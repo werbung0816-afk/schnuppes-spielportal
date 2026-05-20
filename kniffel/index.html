@@ -1,1 +1,1739 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dani's Kniffelchen</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cyan:#53f6ff;
+  --pink:#ff4fd8;
+  --purple:#8f5fff;
+  --col-w:clamp(44px,8vw,62px);
+}
+body{
+  font-family:'Outfit',sans-serif;
+  background:
+    radial-gradient(circle at top left,rgba(143,95,255,.35),transparent 30%),
+    radial-gradient(circle at top right,rgba(255,79,216,.25),transparent 35%),
+    linear-gradient(180deg,#050111,#120523);
+  color:#fff;
+  min-height:100vh;
+  padding:clamp(10px,2vw,20px);
+  user-select:none;
+  -webkit-user-select:none;
+}
 
+/* ── LAYOUT 3-col ── */
+.layout{
+  display:grid;
+  grid-template-columns:clamp(180px,22vw,300px) 1fr clamp(180px,22vw,300px);
+  grid-template-areas:"left center right";
+  gap:clamp(8px,1.5vw,18px);
+  align-items:start;
+}
+.panel-left{grid-area:left}
+.game-center{grid-area:center}
+.panel-right{grid-area:right}
+
+/* 450–700px */
+@media(max-width:700px){
+  .layout{
+    grid-template-columns:1fr 1fr;
+    grid-template-areas:
+      "center center"
+      "left   right";
+  }
+}
+/* <450px */
+@media(max-width:450px){
+  .layout{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "center"
+      "left"
+      "right";
+  }
+}
+
+/* ── PANEL ── */
+.panel{
+  background:rgba(10,12,38,.85);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:28px;
+  padding:clamp(12px,2vw,22px);
+  backdrop-filter:blur(18px);
+  transition:.35s;
+}
+.panel.active-player{
+  border-color:var(--cyan);
+  box-shadow:0 0 28px rgba(83,246,255,.32);
+}
+
+/* ── PLAYER PANEL CONTENT ── */
+.p-badge{
+  font-size:clamp(9px,1.3vw,12px);
+  font-weight:800;
+  letter-spacing:1.5px;
+  color:var(--cyan);
+  margin-bottom:4px;
+  opacity:0;
+  transition:.3s;
+  min-height:16px;
+  text-transform:uppercase;
+}
+.panel.active-player .p-badge{opacity:1}
+.p-name{
+  font-size:clamp(14px,2.2vw,20px);
+  font-weight:900;
+  line-height:1.1;
+  margin-bottom:2px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.p-total{
+  font-size:clamp(32px,5vw,52px);
+  font-weight:900;
+  background:linear-gradient(90deg,var(--cyan),var(--pink));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  line-height:1;
+  margin:6px 0 8px;
+}
+.bonus-wrap{margin-bottom:10px}
+.bonus-lbl{
+  display:flex;
+  justify-content:space-between;
+  font-size:clamp(9px,1.2vw,11px);
+  color:rgba(255,255,255,.45);
+  margin-bottom:3px;
+}
+.bonus-track{
+  height:5px;
+  background:rgba(255,255,255,.07);
+  border-radius:99px;
+  overflow:hidden;
+}
+.bonus-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--purple),var(--cyan));
+  border-radius:99px;
+  transition:.4s;
+}
+.mini-list{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  font-size:clamp(9px,1.2vw,12px);
+}
+.mini-row{
+  display:flex;
+  justify-content:space-between;
+  padding:3px 8px;
+  border-radius:7px;
+  background:rgba(255,255,255,.03);
+}
+.mini-val{color:var(--cyan);font-weight:700}
+.mini-bonus{color:#4ade80;font-weight:700}
+
+/* ── LOGO ── */
+.logo{
+  text-align:center;
+  margin-bottom:clamp(10px,1.8vw,18px);
+}
+.logo h1{
+  font-size:clamp(26px,5vw,56px);
+  font-weight:900;
+  line-height:.88;
+  background:linear-gradient(90deg,var(--pink),var(--cyan));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.logo p{
+  font-size:clamp(11px,1.5vw,14px);
+  color:#ff9ef0;
+  margin-top:3px;
+}
+
+/* ── STATUS BAR ── */
+.status-bar{
+  padding:clamp(8px,1.2vw,14px) clamp(12px,2vw,18px);
+  border-radius:16px;
+  background:rgba(143,95,255,.18);
+  font-size:clamp(11px,1.6vw,15px);
+  text-align:center;
+  margin-bottom:clamp(8px,1.5vw,14px);
+  min-height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ── ROLL COUNTER ── */
+.roll-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-bottom:clamp(8px,1.5vw,14px);
+}
+.roll-dot{
+  width:10px;height:10px;
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+  transition:.3s;
+}
+.roll-dot.used{
+  background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan);
+}
+.roll-label{
+  font-size:clamp(10px,1.4vw,13px);
+  color:rgba(255,255,255,.4);
+  margin-left:4px;
+}
+
+/* ── DICE AREA ── */
+.dice-area{
+  display:flex;
+  flex-wrap:wrap;
+  gap:clamp(8px,1.5vw,14px);
+  justify-content:center;
+  align-items:center;
+  padding:clamp(14px,2vw,22px);
+  border-radius:28px;
+  background:rgba(120,40,255,.06);
+  border:1px solid rgba(220,120,255,.22);
+  box-shadow:0 0 35px rgba(180,80,255,.14) inset;
+  min-height:clamp(90px,14vw,150px);
+  margin-bottom:clamp(10px,1.8vw,16px);
+}
+.dice-placeholder{
+  opacity:.32;
+  font-size:clamp(13px,2vw,17px);
+  font-weight:600;
+  text-align:center;
+}
+
+/* ── DIE ── */
+.die{
+  width:clamp(58px,9.5vw,96px);
+  height:clamp(58px,9.5vw,96px);
+  border-radius:clamp(13px,2.2vw,22px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.22s;
+  position:relative;
+  background:linear-gradient(145deg,#241a36 0%,#151126 55%,#0c0a18 100%);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:
+    0 14px 30px rgba(0,0,0,.45),
+    0 0 18px rgba(180,80,255,.18),
+    inset 0 2px 6px rgba(255,255,255,.07),
+    inset 0 -8px 14px rgba(0,0,0,.42);
+  overflow:hidden;
+}
+.die::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 30%);
+  pointer-events:none;
+}
+.die:hover:not(.no-hold){
+  transform:translateY(-5px) scale(1.04);
+  box-shadow:
+    0 20px 38px rgba(0,0,0,.5),
+    0 0 24px rgba(180,80,255,.3);
+}
+.die.held{
+  outline:3px solid var(--cyan);
+  outline-offset:3px;
+  transform:translateY(-9px) scale(1.06);
+  box-shadow:
+    0 0 18px rgba(83,246,255,.6),
+    0 0 36px rgba(120,80,255,.4),
+    0 22px 42px rgba(0,0,0,.55);
+}
+.die.no-hold{cursor:default}
+.hold-tag{
+  position:absolute;
+  bottom:3px;
+  font-size:clamp(7px,1vw,9px);
+  font-weight:900;
+  letter-spacing:.5px;
+  color:var(--cyan);
+  text-transform:uppercase;
+}
+
+/* heart pip SVG inside die */
+.die svg{
+  width:72%;
+  height:72%;
+  overflow:visible;
+}
+
+/* rolling animation */
+@keyframes dieRoll{
+  0%  {transform:rotate(-12deg) scale(.88)}
+  30% {transform:rotate(10deg) scale(1.06)}
+  60% {transform:rotate(-5deg) scale(.96)}
+  80% {transform:rotate(4deg) scale(1.02)}
+  100%{transform:rotate(0) scale(1)}
+}
+.die.rolling{animation:dieRoll .32s ease}
+
+/* ── BUTTONS ── */
+.btn-row{
+  display:flex;
+  gap:clamp(7px,1.2vw,12px);
+  margin-bottom:clamp(10px,1.8vw,16px);
+}
+.btn{
+  flex:1;
+  padding:clamp(11px,1.8vw,17px);
+  border:none;
+  border-radius:18px;
+  font-size:clamp(12px,1.8vw,17px);
+  font-weight:800;
+  color:#fff;
+  cursor:pointer;
+  font-family:'Outfit',sans-serif;
+  transition:.2s;
+  letter-spacing:.3px;
+}
+.btn:disabled{opacity:.3;cursor:default;transform:none!important}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn-roll{background:linear-gradient(90deg,var(--cyan),#5677ff)}
+.btn-hint{
+  font-size:clamp(9px,1.3vw,12px);
+  color:rgba(255,255,255,.4);
+  text-align:center;
+  margin-top:-8px;
+  margin-bottom:clamp(8px,1.5vw,14px);
+}
+
+/* ── SCORECARD ── */
+.scorecard{
+  background:rgba(8,6,26,.78);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:20px;
+  overflow:hidden;
+  font-size:clamp(10px,1.4vw,13px);
+}
+.sc-section{
+  background:rgba(143,95,255,.16);
+  padding:5px 10px;
+  font-size:clamp(8px,1.1vw,10px);
+  font-weight:900;
+  letter-spacing:2px;
+  color:rgba(255,255,255,.55);
+  text-transform:uppercase;
+}
+.sc-header-row{
+  display:grid;
+  grid-template-columns:1fr var(--col-w) var(--col-w);
+  border-bottom:2px solid rgba(255,255,255,.09);
+}
+.sc-hcell{
+  padding:6px 4px;
+  text-align:center;
+  font-size:clamp(9px,1.2vw,12px);
+  font-weight:800;
+  border-left:1px solid rgba(255,255,255,.05);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sc-hcell:first-child{border-left:none;text-align:left;padding-left:10px}
+.sc-hcell.active-col{color:var(--cyan)}
+
+.sc-row{
+  display:grid;
+  grid-template-columns:1fr var(--col-w) var(--col-w);
+  border-bottom:1px solid rgba(255,255,255,.04);
+  min-height:32px;
+}
+.sc-row:last-child{border-bottom:none}
+.sc-row.sum-row{
+  background:rgba(255,255,255,.025);
+}
+.sc-label{
+  padding:4px 10px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  line-height:1.1;
+}
+.sc-cat{font-size:clamp(10px,1.4vw,13px);font-weight:600}
+.sc-hint{font-size:clamp(8px,1vw,10px);color:rgba(255,255,255,.35)}
+.sc-cell{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:clamp(10px,1.5vw,14px);
+  border-left:1px solid rgba(255,255,255,.05);
+  transition:.18s;
+  cursor:default;
+  position:relative;
+}
+.sc-cell.can-score{
+  cursor:pointer;
+}
+.sc-cell.can-score:hover{
+  background:rgba(83,246,255,.14);
+}
+.sc-cell.preview-pos{
+  color:var(--cyan);
+  background:rgba(83,246,255,.08);
+}
+.sc-cell.preview-zero{
+  color:rgba(255,79,216,.7);
+  background:rgba(255,79,216,.06);
+}
+.sc-cell.scored-val{color:rgba(255,255,255,.92)}
+.sc-cell.scored-zero{
+  color:rgba(255,255,255,.2);
+  text-decoration:line-through;
+}
+.sc-cell.computed-val{
+  color:var(--cyan);
+  background:rgba(83,246,255,.04);
+  font-size:clamp(10px,1.5vw,15px);
+}
+.sc-cell.bonus-yes{
+  color:#4ade80;
+  background:rgba(74,222,128,.06);
+}
+.sc-cell.bonus-no{
+  color:rgba(255,255,255,.25);
+}
+.sc-cell.grand{
+  font-size:clamp(11px,1.6vw,16px);
+  font-weight:900;
+  color:#fff;
+  background:rgba(143,95,255,.1);
+}
+.preview-tick{
+  position:absolute;
+  top:2px;right:3px;
+  font-size:7px;
+  color:var(--cyan);
+  opacity:.7;
+}
+
+/* ── MP OVERLAY ── */
+#mp-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(5,2,20,.97);
+  backdrop-filter:blur(14px);
+  z-index:99999;
+  align-items:center;
+  justify-content:center;
+}
+.mp-box{
+  width:min(460px,96vw);
+  background:linear-gradient(160deg,#0d0821,#180e32);
+  border:1px solid rgba(139,92,246,.3);
+  border-radius:28px;
+  padding:clamp(20px,4vw,32px);
+  color:#fff;
+  box-shadow:0 0 60px rgba(139,92,246,.25),0 0 100px rgba(255,79,216,.1);
+}
+.mp-logo{
+  font-size:clamp(24px,5vw,40px);
+  font-weight:900;
+  line-height:.9;
+  background:linear-gradient(90deg,var(--pink),var(--cyan));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:4px;
+}
+.mp-sub{
+  font-size:clamp(11px,1.5vw,13px);
+  color:#ff9ef0;
+  margin-bottom:clamp(16px,3vw,26px);
+}
+.mp-label{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  color:rgba(255,255,255,.4);
+  text-transform:uppercase;
+  margin-bottom:6px;
+  display:block;
+}
+.mp-input{
+  width:100%;
+  padding:14px 16px;
+  border-radius:14px;
+  border:2px solid rgba(139,92,246,.4);
+  background:rgba(255,255,255,.05);
+  color:#fff;
+  font-family:'Outfit',sans-serif;
+  font-size:clamp(15px,2.5vw,18px);
+  outline:none;
+  margin-bottom:14px;
+  transition:.2s;
+}
+.mp-input:focus{border-color:var(--purple)}
+.mp-badge{
+  padding:10px 14px;
+  border-radius:12px;
+  background:rgba(139,92,246,.08);
+  border:1px solid rgba(139,92,246,.2);
+  font-size:clamp(11px,1.5vw,13px);
+  color:rgba(255,255,255,.5);
+  margin-bottom:14px;
+  min-height:38px;
+  display:flex;
+  align-items:center;
+}
+.mp-btn{
+  width:100%;
+  padding:clamp(14px,2vw,18px);
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg,#8b5cf6,#ec4899);
+  color:#fff;
+  font-family:'Outfit',sans-serif;
+  font-size:clamp(15px,2.5vw,20px);
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 6px 28px rgba(139,92,246,.4);
+  margin-bottom:10px;
+  transition:.2s;
+}
+.mp-btn:hover{transform:translateY(-2px)}
+.mp-btn:disabled{opacity:.35;cursor:default;transform:none}
+.mp-start-btn{
+  width:100%;
+  padding:clamp(13px,2vw,17px);
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg,#16a34a,#15803d);
+  color:#fff;
+  font-family:'Outfit',sans-serif;
+  font-size:clamp(15px,2.5vw,19px);
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 6px 28px rgba(22,163,74,.35);
+  margin-bottom:10px;
+  transition:.2s;
+}
+.mp-start-btn:hover{transform:translateY(-2px)}
+.mp-ai-btn{
+  width:100%;
+  padding:clamp(11px,1.8vw,15px);
+  border:1px solid rgba(83,246,255,.35);
+  border-radius:14px;
+  background:rgba(83,246,255,.07);
+  color:var(--cyan);
+  font-family:'Outfit',sans-serif;
+  font-size:clamp(13px,2vw,16px);
+  font-weight:700;
+  cursor:pointer;
+  margin-bottom:10px;
+  transition:.2s;
+}
+.mp-ai-btn:hover{background:rgba(83,246,255,.14)}
+.mp-divider{border:none;border-top:1px solid rgba(255,255,255,.07);margin:14px 0}
+.mp-leave-btn{
+  width:100%;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;
+  background:transparent;
+  color:rgba(255,255,255,.38);
+  font-family:'Outfit',sans-serif;
+  font-size:clamp(12px,1.6vw,14px);
+  cursor:pointer;
+  transition:.2s;
+}
+.mp-leave-btn:hover{color:rgba(255,255,255,.6)}
+.mp-waiting-name{
+  font-size:clamp(18px,3vw,26px);
+  font-weight:900;
+  color:var(--cyan);
+  margin:10px 0 16px;
+  min-height:32px;
+}
+@keyframes dot{0%,80%,100%{opacity:.22}40%{opacity:1}}
+.dots span{animation:dot 1.4s infinite}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+
+/* ── VICTORY OVERLAY ── */
+#victoryOverlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999999;
+  background:rgba(5,1,20,.93);
+  backdrop-filter:blur(14px);
+  overflow:hidden;
+}
+#victoryOverlay.show{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.confetti-piece{
+  position:absolute;
+  top:-20px;
+  animation:cfFall linear forwards;
+  border-radius:50%;
+}
+@keyframes cfFall{to{transform:translateY(110vh) rotate(540deg);opacity:0}}
+.vStage{
+  text-align:center;
+  z-index:2;
+  padding:20px;
+  animation:fadeUp .5s ease;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.vComment{
+  font-size:clamp(16px,2.8vw,28px);
+  font-weight:800;
+  color:var(--pink);
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+.vPlace{
+  font-size:clamp(28px,6vw,68px);
+  font-weight:900;
+  margin:6px 0;
+}
+.vCard{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:24px;
+  padding:clamp(14px,2vw,22px) clamp(24px,4vw,48px);
+  display:inline-block;
+  margin:8px auto;
+}
+.vCard.gold{border-color:rgba(255,215,0,.5);background:rgba(255,215,0,.06)}
+.vCard.silver{border-color:rgba(192,192,192,.4)}
+.vCard.bronze{border-color:rgba(205,127,50,.4)}
+.vName{
+  font-size:clamp(18px,4vw,42px);
+  font-weight:900;
+  background:linear-gradient(90deg,var(--cyan),var(--pink));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.vScore{
+  font-size:clamp(26px,5vw,58px);
+  font-weight:900;
+  color:#fff;
+}
+.vScoreSub{
+  font-size:clamp(11px,1.5vw,14px);
+  color:rgba(255,255,255,.4);
+  margin-top:-4px;
+}
+.vFinalBtn{
+  margin-top:18px;
+  padding:clamp(12px,2vw,18px) clamp(24px,4vw,44px);
+  border:none;
+  border-radius:18px;
+  background:linear-gradient(90deg,var(--purple),var(--pink));
+  color:#fff;
+  font-family:'Outfit',sans-serif;
+  font-size:clamp(14px,2.2vw,20px);
+  font-weight:900;
+  cursor:pointer;
+  transition:.2s;
+}
+.vFinalBtn:hover{transform:translateY(-3px)}
+
+/* ── MISC ── */
+.kniffel-bonus-badge{
+  position:fixed;
+  top:clamp(10px,2vw,20px);
+  left:50%;
+  transform:translateX(-50%);
+  z-index:99998;
+  padding:12px 28px;
+  border-radius:20px;
+  font-size:clamp(16px,2.5vw,24px);
+  font-weight:900;
+  background:linear-gradient(90deg,rgba(255,79,216,.2),rgba(83,246,255,.2));
+  border:2px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 24px rgba(255,0,180,.2),0 0 32px rgba(0,180,255,.12);
+  animation:fadeUp .4s ease;
+  display:none;
+  white-space:nowrap;
+}
+
+@media(max-width:400px){
+  :root{--col-w:40px}
+  .sc-hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     MP SETUP OVERLAY
+══════════════════════════════════════ -->
+<div id="mp-overlay" style="display:flex">
+  <div class="mp-box">
+    <div class="mp-logo">Dani's<br>Kniffelchen</div>
+    <div class="mp-sub">🎲 Das Würfelspiel für Freunde</div>
+
+    <!-- SETUP SCREEN -->
+    <div id="mp-setup">
+      <label class="mp-label">Dein Name</label>
+      <input id="mp-name" class="mp-input" type="text" maxlength="16" placeholder="Name eingeben…" autocomplete="off">
+      <div id="mp-badge" class="mp-badge">⏳ Verbinde mit Raum…</div>
+      <button class="mp-btn" onclick="mpConnect()">Spielen →</button>
+    </div>
+
+    <!-- WAITING SCREEN (host sees this) -->
+    <div id="mp-waiting" style="display:none">
+      <div style="font-size:clamp(13px,2vw,16px);font-weight:600;color:rgba(255,255,255,.6)">
+        Warte auf Mitspieler<span class="dots"><span>.</span><span>.</span><span>.</span></span>
+      </div>
+      <div class="mp-waiting-name" id="mp-waiting-name"></div>
+      <div id="mp-waiting-badge" class="mp-badge" style="margin-bottom:14px">👤 1 Spieler im Raum</div>
+      <button id="mp-start-btn" class="mp-start-btn" style="display:none" onclick="mpHostStart()">🎮 Spiel starten</button>
+      <button class="mp-ai-btn" onclick="startWithAI()">🤖 Gegen KI starten</button>
+      <hr class="mp-divider">
+      <button class="mp-leave-btn" onclick="mpLeave()">← Verlassen</button>
+    </div>
+
+    <!-- GUEST SCREEN (guest sees this after joining) -->
+    <div id="mp-guest" style="display:none">
+      <div style="font-size:clamp(13px,2vw,16px);font-weight:600;color:rgba(255,255,255,.6)">
+        Wartet auf Spielstart<span class="dots"><span>.</span><span>.</span><span>.</span></span>
+      </div>
+      <div class="mp-waiting-name" id="mp-guest-name"></div>
+      <div style="font-size:clamp(11px,1.5vw,13px);color:rgba(255,255,255,.35);margin-bottom:16px">Der Host startet das Spiel</div>
+      <hr class="mp-divider">
+      <button class="mp-leave-btn" onclick="mpLeave()">← Verlassen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN GAME LAYOUT
+══════════════════════════════════════ -->
+<div class="layout" id="game-layout" style="display:none">
+
+  <!-- Left: Player 0 Panel -->
+  <div class="panel panel-left" id="panel-p0">
+    <div class="p-badge" id="badge-p0">— du bist dran ✦</div>
+    <div class="p-name" id="name-p0">—</div>
+    <div class="p-total" id="total-p0">0</div>
+    <div class="bonus-wrap">
+      <div class="bonus-lbl">
+        <span>Bonus-Ziel (63)</span>
+        <span id="bprog-p0">0/63</span>
+      </div>
+      <div class="bonus-track"><div class="bonus-fill" id="bfill-p0" style="width:0%"></div></div>
+    </div>
+    <div class="mini-list" id="mini-p0"></div>
+  </div>
+
+  <!-- Center: Game Area -->
+  <div class="game-center">
+    <div class="logo">
+      <h1>Dani's<br>Kniffelchen</h1>
+      <p>🎲 Würfelspaß mit Herzchen</p>
+    </div>
+
+    <div class="status-bar" id="status-bar">Willkommen beim Kniffelchen!</div>
+
+    <div class="roll-row">
+      <div class="roll-dot" id="rd0"></div>
+      <div class="roll-dot" id="rd1"></div>
+      <div class="roll-dot" id="rd2"></div>
+      <span class="roll-label" id="roll-lbl">0/3 Würfe</span>
+    </div>
+
+    <div class="dice-area" id="dice-area">
+      <div class="dice-placeholder">🎲 Drücke Würfeln zum Starten</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-roll" id="btn-roll" onclick="rollDice()">🎲 Würfeln</button>
+    </div>
+    <div class="btn-hint" id="btn-hint">Würfe übrig: 3 — Würfel anklicken zum Festhalten</div>
+
+    <div class="scorecard" id="scorecard"><!-- rendered by JS --></div>
+  </div>
+
+  <!-- Right: Player 1 Panel -->
+  <div class="panel panel-right" id="panel-p1">
+    <div class="p-badge" id="badge-p1">— du bist dran ✦</div>
+    <div class="p-name" id="name-p1">—</div>
+    <div class="p-total" id="total-p1">0</div>
+    <div class="bonus-wrap">
+      <div class="bonus-lbl">
+        <span>Bonus-Ziel (63)</span>
+        <span id="bprog-p1">0/63</span>
+      </div>
+      <div class="bonus-track"><div class="bonus-fill" id="bfill-p1" style="width:0%"></div></div>
+    </div>
+    <div class="mini-list" id="mini-p1"></div>
+  </div>
+
+</div>
+
+<!-- Victory Overlay -->
+<div id="victoryOverlay"></div>
+
+<!-- Kniffel Bonus Banner -->
+<div id="kniffelBonusBadge" class="kniffel-bonus-badge"></div>
+
+<!-- Firebase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.8.1/firebase-app-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.8.1/firebase-database-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.8.1/firebase-auth-compat.min.js"></script>
+
+<script>
+'use strict';
+/* ══════════════════════════════════════════════════════════════
+   DANI'S KNIFFELCHEN
+   Firebase: monis-zehntausend / rooms/kniffel_main
+   2 Spieler — ein fixer Raum — Host-Based Multiplayer
+══════════════════════════════════════════════════════════════ */
+
+// ── Firebase ──
+const FB_CFG = {
+  apiKey           : "AIzaSyDkX_aEjOjUmwfMGxRAzwH8IjUPM0wx44s",
+  authDomain       : "monis-zehntausend.firebaseapp.com",
+  databaseURL      : "https://monis-zehntausend-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId        : "monis-zehntausend",
+  storageBucket    : "monis-zehntausend.firebasestorage.app",
+  messagingSenderId: "399927026314",
+  appId            : "1:399927026314:web:5fab639228c5b42efd0373"
+};
+const ROOM_PATH = 'rooms/kniffel_main';
+
+// ── AI Names ──
+const ALL_AI_NAMES = ['Nici','Marco','Leni','Mia','Nele','Dani','Finn','Sascha'];
+
+function pickAIName(taken){
+  const t = (taken||'').toLowerCase();
+  const pool = ALL_AI_NAMES.filter(n=>n.toLowerCase()!==t);
+  const shuffled = [...pool].sort(()=>Math.random()-.5);
+  return (shuffled[0]||'Niki') + ' (KI)';
+}
+
+// ── Categories ──
+const CATS = [
+  // id, label, hint, section, computed?, fixedPts
+  {id:'ones',    lbl:'Einser',      hint:'nur 1er',      sec:'upper', comp:false},
+  {id:'twos',    lbl:'Zweier',      hint:'nur 2er',      sec:'upper', comp:false},
+  {id:'threes',  lbl:'Dreier',      hint:'nur 3er',      sec:'upper', comp:false},
+  {id:'fours',   lbl:'Vierer',      hint:'nur 4er',      sec:'upper', comp:false},
+  {id:'fives',   lbl:'Fünfer',      hint:'nur 5er',      sec:'upper', comp:false},
+  {id:'sixes',   lbl:'Sechser',     hint:'nur 6er',      sec:'upper', comp:false},
+  {id:'_usum',   lbl:'Gesamt',      hint:'→',            sec:'upper', comp:true},
+  {id:'_bonus',  lbl:'Bonus',       hint:'≥63 → +35',    sec:'upper', comp:true},
+  {id:'_utot',   lbl:'Oberer Teil', hint:'→',            sec:'upper', comp:true},
+  {id:'three_k', lbl:'Dreierpasch', hint:'alle Augen',   sec:'lower', comp:false},
+  {id:'four_k',  lbl:'Viererpasch', hint:'alle Augen',   sec:'lower', comp:false},
+  {id:'fhouse',  lbl:'Full House',  hint:'25 Punkte',    sec:'lower', comp:false, fix:25},
+  {id:'sm_str',  lbl:'Kl. Straße',  hint:'30 Punkte',    sec:'lower', comp:false, fix:30},
+  {id:'lg_str',  lbl:'Gr. Straße',  hint:'40 Punkte',    sec:'lower', comp:false, fix:40},
+  {id:'kniffel', lbl:'Kniffel',     hint:'50 Punkte',    sec:'lower', comp:false, fix:50},
+  {id:'chance',  lbl:'Chance',      hint:'alle Augen',   sec:'lower', comp:false},
+  {id:'_lsum',   lbl:'Unterer Teil',hint:'→',            sec:'lower', comp:true},
+  {id:'_uref',   lbl:'Oberer Teil', hint:'→',            sec:'lower', comp:true},
+  {id:'_grand',  lbl:'Endsumme',    hint:'→',            sec:'lower', comp:true},
+];
+const SCORABLE = CATS.filter(c=>!c.comp);
+
+// ── Scoring ──
+function calcScore(id, dv){
+  const cnt = {};
+  dv.forEach(v=>{cnt[v]=(cnt[v]||0)+1});
+  const sum = dv.reduce((a,b)=>a+b,0);
+  const sorted = [...dv].sort((a,b)=>a-b);
+  const uniq = [...new Set(sorted)];
+  
+  switch(id){
+    case 'ones':   return dv.filter(v=>v===1).length;
+    case 'twos':   return dv.filter(v=>v===2).length * 2;
+    case 'threes': return dv.filter(v=>v===3).length * 3;
+    case 'fours':  return dv.filter(v=>v===4).length * 4;
+    case 'fives':  return dv.filter(v=>v===5).length * 5;
+    case 'sixes':  return dv.filter(v=>v===6).length * 6;
+    case 'three_k': return Object.values(cnt).some(c=>c>=3) ? sum : 0;
+    case 'four_k':  return Object.values(cnt).some(c=>c>=4) ? sum : 0;
+    case 'fhouse': {
+      const vals = Object.values(cnt);
+      return (vals.includes(3) && vals.includes(2)) ? 25 : 0;
+    }
+    case 'sm_str': {
+      let best=1,cur=1;
+      for(let i=1;i<uniq.length;i++){
+        if(uniq[i]===uniq[i-1]+1){cur++;if(cur>best)best=cur}else cur=1;
+      }
+      return best>=4 ? 30 : 0;
+    }
+    case 'lg_str': {
+      let best=1,cur=1;
+      for(let i=1;i<uniq.length;i++){
+        if(uniq[i]===uniq[i-1]+1){cur++;if(cur>best)best=cur}else cur=1;
+      }
+      return best>=5 ? 40 : 0;
+    }
+    case 'kniffel': return Object.values(cnt).some(c=>c>=5) ? 50 : 0;
+    case 'chance': return sum;
+    default: return 0;
+  }
+}
+
+function computedVals(p){
+  const s = p.scores;
+  const upIds = ['ones','twos','threes','fours','fives','sixes'];
+  const upFilled = upIds.filter(id=>typeof s[id]==='number');
+  const uSum = upFilled.reduce((a,id)=>a+s[id],0);
+  const bonus = uSum >= 63 ? 35 : 0;
+  const uTot = uSum + bonus;
+  const loIds = ['three_k','four_k','fhouse','sm_str','lg_str','kniffel','chance'];
+  const loFilled = loIds.filter(id=>typeof s[id]==='number');
+  const lSum = loFilled.reduce((a,id)=>a+s[id],0) + (p.kBonus||0);
+  return {uSum, bonus, uTot, lSum, grand: uTot + lSum};
+}
+
+function upperProgress(p){
+  const upIds = ['ones','twos','threes','fours','fives','sixes'];
+  return upIds.filter(id=>typeof p.scores[id]==='number').reduce((a,id)=>a+p.scores[id],0);
+}
+
+// ── Heart Pip Rendering ──
+const PIP_POS = {
+  1:[[50,50]],
+  2:[[28,28],[72,72]],
+  3:[[28,28],[50,50],[72,72]],
+  4:[[28,25],[72,25],[28,75],[72,75]],
+  5:[[28,25],[72,25],[50,50],[28,75],[72,75]],
+  6:[[28,22],[72,22],[28,50],[72,50],[28,78],[72,78]]
+};
+const HEART_COLS = ['#53f6ff','#ff4fd8','#8f5fff'];
+
+function dieSVG(val){
+  if(!val) return '';
+  const pos = PIP_POS[val]||[];
+  const hearts = pos.map((p,i)=>{
+    const c = HEART_COLS[i%3];
+    return `<text x="${p[0]}%" y="${p[1]}%" text-anchor="middle" dominant-baseline="central"
+      font-size="22" fill="${c}"
+      style="filter:drop-shadow(0 0 5px ${c})">♥</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${hearts}</svg>`;
+}
+
+// ── Game State ──
+let GS = {
+  players:[],          // [{name,isAI,scores:{},kBonus}]
+  cp:0,                // current player index
+  dice:[0,0,0,0,0],
+  held:[false,false,false,false,false],
+  rolls:0,             // 0..3
+  gameOver:false,
+  round:1              // 1..13
+};
+
+let myIdx = -1;
+let myName = '';
+let isHost = false;
+let aiBusy = false;
+let MP_on = false;
+
+// ── Comment Pools ──
+const WIN_COMMENTS = [
+  '🥇 DER WÜRFELBECHER IST MIT DIR!','🏆 UNSCHLAGBAR!','👑 DAS WAR EINE SHOW!',
+  '🎆 CHAMPION DES ABENDS!','🌟 ABSOLUT LEGENDÄR!','🚀 EINFACH DAVONGEFLOGEN!',
+  '🎰 DU BIST DER KNIFFEL-KÖNIG!','💎 PERFEKTE STRATEGIE!'
+];
+const LOSS_COMMENTS = [
+  '🥈 SO NAH — UND DOCH SO WEIT!','😤 DAS NÄCHSTE MAL BIST DU DER BOSS!',
+  '💪 STARK GESPIELT — RESPEKT!','⚡ SILBER IST AUCH GOLD WERT!',
+  '🌪️ FAST PERFEKT!','🎯 EIN HAUCH ZU WENIG!'
+];
+const GOOD_MOVE = ['🔥 Stark!','💎 Klasse!','🎯 Präzise!','🌟 Nice!','💫 Gut!','✅ Solide.'];
+const BAD_MOVE  = ['😬 Gestrichen.','🙈 Na ja...','💤 Nächste Chance!','🤷 Null ist auch eine Zahl.'];
+const KNIFFEL_C = ['🎉 KNIFFEL! UNGLAUBLICH!','🤯 5 GLEICHE! WAHNSINN!','👑 KNIFFEL-KÖNIG!','💥 LEGENDÄR!'];
+
+function rand(arr){return arr[Math.floor(Math.random()*arr.length)]}
+
+// ── Render: Dice ──
+function renderDice(){
+  const el = document.getElementById('dice-area');
+  if(!el) return;
+  if(GS.rolls===0){
+    el.innerHTML='<div class="dice-placeholder">🎲 Drücke Würfeln zum Starten</div>';
+    return;
+  }
+  el.innerHTML = GS.dice.map((v,i)=>{
+    const h = GS.held[i];
+    const noHold = GS.rolls>=3;
+    return `<div class="die ${h?'held':''} ${noHold?'no-hold':''}" onclick="toggleHold(${i})">
+      ${dieSVG(v)}
+      ${h && !noHold ? '<div class="hold-tag">HALT</div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── Render: Roll Counter ──
+function renderRollCounter(){
+  for(let i=0;i<3;i++){
+    const d=document.getElementById('rd'+i);
+    if(d) d.className='roll-dot'+(i<GS.rolls?' used':'');
+  }
+  const lbl=document.getElementById('roll-lbl');
+  if(lbl) lbl.textContent=`${GS.rolls}/3 Würfe`;
+  const hint=document.getElementById('btn-hint');
+  if(hint){
+    if(GS.rolls===0) hint.textContent='';
+    else if(GS.rolls<3) hint.textContent=`${3-GS.rolls} Würfe übrig — Würfel anklicken zum Festhalten, dann Kategorie wählen`;
+    else hint.textContent='3 Würfe verwendet — wähle eine Kategorie im Block';
+  }
+}
+
+// ── Render: Panels ──
+function renderPanels(){
+  GS.players.forEach((p,i)=>{
+    const panel=document.getElementById('panel-p'+i);
+    if(!panel) return;
+    const isActive = i===GS.cp;
+    panel.className=`panel ${i===0?'panel-left':'panel-right'} ${isActive?'active-player':''}`;
+    
+    const nameEl=document.getElementById('name-p'+i);
+    if(nameEl) nameEl.textContent=p.name;
+    
+    const cv=computedVals(p);
+    const totEl=document.getElementById('total-p'+i);
+    if(totEl) totEl.textContent=cv.grand;
+    
+    const up=upperProgress(p);
+    const bpEl=document.getElementById('bprog-p'+i);
+    if(bpEl) bpEl.textContent=`${up}/63`;
+    const bfEl=document.getElementById('bfill-p'+i);
+    if(bfEl) bfEl.style.width=Math.min(100,(up/63)*100)+'%';
+    
+    const mini=document.getElementById('mini-p'+i);
+    if(mini){
+      mini.innerHTML=`
+        <div class="mini-row"><span>Oberer Teil</span><span class="mini-val">${cv.uSum}</span></div>
+        ${cv.bonus>0?`<div class="mini-row"><span>Bonus</span><span class="mini-bonus">+35 ✓</span></div>`:''}
+        <div class="mini-row"><span>Unterer Teil</span><span class="mini-val">${cv.lSum}</span></div>
+        ${(p.kBonus||0)>0?`<div class="mini-row"><span>Kniffel-Bonus</span><span class="mini-bonus">+${p.kBonus}</span></div>`:''}
+        <div class="mini-row" style="border-top:1px solid rgba(255,255,255,.08);margin-top:3px;padding-top:5px"><span><b>Gesamt</b></span><span class="mini-val">${cv.grand}</span></div>
+      `;
+    }
+  });
+}
+
+// ── Render: Scorecard ──
+function renderScorecard(){
+  const sc=document.getElementById('scorecard');
+  if(!sc||GS.players.length<2) return;
+  
+  const cp=GS.cp;
+  const mine=myIdx>=0?myIdx:cp;
+  const myTurn=isMyTurn()&&GS.rolls>0&&!GS.gameOver;
+  const dv=GS.dice;
+  
+  // Header
+  let html=`<div class="sc-header-row">
+    <div class="sc-hcell" style="text-align:left;padding-left:10px;color:rgba(255,255,255,.4);font-size:10px">KATEGORIE</div>
+    ${GS.players.map((p,i)=>`<div class="sc-hcell ${i===cp?'active-col':''}">${p.name.length>9?p.name.slice(0,8)+'…':p.name}</div>`).join('')}
+  </div>`;
+  
+  let prevSec='';
+  CATS.forEach(cat=>{
+    if(cat.sec!==prevSec){
+      const label = cat.sec==='upper' ? 'OBERER TEIL' : 'UNTERER TEIL';
+      html+=`<div class="sc-section">${label}</div>`;
+      prevSec=cat.sec;
+    }
+    
+    const isTot=cat.comp;
+    html+=`<div class="sc-row ${isTot?'sum-row':''}">
+      <div class="sc-label">
+        <span class="sc-cat">${cat.lbl}</span>
+        <span class="sc-hint">${cat.hint}</span>
+      </div>`;
+    
+    GS.players.forEach((p,pi)=>{
+      if(cat.comp){
+        const cv=computedVals(p);
+        let val='',cls='computed-val';
+        if(cat.id==='_usum') val=cv.uSum;
+        else if(cat.id==='_bonus'){
+          if(cv.bonus>0){val='+35';cls='bonus-yes';}
+          else {val='—';cls='bonus-no';}
+        }
+        else if(cat.id==='_utot') val=cv.uTot;
+        else if(cat.id==='_lsum') val=cv.lSum;
+        else if(cat.id==='_uref') val=cv.uTot;
+        else if(cat.id==='_grand'){val=cv.grand;cls='computed-val grand';}
+        html+=`<div class="sc-cell ${cls}">${val}</div>`;
+      } else {
+        const scored=p.scores[cat.id];
+        const isMineCell=(pi===cp && pi===mine);
+        const canClick=isMineCell&&myTurn&&typeof scored==='undefined';
+        
+        let cls='',content='',tick='';
+        if(typeof scored==='number'){
+          cls = scored>0 ? 'scored-val' : 'scored-zero';
+          content = scored;
+        } else if(canClick){
+          const pv=calcScore(cat.id,dv);
+          cls = (pv>0 ? 'can-score preview-pos' : 'can-score preview-zero');
+          content = pv>0 ? pv : '0';
+          tick='<span class="preview-tick">✓</span>';
+        }
+        
+        html+=`<div class="sc-cell ${cls}"
+          ${canClick?`onclick="scoreCategory('${cat.id}')" title="${cat.lbl} — ${calcScore(cat.id,dv)} Punkte eintragen"`:''}
+        >${content}${tick}</div>`;
+      }
+    });
+    
+    html+='</div>';
+  });
+  
+  sc.innerHTML=html;
+}
+
+// ── Render: Button ──
+function renderBtn(){
+  const btn=document.getElementById('btn-roll');
+  if(!btn) return;
+  const canRoll=isMyTurn()&&GS.rolls<3&&!GS.gameOver;
+  btn.disabled=!canRoll;
+  if(GS.rolls===0) btn.textContent='🎲 Würfeln';
+  else if(GS.rolls<3) btn.textContent='🎲 Nochmal würfeln';
+  else btn.textContent='🎲 Würfe aufgebraucht';
+}
+
+// ── Full Render ──
+function render(){
+  renderDice();
+  renderRollCounter();
+  renderPanels();
+  renderScorecard();
+  renderBtn();
+}
+
+// ── Status ──
+function setStatus(msg){
+  const el=document.getElementById('status-bar');
+  if(el) el.textContent=msg;
+}
+
+// ── Turn Guard ──
+function isMyTurn(){
+  if(!MP_on) return true;
+  const p=GS.players[GS.cp];
+  if(p?.isAI) return isHost;
+  return GS.cp===myIdx;
+}
+
+// ── Roll Dice ──
+function rollDice(){
+  if(!isMyTurn()) return;
+  if(GS.rolls>=3){setStatus('⚠️ Wähle jetzt eine Kategorie.');return}
+  if(GS.gameOver) return;
+  
+  const newDice=[...GS.dice];
+  for(let i=0;i<5;i++){
+    if(!GS.held[i]||GS.rolls===0) newDice[i]=Math.floor(Math.random()*6)+1;
+  }
+  GS.dice=newDice;
+  if(GS.rolls===0) GS.held=[false,false,false,false,false];
+  GS.rolls++;
+  
+  // Animate dice
+  setTimeout(()=>{
+    document.querySelectorAll('.die').forEach(d=>{
+      d.classList.add('rolling');
+      setTimeout(()=>d.classList.remove('rolling'),350);
+    });
+  },10);
+  
+  const cp=GS.players[GS.cp];
+  const allSame=GS.dice.every(v=>v===GS.dice[0]);
+  if(allSame) setStatus(rand(KNIFFEL_C)+' Kategorie wählen oder nochmal würfeln!');
+  else if(GS.rolls<3) setStatus(`${cp.name} würfelt — Würfel zum Festhalten anklicken, dann Kategorie wählen.`);
+  else setStatus(`${cp.name} — alle 3 Würfe verbraucht. Kategorie im Block wählen!`);
+  
+  render();
+  if(MP_on) mpPush();
+}
+
+// ── Toggle Hold ──
+function toggleHold(i){
+  if(!isMyTurn()) return;
+  if(GS.rolls===0||GS.rolls>=3) return;
+  GS.held[i]=!GS.held[i];
+  renderDice();
+  if(MP_on) mpPush();
+}
+
+// ── Score Category ──
+function scoreCategory(catId){
+  if(!isMyTurn()){setStatus('⏳ Nicht dein Zug!');return}
+  if(GS.rolls===0){setStatus('⚠️ Erst würfeln!');return}
+  if(GS.gameOver) return;
+  
+  const cp=GS.players[GS.cp];
+  if(typeof cp.scores[catId]==='number'){setStatus('⚠️ Bereits belegt.');return}
+  
+  let pts=calcScore(catId,GS.dice);
+  const cat=CATS.find(c=>c.id===catId);
+  
+  // Kniffel bonus (2nd+ Kniffel)
+  if(catId==='kniffel' && pts===50 && typeof cp.scores['kniffel']==='number'){
+    cp.kBonus=(cp.kBonus||0)+50;
+    showKniffelBonus();
+    pts=50; // still score as 50 in another free cell? Actually bonus is tracked separately
+    // Enter in kniffel cell as additional — but it's already scored
+    // Per rules: +50 bonus points separately; enter in any free cell
+    // For simplicity: just add to kBonus, still need to score in a different cell
+    setStatus('🎉 Bonus-Kniffel! +50 Extraprämie! Wähle eine andere Kategorie.');
+    renderPanels();
+    if(MP_on) mpPush();
+    return;
+  }
+  
+  cp.scores[catId]=pts;
+  
+  if(pts===50&&catId==='kniffel') setStatus(rand(KNIFFEL_C));
+  else if(pts>0) setStatus(`${rand(GOOD_MOVE)} +${pts} Punkte für ${cat?.lbl||catId}!`);
+  else setStatus(`${rand(BAD_MOVE)} ${cat?.lbl||catId} mit 0 gestrichen.`);
+  
+  // Check bonus
+  const cv=computedVals(cp);
+  if(cv.bonus>0 && !cp._bonusShown){
+    cp._bonusShown=true;
+    setTimeout(()=>setStatus('🎁 BONUS! +35 Punkte — Oberteil ≥ 63 erreicht!'),1200);
+  }
+  
+  if(MP_on) mpPush();
+  setTimeout(()=>nextTurn(),700);
+}
+
+// ── Next Turn ──
+function nextTurn(){
+  // Check all done
+  const allFilled=GS.players.every(p=>SCORABLE.every(c=>typeof p.scores[c.id]==='number'));
+  if(allFilled){endGame();return}
+  
+  GS.cp=(GS.cp+1)%GS.players.length;
+  GS.dice=[0,0,0,0,0];
+  GS.held=[false,false,false,false,false];
+  GS.rolls=0;
+  
+  const cp=GS.players[GS.cp];
+  if(GS.cp===myIdx||!MP_on)
+    setStatus(`${cp.name} — du bist dran! Jetzt würfeln.`);
+  else
+    setStatus(`⏳ ${cp.name} ist am Zug…`);
+  
+  render();
+  if(MP_on) mpPush();
+  if(cp.isAI) setTimeout(()=>aiTurn(),1200);
+}
+
+// ── AI ──
+function aiTurn(){
+  if(!GS.players[GS.cp]?.isAI) return;
+  if(aiBusy) return;
+  aiBusy=true;
+  setStatus(`${GS.players[GS.cp].name} denkt nach…`);
+  
+  const doRound=()=>{
+    if(GS.rolls<3){
+      rollDice();
+      setTimeout(()=>{
+        aiPickHeld();
+        if(GS.rolls<3 && shouldRollAgain()){
+          setTimeout(()=>doRound(), 900);
+        } else {
+          setTimeout(()=>{aiPickCat();aiBusy=false},900);
+        }
+      },800);
+    } else {
+      aiPickCat();
+      aiBusy=false;
+    }
+  };
+  
+  setTimeout(doRound,1000);
+}
+
+function shouldRollAgain(){
+  // Roll again if can't score well yet
+  const dv=GS.dice;
+  const best=bestAvailableCat(dv);
+  return best.val < 25 && GS.rolls < 2;
+}
+
+function aiPickHeld(){
+  const dv=GS.dice;
+  const cnt={};
+  dv.forEach(v=>{cnt[v]=(cnt[v]||0)+1});
+  GS.held=[false,false,false,false,false];
+  
+  const maxCnt=Math.max(...Object.values(cnt));
+  const maxNum=Number(Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0]);
+  
+  if(maxCnt>=3){
+    // Hold the repeated number
+    dv.forEach((v,i)=>{if(v===maxNum)GS.held[i]=true});
+  } else if(maxCnt===2){
+    // Hold pairs
+    dv.forEach((v,i)=>{if(cnt[v]>=2)GS.held[i]=true});
+  } else {
+    // Try for straight: hold sequential
+    const uniq=[...new Set(dv)].sort((a,b)=>a-b);
+    let bestSeqStart=0,bestSeqLen=1,cur=1;
+    for(let i=1;i<uniq.length;i++){
+      if(uniq[i]===uniq[i-1]+1){cur++;if(cur>bestSeqLen){bestSeqLen=cur;bestSeqStart=i-cur+1}}
+      else cur=1;
+    }
+    if(bestSeqLen>=3){
+      const seqNums=new Set(uniq.slice(bestSeqStart,bestSeqStart+bestSeqLen));
+      const usedNums={};
+      dv.forEach((v,i)=>{
+        if(seqNums.has(v)&&!usedNums[v]){GS.held[i]=true;usedNums[v]=true}
+      });
+    }
+    // Hold 6s and 1s as fallback
+    if(Object.values(GS.held).every(h=>!h)){
+      dv.forEach((v,i)=>{if(v===6||v===1)GS.held[i]=true});
+    }
+  }
+  renderDice();
+}
+
+function bestAvailableCat(dv){
+  let best={id:null,val:-1};
+  const cp=GS.players[GS.cp];
+  SCORABLE.forEach(c=>{
+    if(typeof cp.scores[c.id]==='number') return;
+    const v=calcScore(c.id,dv);
+    if(v>best.val){best={id:c.id,val:v}}
+  });
+  return best;
+}
+
+function aiPickCat(){
+  const best=bestAvailableCat(GS.dice);
+  const cp=GS.players[GS.cp];
+  if(!best.id){
+    // All filled — shouldn't happen
+    nextTurn();return;
+  }
+  if(best.val===0){
+    // Find least valuable empty category to zero
+    const prio=['sm_str','lg_str','fhouse','kniffel','four_k','three_k','chance','sixes','fives','fours','threes','twos','ones'];
+    const empty=prio.find(id=>typeof cp.scores[id]==='undefined');
+    if(empty){ cp.scores[empty]=0; setStatus(`${cp.name} streicht ${CATS.find(c=>c.id===empty)?.lbl||empty} mit 0.`); }
+  } else {
+    cp.scores[best.id]=best.val;
+    setStatus(`${cp.name} trägt ${best.val} ein (${CATS.find(c=>c.id===best.id)?.lbl||best.id}).`);
+  }
+  if(MP_on) mpPush();
+  setTimeout(()=>nextTurn(),700);
+}
+
+// ── End Game ──
+function endGame(){
+  GS.gameOver=true;
+  render();
+  if(MP_on) mpPush();
+  
+  const sorted=[...GS.players]
+    .map(p=>({...p,cv:computedVals(p)}))
+    .sort((a,b)=>b.cv.grand-a.cv.grand);
+  
+  setTimeout(()=>showVictory(sorted),800);
+}
+
+// ── Victory Overlay ──
+function buildConfetti(n){
+  const cols=['#ff4d6d','#ffd166','#06d6a0','#4cc9f0','#b5179e','#f72585','#53f6ff','#ff4fd8','#8f5fff'];
+  let html='';
+  for(let i=0;i<n;i++){
+    const c=cols[Math.floor(Math.random()*cols.length)];
+    const sz=8+Math.random()*12;
+    const left=Math.random()*100;
+    const dur=3+Math.random()*4;
+    const del=Math.random()*1.5;
+    html+=`<div class="confetti-piece" style="left:${left}%;width:${sz}px;height:${sz}px;background:${c};animation-duration:${dur}s;animation-delay:${del}s"></div>`;
+  }
+  return html;
+}
+
+const MEDALS=[
+  {place:'👑 1. PLATZ', pool:WIN_COMMENTS,  cls:'gold',   cf:500},
+  {place:'🥈 2. PLATZ', pool:LOSS_COMMENTS, cls:'silver', cf:200},
+  {place:'🥉 3. PLATZ', pool:LOSS_COMMENTS, cls:'bronze', cf:100},
+  {place:'🏅 4. PLATZ', pool:['🎲 NÄCHSTE RUNDE GEHÖRT DIR!'], cls:'bronze', cf:50}
+];
+
+let vSeq=[], vTimer=null;
+
+function showVictory(sorted){
+  vSeq=sorted.reverse().map((p,i)=>{
+    const m=MEDALS[sorted.length-1-i]||MEDALS[3];
+    return {place:m.place,comment:rand(m.pool),name:p.name,score:p.cv.grand,cls:m.cls,cf:m.cf};
+  });
+  const ov=document.getElementById('victoryOverlay');
+  ov.classList.add('show');
+  let stage=0;
+  renderVStage(stage);
+  clearInterval(vTimer);
+  vTimer=setInterval(()=>{
+    stage++;
+    if(stage>=vSeq.length){clearInterval(vTimer);return}
+    renderVStage(stage);
+  },2800);
+}
+
+function renderVStage(idx){
+  const d=vSeq[idx];
+  const ov=document.getElementById('victoryOverlay');
+  ov.innerHTML=buildConfetti(d.cf)+`
+    <div class="vStage">
+      <div class="vComment">${d.comment}</div>
+      <div class="vPlace">${d.place}</div>
+      <div class="vCard ${d.cls}">
+        <div class="vName">${d.name}</div>
+        <div class="vScore">${d.score}</div>
+        <div class="vScoreSub">Punkte</div>
+      </div>
+      ${idx===vSeq.length-1?`<div><button class="vFinalBtn" onclick="location.reload()">🔄 Neues Spiel</button></div>`:''}
+    </div>`;
+}
+
+// ── Kniffel Bonus Banner ──
+function showKniffelBonus(){
+  const el=document.getElementById('kniffelBonusBadge');
+  if(!el) return;
+  el.textContent='🎉 BONUS-KNIFFEL! +50 Extraprämie!';
+  el.style.display='block';
+  setTimeout(()=>{el.style.display='none'},2800);
+}
+
+// ──────────────────────────────────────────────
+// FIREBASE / MULTIPLAYER ENGINE
+// ──────────────────────────────────────────────
+let _db=null, _mpRef=null, _lastTs=0, _lastPushTs=0;
+let _roomWatcher=null;
+
+function initFirebase(){
+  if(_db) return _db;
+  if(typeof firebase==='undefined') return null;
+  if(!firebase.apps.length) firebase.initializeApp(FB_CFG);
+  _db=firebase.database();
+  try{firebase.auth().signInAnonymously().catch(()=>{})}catch(e){}
+  return _db;
+}
+
+function mpPush(){
+  if(!MP_on||!_mpRef) return;
+  const now=Date.now();
+  _lastPushTs=now>_lastPushTs?now:_lastPushTs+1;
+  _mpRef.child('state').set({
+    players:GS.players.map(p=>({
+      name:p.name,isAI:!!p.isAI,
+      scores:p.scores||{},
+      kBonus:p.kBonus||0,
+      _bonusShown:!!p._bonusShown
+    })),
+    cp:GS.cp,
+    dice:[...GS.dice],
+    held:[...GS.held],
+    rolls:GS.rolls,
+    gameOver:!!GS.gameOver,
+    round:GS.round||1,
+    ts:_lastPushTs
+  }).catch(()=>{});
+}
+
+function mpHydrate(s){
+  if(!s||s.ts<=_lastTs) return;
+  _lastTs=s.ts;
+  
+  // Show game
+  document.getElementById('mp-overlay').style.display='none';
+  document.getElementById('game-layout').style.display='';
+  
+  if(s.players){
+    const oldKB=GS.players.map(p=>p.kBonus||0);
+    GS.players=s.players.map((p,i)=>({
+      name:p.name,isAI:!!p.isAI,
+      scores:p.scores||{},
+      kBonus:p.kBonus||0,
+      _bonusShown:!!p._bonusShown
+    }));
+    myIdx=GS.players.findIndex(p=>p.name===myName&&!p.isAI);
+    // Check for bonus trigger
+    GS.players.forEach((p,i)=>{
+      if((p.kBonus||0)>(oldKB[i]||0)) showKniffelBonus();
+    });
+  }
+  if(typeof s.cp==='number') GS.cp=s.cp;
+  GS.dice=Array.isArray(s.dice)?[...s.dice]:[0,0,0,0,0];
+  GS.held=Array.isArray(s.held)?[...s.held]:[false,false,false,false,false];
+  if(typeof s.rolls==='number') GS.rolls=s.rolls;
+  GS.gameOver=!!s.gameOver;
+  
+  const cp=GS.players[GS.cp];
+  if(GS.cp===myIdx)
+    setStatus(`${cp?.name||'?'} — du bist dran ✦ Würfeln!`);
+  else
+    setStatus(`⏳ ${cp?.name||'?'} ist am Zug…`);
+  
+  render();
+  
+  if(GS.gameOver&&!window._victoryShown){
+    window._victoryShown=true;
+    const sorted=[...GS.players]
+      .map(p=>({...p,cv:computedVals(p)}))
+      .sort((a,b)=>b.cv.grand-a.cv.grand);
+    setTimeout(()=>showVictory(sorted),800);
+  }
+  
+  if(cp?.isAI&&isHost&&!aiBusy) setTimeout(()=>aiTurn(),1200);
+}
+
+// ── Room Watcher (badge updater) ──
+function startRoomWatcher(){
+  const db=initFirebase();
+  if(!db) return;
+  const ref=db.ref(ROOM_PATH);
+  if(_roomWatcher) ref.off('value',_roomWatcher);
+  _roomWatcher=ref.on('value',snap=>{
+    const room=snap.val();
+    const badge=document.getElementById('mp-badge');
+    if(!badge) return;
+    if(!room||room.status==='empty')
+      badge.textContent='🟢 Raum frei — tritt als Erster ein';
+    else if(room.status==='waiting')
+      badge.textContent=`👤 ${room.hostName||'Jemand'} wartet — beitreten!`;
+    else if(room.status==='playing')
+      badge.textContent='⚡ Spiel läuft gerade';
+    else
+      badge.textContent='🔄 Verbinde…';
+  });
+}
+
+// ── Connect ──
+async function mpConnect(){
+  const inp=document.getElementById('mp-name');
+  const name=(inp?.value||'').trim();
+  if(!name){inp?.focus();return}
+  myName=name;
+  
+  const db=initFirebase();
+  if(!db){ startSoloAI(name); return; }
+  
+  _mpRef=db.ref(ROOM_PATH);
+  let snap;
+  try{ snap=await _mpRef.once('value'); }
+  catch(e){ startSoloAI(name); return; }
+  
+  const room=snap.val();
+  
+  if(!room||room.status==='empty'||room.status==='waiting'){
+    if(!room||room.status==='empty'){
+      // I'm host
+      isHost=true;
+      myIdx=0;
+      await _mpRef.set({status:'waiting',hostName:myName,players:[{name:myName,isAI:false}]});
+      showWaitingScreen(myName);
+    } else if(room.status==='waiting'&&room.hostName!==myName){
+      // Join as guest
+      isHost=false;
+      myIdx=1;
+      await _mpRef.update({
+        status:'ready',
+        players:[room.players?.[0]||{name:room.hostName,isAI:false},{name:myName,isAI:false}]
+      });
+      showGuestScreen(myName);
+    } else {
+      // Same name or already in — just wait
+      isHost=false;
+      showGuestScreen(myName);
+    }
+  } else if(room.status==='playing'){
+    // Game running — spectate / rejoin
+    isHost=false;
+    myIdx=-1;
+    MP_on=true;
+    document.getElementById('mp-overlay').style.display='none';
+    document.getElementById('game-layout').style.display='';
+    // Will hydrate via listener
+  }
+  
+  // Subscribe to room
+  MP_on=true;
+  _mpRef.on('value',snap=>{
+    const room=snap.val();
+    if(!room){
+      // Room gone — replace opponent with AI if game was running
+      if(GS.players.length>0&&!GS.gameOver) replaceMissingWithAI();
+      return;
+    }
+    if(room.status==='ready'&&isHost){
+      // Guest joined!
+      const btn=document.getElementById('mp-start-btn');
+      if(btn) btn.style.display='block';
+      const badge=document.getElementById('mp-waiting-badge');
+      if(badge) badge.textContent=`👥 ${room.players?.length||1} Spieler bereit — starte das Spiel!`;
+      _guestName=room.players?.[1]?.name||null;
+    }
+    if(room.status==='playing'&&room.state){
+      mpHydrate(room.state);
+    }
+    // Disconnect: if playing and room has disconnected=true
+    if(room.disconnected&&!GS.gameOver&&GS.players.length>0){
+      replaceMissingWithAI();
+    }
+  });
+  
+  // Setup onDisconnect to mark room as needing reconnect
+  _mpRef.child('disconnected').onDisconnect().set(true);
+}
+
+let _guestName=null;
+
+function replaceMissingWithAI(){
+  if(!GS.players||GS.players.length<2) return;
+  const otherIdx=myIdx===0?1:0;
+  if(GS.players[otherIdx]&&!GS.players[otherIdx].isAI){
+    const aiName=pickAIName(myName);
+    GS.players[otherIdx].name=aiName;
+    GS.players[otherIdx].isAI=true;
+    setStatus(`⚠️ ${GS.players[otherIdx].name} hat das Spiel verlassen — KI übernimmt.`);
+    render();
+    if(isHost) mpPush();
+    if(GS.cp===otherIdx&&!aiBusy) setTimeout(()=>aiTurn(),1200);
+  }
+}
+
+function showWaitingScreen(name){
+  document.getElementById('mp-setup').style.display='none';
+  document.getElementById('mp-waiting').style.display='block';
+  document.getElementById('mp-waiting-name').textContent=name;
+  document.getElementById('mp-start-btn').style.display='none';
+}
+
+function showGuestScreen(name){
+  document.getElementById('mp-setup').style.display='none';
+  document.getElementById('mp-guest').style.display='block';
+  document.getElementById('mp-guest-name').textContent=name;
+}
+
+async function mpHostStart(){
+  if(!isHost) return;
+  let snap;
+  try{ snap=await _mpRef.once('value'); }catch(e){ return; }
+  const room=snap.val();
+  const roomPlayers=room?.players||[];
+  const guest=roomPlayers.find(p=>p.name!==myName);
+  
+  const p0={name:myName,isAI:false,scores:{},kBonus:0};
+  const p1=guest
+    ?{name:guest.name,isAI:false,scores:{},kBonus:0}
+    :{name:pickAIName(myName),isAI:true,scores:{},kBonus:0};
+  
+  GS.players=[p0,p1];
+  GS.cp=0;GS.dice=[0,0,0,0,0];GS.held=[false,false,false,false,false];GS.rolls=0;GS.gameOver=false;
+  myIdx=0;
+  
+  await _mpRef.update({status:'playing',disconnected:false});
+  mpPush();
+  
+  document.getElementById('mp-overlay').style.display='none';
+  document.getElementById('game-layout').style.display='';
+  render();
+  setStatus(`${p0.name} beginnt — Jetzt würfeln!`);
+}
+
+function startWithAI(){
+  const inp=document.getElementById('mp-name');
+  const name=(inp?.value||myName||'Spieler').trim();
+  startSoloAI(name||'Spieler');
+}
+
+function startSoloAI(name){
+  myName=name;
+  myIdx=0;
+  MP_on=false;
+  isHost=false;
+  
+  const aiName=pickAIName(name);
+  GS={
+    players:[
+      {name,isAI:false,scores:{},kBonus:0},
+      {name:aiName,isAI:true,scores:{},kBonus:0}
+    ],
+    cp:0,
+    dice:[0,0,0,0,0],
+    held:[false,false,false,false,false],
+    rolls:0,
+    gameOver:false,
+    round:1
+  };
+  
+  document.getElementById('mp-overlay').style.display='none';
+  document.getElementById('game-layout').style.display='';
+  render();
+  setStatus(`${name} beginnt — Jetzt würfeln!`);
+}
+
+function mpLeave(){
+  if(_mpRef){
+    if(isHost) _mpRef.set({status:'empty'}).catch(()=>{});
+    else _mpRef.child('disconnected').set(true).catch(()=>{});
+  }
+  location.reload();
+}
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  document.getElementById('game-layout').style.display='none';
+  document.getElementById('mp-overlay').style.display='flex';
+  document.getElementById('mp-badge').textContent='⏳ Verbinde…';
+  
+  const inp=document.getElementById('mp-name');
+  if(inp){
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')mpConnect()});
+    // Restore name
+    try{const saved=localStorage.getItem('kniffel_name');if(saved)inp.value=saved}catch(e){}
+    inp.addEventListener('input',()=>{
+      try{localStorage.setItem('kniffel_name',inp.value)}catch(e){}
+    });
+  }
+  
+  // Start room watcher
+  setTimeout(startRoomWatcher, 300);
+});
+</script>
+</body>
+</html>
