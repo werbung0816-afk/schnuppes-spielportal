@@ -1,1 +1,848 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Schnuppes 4 Gewinnt</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔴</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ── */
+*{box-sizing:border-box;margin:0;padding:0}
 
+/* ── Body ── */
+body{
+  font-family:'Outfit',sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(143,95,255,.35),transparent 30%),
+    radial-gradient(circle at top right,rgba(255,79,216,.25),transparent 35%),
+    linear-gradient(180deg,#050111,#120523);
+  color:#fff;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:28px 16px 48px;
+  user-select:none;-webkit-user-select:none;
+}
+
+/* ── Logo ── */
+.logo{text-align:center;margin-bottom:26px}
+.logo .schnuppes{font-size:clamp(16px,4vw,42px);font-weight:300;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.logo h1{font-size:clamp(34px,9vw,82px);line-height:.88;font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo .sub{font-size:clamp(10px,2vw,15px);margin-top:6px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase}
+
+/* ── Layout ── */
+.game-layout{display:grid;grid-template-columns:180px 1fr 180px;grid-template-areas:"p1 board p2";gap:18px;width:100%;max-width:920px;align-items:start}
+.area-p1{grid-area:p1}.area-board{grid-area:board}.area-p2{grid-area:p2}
+@media(max-width:700px){
+  .game-layout{grid-template-columns:1fr 1fr;grid-template-rows:auto auto;grid-template-areas:"board board""p1 p2";max-width:560px;gap:14px}
+}
+@media(max-width:449px){
+  .game-layout{grid-template-columns:1fr;grid-template-areas:"board""p1""p2";max-width:390px;gap:12px}
+}
+
+/* ── Player panels ── */
+.player-panel{background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);border-radius:28px;padding:22px 18px;backdrop-filter:blur(18px);display:flex;flex-direction:column;gap:10px;transition:.3s}
+.player-panel.active-p1{border-color:#53f6ff;box-shadow:0 0 28px rgba(83,246,255,.3)}
+.player-panel.active-p2{border-color:#ff4fd8;box-shadow:0 0 28px rgba(255,79,216,.3)}
+.player-disc{width:38px;height:38px;border-radius:50%;flex-shrink:0}
+.p1 .player-disc{background:linear-gradient(135deg,#53f6ff,#8f5fff);box-shadow:0 0 14px rgba(83,246,255,.55)}
+.p2 .player-disc{background:linear-gradient(135deg,#ff4fd8,#ff9b54);box-shadow:0 0 14px rgba(255,79,216,.55)}
+.player-name{font-size:14px;font-weight:700;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-score-big{font-size:52px;font-weight:900;line-height:1;color:#fff}
+.player-stat-label{font-size:11px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px}
+.win-badge{font-size:10px;padding:4px 10px;border-radius:20px;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:inline-block;width:fit-content}
+.p1 .win-badge{background:rgba(83,246,255,.15);color:#53f6ff;border:1px solid rgba(83,246,255,.3)}
+.p2 .win-badge{background:rgba(255,79,216,.15);color:#ff4fd8;border:1px solid rgba(255,79,216,.3)}
+@media(max-width:700px){
+  .player-panel{flex-direction:row;align-items:center;padding:14px 16px;gap:12px}
+  .player-disc{width:30px;height:30px}
+  .player-meta{flex:1;min-width:0}
+  .player-score-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .player-score-big{font-size:38px}
+  .panel-siege{display:none}
+}
+@media(max-width:449px){.player-score-big{font-size:32px}.player-stat-label{font-size:10px}}
+
+/* ── Board area ── */
+.board-area{display:flex;flex-direction:column;align-items:center;gap:10px}
+
+/* ── Status bar ── */
+.status-bar{padding:12px 20px;border-radius:20px;background:rgba(143,95,255,.18);border:1px solid rgba(143,95,255,.25);font-size:15px;font-weight:600;text-align:center;width:100%;min-height:46px;display:flex;align-items:center;justify-content:center;transition:.3s}
+@media(max-width:449px){.status-bar{font-size:13px;padding:10px 14px;min-height:40px}}
+
+/* ── Column drop buttons ── */
+.col-row{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;padding:0 13px;width:100%}
+.col-btn{
+  aspect-ratio:1;border-radius:50%;
+  background:transparent;border:1px solid transparent;
+  color:transparent;cursor:pointer;
+  transition:.18s;font-size:clamp(8px,1.6vw,12px);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;padding:0;
+}
+.col-btn.hover-p1{background:rgba(83,246,255,.18);color:#53f6ff;border-color:rgba(83,246,255,.4);box-shadow:0 0 12px rgba(83,246,255,.25);transform:translateY(-3px)}
+.col-btn.hover-p2{background:rgba(255,79,216,.18);color:#ff4fd8;border-color:rgba(255,79,216,.4);box-shadow:0 0 12px rgba(255,79,216,.25);transform:translateY(-3px)}
+.col-btn.full{opacity:.18;cursor:not-allowed;transform:none !important}
+.col-btn.inactive{opacity:.3;cursor:default;pointer-events:none}
+
+/* ── Board grid ── */
+.board-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:7px;padding:13px;
+  border-radius:26px;
+  background:rgba(120,40,255,.06);
+  border:1px solid rgba(220,120,255,.22);
+  box-shadow:0 0 35px rgba(180,80,255,.14) inset;
+  width:100%;
+}
+@media(max-width:500px){
+  .board-grid,.col-row{gap:5px}
+  .board-grid{padding:10px}
+  .col-row{padding:0 10px}
+}
+@media(max-width:360px){
+  .board-grid,.col-row{gap:4px}
+  .board-grid{padding:8px}
+  .col-row{padding:0 8px}
+}
+
+/* ── Cells ── */
+.cell{
+  border-radius:50%;aspect-ratio:1;
+  background:linear-gradient(145deg,#1c1130 0%,#0c0818 100%);
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:inset 0 3px 10px rgba(0,0,0,.65),inset 0 -1px 3px rgba(255,255,255,.04);
+  cursor:pointer;transition:.15s;position:relative;
+}
+.cell.col-hover-p1{border-color:rgba(83,246,255,.18);background:linear-gradient(145deg,#1a2038,#0c1020)}
+.cell.col-hover-p2{border-color:rgba(255,79,216,.18);background:linear-gradient(145deg,#281038,#150820)}
+.cell.preview-p1{
+  background:linear-gradient(135deg,rgba(83,246,255,.38),rgba(143,95,255,.38));
+  border-color:rgba(83,246,255,.55);
+  box-shadow:0 0 16px rgba(83,246,255,.38),inset 0 2px 6px rgba(255,255,255,.12);
+  animation:previewPulse .7s ease-in-out infinite;
+}
+.cell.preview-p2{
+  background:linear-gradient(135deg,rgba(255,79,216,.38),rgba(255,155,84,.38));
+  border-color:rgba(255,79,216,.55);
+  box-shadow:0 0 16px rgba(255,79,216,.38),inset 0 2px 6px rgba(255,255,255,.12);
+  animation:previewPulse .7s ease-in-out infinite;
+}
+.cell.p1{
+  background:linear-gradient(135deg,#53f6ff,#8f5fff);
+  border-color:rgba(83,246,255,.65);
+  box-shadow:0 0 20px rgba(83,246,255,.6),0 0 50px rgba(83,246,255,.25),inset 0 2px 8px rgba(255,255,255,.38),inset 0 -2px 6px rgba(0,0,0,.25);
+  animation:pieceIn .3s cubic-bezier(.175,.885,.32,1.275);
+  cursor:default;
+}
+.cell.p2{
+  background:linear-gradient(135deg,#ff4fd8,#ff9b54);
+  border-color:rgba(255,79,216,.65);
+  box-shadow:0 0 20px rgba(255,79,216,.6),0 0 50px rgba(255,79,216,.25),inset 0 2px 8px rgba(255,255,255,.38),inset 0 -2px 6px rgba(0,0,0,.25);
+  animation:pieceIn .3s cubic-bezier(.175,.885,.32,1.275);
+  cursor:default;
+}
+.cell.win-cell{animation:winPulse 1s ease-in-out infinite}
+.cell.p1.win-cell{box-shadow:0 0 32px rgba(83,246,255,.95),0 0 72px rgba(83,246,255,.5),inset 0 2px 8px rgba(255,255,255,.38)}
+.cell.p2.win-cell{box-shadow:0 0 32px rgba(255,79,216,.95),0 0 72px rgba(255,79,216,.5),inset 0 2px 8px rgba(255,255,255,.38)}
+
+@keyframes pieceIn{0%{transform:scale(0) rotate(-12deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes winPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+@keyframes previewPulse{0%,100%{opacity:.55}50%{opacity:1}}
+
+/* ── Buttons ── */
+.btn-row{display:flex;gap:10px;width:100%}
+button{padding:13px 18px;border:none;border-radius:18px;font-size:14px;font-weight:800;font-family:'Outfit',sans-serif;color:white;cursor:pointer;transition:.2s;flex:1}
+button:hover{transform:translateY(-2px);filter:brightness(1.1)}
+button:active{transform:translateY(0)}
+.btn-new{background:linear-gradient(90deg,#5eff9b,#24bf61)}
+.btn-reset{background:linear-gradient(90deg,#ff9b54,#ff5f6d)}
+.btn-reload{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:13px}
+.btn-reload:hover{background:rgba(255,255,255,.14);color:#fff}
+@media(max-width:449px){button{padding:11px 14px;font-size:13px}}
+.draws-row{padding:9px 18px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13px;font-weight:600;color:rgba(255,255,255,.45);text-align:center;width:100%}
+.draws-row span{color:rgba(255,255,255,.8);font-size:15px;font-weight:900}
+
+/* ── Setup ── */
+#setup{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(5,1,17,.93);backdrop-filter:blur(14px);z-index:9000;padding:16px}
+.setup-box{background:rgba(10,12,38,.96);border:1px solid rgba(255,255,255,.12);border-radius:32px;padding:34px 28px;max-width:400px;width:100%;display:flex;flex-direction:column;gap:18px}
+.setup-box h2{font-size:clamp(18px,5vw,22px);font-weight:900;text-align:center;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.setup-field{display:flex;flex-direction:column;gap:7px}
+.setup-field label{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.setup-field input{padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;font-family:'Outfit',sans-serif;font-size:17px;font-weight:600;outline:none;transition:.2s}
+.setup-field input:focus{border-color:#53f6ff;box-shadow:0 0 14px rgba(83,246,255,.2)}
+.setup-info{font-size:13px;color:rgba(255,255,255,.32);text-align:center;line-height:1.6}
+.setup-info strong{color:rgba(255,255,255,.55)}
+.setup-error{font-size:13px;color:#ff6b6b;text-align:center;display:none;background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.2);border-radius:12px;padding:10px 14px}
+.btn-start{background:linear-gradient(90deg,#53f6ff,#8f5fff);padding:16px;border-radius:20px;font-size:17px;font-weight:900}
+
+/* ── Waiting ── */
+#waiting{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,1,20,.94);backdrop-filter:blur(14px);z-index:9001;padding:20px}
+.waiting-box{background:rgba(10,12,38,.96);border:1px solid rgba(255,255,255,.1);border-radius:32px;padding:38px 30px;max-width:380px;width:100%;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+.waiting-title{font-size:20px;font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.waiting-name{font-size:28px;font-weight:900;color:#fff}
+.waiting-sub{font-size:14px;color:rgba(255,255,255,.4);font-weight:400}
+.waiting-dots{display:flex;gap:10px;justify-content:center;margin:4px 0}
+.waiting-dots span{width:11px;height:11px;border-radius:50%;background:#8f5fff;animation:dotBounce 1.2s ease-in-out infinite}
+.waiting-dots span:nth-child(2){animation-delay:.2s;background:#53f6ff}
+.waiting-dots span:nth-child(3){animation-delay:.4s;background:#ff4fd8}
+@keyframes dotBounce{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-9px);opacity:1}}
+.btn-leave{background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.2);color:rgba(255,120,120,.7);font-size:13px;padding:10px 18px;border-radius:14px;width:100%;margin-top:4px}
+.btn-leave:hover{background:rgba(255,80,80,.18);color:rgba(255,120,120,1)}
+.btn-vs-ki{background:linear-gradient(90deg,#8f5fff,#ff4fd8);padding:14px 18px;border-radius:16px;font-size:15px;font-weight:800;width:100%}
+.waiting-divider{display:flex;align-items:center;gap:10px;width:100%;margin:2px 0}
+.waiting-divider span{flex:1;height:1px;background:rgba(255,255,255,.08)}
+.waiting-divider em{font-size:11px;color:rgba(255,255,255,.25);font-style:normal;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+
+/* ── Win Overlay ── */
+#overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:rgba(5,1,20,.9);z-index:9999;backdrop-filter:blur(12px);text-align:center;padding:20px}
+#overlayEmoji{font-size:clamp(46px,12vw,76px);animation:emojiSpin .6s ease-out .2s both}
+#overlayName{font-size:clamp(34px,10vw,82px);font-weight:900;line-height:.92;animation:nameIn .5s cubic-bezier(.175,.885,.32,1.275) both}
+.overlay-p1 #overlayName{background:linear-gradient(90deg,#53f6ff,#8f5fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.overlay-p2 #overlayName{background:linear-gradient(90deg,#ff4fd8,#ff9b54);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.overlay-draw #overlayName{background:linear-gradient(90deg,#5eff9b,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#overlayComment{font-size:clamp(15px,4vw,24px);color:rgba(255,255,255,.65);font-weight:400}
+@keyframes nameIn{0%{transform:scale(.4) rotate(-8deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes emojiSpin{0%{transform:scale(0) rotate(-180deg)}100%{transform:scale(1) rotate(0)}}
+.btn-overlay-new{background:linear-gradient(90deg,#53f6ff,#5677ff);padding:16px 36px;border-radius:22px;font-size:17px;font-weight:900;flex:none;margin-top:6px}
+</style>
+</head>
+<body>
+
+<!-- ── Setup ── -->
+<div id="setup">
+  <div class="setup-box">
+    <h2>🔴 Schnuppes 4 Gewinnt</h2>
+    <div class="setup-field">
+      <label>Dein Name</label>
+      <input type="text" id="myName" placeholder="Name eingeben…" maxlength="14" autocomplete="off">
+    </div>
+    <div class="setup-info">
+      Erster im Raum spielt <strong style="color:#53f6ff">●</strong>, zweiter spielt <strong style="color:#ff4fd8">●</strong>.<br>
+      Spieler 1 beginnt immer.
+    </div>
+    <div class="setup-error" id="setupError"></div>
+    <button class="btn-start" onclick="joinGame()">Spielen →</button>
+  </div>
+</div>
+
+<!-- ── Warten ── -->
+<div id="waiting">
+  <div class="waiting-box">
+    <div class="waiting-title">Du bist drin 🔵 Spieler 1</div>
+    <div class="waiting-name" id="waitingName">—</div>
+    <div class="waiting-sub">Warte auf deinen Mitspieler…</div>
+    <div class="waiting-dots"><span></span><span></span><span></span></div>
+    <button class="btn-vs-ki" onclick="startVsKI()">🤖 Gegen KI starten</button>
+    <div class="waiting-divider"><span></span><em>oder</em><span></span></div>
+    <button class="btn-leave" onclick="leaveGame()">← Verlassen</button>
+  </div>
+</div>
+
+<!-- ── Win Overlay ── -->
+<div id="overlay">
+  <div id="overlayEmoji"></div>
+  <div id="overlayName"></div>
+  <div id="overlayComment"></div>
+  <button class="btn-overlay-new" onclick="newRound()">Neue Runde →</button>
+</div>
+
+<!-- ── Logo ── -->
+<div class="logo">
+  <div class="schnuppes">Schnuppes</div>
+  <h1>4 Gewinnt</h1>
+  <div class="sub">Vier in einer Reihe — Duell zu zweit</div>
+</div>
+
+<!-- ── Game ── -->
+<div class="game-layout">
+
+  <div class="player-panel p1 area-p1" id="panel1">
+    <div class="player-disc"></div>
+    <div class="player-meta">
+      <div class="player-name" id="pname1">—</div>
+      <div class="player-stat-label">Spieler 1</div>
+    </div>
+    <div class="player-score-wrap">
+      <div class="player-score-big" id="score1">0</div>
+      <div class="player-stat-label panel-siege">Siege</div>
+      <div class="win-badge" id="badge1">AM ZUG</div>
+    </div>
+  </div>
+
+  <div class="board-area area-board">
+    <div class="status-bar" id="status">Warte auf Spieler…</div>
+
+    <!-- Column drop buttons (aligned with grid) -->
+    <div class="col-row">
+      <button class="col-btn" id="cb0" onclick="dropPiece(0)" onmouseenter="hoverCol(0)" onmouseleave="unhoverCol()">▼</button>
+      <button class="col-btn" id="cb1" onclick="dropPiece(1)" onmouseenter="hoverCol(1)" onmouseleave="unhoverCol()">▼</button>
+      <button class="col-btn" id="cb2" onclick="dropPiece(2)" onmouseenter="hoverCol(2)" onmouseleave="unhoverCol()">▼</button>
+      <button class="col-btn" id="cb3" onclick="dropPiece(3)" onmouseenter="hoverCol(3)" onmouseleave="unhoverCol()">▼</button>
+      <button class="col-btn" id="cb4" onclick="dropPiece(4)" onmouseenter="hoverCol(4)" onmouseleave="unhoverCol()">▼</button>
+      <button class="col-btn" id="cb5" onclick="dropPiece(5)" onmouseenter="hoverCol(5)" onmouseleave="unhoverCol()">▼</button>
+      <button class="col-btn" id="cb6" onclick="dropPiece(6)" onmouseenter="hoverCol(6)" onmouseleave="unhoverCol()">▼</button>
+    </div>
+
+    <!-- 6×7 = 42 cells, generated by JS -->
+    <div class="board-grid" id="boardGrid"></div>
+
+    <div class="draws-row">Unentschieden: <span id="draws">0</span></div>
+    <div class="btn-row">
+      <button class="btn-new"    onclick="newRound()">Neue Runde</button>
+      <button class="btn-reset"  onclick="resetAll()">Reset</button>
+      <button class="btn-reload" onclick="reloadGame()">↺ Neu</button>
+    </div>
+  </div>
+
+  <div class="player-panel p2 area-p2" id="panel2">
+    <div class="player-disc"></div>
+    <div class="player-meta">
+      <div class="player-name" id="pname2">—</div>
+      <div class="player-stat-label">Spieler 2</div>
+    </div>
+    <div class="player-score-wrap">
+      <div class="player-score-big" id="score2">0</div>
+      <div class="player-stat-label panel-siege">Siege</div>
+      <div class="win-badge" id="badge2" style="visibility:hidden">WARTET</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+/* ═══════════════════════════════════════
+   FIREBASE + CONSTANTS
+═══════════════════════════════════════ */
+const FB_CONFIG = {
+  apiKey:            "AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",
+  authDomain:        "schnuppes-spielportal.firebaseapp.com",
+  databaseURL:       "https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "schnuppes-spielportal",
+  storageBucket:     "schnuppes-spielportal.firebasestorage.app",
+  messagingSenderId: "1022973500272",
+  appId:             "1:1022973500272:web:f9e39d0dfd3c61c3c88db5"
+};
+const ROOM      = 'viergewinnt/room';   // separate path from TicTacToe
+const ROWS      = 6, COLS = 7, TOTAL = 42;
+const EMPTY_STR = '.'.repeat(TOTAL);
+const ALL_KI_NAMES = ['Nici','Marco','Leni','Mia','Nele','Dani','Finn','Sascha'];
+
+let db = null;
+function initFB(){
+  if(db) return;
+  if(!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+  db = firebase.database();
+}
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let board            = EMPTY_STR.split('');  // 42-element Array: '.','1','2'
+let current          = '1';
+let gameOver         = false;
+let mySymbol         = null;   // '1' | '2'
+let kiMode           = false;
+let kiSymbol         = '2';    // which symbol the KI plays
+let localMode        = false;  // true after disconnect mid-game (no Firebase)
+let processedRoundId = 0;
+let roomWatcher      = null;
+let scores           = {'1':0,'2':0,draws:0};
+let names            = {'1':'—','2':'—'};
+
+/* ═══════════════════════════════════════
+   BOARD UI — INIT
+═══════════════════════════════════════ */
+function initBoardUI(){
+  const grid = document.getElementById('boardGrid');
+  grid.innerHTML = '';
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.idx = r*COLS+c;
+      cell.dataset.col = c;
+      // Clicking any cell drops piece in that column
+      cell.addEventListener('click',  ()=> dropPiece(c));
+      cell.addEventListener('mouseenter', ()=> hoverCol(c));
+      cell.addEventListener('mouseleave', ()=> unhoverCol());
+      grid.appendChild(cell);
+    }
+  }
+}
+
+/* ═══════════════════════════════════════
+   JOIN
+═══════════════════════════════════════ */
+async function joinGame(){
+  const name = document.getElementById('myName').value.trim() || 'Spieler';
+  initFB();
+  let snap;
+  try { snap = await db.ref(ROOM).get(); }
+  catch(e){ showErr('Verbindungsfehler. Bitte erneut versuchen.'); return; }
+
+  const room = snap.val();
+
+  if(!room || room.status === 'empty'){
+    // ── Erster Spieler ──
+    mySymbol = '1';
+    names['1'] = name;
+    await db.ref(ROOM).set({
+      playerOne: name, playerTwo: null,
+      board: EMPTY_STR, current: '1',
+      status: 'waiting', result: null,
+      winLine: null, roundId: 1, ts: Date.now()
+    });
+    db.ref(ROOM).onDisconnect().remove();
+    document.getElementById('waitingName').textContent = name;
+    document.getElementById('setup').style.display   = 'none';
+    document.getElementById('waiting').style.display = 'flex';
+    listenRoom();
+
+  } else if(room.status === 'waiting' && !room.playerTwo){
+    // ── Zweiter Spieler ──
+    mySymbol = '2';
+    names['1'] = room.playerOne;
+    names['2'] = name;
+    await db.ref(ROOM).update({ playerTwo: name, status: 'playing' });
+    db.ref(ROOM).onDisconnect().remove();
+    document.getElementById('setup').style.display = 'none';
+    setNames(); updateStatus(); updatePanels();
+    listenRoom();
+
+  } else {
+    showErr('Der Raum ist gerade besetzt. Bitte kurz warten und erneut versuchen.');
+  }
+}
+
+function showErr(msg){
+  const el = document.getElementById('setupError');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+/* ═══════════════════════════════════════
+   ROOM LISTENER
+═══════════════════════════════════════ */
+function listenRoom(){
+  if(roomWatcher){ db.ref(ROOM).off('value',roomWatcher); roomWatcher=null; }
+  roomWatcher = db.ref(ROOM).on('value', snap=>{
+    if(!snap.exists()){ handleRoomGone(); return; }
+    hydrateRoom(snap.val());
+  });
+}
+
+function handleRoomGone(){
+  if(roomWatcher){ db.ref(ROOM).off('value',roomWatcher); roomWatcher=null; }
+
+  // Mid-game: replace disconnected opponent with KI
+  const setupHidden  = document.getElementById('setup').style.display  === 'none';
+  const waitingHidden= document.getElementById('waiting').style.display !== 'flex';
+  if(mySymbol && setupHidden && waitingHidden && !gameOver){
+    const opp = mySymbol==='1'?'2':'1';
+    const kiName = pickKiName();
+    kiSymbol  = opp;
+    kiMode    = true;
+    localMode = true;
+    names[opp] = kiName;
+    document.getElementById(opp==='1'?'pname1':'pname2').textContent = kiName;
+    document.getElementById('status').textContent = 'Gegner getrennt — KI übernimmt…';
+    setTimeout(()=>{
+      if(!gameOver){ updateStatus(); updatePanels(); }
+      if(!gameOver && current===kiSymbol) setTimeout(kiMove, 1000);
+    }, 1400);
+    return;
+  }
+
+  // Otherwise: back to setup
+  document.getElementById('overlay').style.display = 'none';
+  document.getElementById('waiting').style.display = 'none';
+  document.getElementById('setup').style.display   = 'flex';
+  showErr('Verbindung getrennt — dein Mitspieler hat den Raum verlassen.');
+  resetStateVars();
+}
+
+function hydrateRoom(room){
+  const rid = room.roundId || 1;
+
+  if(processedRoundId === 0){
+    processedRoundId = rid;
+  } else if(rid > processedRoundId){
+    processedRoundId = rid;
+    document.getElementById('overlay').style.display = 'none';
+    board = EMPTY_STR.split(''); gameOver = false;
+    clearBoardUI();
+  }
+
+  // Player 2 arrived
+  if(room.playerTwo && document.getElementById('waiting').style.display === 'flex'){
+    names['2'] = room.playerTwo;
+    document.getElementById('waiting').style.display = 'none';
+    setNames(); updateStatus(); updatePanels();
+  }
+
+  if(room.status === 'waiting') return;
+
+  // Sync board state
+  const rb = room.board.split('');
+  rb.forEach((val,i)=>{
+    if(val!=='.' && board[i]==='.'){ board[i]=val; renderCell(i,val); }
+  });
+  current = room.current;
+
+  if(room.status === 'finished' && !gameOver){
+    gameOver = true;
+    updateColButtons();
+    if(room.result === 'draw'){
+      scores.draws++; updateScores(); showOverlay(null, true);
+    } else {
+      scores[room.result]++; updateScores();
+      if(room.winLine) highlightWin(room.winLine.split(',').map(Number));
+      showOverlay(room.result, false);
+    }
+    return;
+  }
+  if(!gameOver){ updateStatus(); updatePanels(); updateColButtons(); }
+}
+
+function setNames(){
+  document.getElementById('pname1').textContent = names['1'];
+  document.getElementById('pname2').textContent = names['2'];
+}
+
+/* ═══════════════════════════════════════
+   LEAVE / VS KI
+═══════════════════════════════════════ */
+async function leaveGame(){
+  if(roomWatcher){ db.ref(ROOM).off('value',roomWatcher); roomWatcher=null; }
+  if(db) db.ref(ROOM).remove();
+  document.getElementById('waiting').style.display = 'none';
+  document.getElementById('setup').style.display   = 'flex';
+  document.getElementById('setupError').style.display = 'none';
+  mySymbol=null; processedRoundId=0; kiMode=false; localMode=false;
+}
+
+async function startVsKI(){
+  const kiName = pickKiName();
+  kiSymbol = '2';
+  kiMode   = true;
+  names['2'] = kiName;
+  await db.ref(ROOM).update({ playerTwo: kiName, status: 'playing' });
+  document.getElementById('waiting').style.display = 'none';
+  setNames(); updateStatus(); updatePanels(); updateColButtons();
+}
+
+function pickKiName(){
+  const myName = Object.values(names).join(' ').toLowerCase();
+  const avail  = ALL_KI_NAMES.filter(n=> !myName.includes(n.toLowerCase()));
+  const pool   = avail.length ? avail : ALL_KI_NAMES;
+  return pool[Math.floor(Math.random()*pool.length)] + ' (KI)';
+}
+
+/* ═══════════════════════════════════════
+   MOVE
+═══════════════════════════════════════ */
+function canPlay(){
+  if(gameOver || !mySymbol) return false;
+  if(kiMode  && current===kiSymbol) return false;   // KI's turn
+  if(!kiMode && current!==mySymbol) return false;   // opponent's turn
+  return true;
+}
+
+function dropPiece(col){
+  if(!canPlay()) return;
+  const row = getDropRow(col);
+  if(row===-1) return;   // column full
+  makeMove(row, col);
+}
+
+async function makeMove(row, col){
+  const idx    = row*COLS+col;
+  const player = current;
+
+  // ── Local mode (after opponent disconnects) ──
+  if(localMode){
+    board[idx] = player;
+    renderCell(idx, player);
+    const winLine = checkWinBoard(board, player);
+    const isDraw  = board.every(c=>c!=='.');
+    current  = player==='1'?'2':'1';
+    gameOver = !!(winLine||isDraw);
+    updateColButtons();
+    if(winLine){
+      scores[player]++; updateScores(); highlightWin(winLine); showOverlay(player,false);
+    } else if(isDraw){
+      scores.draws++; updateScores(); showOverlay(null,true);
+    } else {
+      updateStatus(); updatePanels();
+      if(kiMode && current===kiSymbol) setTimeout(kiMove, 650);
+    }
+    return;
+  }
+
+  // ── Firebase mode: write, let hydrateRoom handle local state ──
+  const nb  = board.slice(); nb[idx] = player;
+  const bStr = nb.join('');
+  const next = player==='1'?'2':'1';
+  const wl   = checkWinBoard(nb, player);
+  let status='playing', result=null, wlStr=null;
+  if(wl)              { status='finished'; result=player; wlStr=wl.join(','); }
+  else if(nb.every(c=>c!=='.')) { status='finished'; result='draw'; }
+
+  await db.ref(ROOM).update({ board:bStr, current:next, status, result, winLine:wlStr });
+  if(kiMode && status==='playing') setTimeout(kiMove, 650);
+}
+
+/* ═══════════════════════════════════════
+   BOARD LOGIC
+═══════════════════════════════════════ */
+function getDropRow(col){
+  for(let r=ROWS-1; r>=0; r--)
+    if(board[r*COLS+col]==='.') return r;
+  return -1;
+}
+
+function checkWinBoard(b, p){
+  // Horizontal
+  for(let r=0;r<ROWS;r++) for(let c=0;c<=COLS-4;c++){
+    const cells=[r*COLS+c,r*COLS+c+1,r*COLS+c+2,r*COLS+c+3];
+    if(cells.every(i=>b[i]===p)) return cells;
+  }
+  // Vertical
+  for(let r=0;r<=ROWS-4;r++) for(let c=0;c<COLS;c++){
+    const cells=[r*COLS+c,(r+1)*COLS+c,(r+2)*COLS+c,(r+3)*COLS+c];
+    if(cells.every(i=>b[i]===p)) return cells;
+  }
+  // Diagonal ↘
+  for(let r=0;r<=ROWS-4;r++) for(let c=0;c<=COLS-4;c++){
+    const cells=[r*COLS+c,(r+1)*COLS+c+1,(r+2)*COLS+c+2,(r+3)*COLS+c+3];
+    if(cells.every(i=>b[i]===p)) return cells;
+  }
+  // Diagonal ↗
+  for(let r=3;r<ROWS;r++) for(let c=0;c<=COLS-4;c++){
+    const cells=[r*COLS+c,(r-1)*COLS+c+1,(r-2)*COLS+c+2,(r-3)*COLS+c+3];
+    if(cells.every(i=>b[i]===p)) return cells;
+  }
+  return null;
+}
+
+/* ═══════════════════════════════════════
+   BOARD UI
+═══════════════════════════════════════ */
+function renderCell(idx, player){
+  const cell = document.querySelector(`.cell[data-idx="${idx}"]`);
+  if(!cell || cell.classList.contains('p1') || cell.classList.contains('p2')) return;
+  cell.classList.remove('preview-p1','preview-p2','col-hover-p1','col-hover-p2');
+  void cell.offsetWidth; // reflow triggers animation
+  cell.classList.add(player==='1'?'p1':'p2');
+}
+
+function clearBoardUI(){
+  document.querySelectorAll('.cell').forEach(c=>{ c.className='cell'; });
+}
+
+function highlightWin(line){
+  line.forEach(i=>{
+    const c=document.querySelector(`.cell[data-idx="${i}"]`);
+    if(c) c.classList.add('win-cell');
+  });
+}
+
+function updateColButtons(){
+  const active = canPlay();
+  for(let c=0;c<COLS;c++){
+    const btn = document.getElementById('cb'+c);
+    if(!btn) continue;
+    btn.classList.remove('full','inactive');
+    if(getDropRow(c)===-1) btn.classList.add('full');
+    else if(!active)       btn.classList.add('inactive');
+  }
+}
+
+function hoverCol(col){
+  unhoverCol();
+  if(!canPlay()) return;
+  const row = getDropRow(col);
+  if(row===-1) return;
+
+  const hCls = current==='1'?'col-hover-p1':'col-hover-p2';
+  const pCls = current==='1'?'preview-p1':'preview-p2';
+  const bCls = current==='1'?'hover-p1':'hover-p2';
+
+  // Subtle column highlight
+  document.querySelectorAll(`.cell[data-col="${col}"]`).forEach(c=>{
+    if(!c.classList.contains('p1')&&!c.classList.contains('p2'))
+      c.classList.add(hCls);
+  });
+  // Bright preview on actual drop target
+  const target = document.querySelector(`.cell[data-idx="${row*COLS+col}"]`);
+  if(target && !target.classList.contains('p1') && !target.classList.contains('p2')){
+    target.classList.remove(hCls);
+    target.classList.add(pCls);
+  }
+  // Glow on column button
+  const btn = document.getElementById('cb'+col);
+  if(btn && !btn.classList.contains('full')) btn.classList.add(bCls);
+}
+
+function unhoverCol(){
+  document.querySelectorAll('.cell').forEach(c=>{
+    c.classList.remove('col-hover-p1','col-hover-p2','preview-p1','preview-p2');
+  });
+  document.querySelectorAll('.col-btn').forEach(b=>{
+    b.classList.remove('hover-p1','hover-p2');
+  });
+}
+
+/* ═══════════════════════════════════════
+   KI — MITTEL
+═══════════════════════════════════════ */
+function kiMove(){
+  if(gameOver || current!==kiSymbol) return;
+  const st = document.getElementById('status');
+  st.style.opacity='.45';
+  setTimeout(()=>{
+    st.style.opacity='1';
+    const col = findBestCol(kiSymbol);
+    const row = getDropRow(col);
+    if(row>=0) makeMove(row,col);
+  }, 340);
+}
+
+function findBestCol(me){
+  const opp   = me==='1'?'2':'1';
+  const valid = [];
+  for(let c=0;c<COLS;c++) if(getDropRow(c)!==-1) valid.push(c);
+  if(!valid.length) return 0;
+
+  // 1. Win immediately
+  for(const c of valid){
+    const r=getDropRow(c), nb=board.slice(); nb[r*COLS+c]=me;
+    if(checkWinBoard(nb,me)) return c;
+  }
+  // 2. Block opponent's win
+  for(const c of valid){
+    const r=getDropRow(c), nb=board.slice(); nb[r*COLS+c]=opp;
+    if(checkWinBoard(nb,opp)) return c;
+  }
+  // 3. Center-preference, avoid gifting a free win above
+  const order=[3,2,4,1,5,0,6];
+  const safe=order.filter(c=>{
+    if(!valid.includes(c)) return false;
+    const r=getDropRow(c);
+    if(r===0) return true;
+    // After we play here, would opponent win on top?
+    const nb=board.slice(); nb[r*COLS+c]=me;
+    const nb2=nb.slice(); nb2[(r-1)*COLS+c]=opp;
+    return !checkWinBoard(nb2,opp);
+  });
+  if(safe.length) return safe[0];
+  return order.find(c=>valid.includes(c)) ?? valid[0];
+}
+
+/* ═══════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════ */
+function updateStatus(){
+  const sym = current==='1'?'🔵':'🔴';
+  let suffix=' ist am Zug';
+  if(kiMode && current===kiSymbol) suffix=' denkt…';
+  else if(current===mySymbol)      suffix=' — du bist dran ✦';
+  document.getElementById('status').textContent=`${sym}  ${names[current]}${suffix}`;
+}
+
+function updatePanels(){
+  const p1=current==='1', p2=current==='2';
+  document.getElementById('panel1').className='player-panel p1 area-p1'+(p1?' active-p1':'');
+  document.getElementById('panel2').className='player-panel p2 area-p2'+(p2?' active-p2':'');
+  const b1=document.getElementById('badge1'), b2=document.getElementById('badge2');
+  b1.style.visibility='visible'; b2.style.visibility='visible';
+  b1.textContent=p1?(kiMode&&kiSymbol==='1'?'DENKT…':'AM ZUG'):'WARTET';
+  b2.textContent=p2?(kiMode&&kiSymbol==='2'?'DENKT…':'AM ZUG'):'WARTET';
+  updateColButtons();
+}
+
+function updateScores(){
+  document.getElementById('score1').textContent=scores['1'];
+  document.getElementById('score2').textContent=scores['2'];
+  document.getElementById('draws').textContent =scores.draws;
+}
+
+function showOverlay(winner, isDraw){
+  const ov=document.getElementById('overlay');
+  ov.className='';
+  if(isDraw){
+    ov.classList.add('overlay-draw');
+    document.getElementById('overlayEmoji').textContent   ='🤝';
+    document.getElementById('overlayName').textContent    ='Unentschieden!';
+    document.getElementById('overlayComment').textContent ='Alle 42 Felder belegt — kein Sieger.';
+  } else {
+    ov.classList.add(winner==='1'?'overlay-p1':'overlay-p2');
+    document.getElementById('overlayEmoji').textContent   =winner==='1'?'🏆':'🎉';
+    document.getElementById('overlayName').textContent    =names[winner]+' gewinnt!';
+    document.getElementById('overlayComment').textContent =(winner==='1'?'🔵':'🔴')+' Vier in einer Reihe!';
+  }
+  ov.style.display='flex';
+}
+
+/* ═══════════════════════════════════════
+   NEUE RUNDE / RESET
+═══════════════════════════════════════ */
+function newRound(){
+  document.getElementById('overlay').style.display='none';
+  board=EMPTY_STR.split(''); gameOver=false;
+  clearBoardUI();
+  const nextId=(processedRoundId||1)+1;
+  processedRoundId=nextId;
+  const nextStart=nextId%2===0?'2':'1';   // alternate starter
+  current=nextStart;
+  updateStatus(); updatePanels();
+
+  if(!localMode && db){
+    db.ref(ROOM).update({
+      board:EMPTY_STR, current:nextStart,
+      status:'playing', result:null, winLine:null, roundId:nextId
+    });
+  }
+  if(kiMode && current===kiSymbol) setTimeout(kiMove, 750);
+}
+
+function resetAll(){
+  scores={'1':0,'2':0,draws:0}; updateScores(); newRound();
+}
+
+function resetStateVars(){
+  board=EMPTY_STR.split(''); gameOver=false; mySymbol=null;
+  kiMode=false; kiSymbol='2'; localMode=false;
+  processedRoundId=0; scores={'1':0,'2':0,draws:0}; names={'1':'—','2':'—'};
+  clearBoardUI(); updateScores();
+}
+
+function reloadGame(){
+  if(roomWatcher){ db.ref(ROOM).off('value',roomWatcher); roomWatcher=null; }
+  if(db) db.ref(ROOM).remove();
+  resetStateVars();
+  document.getElementById('pname1').textContent='—';
+  document.getElementById('pname2').textContent='—';
+  document.getElementById('overlay').style.display='none';
+  document.getElementById('waiting').style.display='none';
+  document.getElementById('setupError').style.display='none';
+  document.getElementById('setup').style.display='flex';
+  document.getElementById('myName').value='';
+  document.getElementById('myName').focus();
+}
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && document.getElementById('setup').style.display!=='none') joinGame();
+});
+window.addEventListener('load', ()=>{
+  initBoardUI();
+  document.getElementById('myName').focus();
+});
+</script>
+</body>
+</html>
