@@ -83,6 +83,8 @@ button:hover{ transform:translateY(-2px); filter:brightness(1.1); }
 button:active{ transform:translateY(0); }
 .btn-new{ background:linear-gradient(90deg,#5eff9b,#24bf61); }
 .btn-reset{ background:linear-gradient(90deg,#ff9b54,#ff5f6d); }
+.btn-reload{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.6); font-size:13px; }
+.btn-reload:hover{ background:rgba(255,255,255,.14); color:#fff; }
 @media(max-width:449px){ button{ padding:11px 14px; font-size:13px; } }
 .draws-row{ padding:9px 18px; border-radius:16px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); font-size:13px; font-weight:600; color:rgba(255,255,255,.45); text-align:center; width:100%; }
 .draws-row span{ color:rgba(255,255,255,.8); font-size:15px; font-weight:900; }
@@ -209,8 +211,9 @@ button:active{ transform:translateY(0); }
     </div>
     <div class="draws-row">Unentschieden: <span id="draws">0</span></div>
     <div class="btn-row">
-      <button class="btn-new"   onclick="newRound()">Neue Runde</button>
-      <button class="btn-reset" onclick="resetAll()">Reset</button>
+      <button class="btn-new"    onclick="newRound()">Neue Runde</button>
+      <button class="btn-reset"  onclick="resetAll()">Reset</button>
+      <button class="btn-reload" onclick="reloadGame()">↺ Neu</button>
     </div>
   </div>
 
@@ -537,14 +540,39 @@ function showOverlay(winner, isDraw) {
 function newRound() {
   document.getElementById('overlay').style.display = 'none';
   board=Array(9).fill(null); gameOver=false;
-  clearBoardUI(); updateStatus(); updatePanels();
+  clearBoardUI();
+  // Wer hat zuletzt begonnen? Nächste Runde beginnt der andere.
+  const nextRoundId = (processedRoundId||1) + 1;
+  const nextStarter = nextRoundId % 2 === 0 ? 'O' : 'X';
+  current = nextStarter;
+  updateStatus(); updatePanels();
   if(db) db.ref(ROOM).update({
-    board:'.........',current:'X',status:'playing',
-    result:null,winLine:null,roundId:(processedRoundId||1)+1
+    board:'.........',current:nextStarter,status:'playing',
+    result:null,winLine:null,roundId:nextRoundId
   });
+  // KI beginnt falls sie dran ist
+  if(kiMode && current==='O') setTimeout(kiMove, 600);
 }
+
 function resetAll() {
   scores={X:0,O:0,draws:0}; updateScores(); newRound();
+}
+
+function reloadGame() {
+  if(roomWatcher) { db.ref(ROOM).off('value', roomWatcher); roomWatcher = null; }
+  if(db) db.ref(ROOM).remove();
+  board=Array(9).fill(null); gameOver=false; current='X';
+  mySymbol=null; kiMode=false; processedRoundId=0;
+  scores={X:0,O:0,draws:0}; names={X:'—',O:'—'};
+  clearBoardUI(); updateScores();
+  document.getElementById('pname1').textContent='—';
+  document.getElementById('pname2').textContent='—';
+  document.getElementById('overlay').style.display='none';
+  document.getElementById('waiting').style.display='none';
+  document.getElementById('setupError').style.display='none';
+  document.getElementById('setup').style.display='flex';
+  document.getElementById('myName').value='';
+  document.getElementById('myName').focus();
 }
 
 /* ════════════════════════════════════
