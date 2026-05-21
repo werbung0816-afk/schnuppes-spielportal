@@ -89,6 +89,10 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 .sheet-t th.hl{background:linear-gradient(180deg,#c8e8d0,#b0dcc0);color:#1a4a1e;font-size:clamp(7.5px,1.1vw,10px)}
 .sheet-t th.hc{background:linear-gradient(180deg,#dde9f2,#ccdde8);color:#334455;font-size:clamp(7px,1vw,9.5px);font-weight:700}
 .sheet-t th.hf{background:linear-gradient(180deg,#c4d8e5,#b0cce0);color:#182f42;font-weight:900;font-size:clamp(8px,1.1vw,10.5px)}
+.sheet-t th.hb{background:linear-gradient(180deg,#d0ecd8,#b8e0c8);color:#1a5a2a;font-size:clamp(8px,1.1vw,10.5px);font-weight:700}
+.sheet-t th sub,.sheet-t th sup{font-size:clamp(6px,.9vw,8px);opacity:.75}
+.sheet-t td,.sheet-t th{line-height:1.2}
+.sheet-t th.hu{line-height:1.1}
 .sheet-t td.cu{background:#fdf8f0}
 .sheet-t td.cl{background:#f4fbf5}
 .sheet-t td.cc{background:#eaf2f8;font-weight:600;color:#334455;font-size:clamp(8px,1.1vw,11px)}
@@ -218,6 +222,7 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
         <button class="btn btn-reset" id="resetBtn" onclick="mpResetGame()" style="display:none;flex:1">🔄 Zurücksetzen</button>
         <button class="btn btn-resync" id="resyncBtn" onclick="mpResync()" style="display:none;flex:1">↺ Re-Sync</button>
       </div>
+      <button class="mpbt ai" id="inviteBtn" onclick="soloToMP()" style="display:none;margin-top:0">🌐 Freunde einladen</button>
       <button class="mpbt lv" id="leaveBtn" onclick="mpLeave()" style="display:none">← Verlassen</button>
     </div>
   </div>
@@ -576,23 +581,30 @@ function renderSheet(){
   const el=document.getElementById('SW');if(!el||!players.length)return;
   const vis=players.filter(p=>p&&p.name&&!p.left);
   if(!vis.length)return;
-  if(vis.length<=2){renderSheetT(el,vis);}else{renderSheetN(el,vis);}
+  renderSheetT(el,vis);
 }
 
 // TRANSPOSED layout (≤2 players): categories as columns, players as rows
 const TH=[
-  // upper cats
-  ...UP.map((c,i)=>({t:'cat',id:c.id,cls:'hu',lab:c.lab.split(' ')[0],title:c.lab,sec:'u'})),
-  // upper computed
-  {t:'comp',fn:uSum,cls:'hc',lab:'Σ',title:'Gesamt'},
-  {t:'bonus',cls:'hc',lab:'+35',title:'Bonus ≥63'},
-  {t:'comp',fn:uTot,cls:'hc',lab:'OT',title:'Gesamt ob. Teil'},
-  // lower cats
-  ...LO.map((c,i)=>({t:'cat',id:c.id,cls:'hl',lab:['3P','4P','FH','kS','gS','K!','Ch'][i],title:c.lab,sec:'l'})),
-  // lower computed
-  {t:'comp',fn:lTot,cls:'hc',lab:'UT',title:'Gesamt unt. Teil'},
-  {t:'comp2',fn:uTot,cls:'hc',lab:'OT',title:'Gesamt ob. Teil'},
-  {t:'final',fn:gTot,cls:'hf',lab:'TOTAL',title:'Endsumme'},
+  {t:'cat',id:'ones',  cls:'hu',lab:'<span style="font-size:1.3em">⚀</span><br><sup style="color:#4a8">1</sup>',title:'Einser: Summe aller Einer',sec:'u'},
+  {t:'cat',id:'twos',  cls:'hu',lab:'<span style="font-size:1.3em">⚁</span><br><sup style="color:#4a8">2</sup>',title:'Zweier: Summe aller Zweier',sec:'u'},
+  {t:'cat',id:'threes',cls:'hu',lab:'<span style="font-size:1.3em">⚂</span><br><sup style="color:#4a8">3</sup>',title:'Dreier: Summe aller Dreier',sec:'u'},
+  {t:'cat',id:'fours', cls:'hu',lab:'<span style="font-size:1.3em">⚃</span><br><sup style="color:#4a8">4</sup>',title:'Vierer: Summe aller Vierer',sec:'u'},
+  {t:'cat',id:'fives', cls:'hu',lab:'<span style="font-size:1.3em">⚄</span><br><sup style="color:#4a8">5</sup>',title:'Fünfer: Summe aller Fünfer',sec:'u'},
+  {t:'cat',id:'sixes', cls:'hu',lab:'<span style="font-size:1.3em">⚅</span><br><sup style="color:#4a8">6</sup>',title:'Sechser: Summe aller Sechser',sec:'u'},
+  {t:'comp', fn:uSum, cls:'hc',lab:'Σ<br><sub>ob</sub>',title:'Gesamt oberer Teil'},
+  {t:'bonus',          cls:'hb',lab:'🎁<br><sub>+35</sub>',title:'Bonus +35 bei ≥63 Punkten'},
+  {t:'comp2',fn:uTot, cls:'hc',lab:'OB<br><sub>+B</sub>',title:'Gesamt oberer Teil inkl. Bonus'},
+  {t:'cat',id:'t3',cls:'hl',lab:'3×<br><sub>Σ</sub>',  title:'Dreierpasch: ≥3 gleiche → Σ aller',sec:'l'},
+  {t:'cat',id:'t4',cls:'hl',lab:'4×<br><sub>Σ</sub>',  title:'Viererpasch: ≥4 gleiche → Σ aller',sec:'l'},
+  {t:'cat',id:'fh', cls:'hl',lab:'🏠<br><sub>25</sub>', title:'Full House: 3+2 gleiche = 25 Pkt.',sec:'l'},
+  {t:'cat',id:'ss', cls:'hl',lab:'→4<br><sub>30</sub>', title:'Kl. Straße: 4er Folge = 30 Pkt.',sec:'l'},
+  {t:'cat',id:'bs', cls:'hl',lab:'→5<br><sub>40</sub>', title:'Gr. Straße: 5er Folge = 40 Pkt.',sec:'l'},
+  {t:'cat',id:'kn', cls:'hl',lab:'🎲<br><sub>50</sub>', title:'Kniffel: 5 gleiche = 50 Pkt.',sec:'l'},
+  {t:'cat',id:'ch', cls:'hl',lab:'∑<br><sub>all</sub>', title:'Chance: Σ aller Würfel',sec:'l'},
+  {t:'comp3',fn:lTot,cls:'hc',lab:'UT<br><sub>Σ</sub>',  title:'Gesamt unterer Teil'},
+  {t:'comp2',fn:uTot,cls:'hc',lab:'OB<br><sub>+B</sub>', title:'Gesamt oberer Teil'},
+  {t:'final',fn:gTot,cls:'hf',lab:'🏆<br><sub>END</sub>',title:'Endsumme'},
 ];
 
 function renderSheetT(el,vis){
@@ -817,6 +829,7 @@ function _hydrate(s){
     MP._ref.child('state/players/'+MP.myIdx+'/left').onDisconnect().set(T);
   }
   const rb=document.getElementById('resyncBtn');if(rb)rb.style.display=(MP.host||(!MP.on&&players.some(p=>p.isAI)))?'block':'none';
+  const inv=document.getElementById('inviteBtn');if(inv)inv.style.display='none'; // hide during MP
   const xb=document.getElementById('resetBtn');if(xb)xb.style.display=MP.host?'block':'none';
   const lb=document.getElementById('leaveBtn');if(lb)lb.style.display=(MP.on&&MP.myIdx>=0&&!players[MP.myIdx]?.left)?'block':'none';
 }
@@ -833,8 +846,8 @@ function _showWait(){document.getElementById('mpLobby').style.display='none';doc
 function _setBadge(t){const e=document.getElementById('mpBadge');if(e)e.textContent=t;}
 
 window.mpConnect=async function(){
-  const name=(document.getElementById('mpNI')?.value||'').trim();
-  if(!name){const e=document.getElementById('mpNI');if(e){e.style.borderColor='rgba(239,68,68,.7)';e.focus();}return;}
+  const name=(document.getElementById('mpNI')?.value||MP.myName||localStorage.getItem('kn_mp_name')||'').trim();
+  if(!name){const e=document.getElementById('mpNI');if(e){e.style.borderColor='rgba(239,68,68,.7)';e.style.display='block';e.focus();}return;}
   localStorage.setItem('kn_mp_name',name);MP.myName=name;_setBadge('⏳ Verbinde…');
   // SOLO→MP conversion: if solo game is running, push it to Firebase
   if(players.length>0&&!MP.on){
