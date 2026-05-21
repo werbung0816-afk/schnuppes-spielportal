@@ -81,6 +81,28 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 .sheet .sc.pt:hover{background:rgba(83,200,255,.28)!important;outline:2px solid #53f6ff;outline-offset:-2px}
 .sheet .sc.ac{background:rgba(83,246,255,.07)}
 .sheet .sc.bon{background:linear-gradient(90deg,#c4efd0,#b2e5c0)!important;color:#1a5a22!important;font-weight:900}
+/* TRANSPOSED SHEET (≤2 Spieler) */
+.sheet-t th,.sheet-t td{padding:clamp(2px,.4vw,4px) clamp(3px,.6vw,5px);text-align:center;font-size:clamp(8.5px,1.2vw,11.5px);white-space:nowrap;border:1px solid #b4cad5}
+.sheet-t .ptn{text-align:left;font-weight:700;min-width:88px;max-width:110px;position:sticky;left:0;z-index:4;background:linear-gradient(90deg,#f4eee6,#ece7de)!important;font-size:clamp(9px,1.3vw,12px)}
+.sheet-t .ptn.act{background:linear-gradient(90deg,#c8f0f4,#b0e8ee)!important;font-weight:900}
+.sheet-t th.hu{background:linear-gradient(180deg,#c8e0f0,#aecce0);color:#1a3a5a;font-size:clamp(11px,2vw,17px)}
+.sheet-t th.hl{background:linear-gradient(180deg,#c8e8d0,#b0dcc0);color:#1a4a1e;font-size:clamp(7.5px,1.1vw,10px)}
+.sheet-t th.hc{background:linear-gradient(180deg,#dde9f2,#ccdde8);color:#334455;font-size:clamp(7px,1vw,9.5px);font-weight:700}
+.sheet-t th.hf{background:linear-gradient(180deg,#c4d8e5,#b0cce0);color:#182f42;font-weight:900;font-size:clamp(8px,1.1vw,10.5px)}
+.sheet-t td.cu{background:#fdf8f0}
+.sheet-t td.cl{background:#f4fbf5}
+.sheet-t td.cc{background:#eaf2f8;font-weight:600;color:#334455;font-size:clamp(8px,1.1vw,11px)}
+.sheet-t td.cf{background:linear-gradient(90deg,#c4d8e5,#b4ccd8);font-weight:900;color:#182f42;font-size:clamp(9px,1.3vw,12px)}
+.sheet-t tr.ar td.cu{background:rgba(83,246,255,.06)}
+.sheet-t tr.ar td.cl{background:rgba(100,220,130,.06)}
+.sheet-t td.fi{font-weight:700;background:rgba(60,180,80,.17)!important;color:#1a3a1e}
+.sheet-t td.fi.z{color:rgba(160,0,0,.7);background:rgba(220,50,50,.13)!important}
+.sheet-t td.tp{cursor:pointer;font-weight:700;background:rgba(83,180,255,.1)}
+.sheet-t td.tp.gd{background:rgba(83,210,150,.14);color:#00603a}
+.sheet-t td.tp.zr{color:rgba(170,0,0,.44);font-weight:400;font-style:italic}
+.sheet-t td.tp:hover{background:rgba(83,200,255,.3)!important;outline:2px solid #53f6ff;outline-offset:-2px}
+.sheet-t td.bon{background:linear-gradient(90deg,#c4efd0,#b2e5c0)!important;color:#1a5a22!important;font-weight:900}
+
 .sheet .sc.pl{opacity:.32;background:rgba(0,0,0,.04)!important;cursor:default!important}
 #turnOv{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(5,5,20,.88);z-index:8900;backdrop-filter:blur(10px)}
 .tsc{font-size:clamp(15px,2.8vw,24px);color:#ff9ef0;margin-bottom:5px;text-align:center;padding:0 16px;font-weight:600}
@@ -465,6 +487,7 @@ function aiTurn(){
   setTimeout(()=>_aiS(0),1700);
 }
 function _aiS(n){
+  try{
   if(!players[cp]?.isAI||players[cp]?.left){aiBusy=F;return;}
   doRoll();renderDice();renderSheet();if(MP.on)MP.push();
   const again=rc<3&&n<1+Math.floor(Math.random()*2);
@@ -476,6 +499,7 @@ function _aiS(n){
   } else {
     setTimeout(()=>{const cat=aiPickCat();aiBusy=F;if(cat)scoreField(cat);else nextPlayer('🤖 KI patscht.');},1600);
   }
+  }catch(e){console.error('AI:',e);aiBusy=F;nextPlayer('⚠️ KI-Fehler.');}
 }
 
 // EFFECTS
@@ -550,10 +574,71 @@ function updBtn(){
 }
 function renderSheet(){
   const el=document.getElementById('SW');if(!el||!players.length)return;
+  const vis=players.filter(p=>p&&p.name&&!p.left);
+  if(!vis.length)return;
+  if(vis.length<=2){renderSheetT(el,vis);}else{renderSheetN(el,vis);}
+}
+
+// TRANSPOSED layout (≤2 players): categories as columns, players as rows
+const TH=[
+  // upper cats
+  ...UP.map((c,i)=>({t:'cat',id:c.id,cls:'hu',lab:c.lab.split(' ')[0],title:c.lab,sec:'u'})),
+  // upper computed
+  {t:'comp',fn:uSum,cls:'hc',lab:'Σ',title:'Gesamt'},
+  {t:'bonus',cls:'hc',lab:'+35',title:'Bonus ≥63'},
+  {t:'comp',fn:uTot,cls:'hc',lab:'OT',title:'Gesamt ob. Teil'},
+  // lower cats
+  ...LO.map((c,i)=>({t:'cat',id:c.id,cls:'hl',lab:['3P','4P','FH','kS','gS','K!','Ch'][i],title:c.lab,sec:'l'})),
+  // lower computed
+  {t:'comp',fn:lTot,cls:'hc',lab:'UT',title:'Gesamt unt. Teil'},
+  {t:'comp2',fn:uTot,cls:'hc',lab:'OT',title:'Gesamt ob. Teil'},
+  {t:'final',fn:gTot,cls:'hf',lab:'TOTAL',title:'Endsumme'},
+];
+
+function renderSheetT(el,vis){
+  const mine=!MP.on||(cp===MP.myIdx&&!players[cp]?.isAI);
+  const canSc=mine&&rc>0&&!go&&!players[cp]?.left;
+  // Header
+  let thead='<tr><th class="ptn">Spieler</th>';
+  TH.forEach(col=>{thead+=`<th class="${col.cls}" title="${col.title||''}">${col.lab}</th>`;});
+  thead+='</tr>';
+  // Player rows
+  let tbody='';
+  vis.forEach(p=>{
+    const ri=players.indexOf(p);const isA=ri===cp;
+    const isMe=MP.on&&ri===MP.myIdx;
+    const nameParts=[esc(p.name.replace(' (KI)','').substring(0,9)),p.isAI?'🤖':'',isMe?'⭐':'',isA?'✦':''].filter(Boolean).join(' ');
+    tbody+=`<tr class="${isA?'ar':''}">
+<td class="ptn${isA?' act':''}">${nameParts}</td>`;
+    TH.forEach(col=>{
+      if(col.t==='cat'){
+        const v=p.sc[col.id];const bCls=col.sec==='u'?'cu':'cl';
+        if(v!==null&&v!==undefined){
+          tbody+=`<td class="${bCls} fi${v===0?' z':''}">${v}</td>`;
+        } else if(canSc&&isA){
+          const pot=calcSc(col.id,dice);
+          tbody+=`<td class="${bCls} tp ${pot>0?'gd':'zr'}" onclick="scoreField('${col.id}')">${pot}</td>`;
+        } else { tbody+=`<td class="${bCls}"></td>`; }
+      } else if(col.t==='bonus'){
+        const us=uSum(p.sc);const bonOk=hasBonus(p.sc);const filU=UP.filter(c=>p.sc[c.id]!=null).length;
+        let con=bonOk?'+35 🎉':filU>0?us+'/63':'';let x=bonOk?' bon':'';
+        tbody+=`<td class="cc${x}">${con}</td>`;
+      } else if(col.t==='final'){
+        tbody+=`<td class="cf"><b>${col.fn(p.sc)}</b></td>`;
+      } else {
+        tbody+=`<td class="cc">${col.fn(p.sc)}</td>`;
+      }
+    });
+    tbody+='</tr>';
+  });
+  el.innerHTML=`<table class="sheet sheet-t"><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
+}
+
+// NORMAL layout (>2 players): categories as rows, players as columns
+function renderSheetN(el,vis){
   updateColW();
   const mine=!MP.on||(cp===MP.myIdx&&!players[cp]?.isAI);
   const canSc=mine&&rc>0&&!go&&!players[cp]?.left;
-  const vis=players.filter(p=>p&&p.name&&!p.left);
   let th='<tr><th class="cl">Kategorie</th><th class="ph">Pkt</th>';
   vis.forEach(p=>{
     const ri=players.indexOf(p);const isA=ri===cp;
@@ -636,12 +721,16 @@ window.addEventListener('DOMContentLoaded',()=>{
   const saved=localStorage.getItem('kn_mp_name')||'';
   const inp=document.getElementById('mpNI');if(inp&&saved)inp.value=saved;
   updAIPreview();
-  // AI heartbeat: re-trigger if AI gets stuck
+  // AI heartbeat every 3s: reset if stuck, then re-trigger
   setInterval(()=>{
-    if(go||aiBusy||!players.length)return;
+    if(go||!players.length)return;
     const p=players[cp];
-    if(p&&p.isAI&&!p.left&&(!MP.on||MP.host))aiTurn();
-  },5000);
+    if(p&&p.isAI&&!p.left&&(!MP.on||MP.host)){
+      // If aiBusy but no dice rolled, AI is stuck → force reset
+      if(aiBusy&&rc===0&&dice.length===0){aiBusy=F;}
+      if(!aiBusy)aiTurn();
+    }
+  },3000);
 });
 function _rendVic(idx){
   const d=_vicSeq[idx];if(!d)return;
@@ -727,7 +816,7 @@ function _hydrate(s){
     window._dcSet=T;
     MP._ref.child('state/players/'+MP.myIdx+'/left').onDisconnect().set(T);
   }
-  const rb=document.getElementById('resyncBtn');if(rb)rb.style.display=MP.host?'block':'none';
+  const rb=document.getElementById('resyncBtn');if(rb)rb.style.display=(MP.host||(!MP.on&&players.some(p=>p.isAI)))?'block':'none';
   const xb=document.getElementById('resetBtn');if(xb)xb.style.display=MP.host?'block':'none';
   const lb=document.getElementById('leaveBtn');if(lb)lb.style.display=(MP.on&&MP.myIdx>=0&&!players[MP.myIdx]?.left)?'block':'none';
 }
