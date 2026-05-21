@@ -23,11 +23,11 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 .player-card .pscore{font-size:clamp(16px,2.5vw,26px);font-weight:900;background:linear-gradient(90deg,#53f6ff,#8f5fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .player-card .pprog{font-size:8px;color:rgba(255,255,255,.35);margin-top:1px}
 .player-card.pleft{opacity:.35;border-style:dashed}
-.dice-area{display:flex;flex-direction:column;align-items:center;gap:5px;margin:6px 0}
+.dice-area{display:flex;flex-direction:column;align-items:center;gap:5px;margin:6px 0;padding-top:10px}
 .dice-row{display:flex;gap:clamp(4px,1vw,9px);justify-content:center}
 .die{width:clamp(42px,6.5vw,66px);height:clamp(42px,6.5vw,66px);border-radius:clamp(8px,1.3vw,14px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s;position:relative;background:linear-gradient(145deg,#241a36,#151126,#0c0a18);border:1px solid rgba(255,255,255,.08);box-shadow:0 7px 16px rgba(0,0,0,.4),0 0 9px rgba(180,80,255,.14),inset 0 2px 4px rgba(255,255,255,.07)}
 .die:before{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.07),transparent 30%);pointer-events:none}
-.die.held{outline:3px solid #53f6ff;outline-offset:3px;transform:translateY(-6px) scale(1.04);box-shadow:0 0 12px rgba(83,246,255,.5),0 12px 24px rgba(0,0,0,.45)}
+.die.held{box-shadow:0 0 0 3px #53f6ff,0 0 20px rgba(83,246,255,.65),0 0 40px rgba(83,246,255,.25);background:linear-gradient(145deg,#162a40,#0d1e2e)}
 .die.rolling{animation:dRoll .07s linear infinite}
 @keyframes dRoll{0%{transform:rotate(-4deg) scale(.95)}50%{transform:rotate(4deg) scale(1.03)}100%{transform:rotate(-4deg) scale(.95)}}
 .pips{position:relative;width:clamp(26px,4vw,42px);height:clamp(26px,4vw,42px)}
@@ -71,8 +71,8 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 .sheet thead tr th.cl,.sheet thead tr th.ph{z-index:5;background:linear-gradient(180deg,#c8e0f0,#aecce0)!important}
 .sheet thead tr th.act{background:linear-gradient(180deg,#53f6ff,#1eb8cc)!important;color:#002233}
 .sheet .sc{text-align:center;min-width:var(--cw,80px);cursor:default}
-.sheet .sc.fi{font-weight:700;color:#1a1a2e}
-.sheet .sc.fi.z{color:rgba(0,0,0,.24);font-style:italic}
+.sheet .sc.fi{font-weight:700;color:#1a3a1e;background:rgba(60,180,80,.18)!important}
+.sheet .sc.fi.z{color:rgba(160,0,0,.7);font-style:italic;background:rgba(220,50,50,.13)!important}
 .sheet .sc.pt{cursor:pointer;color:#1a6699;font-weight:700;background:rgba(83,180,255,.09)}
 .sheet .sc.pt.gd{background:rgba(83,210,150,.13);color:#00603a}
 .sheet .sc.pt.zr{color:rgba(170,0,0,.44);font-weight:400;font-style:italic}
@@ -158,7 +158,7 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
       <div style="font-size:13px;font-weight:700;margin-bottom:9px;color:rgba(255,255,255,.55);letter-spacing:.8px">WARTERAUM</div>
       <div style="font-size:12px;margin-bottom:10px" id="mpWM">Warten<span class="da"><span>.</span><span>.</span><span>.</span></span></div>
       <div class="mpwl" id="mpWL"></div>
-      <button class="mpbt ai" id="mpAI" onclick="mpStartVsAI()">🤖 Gegen KI starten</button>
+      <button class="mpbt" id="mpAI" onclick="mpStartVsAI()">▶ Spiel starten</button>
       <div class="mpdiv"></div>
       <button class="mpbt lv" onclick="mpLeaveWait()">← Verlassen</button>
     </div>
@@ -175,12 +175,16 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
     </div>
     <div class="btn-row">
       <button class="btn btn-roll" id="rollBtn" onclick="doRoll()">🎲 Würfeln</button>
-      <button class="btn btn-reset" id="resetBtn" onclick="mpResetGame()" style="display:none">🔄 Spiel zurücksetzen</button>
-      <button class="btn btn-resync" id="resyncBtn" onclick="mpResync()" style="display:none">↺ Re-Sync</button>
-      <button class="mpbt lv" id="leaveBtn" onclick="mpLeave()" style="display:none">← Verlassen</button>
     </div>
     <div class="status-bar" id="SB">Lade…</div>
     <div class="sheet-wrap" id="SW"></div>
+    <div id="bottomBtns" style="margin-top:8px;display:flex;flex-direction:column;gap:5px">
+      <div style="display:flex;gap:5px">
+        <button class="btn btn-reset" id="resetBtn" onclick="mpResetGame()" style="display:none;flex:1">🔄 Zurücksetzen</button>
+        <button class="btn btn-resync" id="resyncBtn" onclick="mpResync()" style="display:none;flex:1">↺ Re-Sync</button>
+      </div>
+      <button class="mpbt lv" id="leaveBtn" onclick="mpLeave()" style="display:none">← Verlassen</button>
+    </div>
   </div>
 </div>
 
@@ -290,6 +294,7 @@ function checkSignal(ts){
 }
 
 // LOBBY AI SELECTION
+let _roomStatus=null; // tracked from Firebase on load
 function setAICnt(n){
   _aiCnt=n;
   document.getElementById('aiB1')?.classList.toggle('sel',n===1);
@@ -305,6 +310,10 @@ function updAIPreview(){
   if(el)el.textContent=names?'→ '+names:'';
 }
 function soloStart(){
+  // If MP game is running in Firebase → redirect to join
+  if(_roomStatus==='playing'){
+    mpConnect();return;
+  }
   const name=(document.getElementById('mpNI')?.value||'').trim();
   if(!name){const e=document.getElementById('mpNI');if(e){e.style.borderColor='rgba(239,68,68,.7)';e.focus();}return;}
   localStorage.setItem('kn_mp_name',name);
@@ -314,7 +323,7 @@ function soloStart(){
   players=[{name,isAI:F,left:F,sc:newSC()}];
   for(let i=0;i<_aiCnt;i++)players.push({name:pool[i]+' (KI)',isAI:T,left:F,sc:newSC()});
   cp=0;dice=[];held=[F,F,F,F,F];rc=0;go=F;prevBon={};
-  _hideMPOv();
+  document.getElementById('mpOv').style.display='none';
   document.getElementById('GL').style.display='grid';
   renderAll();renderDots();updBtn();
   showTurnOv(players[0].name,'🎲 Spiel startet!',null);
@@ -702,6 +711,10 @@ window.mpConnect=async function(){
   const name=(document.getElementById('mpNI')?.value||'').trim();
   if(!name){const e=document.getElementById('mpNI');if(e){e.style.borderColor='rgba(239,68,68,.7)';e.focus();}return;}
   localStorage.setItem('kn_mp_name',name);MP.myName=name;_setBadge('⏳ Verbinde…');
+  // SOLO→MP conversion: if solo game is running, push it to Firebase
+  if(players.length>0&&!MP.on){
+    await _convertSoloToMP(name);return;
+  }
   try{
     MP._ref=rRef();
     if(!MP._ref){_setBadge('❌ Firebase nicht verfügbar');return;}
@@ -716,6 +729,28 @@ window.mpConnect=async function(){
     } else {await _asNew(name);}
   }catch(e){console.error(e);_setBadge('❌ '+(e?.message||'Fehler'));}
 };
+
+async function _convertSoloToMP(name){
+  // Promote running solo game to Firebase multiplayer
+  try{
+    MP._ref=rRef();
+    if(!MP._ref){_setBadge('❌ Firebase nicht verfügbar');return;}
+    // Update human player name in case it changed
+    if(players[0]&&!players[0].isAI) players[0].name=name;
+    MP.on=T;MP.host=T;MP.myIdx=0;
+    const pArr=players.map(p=>({name:p.name,isAI:p.isAI,left:p.left}));
+    await MP._ref.set({status:'playing',players:pArr,hostName:name,ts:Date.now()});
+    MP._ref.child('state/players/0/left').onDisconnect().set(T);
+    await MP.push();
+    document.getElementById('mpOv').style.display='none';
+    document.getElementById('GL').style.display='grid';
+    MP.listen();
+    renderAll();renderDots();updBtn();
+    const rb=document.getElementById('resyncBtn');if(rb)rb.style.display='block';
+    const xb=document.getElementById('resetBtn');if(xb)xb.style.display='block';
+    ss('🌐 Multiplayer aktiv — '+esc(name)+' ist Host');
+  }catch(e){console.error('convertSolo:',e);_setBadge('❌ '+(e?.message||'Fehler'));}
+}
 
 async function _asHost(name){
   const pArr=[{name,isAI:F,left:F}];
@@ -767,7 +802,6 @@ window.mpStartVsAI=async function(){
 };
 
 window.mpLeave=async function(){
-  if(!confirm('Spiel verlassen?'))return;
   if(MP._ref&&MP.myIdx>=0&&MP.on&&!players[MP.myIdx]?.left){
     const upd={};upd['players/'+MP.myIdx+'/left']=T;
     _lPush=Date.now()>_lPush?Date.now():_lPush+1;upd['ts']=_lPush;
@@ -775,10 +809,9 @@ window.mpLeave=async function(){
   }
   location.reload();
 };
-window.mpLeaveWait=function(){if(confirm('Verlassen?'))location.reload();};
+window.mpLeaveWait=function(){location.reload();};
 window.mpResetGame=async function(){
   if(!MP.host||!MP._ref)return;
-  if(!confirm('Spiel für alle zurücksetzen? Alle Punkte gehen verloren.'))return;
   try{await MP._ref.child('resetSig').set(Date.now());}catch(e){}
 };
 window.mpResync=function(){
@@ -794,11 +827,16 @@ window.addEventListener('load',()=>{
   iDB();
   MP._ref=rRef();
   if(MP._ref){
-    MP._ref.child('state').once('value').then(snap=>{
+    // Live room-status watcher — updates badge and _roomStatus
+    MP._ref.on('value',snap=>{
+      const room=snap.val();
+      _roomStatus=room?.status||null;
       const b=document.getElementById('mpBadge');
-      if(!snap.exists()){if(b)b.textContent='🟢 Kein aktives Spiel — als Erster starten!';}
-      else{if(b)b.textContent='🔵 Spiel läuft — Beitreten möglich.';}
-    }).catch(()=>{});
+      if(!b||MP.on)return;
+      if(!room)b.textContent='🟢 Kein aktives Spiel — als Erster starten!';
+      else if(_roomStatus==='waiting')b.textContent='⏳ Raum wartet auf Spieler — jetzt beitreten!';
+      else b.textContent='🔵 Spiel läuft — Beitreten möglich.';
+    });
   }
 });
 })();
