@@ -2,6 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>DANI'S Kniffelchen</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
@@ -551,11 +553,11 @@ function renderSheet(){
   updateColW();
   const mine=!MP.on||(cp===MP.myIdx&&!players[cp]?.isAI);
   const canSc=mine&&rc>0&&!go&&!players[cp]?.left;
-  const vis=players.filter(p=>p&&p.name);
+  const vis=players.filter(p=>p&&p.name&&!p.left);
   let th='<tr><th class="cl">Kategorie</th><th class="ph">Pkt</th>';
   vis.forEach(p=>{
-    const ri=players.indexOf(p);const isA=ri===cp;const isL=!!p.left;
-    th+=`<th class="sc${isA?' act':''}${isL?' pl':''}">${esc(p.name.replace(' (KI)','').substring(0,8))}${p.isAI?' 🤖':''}${isA?' ✦':''}</th>`;
+    const ri=players.indexOf(p);const isA=ri===cp;
+    th+=`<th class="sc${isA?' act':''}">${esc(p.name.replace(' (KI)','').substring(0,8))}${p.isAI?' 🤖':''}${isA?' ✦':''}</th>`;
   });
   th+='</tr>';
   let tb='';
@@ -575,14 +577,14 @@ function renderSheet(){
 function bldRow(cat,canSc,vis){
   let cells='';
   vis.forEach(p=>{
-    const ri=players.indexOf(p);const v=p.sc[cat.id];const isA=ri===cp;const isL=!!p.left;
+    const ri=players.indexOf(p);const v=p.sc[cat.id];const isA=ri===cp;
     if(v!==null&&v!==undefined){
-      cells+=`<td class="sc fi${v===0?' z':''}${isA?' ac':''}${isL?' pl':''}">${v}</td>`;
-    } else if(canSc&&isA&&!isL){
+      cells+=`<td class="sc fi${v===0?' z':''}${isA?' ac':''}">${v}</td>`;
+    } else if(canSc&&isA){
       const pot=calcSc(cat.id,dice);
       cells+=`<td class="sc pt ${pot>0?'gd':'zr'} ac" onclick="scoreField('${cat.id}')">${pot}</td>`;
     } else {
-      cells+=`<td class="sc${isA?' ac':''}${isL?' pl':''}"></td>`;
+      cells+=`<td class="sc${isA?' ac':''}"></td>`;
     }
   });
   return`<tr><td class="cl">${cat.lab}</td><td class="ph">${cat.h}</td>${cells}</tr>`;
@@ -590,19 +592,19 @@ function bldRow(cat,canSc,vis){
 function bldComp(label,vals,isFinal,vis){
   let cells='';
   vals.forEach((v,i)=>{
-    const p=vis[i];const ri=p?players.indexOf(p):-1;const isA=ri===cp;const isL=!!(p?.left);
-    cells+=`<td class="sc${isA?' ac':''}${isL?' pl':''}">${v}</td>`;
+    const p=vis[i];const ri=p?players.indexOf(p):-1;const isA=ri===cp;
+    cells+=`<td class="sc${isA?' ac':''}">${v}</td>`;
   });
   return`<tr class="${isFinal?'fr':'cr'}"><td class="cl" style="font-weight:${isFinal?900:700}">${label}</td><td class="ph">→</td>${cells}</tr>`;
 }
 function bldBonus(vis){
   let cells='';
   vis.forEach(p=>{
-    const ri=players.indexOf(p);const isA=ri===cp;const isL=!!p.left;
+    const ri=players.indexOf(p);const isA=ri===cp;
     const us=uSum(p.sc);const bonOk=hasBonus(p.sc);const filU=UP.filter(c=>p.sc[c.id]!=null).length;
     let con='',ex='';
     if(bonOk){con='+35 🎉';ex=' bon';}else if(filU>0){con=us+'/63';}
-    cells+=`<td class="sc${ex}${isA?' ac':''}${isL?' pl':''}">${con}</td>`;
+    cells+=`<td class="sc${ex}${isA?' ac':''}">${con}</td>`;
   });
   return`<tr class="br cr"><td class="cl">Bonus ≥63</td><td class="ph" style="font-size:7px">+35</td>${cells}</tr>`;
 }
@@ -720,6 +722,11 @@ function _hydrate(s){
   if(s.ovl&&s.ovl.name){const age=Date.now()-(s.ts||0);if(age<3500)setTimeout(()=>showTurnOv(s.ovl.name,s.ovl.comment||'',s.ovl.scored||null),80);}
   if(s.go&&!go){go=T;setTimeout(()=>{_bldVic(activeP().sort((a,b)=>gTot(b.sc)-gTot(a.sc)));document.getElementById('victoryTestBtn').click();},600);return;}
   if(MP.host&&isAI&&!aiBusy)setTimeout(()=>{if(players[cp]?.isAI&&!players[cp]?.left&&!aiBusy)aiTurn();},900);
+  // Set onDisconnect for this player's left flag (ensures tab-close marks player as left)
+  if(MP.on&&MP.myIdx>=0&&!window._dcSet){
+    window._dcSet=T;
+    MP._ref.child('state/players/'+MP.myIdx+'/left').onDisconnect().set(T);
+  }
   const rb=document.getElementById('resyncBtn');if(rb)rb.style.display=MP.host?'block':'none';
   const xb=document.getElementById('resetBtn');if(xb)xb.style.display=MP.host?'block':'none';
   const lb=document.getElementById('leaveBtn');if(lb)lb.style.display=(MP.on&&MP.myIdx>=0&&!players[MP.myIdx]?.left)?'block':'none';
