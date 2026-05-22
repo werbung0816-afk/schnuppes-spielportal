@@ -85,15 +85,16 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 .sheet-t th,.sheet-t td{padding:clamp(2px,.4vw,4px) clamp(3px,.6vw,5px);text-align:center;font-size:clamp(8.5px,1.2vw,11.5px);white-space:nowrap;border:1px solid #b4cad5}
 .sheet-t .ptn{text-align:left;font-weight:700;min-width:88px;max-width:110px;position:sticky;left:0;z-index:4;background:linear-gradient(90deg,#f4eee6,#ece7de)!important;font-size:clamp(9px,1.3vw,12px)}
 .sheet-t .ptn.act{background:linear-gradient(90deg,#c8f0f4,#b0e8ee)!important;font-weight:900}
-.sheet-t th.hu{background:linear-gradient(180deg,#c8e0f0,#aecce0);color:#1a3a5a;font-size:clamp(11px,2vw,17px)}
-.sheet-t th.hl{background:linear-gradient(180deg,#c8e8d0,#b0dcc0);color:#1a4a1e;font-size:clamp(7.5px,1.1vw,10px)}
+.sheet-t th.hu{background:linear-gradient(180deg,#c8e0f0,#aecce0);color:#1a3a5a;font-size:clamp(8.5px,1.3vw,12px);font-weight:800;letter-spacing:.2px}
+.sheet-t th.hl{background:linear-gradient(180deg,#c8e8d0,#b0dcc0);color:#1a4a1e;font-size:clamp(7.5px,1.1vw,10px);min-width:38px}
 .sheet-t th.hc{background:linear-gradient(180deg,#dde9f2,#ccdde8);color:#334455;font-size:clamp(7px,1vw,9.5px);font-weight:700}
 .sheet-t th.hf{background:linear-gradient(180deg,#c4d8e5,#b0cce0);color:#182f42;font-weight:900;font-size:clamp(8px,1.1vw,10.5px)}
 .sheet-t th.hb{background:linear-gradient(180deg,#d0ecd8,#b8e0c8);color:#1a5a2a;font-size:clamp(8px,1.1vw,10.5px);font-weight:700}
 .sheet-t th sub,.sheet-t th sup{font-size:clamp(6px,.9vw,8px);opacity:.75}
+.sheet-t th small{font-size:clamp(6.5px,.9vw,9px);display:block;line-height:1.2;opacity:.88}
 .sheet-t td,.sheet-t th{line-height:1.2}
 .sheet-t th.hu{line-height:1.1}
-.sheet-t td.cu{background:#fdf8f0}
+.sheet-t td.cu{background:#fdf8f0;min-width:36px;text-align:center}
 .sheet-t td.cl{background:#f4fbf5}
 .sheet-t td.cc{background:#eaf2f8;font-weight:600;color:#334455;font-size:clamp(8px,1.1vw,11px)}
 .sheet-t td.cf{background:linear-gradient(90deg,#c4d8e5,#b4ccd8);font-weight:900;color:#182f42;font-size:clamp(9px,1.3vw,12px)}
@@ -259,7 +260,7 @@ const PIPS={
 };
 const F=false,T=true;
 let players=[],cp=0,dice=[],held=[F,F,F,F,F],rc=0,aiBusy=F,go=F,prevBon={};
-let _lastSignalTs=0,_aiCnt=1;
+let _lastSignalTs=0,_aiCnt=1,_aiTid=0,_aiBusySince=0;
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
@@ -488,24 +489,34 @@ function aiTurn(){
   if(MP.on&&!MP.host)return;
   if(aiBusy)return;
   if(!players[cp]?.isAI||players[cp]?.left)return;
-  aiBusy=T;ss(esc(players[cp].name)+' überlegt…');
-  setTimeout(()=>_aiS(0),1700);
+  aiBusy=T;_aiBusySince=Date.now();
+  const tid=++_aiTid;
+  ss(esc(players[cp].name)+' überlegt…');
+  setTimeout(()=>_aiS(0,tid),1700);
 }
-function _aiS(n){
+function _aiS(n,tid){
   try{
-  if(!players[cp]?.isAI||players[cp]?.left){aiBusy=F;return;}
+  if(tid!==_aiTid||!players[cp]?.isAI||players[cp]?.left){aiBusy=F;return;}
   doRoll();renderDice();renderSheet();if(MP.on)MP.push();
-  const again=rc<3&&n<1+Math.floor(Math.random()*2);
+  // maxRolls fixed per turn: 1 or 2 extra rolls (total 2–3)
+  if(n===0)_aiS._max=1+Math.floor(Math.random()*2);
+  const again=rc<3&&n<_aiS._max;
   if(again){
     setTimeout(()=>{
+      if(tid!==_aiTid)return;
       aiDecHold();renderDice();ss(esc(players[cp].name)+' hält Würfel…');if(MP.on)MP.push();
-      setTimeout(()=>_aiS(n+1),1300);
+      setTimeout(()=>_aiS(n+1,tid),1300);
     },1050);
   } else {
-    setTimeout(()=>{const cat=aiPickCat();aiBusy=F;if(cat)scoreField(cat);else nextPlayer('🤖 KI patscht.');},1600);
+    setTimeout(()=>{
+      if(tid!==_aiTid)return;
+      const cat=aiPickCat();aiBusy=F;
+      if(cat)scoreField(cat);else nextPlayer('🤖 KI patscht.');
+    },1600);
   }
-  }catch(e){console.error('AI:',e);aiBusy=F;nextPlayer('⚠️ KI-Fehler.');}
+  }catch(e){console.error('AI:',e);aiBusy=F;_aiTid++;nextPlayer('⚠️ KI-Fehler.');}
 }
+_aiS._max=1;
 
 // EFFECTS
 function showSad(){
@@ -586,24 +597,24 @@ function renderSheet(){
 
 // TRANSPOSED layout (≤2 players): categories as columns, players as rows
 const TH=[
-  {t:'cat',id:'ones',  cls:'hu',lab:'<span style="font-size:1.3em">⚀</span><br><sup style="color:#4a8">1</sup>',title:'Einser: Summe aller Einer',sec:'u'},
-  {t:'cat',id:'twos',  cls:'hu',lab:'<span style="font-size:1.3em">⚁</span><br><sup style="color:#4a8">2</sup>',title:'Zweier: Summe aller Zweier',sec:'u'},
-  {t:'cat',id:'threes',cls:'hu',lab:'<span style="font-size:1.3em">⚂</span><br><sup style="color:#4a8">3</sup>',title:'Dreier: Summe aller Dreier',sec:'u'},
-  {t:'cat',id:'fours', cls:'hu',lab:'<span style="font-size:1.3em">⚃</span><br><sup style="color:#4a8">4</sup>',title:'Vierer: Summe aller Vierer',sec:'u'},
-  {t:'cat',id:'fives', cls:'hu',lab:'<span style="font-size:1.3em">⚄</span><br><sup style="color:#4a8">5</sup>',title:'Fünfer: Summe aller Fünfer',sec:'u'},
-  {t:'cat',id:'sixes', cls:'hu',lab:'<span style="font-size:1.3em">⚅</span><br><sup style="color:#4a8">6</sup>',title:'Sechser: Summe aller Sechser',sec:'u'},
-  {t:'comp', fn:uSum, cls:'hc',lab:'Σ<br><sub>ob</sub>',title:'Gesamt oberer Teil'},
-  {t:'bonus',          cls:'hb',lab:'🎁<br><sub>+35</sub>',title:'Bonus +35 bei ≥63 Punkten'},
-  {t:'comp2',fn:uTot, cls:'hc',lab:'OB<br><sub>+B</sub>',title:'Gesamt oberer Teil inkl. Bonus'},
-  {t:'cat',id:'t3',cls:'hl',lab:'3×<br><sub>Σ</sub>',  title:'Dreierpasch: ≥3 gleiche → Σ aller',sec:'l'},
-  {t:'cat',id:'t4',cls:'hl',lab:'4×<br><sub>Σ</sub>',  title:'Viererpasch: ≥4 gleiche → Σ aller',sec:'l'},
-  {t:'cat',id:'fh', cls:'hl',lab:'🏠<br><sub>25</sub>', title:'Full House: 3+2 gleiche = 25 Pkt.',sec:'l'},
-  {t:'cat',id:'ss', cls:'hl',lab:'→4<br><sub>30</sub>', title:'Kl. Straße: 4er Folge = 30 Pkt.',sec:'l'},
-  {t:'cat',id:'bs', cls:'hl',lab:'→5<br><sub>40</sub>', title:'Gr. Straße: 5er Folge = 40 Pkt.',sec:'l'},
-  {t:'cat',id:'kn', cls:'hl',lab:'🎲<br><sub>50</sub>', title:'Kniffel: 5 gleiche = 50 Pkt.',sec:'l'},
-  {t:'cat',id:'ch', cls:'hl',lab:'∑<br><sub>all</sub>', title:'Chance: Σ aller Würfel',sec:'l'},
-  {t:'comp3',fn:lTot,cls:'hc',lab:'UT<br><sub>Σ</sub>',  title:'Gesamt unterer Teil'},
-  {t:'comp2',fn:uTot,cls:'hc',lab:'OB<br><sub>+B</sub>', title:'Gesamt oberer Teil'},
+  // Upper: plain text "1er"–"6er"
+  {t:'cat',id:'ones',  cls:'hu',lab:'1er',   title:'Einser: Summe aller Einer',   sec:'u'},
+  {t:'cat',id:'twos',  cls:'hu',lab:'2er',   title:'Zweier: Summe aller Zweier',  sec:'u'},
+  {t:'cat',id:'threes',cls:'hu',lab:'3er',   title:'Dreier: Summe aller Dreier',  sec:'u'},
+  {t:'cat',id:'fours', cls:'hu',lab:'4er',   title:'Vierer: Summe aller Vierer',  sec:'u'},
+  {t:'cat',id:'fives', cls:'hu',lab:'5er',   title:'Fünfer: Summe aller Fünfer',  sec:'u'},
+  {t:'cat',id:'sixes', cls:'hu',lab:'6er',   title:'Sechser: Summe aller Sechser',sec:'u'},
+  // Bonus indicator
+  {t:'bonus',cls:'hb',lab:'🎁<br><sub>+35</sub>',title:'Bonus +35 bei ≥63 Punkten'},
+  // Lower: small text, two-line
+  {t:'cat',id:'t3',cls:'hl',lab:'<small>3er<br>Pasch</small>',  title:'Dreierpasch: ≥3 gleiche → Σ aller',sec:'l'},
+  {t:'cat',id:'t4',cls:'hl',lab:'<small>4er<br>Pasch</small>',  title:'Viererpasch: ≥4 gleiche → Σ aller',sec:'l'},
+  {t:'cat',id:'fh', cls:'hl',lab:'<small>Full<br>House</small>', title:'Full House: 3+2 gleiche = 25 Pkt.',sec:'l'},
+  {t:'cat',id:'ss', cls:'hl',lab:'<small>kl.<br>Straße</small>', title:'Kl. Straße: 4er Folge = 30 Pkt.',sec:'l'},
+  {t:'cat',id:'bs', cls:'hl',lab:'<small>gr.<br>Straße</small>', title:'Gr. Straße: 5er Folge = 40 Pkt.',sec:'l'},
+  {t:'cat',id:'kn', cls:'hl',lab:'<small>Knif-<br>fel!</small>',  title:'Kniffel: 5 gleiche = 50 Pkt.',sec:'l'},
+  {t:'cat',id:'ch', cls:'hl',lab:'<small>Chan-<br>ce</small>',    title:'Chance: Σ aller Würfel',sec:'l'},
+  // Only grand total
   {t:'final',fn:gTot,cls:'hf',lab:'🏆<br><sub>END</sub>',title:'Endsumme'},
 ];
 
@@ -733,16 +744,15 @@ window.addEventListener('DOMContentLoaded',()=>{
   const saved=localStorage.getItem('kn_mp_name')||'';
   const inp=document.getElementById('mpNI');if(inp&&saved)inp.value=saved;
   updAIPreview();
-  // AI heartbeat every 3s: reset if stuck, then re-trigger
+  // AI heartbeat: only reset if GENUINELY stuck (>8s), prevents false resets
   setInterval(()=>{
     if(go||!players.length)return;
     const p=players[cp];
     if(p&&p.isAI&&!p.left&&(!MP.on||MP.host)){
-      // If aiBusy but no dice rolled, AI is stuck → force reset
-      if(aiBusy&&rc===0&&dice.length===0){aiBusy=F;}
+      if(aiBusy&&Date.now()-_aiBusySince>8000){aiBusy=F;_aiTid++;}
       if(!aiBusy)aiTurn();
     }
-  },3000);
+  },4000);
 });
 function _rendVic(idx){
   const d=_vicSeq[idx];if(!d)return;
