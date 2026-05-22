@@ -91,7 +91,9 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 .sheet-t th.hf{background:linear-gradient(180deg,#c8e0f0,#aecce0);color:#182f42;font-weight:900;font-size:clamp(8px,1.1vw,10.5px)}
 .sheet-t th.hb{background:linear-gradient(180deg,#c8e0f0,#aecce0);color:#1a5a2a;font-size:clamp(8px,1.1vw,10.5px);font-weight:700}
 .sheet-t th sub,.sheet-t th sup{font-size:clamp(6px,.9vw,8px);opacity:.75}
-.sheet-t th small{font-size:clamp(6.5px,.9vw,9px);display:block;line-height:1.2;opacity:.88}
+.sheet-t th small{font-size:clamp(6px,.85vw,9px);display:block;line-height:1.25;opacity:.9}
+.sheet-t .sep-l,.sheet-t td.sep-l{border-left:3px solid #7aaec8!important}
+.sheet-t th.sep-l{border-left:3px solid #4a8aaa!important}
 .sheet-t td,.sheet-t th{line-height:1.2}
 .sheet-t th.hu{line-height:1.1}
 .sheet-t td.cu{background:#fdf9f2;min-width:36px;text-align:center}
@@ -329,7 +331,7 @@ function playSignal(){
   }catch(e){}
 }
 function checkSignal(ts){
-  const mine=!MP.on||(cp===MP.myIdx&&!players[cp]?.isAI);
+  const mine=cp===MP.myIdx&&!players[cp]?.isAI&&!players[cp]?.left;
   if(mine&&ts>_lastSignalTs){_lastSignalTs=ts;playSignal();}
 }
 
@@ -357,7 +359,7 @@ function soloStart(){
   const name=(document.getElementById('mpNI')?.value||'').trim();
   if(!name){const e=document.getElementById('mpNI');if(e){e.style.borderColor='rgba(239,68,68,.7)';e.focus();}return;}
   localStorage.setItem('kn_mp_name',name);
-  MP.myName=name;
+  MP.myName=name;MP.myIdx=0;
   const taken=[name.toLowerCase()];
   const pool=shuffle(AI_POOL.filter(x=>!taken.includes(x.toLowerCase())));
   players=[{name,isAI:F,left:F,sc:newSC()}];
@@ -433,7 +435,7 @@ function nextPlayer(comment){
     window._pOvl={name:players[cp].name,comment,scored};
     MP.push();window._pOvl=null;window._pConfTs=null;window._pSadTs=null;
   }
-  const mine=!MP.on||(cp===MP.myIdx&&!players[cp]?.isAI);
+  const mine=cp===MP.myIdx&&!players[cp]?.isAI&&!players[cp]?.left;
   if(mine)ss('⭐ Du bist dran ✦ — Jetzt würfeln!');
   else ss(esc(players[cp]?.name)+' ist am Zug…');
   if(players[cp]?.isAI&&!players[cp]?.left)setTimeout(()=>aiTurn(),1800);
@@ -582,7 +584,7 @@ function renderDice(){
 function renderDots(){for(let i=0;i<3;i++){const d=document.getElementById('rd'+i);if(d)d.className='roll-dot'+(i<rc?' used':'');}}
 function updBtn(){
   const btn=document.getElementById('rollBtn');if(!btn)return;
-  const mine=!MP.on||(cp===MP.myIdx&&!players[cp]?.isAI);
+  const mine=cp===MP.myIdx&&!players[cp]?.isAI&&!players[cp]?.left;
   btn.disabled=!mine||rc>=3||go||aiBusy||!!players[cp]?.left;
   btn.textContent=rc===0?'🎲 Würfeln':'🎲 Nochmal würfeln';
 }
@@ -603,21 +605,21 @@ const TH=[
   {t:'cat',id:'fives', cls:'hu',lab:'5er',   title:'Fünfer: Summe aller Fünfer',  sec:'u'},
   {t:'cat',id:'sixes', cls:'hu',lab:'6er',   title:'Sechser: Summe aller Sechser',sec:'u'},
   // Bonus indicator
-  {t:'bonus',cls:'hb',lab:'🎁<br><sub>+35</sub>',title:'Bonus +35 bei ≥63 Punkten'},
+  {t:'bonus',cls:'hb sep-l',lab:'🎁<br><sub>+35</sub>',title:'Bonus +35 bei ≥63 Punkten'},
   // Lower: small text, two-line
-  {t:'cat',id:'t3',cls:'hl',lab:'<small>3er<br>Pasch</small>',  title:'Dreierpasch: ≥3 gleiche → Σ aller',sec:'l'},
+  {t:'cat',id:'t3',cls:'hl sep-l',lab:'<small>3er<br>Pasch</small>',  title:'Dreierpasch: ≥3 gleiche → Σ aller',sec:'l'},
   {t:'cat',id:'t4',cls:'hl',lab:'<small>4er<br>Pasch</small>',  title:'Viererpasch: ≥4 gleiche → Σ aller',sec:'l'},
   {t:'cat',id:'fh', cls:'hl',lab:'<small>Full<br>House</small>', title:'Full House: 3+2 gleiche = 25 Pkt.',sec:'l'},
   {t:'cat',id:'ss', cls:'hl',lab:'<small>kl.<br>Straße</small>', title:'Kl. Straße: 4er Folge = 30 Pkt.',sec:'l'},
   {t:'cat',id:'bs', cls:'hl',lab:'<small>gr.<br>Straße</small>', title:'Gr. Straße: 5er Folge = 40 Pkt.',sec:'l'},
-  {t:'cat',id:'kn', cls:'hl',lab:'<small>Knif-<br>fel!</small>',  title:'Kniffel: 5 gleiche = 50 Pkt.',sec:'l'},
-  {t:'cat',id:'ch', cls:'hl',lab:'<small>Chan-<br>ce</small>',    title:'Chance: Σ aller Würfel',sec:'l'},
+  {t:'cat',id:'kn', cls:'hl',lab:'Kniffel',  title:'Kniffel: 5 gleiche = 50 Pkt.',sec:'l'},
+  {t:'cat',id:'ch', cls:'hl',lab:'Chance',    title:'Chance: Σ aller Würfel',sec:'l'},
   // Only grand total
-  {t:'final',fn:gTot,cls:'hf',lab:'🏆<br><sub>END</sub>',title:'Endsumme'},
+  {t:'final',fn:gTot,cls:'hf sep-l',lab:'🏆',title:'Endsumme'},
 ];
 
 function renderSheetT(el,vis){
-  const mine=!MP.on||(cp===MP.myIdx&&!players[cp]?.isAI);
+  const mine=cp===MP.myIdx&&!players[cp]?.isAI&&!players[cp]?.left;
   const canSc=mine&&rc>0&&!go&&!players[cp]?.left;
   // Header
   let thead='<tr><th class="ptn">Spieler</th>';
@@ -633,7 +635,7 @@ function renderSheetT(el,vis){
 <td class="ptn${isA?' act':''}">${nameParts}</td>`;
     TH.forEach(col=>{
       if(col.t==='cat'){
-        const v=p.sc[col.id];const bCls=col.sec==='u'?'cu':'cl';
+        const v=p.sc[col.id];const sep=col.cls.includes('sep-l')?' sep-l':'';const bCls=(col.sec==='u'?'cu':'cl')+sep;
         if(v!==null&&v!==undefined){
           tbody+=`<td class="${bCls} fi${v===0?' z':''}">${v}</td>`;
         } else if(canSc&&isA){
@@ -642,10 +644,10 @@ function renderSheetT(el,vis){
         } else { tbody+=`<td class="${bCls}"></td>`; }
       } else if(col.t==='bonus'){
         const us=uSum(p.sc);const bonOk=hasBonus(p.sc);const filU=UP.filter(c=>p.sc[c.id]!=null).length;
-        let con=bonOk?'+35 🎉':filU>0?us+'/63':'';let x=bonOk?' bon':'';
+        let con=bonOk?'+35 🎉':filU>0?us+'/63':'';let x=bonOk?' bon':' sep-l';if(bonOk)x+=' sep-l';
         tbody+=`<td class="cc${x}">${con}</td>`;
       } else if(col.t==='final'){
-        tbody+=`<td class="cf"><b>${col.fn(p.sc)}</b></td>`;
+        tbody+=`<td class="cf sep-l"><b>${col.fn(p.sc)}</b></td>`;
       } else {
         tbody+=`<td class="cc">${col.fn(p.sc)}</td>`;
       }
@@ -658,7 +660,7 @@ function renderSheetT(el,vis){
 // NORMAL layout (>2 players): categories as rows, players as columns
 function renderSheetN(el,vis){
   updateColW();
-  const mine=!MP.on||(cp===MP.myIdx&&!players[cp]?.isAI);
+  const mine=cp===MP.myIdx&&!players[cp]?.isAI&&!players[cp]?.left;
   const canSc=mine&&rc>0&&!go&&!players[cp]?.left;
   let th='<tr><th class="cl">Kategorie</th><th class="ph">Pkt</th>';
   vis.forEach(p=>{
