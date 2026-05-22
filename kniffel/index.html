@@ -14,7 +14,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
 body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top left,rgba(143,95,255,.35),transparent 30%),radial-gradient(circle at top right,rgba(255,79,216,.25),transparent 35%),linear-gradient(180deg,#050111,#120523);color:#fff;min-height:100vh;padding:clamp(5px,1.2vw,14px);overflow-x:hidden}
-.layout{display:grid;grid-template-columns:190px 1fr;gap:clamp(5px,1vw,12px);max-width:1300px;margin:0 auto;align-items:start}
+.layout{display:grid;grid-template-columns:1fr;gap:0;max-width:1200px;margin:0 auto;align-items:start}
 .panel{background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:clamp(9px,1.5vw,16px);backdrop-filter:blur(18px)}
 .logo{text-align:center;margin-bottom:8px}
 .logo h1{font-size:clamp(18px,3vw,30px);line-height:.9;font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -83,23 +83,23 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 .sheet .sc.bon{background:linear-gradient(90deg,#c4efd0,#b2e5c0)!important;color:#1a5a22!important;font-weight:900}
 /* TRANSPOSED SHEET (≤2 Spieler) */
 .sheet-t th,.sheet-t td{padding:clamp(2px,.4vw,4px) clamp(3px,.6vw,5px);text-align:center;font-size:clamp(8.5px,1.2vw,11.5px);white-space:nowrap;border:1px solid #b4cad5}
-.sheet-t .ptn{text-align:left;font-weight:700;min-width:88px;max-width:110px;position:sticky;left:0;z-index:4;background:linear-gradient(90deg,#f4eee6,#ece7de)!important;font-size:clamp(9px,1.3vw,12px)}
-.sheet-t .ptn.act{background:linear-gradient(90deg,#c8f0f4,#b0e8ee)!important;font-weight:900}
+.sheet-t .ptn{text-align:left;font-weight:700;min-width:88px;max-width:120px;position:sticky;left:0;z-index:4;background:#f5f0e8!important;font-size:clamp(9px,1.3vw,12px)}
+.sheet-t .ptn.act{background:#dff0f5!important;font-weight:900;color:#003344}
 .sheet-t th.hu{background:linear-gradient(180deg,#c8e0f0,#aecce0);color:#1a3a5a;font-size:clamp(8.5px,1.3vw,12px);font-weight:800;letter-spacing:.2px}
-.sheet-t th.hl{background:linear-gradient(180deg,#c8e8d0,#b0dcc0);color:#1a4a1e;font-size:clamp(7.5px,1.1vw,10px);min-width:38px}
-.sheet-t th.hc{background:linear-gradient(180deg,#dde9f2,#ccdde8);color:#334455;font-size:clamp(7px,1vw,9.5px);font-weight:700}
-.sheet-t th.hf{background:linear-gradient(180deg,#c4d8e5,#b0cce0);color:#182f42;font-weight:900;font-size:clamp(8px,1.1vw,10.5px)}
-.sheet-t th.hb{background:linear-gradient(180deg,#d0ecd8,#b8e0c8);color:#1a5a2a;font-size:clamp(8px,1.1vw,10.5px);font-weight:700}
+.sheet-t th.hl{background:linear-gradient(180deg,#c8e0f0,#aecce0);color:#1a4a1e;font-size:clamp(7.5px,1.1vw,10px);min-width:38px}
+.sheet-t th.hc{background:linear-gradient(180deg,#c8e0f0,#aecce0);color:#334455;font-size:clamp(7px,1vw,9.5px);font-weight:700}
+.sheet-t th.hf{background:linear-gradient(180deg,#c8e0f0,#aecce0);color:#182f42;font-weight:900;font-size:clamp(8px,1.1vw,10.5px)}
+.sheet-t th.hb{background:linear-gradient(180deg,#c8e0f0,#aecce0);color:#1a5a2a;font-size:clamp(8px,1.1vw,10.5px);font-weight:700}
 .sheet-t th sub,.sheet-t th sup{font-size:clamp(6px,.9vw,8px);opacity:.75}
 .sheet-t th small{font-size:clamp(6.5px,.9vw,9px);display:block;line-height:1.2;opacity:.88}
 .sheet-t td,.sheet-t th{line-height:1.2}
 .sheet-t th.hu{line-height:1.1}
-.sheet-t td.cu{background:#fdf8f0;min-width:36px;text-align:center}
-.sheet-t td.cl{background:#f4fbf5}
-.sheet-t td.cc{background:#eaf2f8;font-weight:600;color:#334455;font-size:clamp(8px,1.1vw,11px)}
-.sheet-t td.cf{background:linear-gradient(90deg,#c4d8e5,#b4ccd8);font-weight:900;color:#182f42;font-size:clamp(9px,1.3vw,12px)}
-.sheet-t tr.ar td.cu{background:rgba(83,246,255,.06)}
-.sheet-t tr.ar td.cl{background:rgba(100,220,130,.06)}
+.sheet-t td.cu{background:#fdf9f2;min-width:36px;text-align:center}
+.sheet-t td.cl{background:#fdf9f2}
+.sheet-t td.cc{background:#fdf9f2;font-weight:600;color:#334455;font-size:clamp(8px,1.1vw,11px)}
+.sheet-t td.cf{background:#fdf9f2;font-weight:900;color:#1a1a2e;font-size:clamp(9px,1.3vw,12px)}
+.sheet-t tr.ar td.cu{background:#e4f4fa}
+.sheet-t tr.ar td.cl{background:#e4f4fa}
 .sheet-t td.fi{font-weight:700;background:rgba(60,180,80,.17)!important;color:#1a3a1e}
 .sheet-t td.fi.z{color:rgba(160,0,0,.7);background:rgba(220,50,50,.13)!important}
 .sheet-t td.tp{cursor:pointer;font-weight:700;background:rgba(83,180,255,.1)}
@@ -154,8 +154,8 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 @keyframes db{0%,100%{opacity:.2}50%{opacity:1}}
 .da span{display:inline-block;animation:db 1.2s infinite}.da span:nth-child(2){animation-delay:.22s}.da span:nth-child(3){animation-delay:.44s}
 #victoryTestBtn{display:none}
-@media(max-width:700px){.layout{grid-template-columns:155px 1fr!important}.sheet-wrap{max-height:calc(100vh - 340px)}}
-@media(max-width:449px){body{padding:4px!important}.layout{grid-template-columns:1fr!important}.lp2{display:none!important}.cup{width:34px!important;height:54px!important}.sheet-wrap{max-height:calc(100vh - 270px)}.sheet{font-size:9px!important}.sheet th,.sheet td{padding:1.5px 2px!important}}
+@media(max-width:700px){.sheet-wrap{max-height:calc(100vh - 340px)}}
+@media(max-width:449px){body{padding:4px!important}.cup{width:34px!important;height:54px!important}.sheet-wrap{max-height:calc(100vh - 260px)}.sheet{font-size:9px!important}.sheet th,.sheet td{padding:1.5px 2px!important}}
 </style>
 </head>
 <body>
@@ -206,8 +206,7 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 </div>
 
 <div class="layout" id="GL" style="display:none">
-  <div class="panel lp2" id="LP"></div>
-  <div class="panel cp2" id="CP">
+  <div class="panel" id="CP">
     <div class="logo"><h1>DANI'S<br>Kniffelchen</h1><p>🎲 Das Würfelspiel für Freunde</p></div>
     <div class="dice-area">
       <div id="DW"></div>
@@ -378,7 +377,6 @@ function doRoll(){
   if(go)return;
   if(MP.on&&!players[cp]?.isAI&&cp!==MP.myIdx){ss('⏳ '+esc(players[cp]?.name)+' ist am Zug…');return;}
   if(rc>=3){ss('⚠️ 3 Würfe aufgebraucht — wähle ein Feld!');return;}
-  if(aiBusy)return;
   if(rc===0){dice=[1,2,3,4,5].map(()=>Math.floor(Math.random()*6)+1);held=[F,F,F,F,F];}
   else dice=dice.map((d,i)=>held[i]?d:Math.floor(Math.random()*6)+1);
   rc++;playDice();
@@ -544,7 +542,7 @@ function launchConfetti(n=170){
 }
 
 // RENDER
-function renderAll(){renderPlayers();renderDice();renderSheet();}
+function renderAll(){renderDice();renderSheet();}
 function updateColW(){
   const el=document.getElementById('SW');if(!el)return;
   const n=Math.max(1,players.filter(p=>p&&p.name).length);
