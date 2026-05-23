@@ -479,10 +479,11 @@ body::before{
       <div class="hand-lbl">✋ Deine Hand</div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
         <div id="hand-info" style="font-size:12px;color:var(--dim)"></div>
-        <div style="display:flex;gap:3px" oncontextmenu="return false">
-          <button class="sort-btn active" id="sort-def" onclick="setHandSort('default')">Standard</button>
-          <button class="sort-btn" id="sort-val" onclick="setHandSort('value')">1→12</button>
-          <button class="sort-btn" id="sort-col" onclick="setHandSort('color')">Farbe</button>
+        <div style="display:flex;gap:2px" oncontextmenu="return false">
+          <button class="sort-btn active" id="sort-def" onclick="setHandSort('default')" title="Reihenfolge vom Server">Standard</button>
+          <button class="sort-btn" id="sort-val" onclick="setHandSort('value')"  title="Nach Wert sortieren">1→12</button>
+          <button class="sort-btn" id="sort-col" onclick="setHandSort('color')"  title="Nach Farbe sortieren">Farbe</button>
+          <button class="sort-btn" id="sort-man" onclick="setHandSort('manual')" title="Manuell sortieren mit ← →">✋ Manuell</button>
         </div>
       </div>
     </div>
@@ -634,8 +635,9 @@ let selectedCardIds = new Set();
 let addCardMode = false;
 let addingCardId = null;
 let confAnim = null;
-let handSort = 'default'; // 'default' | 'value' | 'color'
-let pendingMode = 'classic'; // for host mode selection before game starts
+let handSort = 'default';   // 'default' | 'value' | 'color' | 'manual'
+let pendingMode = 'classic';
+let handOrder = [];          // card IDs in manual order (local only)
 
 /* ================================================================
    FIREBASE INIT
@@ -1393,15 +1395,15 @@ function renderAll(){
 }
 
 function renderGameScreen(){
-  renderHeader();
-  renderBoard();
-  renderPanels();
-  renderPiles();
-  renderDice();
-  renderTable();
-  renderHand();
-  renderHandActions();
-  renderActionButtons();
+  try { renderHeader(); } catch(e){ console.warn('renderHeader',e); }
+  try { renderBoard(); }  catch(e){ console.warn('renderBoard',e); }
+  try { renderPanels(); } catch(e){ console.warn('renderPanels',e); }
+  try { renderPiles(); }  catch(e){ console.warn('renderPiles',e); }
+  try { renderDice(); }   catch(e){ console.warn('renderDice',e); }
+  try { renderTable(); }  catch(e){ console.warn('renderTable',e); }
+  try { renderHand(); }   catch(e){ console.warn('renderHand',e); }
+  try { renderHandActions(); } catch(e){ console.warn('renderHandActions',e); }
+  try { renderActionButtons(); } catch(e){ console.warn('renderActionButtons',e); }
 }
 
 function renderHeader(){
@@ -1419,6 +1421,27 @@ function renderHeader(){
   const phaseText = phI < 10 ? `Phase ${phI+1}: ${PHASES[phI].desc}` : '🏆 Ziel!';
   bar.innerHTML = `${activeText} <span style="color:var(--dim)">|</span> ${phaseText}`;
   document.getElementById('host-reset-game').style.display = isHost ? 'inline':'none';
+}
+
+// Returns Map<boardPosition → {idx, pasch}> when player needs to choose a die
+function getReachableMap(){
+  const map = new Map();
+  if (!GS || GS.turnPhase !== 'choose_die') return map;
+  if (!iAmActive()) return map;
+  const d = GS.dice;
+  if (GS.isPasch){
+    const pA = aiSimPos(d[0]);
+    const pB = aiSimPos(d[0]*2);
+    map.set(pA, {idx:0, pasch:false});
+    if (pB !== pA) map.set(pB, {idx:2, pasch:true});
+    else map.set(pA, {idx:0, pasch:true}); // same field: prefer single shown as pink
+  } else {
+    const pA = aiSimPos(d[0]);
+    const pB = aiSimPos(d[1]);
+    map.set(pA, {idx:0, pasch:false});
+    if (pB !== pA) map.set(pB, {idx:1, pasch:false});
+  }
+  return map;
 }
 
 function renderBoard(){
@@ -1593,22 +1616,48 @@ function renderTable(){
 }
 
 function setHandSort(mode){
-  handSort=mode;
-  ['def','val','col'].forEach(k=>{
-    const el=document.getElementById('sort-'+k);
-    if(el) el.className='sort-btn'+(({default:'def',value:'val',color:'col'}[mode]===k)?' active':'');
+  handSort = mode;
+  if (mode === 'manual'){
+    // Seed handOrder from current hand
+    const me = GS?.players?.find(p=>p.id===myId);
+    if (me) handOrder = (me.hand||[]).map(c=>c.id);
+  }
+  ['def','val','col','man'].forEach(k=>{
+    const el = document.getElementById('sort-'+k);
+    if(el) el.className = 'sort-btn' + (({'default':'def','value':'val','color':'col','manual':'man'}[mode]===k) ? ' active' : '');
   });
   renderHand();
 }
 
 function getSortedHand(hand){
-  if (!hand) return [];
-  if (handSort==='value') return [...hand].sort((a,b)=>a.j?99:b.j?-99:a.v-b.v);
-  if (handSort==='color'){
-    const ORDER = {rot:0,blau:1,gruen:2,gelb:3,joker:4};
-    return [...hand].sort((a,b)=>(ORDER[a.col]||0)-(ORDER[b.col]||0) || a.v-b.v);
+  if (!hand || hand.length===0) return [];
+  if (handSort === 'value')  return [...hand].sort((a,b) => a.j?99:b.j?-99:a.v-b.v);
+  if (handSort === 'color'){
+    const ORD = {rot:0,blau:1,gruen:2,gelb:3,joker:4};
+    return [...hand].sort((a,b) => (ORD[a.col]||0)-(ORD[b.col]||0) || a.v-b.v);
   }
-  return hand;
+  if (handSort === 'manual'){
+    // Sync handOrder with current hand (add new cards at end, remove missing)
+    const ids = new Set(hand.map(c=>c.id));
+    handOrder = handOrder.filter(id => ids.has(id));
+    hand.forEach(c => { if(!handOrder.includes(c.id)) handOrder.push(c.id); });
+    return handOrder.map(id => hand.find(c=>c.id===id)).filter(Boolean);
+  }
+  return hand; // default: original order from server
+}
+
+function moveCardInHand(cardId, dir){
+  // dir: -1 = left, +1 = right
+  if (handSort !== 'manual') return;
+  const me = GS?.players?.find(p=>p.id===myId);
+  if (!me) return;
+  const sorted = getSortedHand(me.hand);
+  const idx = handOrder.indexOf(cardId);
+  if (idx < 0) return;
+  const newIdx = Math.max(0, Math.min(handOrder.length-1, idx+dir));
+  handOrder.splice(idx, 1);
+  handOrder.splice(newIdx, 0, cardId);
+  renderHand();
 }
 
 function renderHand(){
@@ -1625,13 +1674,28 @@ function renderHand(){
     : me.phaseComplete ? '✓ Phase ausgelegt' : '';
 
   const sorted = getSortedHand(me.hand);
-  hc.innerHTML = sorted.map(c => {
+  const isManual = handSort === 'manual';
+  const onlyOneSel = selectedCardIds.size === 1;
+  const selId = onlyOneSel ? [...selectedCardIds][0] : null;
+
+  hc.innerHTML = sorted.map((c,idx) => {
     const sel = selectedCardIds.has(c.id);
     const adding = addCardMode && c.id===addingCardId;
-    return `<div class="card ${c.j?'card-joker':COLOR_CSS[c.col]||''} ${sel?'sel':''}"
-      onclick="onCardClick(${c.id})" title="${c.j?'Joker':COLOR_LABEL[c.col]+' '+c.v}"
-      style="${adding?'border-color:var(--p);transform:translateY(-12px)':''}">
-      ${c.j?'⭐':c.v}
+    // Manual move arrows: show on the selected card only in manual mode
+    const arrows = isManual && sel
+      ? `<div style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);display:flex;gap:2px;z-index:20">
+           <button class="sort-btn" style="padding:1px 6px;font-size:13px" oncontextmenu="return false" onclick="event.stopPropagation();moveCardInHand(${c.id},-1)">◀</button>
+           <button class="sort-btn" style="padding:1px 6px;font-size:13px" oncontextmenu="return false" onclick="event.stopPropagation();moveCardInHand(${c.id},1)">▶</button>
+         </div>`
+      : '';
+    return `<div style="position:relative;${isManual&&sel?'margin-bottom:26px':''}">
+      <div class="card ${c.j?'card-joker':COLOR_CSS[c.col]||''} ${sel?'sel':''}"
+        onclick="onCardClick(${c.id})"
+        title="${c.j?'Joker':COLOR_LABEL[c.col]+' '+c.v}"
+        style="${adding?'border-color:var(--p);transform:translateY(-12px)':''}">
+        ${c.j?'⭐':c.v}
+      </div>
+      ${arrows}
     </div>`;
   }).join('');
 }
