@@ -102,9 +102,9 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 .sheet-t td.cf{background:#fdf9f2;font-weight:900;color:#1a1a2e;font-size:clamp(9px,1.3vw,12px)}
 .sheet-t tr.ar td.cu{background:#e4f4fa}
 .sheet-t tr.ar td.cl{background:#e4f4fa}
-.sheet-t td.fi{font-weight:700;background:rgba(60,180,80,.17)!important;color:#1a3a1e}
+.sheet-t td.fi{font-weight:700;background:rgba(60,180,80,.17)!important;color:#1a3a1e;text-align:center}
 .sheet-t td.fi.z{color:rgba(160,0,0,.7);background:rgba(220,50,50,.13)!important}
-.sheet-t td.tp{cursor:pointer;font-weight:700;background:rgba(83,180,255,.1)}
+.sheet-t td.tp{cursor:pointer;font-weight:700;background:rgba(83,180,255,.1);text-align:center}
 .sheet-t td.tp.gd{background:rgba(83,210,150,.14);color:#00603a}
 .sheet-t td.tp.zr{color:rgba(170,0,0,.44);font-weight:400;font-style:italic}
 .sheet-t td.tp:hover{background:rgba(83,200,255,.3)!important;outline:2px solid #53f6ff;outline-offset:-2px}
@@ -406,6 +406,13 @@ function scoreField(cat){
   const val=calcSc(cat,dice);
   p.sc[cat]=val;
   if(val===0){showSad();window._pSadTs=Date.now();}
+  // Special Kniffel! celebration
+  if(cat==='kn'&&val===50){
+    launchConfetti(320);
+    try{appAudio.pause();appAudio.currentTime=0;appAudio.play().catch(()=>{});}catch(e){}
+    window._pConfTs=Date.now();
+    setTimeout(()=>ss('🎲✨ KNIFFEL! 50 Punkte für '+esc(p.name)+'! ✨🎲'),100);
+  }
   if(!prevBon[cp]&&hasBonus(p.sc)){
     prevBon[cp]=T;launchConfetti(260);window._pConfTs=Date.now();
     setTimeout(()=>ss('🎉 BONUS! +35 Punkte für '+esc(p.name)+' 🎉'),150);
@@ -598,7 +605,7 @@ function renderSheet(){
 // TRANSPOSED layout (≤2 players): categories as columns, players as rows
 const TH=[
   // Upper: plain text "1er"–"6er"
-  {t:'cat',id:'ones',  cls:'hu',lab:'1er',   title:'Einser: Summe aller Einer',   sec:'u'},
+  {t:'cat',id:'ones',  cls:'hu sep-l',lab:'1er',   title:'Einser: Summe aller Einer',   sec:'u'},
   {t:'cat',id:'twos',  cls:'hu',lab:'2er',   title:'Zweier: Summe aller Zweier',  sec:'u'},
   {t:'cat',id:'threes',cls:'hu',lab:'3er',   title:'Dreier: Summe aller Dreier',  sec:'u'},
   {t:'cat',id:'fours', cls:'hu',lab:'4er',   title:'Vierer: Summe aller Vierer',  sec:'u'},
@@ -757,9 +764,11 @@ window.addEventListener('DOMContentLoaded',()=>{
 function _rendVic(idx){
   const d=_vicSeq[idx];if(!d)return;
   launchConfetti(d.cn);
+  // Extra burst for 1st place
+  if(idx===_vicSeq.length-1){setTimeout(()=>launchConfetti(300),700);setTimeout(()=>launchConfetti(200),1400);}
   try{appAudio.pause();appAudio.currentTime=0;appAudio.play().catch(()=>{});}catch(e){}
   const isLast=idx===_vicSeq.length-1;
-  document.getElementById('victoryOv').innerHTML=`<div class="vc"><div class="vp">${d.pl}</div><div class="vx">${d.cmt}</div><div class="vn">${esc(d.name)}</div><div class="vs">${d.score} Punkte</div>${isLast?'<button class="vb" onclick="location.reload()">🔄 Neues Spiel</button>':''}</div>`;
+  document.getElementById('victoryOv').innerHTML=`<div class="vc"><div class="vp">${d.pl}</div><div class="vx">${d.cmt}</div><div class="vn">${esc(d.name)}</div><div class="vs">${d.score} Punkte</div>${isLast?'<button class="vb" onclick="newGame()">🔄 Neues Spiel</button>':''}</div>`;
 }
 
 
@@ -773,6 +782,16 @@ function dismissSplash(){
   setTimeout(()=>{sp.style.display='none';},700);
 }
 setTimeout(()=>dismissSplash(), 2500); // auto-dismiss after 2.5s (total ~3s with fade)
+
+// NEUES SPIEL: proper room cleanup
+window.newGame=async function(){
+  // Host: send resetSig → listener removes room → all reload
+  if(typeof MP!=='undefined'&&MP.on&&MP.host&&MP._ref){
+    try{await MP._ref.child('resetSig').set(Date.now());}catch(e){}
+    return; // listener handles reload
+  }
+  location.reload(); // solo or non-host
+};
 
 // FIREBASE MULTIPLAYER
 (function(){
