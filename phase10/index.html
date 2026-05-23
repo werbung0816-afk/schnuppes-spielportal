@@ -1354,7 +1354,26 @@ function renderLobby(){
 
 function renderAll(){
   if (!GS) return;
-  if (GS.status === 'lobby'){ showScreen('waiting'); renderLobby(); return; }
+
+  // Check if this browser session is an active player
+  const amIPlaying = GS.players?.some(p => p.id === myId);
+
+  if (GS.status === 'lobby'){
+    if (amIPlaying){ showScreen('waiting'); renderLobby(); }
+    else showScreen('setup');
+    return;
+  }
+
+  // Game is running but we're not in it → offer to rejoin or reset
+  if (!amIPlaying){
+    showScreen('setup');
+    document.getElementById('fb-note').style.display = 'block';
+    document.getElementById('fb-note').innerHTML =
+      '⚠️ Spiel läuft bereits (kein aktiver Spieler in dieser Session).<br>' +
+      '<button class="btn btn-danger btn-sm" style="margin-top:8px" onclick="resetRoom()">⟳ Raum zurücksetzen</button>';
+    return;
+  }
+
   if (GS.status === 'gameOver'){
     showScreen('game');
     renderGameScreen();
