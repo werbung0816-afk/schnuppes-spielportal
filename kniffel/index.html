@@ -126,6 +126,18 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 .vs{font-size:clamp(13px,2vw,20px);color:#ff9ef0;margin-bottom:12px}
 .vx{font-size:clamp(12px,1.8vw,17px);margin-bottom:16px;opacity:.88}
 .vb{padding:11px 26px;border:none;border-radius:14px;font-size:clamp(12px,1.7vw,15px);font-weight:900;color:white;cursor:pointer;background:linear-gradient(90deg,#8f5fff,#ff4fd8);font-family:'Outfit',sans-serif}
+#vicZone{background:linear-gradient(160deg,#0d0821dd,#180e32dd);border-radius:18px;border:1px solid rgba(139,92,246,.35);box-shadow:0 0 32px rgba(139,92,246,.22),0 0 60px rgba(255,79,216,.08);padding:clamp(12px,2vw,20px);text-align:center;animation:splashFadeIn .6s ease-out}
+#vicZone .vp{font-size:clamp(18px,3.5vw,30px);font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:3px}
+#vicZone .vx{font-size:clamp(13px,2.2vw,20px);font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+#vicZone .vn{font-size:clamp(14px,2.5vw,22px);font-weight:700;color:#fff;margin-bottom:1px}
+#vicZone .vs{font-size:clamp(11px,1.8vw,16px);color:#ff9ef0;margin-bottom:10px}
+.vstab{width:100%;border-collapse:collapse;margin:0 0 16px;font-family:'Outfit',sans-serif}
+.vstab tr{border-bottom:1px solid rgba(255,255,255,.08)}
+.vstab td{padding:7px 10px;font-size:clamp(11px,1.6vw,15px);color:#fff;text-align:left}
+.vstab td:first-child{font-size:clamp(14px,2vw,20px);width:32px}
+.vstab td:last-child{text-align:right;font-weight:900;background:linear-gradient(90deg,#53f6ff,#8f5fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.vstab tr:first-child td{font-size:clamp(12px,1.8vw,16px);font-weight:700}
+.vtitle{font-size:clamp(10px,1.3vw,13px);letter-spacing:2px;color:rgba(255,255,255,.45);margin-bottom:8px;text-transform:uppercase}
 @keyframes cFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(600deg);opacity:0}}
 .cpc{position:fixed;top:-10px;z-index:99800;pointer-events:none;animation:cFall linear forwards}
 #mpOv{position:fixed;inset:0;background:rgba(5,2,20,.97);backdrop-filter:blur(14px);z-index:88888;display:flex;align-items:center;justify-content:center}
@@ -218,6 +230,7 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
       <button class="btn btn-roll" id="rollBtn" onclick="doRoll()">🎲 Würfeln</button>
     </div>
     <div class="status-bar" id="SB">Lade…</div>
+    <div id="vicZone" style="display:none"></div>
     <div class="sheet-wrap" id="SW"></div>
     <div id="bottomBtns" style="margin-top:8px;display:flex;flex-direction:column;gap:5px">
       <div style="display:flex;gap:5px">
@@ -728,7 +741,17 @@ function bldBonus(vis){
 function trigVic(){
   if(MP.on&&!MP.host)return;
   const sorted=activeP().sort((a,b)=>gTot(b.sc)-gTot(a.sc));
-  _bldVic(sorted);document.getElementById('victoryTestBtn').click();
+  _bldVic(sorted);
+  // Hide dice/button area, show inline victory
+  const da=document.querySelector('.dice-area');if(da)da.style.display='none';
+  const rb=document.getElementById('rollBtn');if(rb)rb.style.display='none';
+  const rd=document.getElementById('rollDots');if(rd)rd.style.display='none';
+  const sb=document.getElementById('SB');if(sb){sb.textContent='🏆 Spiel beendet!';}
+  const vz=document.getElementById('vicZone');
+  if(vz)vz.style.display='block';
+  let st=0;_rendVicInline(st);
+  clearInterval(_vicT);
+  _vicT=setInterval(()=>{st++;if(st>=_vicSeq.length){clearInterval(_vicT);return;}_rendVicInline(st);},2800);
 }
 let _vicSeq=[],_vicT=null;
 const _medals=[
@@ -761,15 +784,27 @@ window.addEventListener('DOMContentLoaded',()=>{
     }
   },4000);
 });
-function _rendVic(idx){
+function _rendVicInline(idx){
   const d=_vicSeq[idx];if(!d)return;
   launchConfetti(d.cn);
-  // Extra burst for 1st place
   if(idx===_vicSeq.length-1){setTimeout(()=>launchConfetti(300),700);setTimeout(()=>launchConfetti(200),1400);}
   try{appAudio.pause();appAudio.currentTime=0;appAudio.play().catch(()=>{});}catch(e){}
   const isLast=idx===_vicSeq.length-1;
-  document.getElementById('victoryOv').innerHTML=`<div class="vc"><div class="vp">${d.pl}</div><div class="vx">${d.cmt}</div><div class="vn">${esc(d.name)}</div><div class="vs">${d.score} Punkte</div>${isLast?'<button class="vb" onclick="newGame()">🔄 Neues Spiel</button>':''}</div>`;
+  const medals=['👑','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣'];
+  const sorted=[..._vicSeq].reverse();
+  const tabRows=sorted.map((s,i)=>`<tr><td>${medals[i]||String(i+1)+'.'}</td><td>${esc(s.name)}</td><td>${s.score}</td></tr>`).join('');
+  const vz=document.getElementById('vicZone');if(!vz)return;
+  vz.innerHTML=`
+    <div class="vp">${d.pl}</div>
+    <div class="vx">${d.cmt}</div>
+    <div class="vn">${esc(d.name)}</div>
+    <div class="vs">${d.score} Punkte</div>
+    <div class="vtitle" style="margin-top:4px">Endstand</div>
+    <table class="vstab">${tabRows}</table>
+    ${isLast?'<button class="vb" onclick="newGame()" style="margin-top:6px">🔄 Neues Spiel</button>':''}
+  `;
 }
+function _rendVic(idx){_rendVicInline(idx);}
 
 
 
@@ -785,12 +820,16 @@ setTimeout(()=>dismissSplash(), 2500); // auto-dismiss after 2.5s (total ~3s wit
 
 // NEUES SPIEL: proper room cleanup
 window.newGame=async function(){
-  // Host: send resetSig → listener removes room → all reload
+  // Restore game UI (in case user clicks before full reload)
+  const da=document.querySelector('.dice-area');if(da)da.style.display='';
+  const rb=document.getElementById('rollBtn');if(rb)rb.style.display='';
+  const rd=document.getElementById('rollDots');if(rd)rd.style.display='';
+  const vz=document.getElementById('vicZone');if(vz){vz.style.display='none';vz.innerHTML='';}
   if(typeof MP!=='undefined'&&MP.on&&MP.host&&MP._ref){
     try{await MP._ref.child('resetSig').set(Date.now());}catch(e){}
-    return; // listener handles reload
+    return;
   }
-  location.reload(); // solo or non-host
+  location.reload();
 };
 
 // FIREBASE MULTIPLAYER
@@ -850,7 +889,7 @@ function _hydrate(s){
   if(mine){ss('⭐ Du bist dran ✦ — Jetzt würfeln!');checkSignal(s.ts);}
   else if(!isAI)ss('⏳ '+esc(players[cp]?.name||'?')+' ist am Zug…');
   if(s.ovl&&s.ovl.name){const age=Date.now()-(s.ts||0);if(age<3500)setTimeout(()=>showTurnOv(s.ovl.name,s.ovl.comment||'',s.ovl.scored||null),80);}
-  if(s.go&&!go){go=T;setTimeout(()=>{_bldVic(activeP().sort((a,b)=>gTot(b.sc)-gTot(a.sc)));document.getElementById('victoryTestBtn').click();},600);return;}
+  if(s.go&&!go){go=T;setTimeout(()=>{_bldVic(activeP().sort((a,b)=>gTot(b.sc)-gTot(a.sc)));const da=document.querySelector('.dice-area');if(da)da.style.display='none';const rb=document.getElementById('rollBtn');if(rb)rb.style.display='none';const rd=document.getElementById('rollDots');if(rd)rd.style.display='none';const vz=document.getElementById('vicZone');if(vz)vz.style.display='block';let st=0;_rendVicInline(st);clearInterval(_vicT);_vicT=setInterval(()=>{st++;if(st>=_vicSeq.length){clearInterval(_vicT);return;}_rendVicInline(st);},2800);},600);return;}
   if(MP.host&&isAI&&!aiBusy)setTimeout(()=>{if(players[cp]?.isAI&&!players[cp]?.left&&!aiBusy)aiTurn();},900);
   // Set onDisconnect for this player's left flag (ensures tab-close marks player as left)
   if(MP.on&&MP.myIdx>=0&&!window._dcSet){
