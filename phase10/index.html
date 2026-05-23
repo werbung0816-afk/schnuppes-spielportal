@@ -337,17 +337,13 @@ body::before{
 .res-row:last-child{border-bottom:none}
 .res-plus{color:#4ade80;font-weight:700}
 .res-minus{color:#f87171;font-weight:700}
-/* Sort buttons */
 .sort-btn{padding:3px 9px;font-size:11px;border-radius:6px;border:1px solid var(--gb);background:transparent;color:var(--dim);cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;transition:all var(--t)}
 .sort-btn.active,.sort-btn:hover{background:rgba(83,246,255,.15);border-color:var(--c);color:var(--c)}
-/* Schnelle-10 score badge */
-.schnell-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);font-size:11px;color:gold;font-weight:700}
-/* Reachable board fields */
-.bf.reachable{border:2px solid rgba(83,246,255,.9)!important;cursor:pointer;animation:rPulse 1s infinite alternate}
-.bf.reachable-pasch{border:2px solid rgba(255,79,216,.9)!important;cursor:pointer;animation:rPulseP 1s infinite alternate}
-@keyframes rPulse{from{box-shadow:0 0 7px rgba(83,246,255,.35)}to{box-shadow:0 0 18px rgba(83,246,255,.85)}}
-@keyframes rPulseP{from{box-shadow:0 0 7px rgba(255,79,216,.35)}to{box-shadow:0 0 18px rgba(255,79,216,.85)}}
-.bf.reachable .bf-lbl,.bf.reachable-pasch .bf-lbl{display:block}
+.bf.reach{border:2px solid rgba(83,246,255,.9)!important;cursor:pointer;animation:rP 1s infinite alternate}
+.bf.reach-p{border:2px solid rgba(255,79,216,.9)!important;cursor:pointer;animation:rPP 1s infinite alternate}
+@keyframes rP{from{box-shadow:0 0 6px rgba(83,246,255,.3)}to{box-shadow:0 0 18px rgba(83,246,255,.8)}}
+@keyframes rPP{from{box-shadow:0 0 6px rgba(255,79,216,.3)}to{box-shadow:0 0 18px rgba(255,79,216,.8)}}
+.bf.reach .bf-lbl,.bf.reach-p .bf-lbl{display:block}
 </style>
 </head>
 <body>
@@ -358,7 +354,6 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:var(--dim);opacity:.6">v2.4</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -376,21 +371,14 @@ body::before{
   <div class="wait-name" id="wait-myname">–</div>
   <div class="dots"><span></span><span></span><span></span></div>
   <div id="wait-list" class="wait-players"></div>
-  <div id="mode-toggle" style="display:none;flex-direction:column;align-items:center;gap:8px">
-    <div style="font-size:12px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.06em">Spielmodus</div>
-    <div style="display:flex;gap:0;border-radius:var(--rs);overflow:hidden;border:1px solid var(--gb)">
-      <button id="btn-mode-classic" class="btn btn-prime btn-sm" style="border-radius:0" onclick="setMode('classic')">🎯 Classic</button>
-      <button id="btn-mode-schnell" class="btn btn-ghost btn-sm" style="border-radius:0" onclick="setMode('schnell')">⚡ Schnelle 10</button>
-    </div>
-    <div id="mode-desc" style="font-size:11px;color:var(--dim);text-align:center;max-width:260px">🎯 Classic: Phasen 1–10 der Reihe nach absolvieren</div>
-  </div>
+  <div id="mode-row" style="display:none;flex-direction:column;align-items:center;gap:8px"><div style="display:flex;gap:0;border-radius:var(--rs);overflow:hidden;border:1px solid var(--gb)"><button id="bmc" class="btn btn-prime btn-sm" style="border-radius:0" onclick="setMode('classic')">🎯 Classic</button><button id="bms" class="btn btn-ghost btn-sm" style="border-radius:0" onclick="setMode('schnell')">⚡ Schnelle 10</button></div><div id="mode-desc" style="font-size:11px;color:var(--dim);text-align:center;max-width:260px">🎯 Classic: Phasen 1-10 der Reihe nach</div></div>
   <div id="host-start" style="display:none">
     <button class="btn btn-prime" onclick="startGame()" style="margin-top:4px">▶ Spiel starten</button>
   </div>
   <div class="wait-divider"></div>
   <button class="btn btn-hot" onclick="startWithAI()">🤖 Gegen KI starten</button>
   <button class="btn btn-ghost" onclick="leaveGame()">← Verlassen</button>
-  <div style="margin-top:8px">
+  <div id="host-reset-wait" style="display:none;margin-top:8px">
     <button class="btn btn-danger btn-sm" onclick="resetRoom()">⟳ Raum zurücksetzen</button>
   </div>
 </div>
@@ -399,13 +387,12 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div>
-    <div style="font-size:10px;color:var(--dim);font-weight:600;letter-spacing:.05em">v2.4</div>
+    <div class="game-logo">🎲 10er Phase <span style="font-size:10px;opacity:.5;font-weight:400">v3.0</span></div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
       <button class="btn btn-ghost btn-sm" onclick="resync()" title="Neu synchronisieren">⟳ Sync</button>
-      <button class="btn btn-danger btn-sm" onclick="resetRoom()" title="Raum löschen und neu starten">⟳ Reset</button>
+      <button class="btn btn-danger btn-sm" onclick="resetRoom()">⟳ Reset</button>
     </div>
   </div>
 
@@ -462,15 +449,7 @@ body::before{
   <div class="hand-area">
     <div class="hand-hdr">
       <div class="hand-lbl">✋ Deine Hand</div>
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        <div id="hand-info" style="font-size:12px;color:var(--dim)"></div>
-        <div style="display:flex;gap:2px" oncontextmenu="return false">
-          <button class="sort-btn active" id="sort-def" onclick="setHandSort('default')" title="Originalreihenfolge">Standard</button>
-          <button class="sort-btn" id="sort-val" onclick="setHandSort('value')"  title="Nach Wert sortieren">1→12</button>
-          <button class="sort-btn" id="sort-col" onclick="setHandSort('color')"  title="Nach Farbe sortieren">Farbe</button>
-          <button class="sort-btn" id="sort-man" onclick="setHandSort('manual')" title="Manuell mit ← → verschieben">✋ Manuell</button>
-        </div>
-      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><div id="hand-info" style="font-size:12px;color:var(--dim)"></div><div style="display:flex;gap:2px" oncontextmenu="return false"><button id="sb-def" class="sort-btn active" onclick="setHS('default')">Standard</button><button id="sb-val" class="sort-btn" onclick="setHS('value')">1→12</button><button id="sb-col" class="sort-btn" onclick="setHS('color')">Farbe</button><button id="sb-man" class="sort-btn" onclick="setHS('manual')">✋</button></div></div>
     </div>
     <div id="hand-cards" class="hand-cards"></div>
     <div id="hand-acts" class="hand-actions"></div>
@@ -619,10 +598,7 @@ let isHost  = false;
 let selectedCardIds = new Set();
 let addCardMode = false;
 let addingCardId = null;
-let confAnim = null;
-let handSort    = 'default'; // 'default'|'value'|'color'|'manual'
-let pendingMode = 'classic'; // mode selected in lobby before game starts
-let handOrder   = [];        // card IDs in manual order (local only)
+let confAnim=null;let _hs='default';let _ho=[];let _mode='classic';
 
 /* ================================================================
    FIREBASE INIT
@@ -656,10 +632,8 @@ function updateHostStatus(){
   if (!GS) return;
   isHost = (GS.hostId === myId);
   document.getElementById('host-start').style.display    = isHost && GS.status === 'lobby' ? 'block' : 'none';
-  // wait reset always visible
-  // Reset always visible (family game)
-  const mt = document.getElementById('mode-toggle');
-  if(mt) mt.style.display = isHost && GS.status==='lobby' ? 'flex' : 'none';
+  document.getElementById('host-reset-wait').style.display = isHost ? 'block' : 'none';
+  const mr=document.getElementById('mode-row');if(mr)mr.style.display=isHost&&GS.status==='lobby'?'flex':'none';
 }
 
 function resync(){ db && db.ref(ROOM + '/gs').once('value', snap => { if(snap.val()?.gs) { GS = snap.val().gs; renderAll(); } }); }
@@ -742,39 +716,19 @@ function resetRoom(){
   if (!db) return;
   db.ref(ROOM).remove().then(() => { GS = null; showScreen('setup'); stopHeartbeat(); });
 }
-
 function newGame(){
-  stopConfetti();
-  document.getElementById('win-overlay').classList.remove('show');
-  if (!isHost){ showToast('Nur der Host kann ein neues Spiel starten!'); showScreen('waiting'); return; }
-  if (!GS){ showScreen('setup'); return; }
-  GS.status = 'lobby';
-  GS.round = 0;
-  GS.table = {};
-  GS.deck = [];
-  GS.discardPile = [];
-  GS.winner = null;
-  GS.turnPhase = 'roll';
-  GS.extraTurn = false;
-  GS.players.forEach(p => {
-    p.position = 0; p.phaseIndicator = 0;
-    p.score = 0; p.schnellScore = 0;
-    p.phaseComplete = false; p.hand = [];
-  });
-  writeState(GS);
-  showScreen('waiting');
+  stopConfetti();document.getElementById('win-overlay').classList.remove('show');
+  if(!GS){showScreen('setup');return;}
+  GS.status='lobby';GS.round=0;GS.table={};GS.deck=[];GS.discardPile=[];GS.winner=null;GS.turnPhase='roll';GS.extraTurn=false;
+  GS.players.forEach(p=>{p.position=0;p.phaseIndicator=0;p.score=0;p.schnellScore=0;p.phaseComplete=false;p.hand=[];});
+  writeState(GS);showScreen('waiting');
 }
-
-function setMode(mode){
-  pendingMode = mode;
-  const btnC = document.getElementById('btn-mode-classic');
-  const btnS = document.getElementById('btn-mode-schnell');
-  if(btnC){ btnC.className='btn btn-sm '+(mode==='classic'?'btn-prime':'btn-ghost'); btnC.style.borderRadius='0'; }
-  if(btnS){ btnS.className='btn btn-sm '+(mode==='schnell'?'btn-prime':'btn-ghost'); btnS.style.borderRadius='0'; }
-  const desc = document.getElementById('mode-desc');
-  if(desc) desc.textContent = mode==='schnell'
-    ? '⚡ 10 Runden: Alle versuchen in Runde N die Phase N. +1 Punkt bei Erfolg.'
-    : '🎯 Classic: Phasen 1–10 der Reihe nach absolvieren.';
+function setMode(m){
+  _mode=m;
+  const bc=document.getElementById('bmc'),bs=document.getElementById('bms');
+  if(bc){bc.className='btn btn-sm '+(m==='classic'?'btn-prime':'btn-ghost');bc.style.borderRadius='0';}
+  if(bs){bs.className='btn btn-sm '+(m==='schnell'?'btn-prime':'btn-ghost');bs.style.borderRadius='0';}
+  const d=document.getElementById('mode-desc');if(d)d.textContent=m==='schnell'?'⚡ Runde N = Phase N, +1 Pkt bei Erfolg':'🎯 Classic: Phasen 1-10 der Reihe nach';
 }
 
 let heartbeatInt = null;
@@ -813,7 +767,7 @@ function startWithAI(){
 function startGame(){
   if (!isHost || !GS) return;
   if (GS.players.length < 1) { showToast('Mindestens 1 Spieler benötigt!'); return; }
-  GS.mode = pendingMode;
+  GS.mode=_mode;
   startRound(GS);
   writeState(GS);
 }
@@ -855,11 +809,11 @@ function startRound(state){
   state.table = {};
 
   const deck = createDeck();
+  // Deal 10 cards each
   for (const p of state.players){
-    p.hand = deck.splice(0,10);
-    p.phaseComplete = false;
-    // Schnelle 10: force all players to attempt phase = round-1
-    if (state.mode === 'schnell') p.phaseIndicator = Math.min(9, state.round - 1);
+    p.hand=deck.splice(0,10);
+    p.phaseComplete=false;
+    if(state.mode==='schnell')p.phaseIndicator=Math.min(9,state.round-1);
   }
   // Initial discard: 1 card face up
   state.discardPile = [deck.splice(0,1)[0]];
@@ -868,41 +822,34 @@ function startRound(state){
 }
 
 function endRound(state, enderId){
-  if (state.mode === 'schnell'){
-    // Schnelle 10: +1 Punkt bei Erfolg, keine Minuspunkte
-    for (const p of state.players){
-      if (p.phaseComplete) p.schnellScore = (p.schnellScore||0) + 1;
-      p.hand = [];
-    }
-    if (state.round >= 10){
-      const sorted = [...state.players].sort((a,b)=>(b.schnellScore||0)-(a.schnellScore||0));
-      const w = sorted[0];
-      state.winner = {name:w.name, score:w.schnellScore||0, id:w.id, isSchnell:true};
-      state.status = 'gameOver';
-    } else {
-      state.status = 'roundEnd';
-    }
+  if(state.mode==='schnell'){
+    for(const p of state.players){if(p.phaseComplete)p.schnellScore=(p.schnellScore||0)+1;p.hand=[];}
+    if(state.round>=10){const s=[...state.players].sort((a,b)=>(b.schnellScore||0)-(a.schnellScore||0));const w=s[0];state.winner={name:w.name,score:w.schnellScore||0,id:w.id,isSchnell:true};state.status='gameOver';}
+    else state.status='roundEnd';
     return;
   }
-  // Classic
   const winner = [];
   for (const p of state.players){
     if (p.phaseComplete){
       const steps = (p.id === enderId) ? 2 : 1;
       p.phaseIndicator = Math.min(10, p.phaseIndicator + steps);
-      p.hand = [];
+      p.hand = []; // discard remaining
       if (p.phaseIndicator >= 10) winner.push(p);
     } else {
+      // Penalty for remaining cards
       const penalty = p.hand.reduce((s,c) => s + cardPenalty(c), 0);
       p.score = (p.score||0) + penalty;
     }
   }
+
   if (winner.length > 0){
+    // Find winner with lowest score
     winner.sort((a,b) => a.score - b.score);
     const w = winner[0];
     state.winner = {name:w.name, score:w.score, id:w.id};
     state.status = 'gameOver';
   } else {
+    // Start new round
     state.status = 'roundEnd';
   }
 }
@@ -918,7 +865,6 @@ function myTurnIdx(){ return GS ? GS.players.findIndex(p => p.id === myId) : -1;
 function currentPlayer(){ return GS ? GS.players[GS.currentPlayerIdx] : null; }
 function isMyTurn(){ return currentPlayer()?.id === myId; }
 function iAmActive(){ return isMyTurn() || (isHost && currentPlayer()?.isAI); }
-function isSchnell(){ return GS?.mode === 'schnell'; }
 
 function doRoll(){
   if (!isMyTurn() && !(isHost && currentPlayer()?.isAI)) return;
@@ -1356,26 +1302,10 @@ function renderLobby(){
 
 function renderAll(){
   if (!GS) return;
-
-  // Check if this browser session is an active player
-  const amIPlaying = GS.players?.some(p => p.id === myId);
-
-  if (GS.status === 'lobby'){
-    if (amIPlaying){ showScreen('waiting'); renderLobby(); }
-    else showScreen('setup');
-    return;
-  }
-
-  // Game is running but we're not in it → offer to rejoin or reset
-  if (!amIPlaying){
-    showScreen('setup');
-    document.getElementById('fb-note').style.display = 'block';
-    document.getElementById('fb-note').innerHTML =
-      '⚠️ Spiel läuft bereits (kein aktiver Spieler in dieser Session).<br>' +
-      '<button class="btn btn-danger btn-sm" style="margin-top:8px" onclick="resetRoom()">⟳ Raum zurücksetzen</button>';
-    return;
-  }
-
+  const amI=GS.players?.some(p=>p.id===myId);
+  if(GS.status==='lobby'){if(amI){showScreen('waiting');renderLobby();}else showScreen('setup');return;}
+  if(!amI){showScreen('setup');return;}
+  if (GS.status === 'lobby'){ showScreen('waiting'); renderLobby(); return; }
   if (GS.status === 'gameOver'){
     showScreen('game');
     renderGameScreen();
@@ -1407,7 +1337,7 @@ function renderHeader(){
   const cp = currentPlayer();
   const bar = document.getElementById('status-bar');
   const rb  = document.getElementById('round-badge');
-  rb.textContent = isSchnell() ? `Runde ${GS.round}/10 · ⚡ Schnelle 10` : `Runde ${GS.round}`;
+  rb.textContent=GS.mode==='schnell'?`Runde ${GS.round}/10 ⚡`:`Runde ${GS.round}`;
   if (!cp){ bar.innerHTML=''; return; }
   const isMe = cp.id === myId;
   const activeText = isMe
@@ -1420,22 +1350,13 @@ function renderHeader(){
   document.getElementById('host-reset-game').style.display = isHost ? 'inline':'none';
 }
 
-function getReachableMap(){
-  const map = new Map();
-  if (!GS || GS.turnPhase !== 'choose_die' || !iAmActive()) return map;
-  const d = GS.dice;
-  if (GS.isPasch){
-    const pA = aiSimPos(d[0]), pB = aiSimPos(d[0]*2);
-    map.set(pA, {idx:0, pasch:false});
-    if (pB !== pA) map.set(pB, {idx:2, pasch:true});
-  } else {
-    const pA = aiSimPos(d[0]), pB = aiSimPos(d[1]);
-    map.set(pA, {idx:0, pasch:false});
-    if (pB !== pA) map.set(pB, {idx:1, pasch:false});
-  }
-  return map;
+function getReach(){
+  try{if(!GS||GS.turnPhase!=='choose_die'||!iAmActive())return new Map();
+    const d=GS.dice,m=new Map();
+    if(GS.isPasch){const a=aiSimPos(d[0]),b=aiSimPos(d[0]*2);m.set(a,{i:0,p:false});if(b!==a)m.set(b,{i:2,p:true});}
+    else{const a=aiSimPos(d[0]),b=aiSimPos(d[1]);m.set(a,{i:0,p:false});if(b!==a)m.set(b,{i:1,p:false});}
+    return m;}catch(e){return new Map();}
 }
-
 function renderBoard(){
   const track = document.getElementById('board-track');
   if (!track) return;
@@ -1444,27 +1365,18 @@ function renderBoard(){
     if (!positions[p.position]) positions[p.position] = [];
     positions[p.position].push(i);
   });
-  const reachable = getReachableMap();
+  const reach=getReach();
   track.innerHTML = BOARD.map((f,i) => {
     const type = f.t==='action'?'f-action':f.t==='phase'?'f-phase':f.t==='goal'?'f-goal':'f-start';
-    const ri = reachable.get(i);
-    const rCls = ri ? (ri.pasch ? ' reachable-pasch' : ' reachable') : '';
-    const rClick = ri ? `onclick="chooseDie(${ri.idx})"` : '';
-    const toks = (positions[i]||[]).map(pi =>
+    const ri=reach.get(i);const rc=ri?(ri.p?' reach-p':' reach'):'';const rk=ri?`onclick="chooseDie(${ri.i})"`:\'\';    const toks = (positions[i]||[]).map(pi =>
       `<div class="tok" style="background:${TOKEN_COLORS[pi%4]}"></div>`
     ).join('');
-    return `<div class="bf ${type}${rCls}" title="${f.lbl||''}" ${rClick}>
+    return `<div class="bf ${type}${rc}" title="${f.lbl||\'\'}" ${rk}>
       <div class="bf-ic">${f.ic||''}</div>
       <div class="bf-lbl">${f.lbl||''}</div>
       <div class="bf-tokens">${toks}</div>
     </div>`;
   }).join('');
-  // Scroll to first reachable field
-  if (reachable.size > 0){
-    const fp = [...reachable.keys()].sort((a,b)=>a-b)[0];
-    const sc = document.querySelector('.board-scroll');
-    if (sc) sc.scrollLeft = Math.max(0, fp*42 - sc.clientWidth/2);
-  }
 }
 
 function renderPanels(){
@@ -1510,7 +1422,7 @@ function playerPanelHTML(p){
     </div>
     <div class="p-phase-badge">Phase ${phI+1}${phI<10?': '+PHASES[phI].short:'🏆'}</div>
     <div class="phase-track">${dots}</div>
-    <div class="${isSchnell()?'schnell-badge':'p-score'}">${isSchnell()?'⭐ '+(p.schnellScore||0)+' Pkt':(p.score>0?'-'+p.score+' Pkt':'0 Pkt')}</div>
+    <div class="p-score">${p.score > 0 ? '-'+p.score+' Pkt' : '0 Pkt'}</div>
     <div class="p-pos">📍 Feld ${p.position} · ${BOARD[p.position]?.lbl||''}</div>
     <div class="p-cards">🃏 ${p.hand?.length||0} Karten ${cardBacks}</div>
     ${p.phaseComplete?`<div style="font-size:11px;color:#4ade80">✓ Phase ausgelegt</div>`:''}
@@ -1586,10 +1498,8 @@ function renderTable(){
       })();
       html += `<div class="tbl-group${canAdd?' can-add':''}" onclick="onTableGroupClick('${pid}',${gi})" title="${g.type}">
         <div class="tbl-gtype">${g.type==='set'?'Set':g.type==='run'?'Folge':'Farbe'}</div>`;
-      const dispCards = g.type==='run'
-        ? [...(g.cards||[])].sort((a,b)=>a.j?1:b.j?-1:a.v-b.v)
-        : (g.cards||[]);
-      dispCards.forEach(c => {
+      const dc=g.type==="run"?[...(g.cards||[])].sort((a,b)=>a.j?1:b.j?-1:a.v-b.v):(g.cards||[]);
+      dc.forEach(c => {
         html += `<div class="card-mini ${c.j?'card-joker':COLOR_CSS[c.col]||''}">${c.j?'⭐':c.v}</div>`;
       });
       html += '</div>';
@@ -1597,44 +1507,6 @@ function renderTable(){
     html += '</div></div>';
   }
   tc.innerHTML = html || '<div style="color:var(--dim);font-size:13px">Noch keine Phasen ausgelegt</div>';
-}
-
-function getSortedHand(hand){
-  if (!hand||!hand.length) return [];
-  if (handSort==='value')  return [...hand].sort((a,b)=>a.j?99:b.j?-99:a.v-b.v);
-  if (handSort==='color'){
-    const O={rot:0,blau:1,gruen:2,gelb:3,joker:4};
-    return [...hand].sort((a,b)=>(O[a.col]||0)-(O[b.col]||0)||a.v-b.v);
-  }
-  if (handSort==='manual'){
-    const ids = new Set(hand.map(c=>c.id));
-    handOrder = handOrder.filter(id=>ids.has(id));
-    hand.forEach(c=>{ if(!handOrder.includes(c.id)) handOrder.push(c.id); });
-    return handOrder.map(id=>hand.find(c=>c.id===id)).filter(Boolean);
-  }
-  return hand;
-}
-
-function setHandSort(mode){
-  handSort = mode;
-  if (mode==='manual'){
-    const me = GS?.players?.find(p=>p.id===myId);
-    if (me) handOrder = (me.hand||[]).map(c=>c.id);
-  }
-  ['def','val','col','man'].forEach(k=>{
-    const el=document.getElementById('sort-'+k);
-    if(el) el.className='sort-btn'+({'default':'def','value':'val','color':'col','manual':'man'}[mode]===k?' active':'');
-  });
-  renderHand();
-}
-
-function moveCardInHand(cardId, dir){
-  if (handSort!=='manual') return;
-  const i = handOrder.indexOf(cardId);
-  if (i<0) return;
-  const j = Math.max(0,Math.min(handOrder.length-1, i+dir));
-  handOrder.splice(i,1); handOrder.splice(j,0,cardId);
-  renderHand();
 }
 
 function renderHand(){
@@ -1645,27 +1517,16 @@ function renderHand(){
   if (!me){ hc.innerHTML=''; return; }
   const phI = me.phaseIndicator;
   const need = phI < 10 ? PHASES[phI].parts.reduce((s,p)=>s+p.n,0) : 0;
-  const schnellHint = isSchnell() ? ' · ⚡ Schnelle 10' : '';
-  if (hi) hi.textContent = !me.phaseComplete && phI<10
-    ? `Phase ${phI+1}: ${PHASES[phI].desc} (${need} Karten)${schnellHint}`
-    : me.phaseComplete?'✓ Phase ausgelegt':'';
+  if (hi) hi.textContent = !me.phaseComplete && phI<10 ? `Phase ${phI+1}: ${PHASES[phI].desc} (${need} Karten)` : me.phaseComplete?'✓ Phase ausgelegt':'';
 
-  const sorted = getSortedHand(me.hand);
-  const isMan = handSort==='manual';
+  function sH(h){if(!h||!h.length)return h||[];if(_hs==='value')return[...h].sort((a,b)=>a.j?99:b.j?-99:a.v-b.v);if(_hs==='color'){const O={rot:0,blau:1,gruen:2,gelb:3,joker:4};return[...h].sort((a,b)=>(O[a.col]||0)-(O[b.col]||0)||a.v-b.v);}if(_hs==='manual'){const ids=new Set(h.map(c=>c.id));_ho=_ho.filter(id=>ids.has(id));h.forEach(c=>{if(!_ho.includes(c.id))_ho.push(c.id);});return _ho.map(id=>h.find(c=>c.id===id)).filter(Boolean);}return h;}
+  if(!window.setHS)window.setHS=function(m){_hs=m;if(m==='manual'){const me2=GS?.players?.find(p=>p.id===myId);if(me2)_ho=(me2.hand||[]).map(c=>c.id);}['def','val','col','man'].forEach(k=>{const el=document.getElementById('sb-'+k);if(el)el.className='sort-btn'+({'default':'def','value':'val','color':'col','manual':'man'}[m]===k?' active':'');});renderHand();};
+  if(!window.moveCard)window.moveCard=function(id,dir){if(_hs!=='manual')return;const idx=_ho.indexOf(id);if(idx<0)return;const j=Math.max(0,Math.min(_ho.length-1,idx+dir));_ho.splice(idx,1);_ho.splice(j,0,id);renderHand();};
+  const sorted=sH(me.hand||[]);
   hc.innerHTML = sorted.map(c => {
-    const sel = selectedCardIds.has(c.id);
-    const adding = addCardMode && c.id===addingCardId;
-    const arrows = isMan && sel
-      ? `<div style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);display:flex;gap:2px;z-index:20">
-           <button class="sort-btn" style="padding:1px 7px;font-size:13px" oncontextmenu="return false" onclick="event.stopPropagation();moveCardInHand(${c.id},-1)">◀</button>
-           <button class="sort-btn" style="padding:1px 7px;font-size:13px" oncontextmenu="return false" onclick="event.stopPropagation();moveCardInHand(${c.id},1)">▶</button>
-         </div>` : '';
-    return `<div style="position:relative;${isMan&&sel?'margin-bottom:26px':''}">
-      <div class="card ${c.j?'card-joker':COLOR_CSS[c.col]||''} ${sel?'sel':''}"
-        onclick="onCardClick(${c.id})" title="${c.j?'Joker':COLOR_LABEL[c.col]+' '+c.v}"
-        style="${adding?'border-color:var(--p);transform:translateY(-12px)':''}">
-        ${c.j?'⭐':c.v}
-      </div>${arrows}</div>`;
+    const sel=selectedCardIds.has(c.id);const adding=addCardMode&&c.id===addingCardId;const isM=_hs==='manual'&&sel;
+    const arr=isM?`<div style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);display:flex;gap:2px;z-index:20"><button class="sort-btn" style="padding:1px 7px" oncontextmenu="return false" onclick="event.stopPropagation();moveCard(${c.id},-1)">◀</button><button class="sort-btn" style="padding:1px 7px" oncontextmenu="return false" onclick="event.stopPropagation();moveCard(${c.id},1)">▶</button></div>`:'';
+    return `<div style="position:relative;${isM?'margin-bottom:26px':''}"><div class="card ${c.j?'card-joker':COLOR_CSS[c.col]||''} ${sel?'sel':''}" onclick="onCardClick(${c.id})" title="${c.j?'Joker':COLOR_LABEL[c.col]+' '+c.v}" style="${adding?'border-color:var(--p);transform:translateY(-12px)':''}">${c.j?'⭐':c.v}</div>${arr}</div>`;
   }).join('');
 }
 
@@ -1785,15 +1646,7 @@ function hideModal(){ document.getElementById('modal').classList.remove('show');
    ROUND END MODAL
    ================================================================ */
 function showRoundSummary(state){
-  const schnell = isSchnell();
   const rows = state.players.map(p=>{
-    if (schnell){
-      return `<div class="res-row">
-        <span>${p.name}</span>
-        <span>${p.phaseComplete?'<span class="res-plus">✓ +1</span>':'<span style="color:var(--dim)">✗ 0</span>'}</span>
-        <span class="schnell-badge">⭐ ${p.schnellScore||0} Pkt</span>
-      </div>`;
-    }
     const pen = p.phaseComplete ? 0 : (p.hand||[]).reduce((s,c)=>s+cardPenalty(c),0);
     return `<div class="res-row">
       <span>${p.name}</span>
@@ -1802,9 +1655,9 @@ function showRoundSummary(state){
       <span style="color:var(--c)">→ Phase ${p.phaseIndicator+1}</span>
     </div>`;
   }).join('');
-  const title = schnell ? `Runde ${state.round}/10 beendet!` : `Runde ${state.round} beendet!`;
   showModal({
-    title, body:'',
+    title:`Runde ${state.round} beendet!`,
+    body:'Auswertung:',
     actions: isHost ? [{label:'Nächste Runde →',cls:'btn-prime',fn:()=>{ hideModal(); nextRound(GS); writeState(GS); }}] : [{label:'Warte auf Host…',cls:'btn-ghost',fn:()=>{}}]
   });
   document.getElementById('modal-body').innerHTML = rows;
@@ -1818,9 +1671,7 @@ function showWin(winner){
   document.getElementById('win-ttl').textContent = '🎉 Gewonnen!';
   document.getElementById('win-name').textContent = winner.name;
   document.getElementById('win-comment').textContent = WIN_COMMENTS[Math.floor(Math.random()*WIN_COMMENTS.length)];
-  const scores = isSchnell()
-    ? GS.players.map(p=>`${p.name}: ${p.schnellScore||0} Pkt`).join(' · ')
-    : GS.players.map(p=>`${p.name}: -${p.score} Pkt`).join(' · ');
+  const scores=GS.mode==='schnell'?GS.players.map(p=>`${p.name}: ${p.schnellScore||0} Pkt`).join(' · '):GS.players.map(p=>`${p.name}: -${p.score} Pkt`).join(' · ');
   document.getElementById('win-scores').textContent = scores;
   overlay.classList.add('show');
   playSound('applause');
