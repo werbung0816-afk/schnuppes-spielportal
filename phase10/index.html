@@ -347,7 +347,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px;letter-spacing:.05em">v3.2</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.3</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -381,11 +381,14 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.2</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.3</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
       <button class="btn btn-ghost btn-sm" onclick="resync()" title="Neu synchronisieren">⟳ Sync</button>
+      <span id="host-reset-game" style="display:none">
+        <button class="btn btn-danger btn-sm" onclick="resetRoom()">Reset</button>
+      </span>
       <button class="btn btn-danger btn-sm" onclick="resetRoom()">⟳ Reset</button>
     </div>
   </div>
@@ -713,15 +716,12 @@ function newGame(){
   stopConfetti();
   document.getElementById('win-overlay').classList.remove('show');
   if (!GS) { showScreen('setup'); return; }
-  GS.status = 'lobby';
-  GS.round = 0; GS.table = {}; GS.deck = []; GS.discardPile = [];
-  GS.winner = null; GS.turnPhase = 'roll'; GS.extraTurn = false;
+  GS.status='lobby'; GS.round=0; GS.table={}; GS.deck=[];
+  GS.discardPile=[]; GS.winner=null; GS.turnPhase='roll'; GS.extraTurn=false;
   GS.players.forEach(function(p){
-    p.position = 0; p.phaseIndicator = 0;
-    p.score = 0; p.phaseComplete = false; p.hand = [];
+    p.position=0; p.phaseIndicator=0; p.score=0; p.phaseComplete=false; p.hand=[];
   });
-  writeState(GS);
-  showScreen('waiting');
+  writeState(GS); showScreen('waiting');
 }
 
 let heartbeatInt = null;
