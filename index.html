@@ -10,44 +10,41 @@
 *{ box-sizing:border-box; margin:0; padding:0; }
 
 :root{
-  --cyan:   #53f6ff;
-  --pink:   #ff4fd8;
-  --lila:   #8f5fff;
-  --green:  #5eff9b;
-  --orange: #ff9b54;
-  --bg1:    #050111;
-  --bg2:    #120523;
-  --panel:  rgba(10,12,38,.85);
-  --border: rgba(255,255,255,.1);
+  --cyan:#53f6ff;
+  --pink:#ff4fd8;
+  --lila:#8f5fff;
+  --green:#5eff9b;
+  --orange:#ff9b54;
+  --bg1:#050111;
+  --bg2:#120523;
+  --panel:rgba(10,12,38,.85);
+  --border:rgba(255,255,255,.1);
 }
 
 body{
   font-family:'Outfit',sans-serif;
   background:
-    radial-gradient(circle at 15% 10%,  rgba(143,95,255,.35), transparent 30%),
-    radial-gradient(circle at 85% 8%,   rgba(255,79,216,.25), transparent 35%),
-    radial-gradient(circle at 50% 90%,  rgba(83,246,255,.12), transparent 40%),
+    radial-gradient(circle at 15% 10%, rgba(143,95,255,.35), transparent 30%),
+    radial-gradient(circle at 85% 8%, rgba(255,79,216,.25), transparent 35%),
+    radial-gradient(circle at 50% 90%, rgba(83,246,255,.12), transparent 40%),
     linear-gradient(180deg,var(--bg1),var(--bg2));
   color:#fff;
   min-height:100vh;
   font-size:16px;
 }
 
-/* ════════════════════════════
-   NOISE OVERLAY
-════════════════════════════ */
 body::before{
   content:'';
-  position:fixed; inset:0;
+  position:fixed;
+  inset:0;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
-  pointer-events:none; z-index:0;
+  pointer-events:none;
+  z-index:0;
 }
 
-/* ════════════════════════════
-   HERO
-════════════════════════════ */
 .hero{
-  position:relative; z-index:1;
+  position:relative;
+  z-index:1;
   text-align:center;
   padding:64px 20px 52px;
 }
@@ -82,17 +79,16 @@ body::before{
 }
 
 .hero-divider{
-  width:120px; height:2px;
+  width:120px;
+  height:2px;
   background:linear-gradient(90deg,transparent,var(--cyan),var(--pink),transparent);
   margin:28px auto 0;
   border-radius:2px;
 }
 
-/* ════════════════════════════
-   GRID
-════════════════════════════ */
 .portal-grid{
-  position:relative; z-index:1;
+  position:relative;
+  z-index:1;
   display:grid;
   grid-template-columns:repeat(auto-fill, minmax(300px,1fr));
   gap:24px;
@@ -102,12 +98,13 @@ body::before{
 }
 
 @media(max-width:480px){
-  .portal-grid{ grid-template-columns:1fr; padding:0 16px 60px; gap:16px; }
+  .portal-grid{
+    grid-template-columns:1fr;
+    padding:0 16px 60px;
+    gap:16px;
+  }
 }
 
-/* ════════════════════════════
-   GAME CARD
-════════════════════════════ */
 .card{
   background:var(--panel);
   border:1px solid var(--border);
@@ -126,7 +123,8 @@ body::before{
 
 .card::before{
   content:'';
-  position:absolute; inset:0;
+  position:absolute;
+  inset:0;
   background:linear-gradient(135deg,rgba(255,255,255,.06) 0%,transparent 60%);
   pointer-events:none;
 }
@@ -136,214 +134,324 @@ body::before{
   border-color:rgba(255,255,255,.22);
 }
 
-/* Glow accent per Spiel */
-.card.glow-cyan:hover  { box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(83,246,255,.2); border-color:rgba(83,246,255,.35); }
-.card.glow-pink:hover  { box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(255,79,216,.2); border-color:rgba(255,79,216,.35); }
-.card.glow-lila:hover  { box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(143,95,255,.2); border-color:rgba(143,95,255,.35); }
-.card.glow-green:hover { box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(94,255,155,.2); border-color:rgba(94,255,155,.35); }
-
-.card.coming-soon{
-  opacity:.55;
-  cursor:default;
-  pointer-events:none;
+.card.glow-cyan:hover{
+  box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(83,246,255,.2);
+  border-color:rgba(83,246,255,.35);
 }
-.card.coming-soon:hover{ transform:none; box-shadow:none; }
 
-/* ── Card: Icon ── */
+.card.glow-pink:hover{
+  box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(255,79,216,.2);
+  border-color:rgba(255,79,216,.35);
+}
+
+.card.glow-lila:hover{
+  box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(143,95,255,.2);
+  border-color:rgba(143,95,255,.35);
+}
+
+.card.glow-green:hover{
+  box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(94,255,155,.2);
+  border-color:rgba(94,255,155,.35);
+}
+
 .card-icon{
   font-size:52px;
   line-height:1;
-  filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));
 }
 
-/* ── Card: Badge row ── */
 .card-badges{
-  display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
 }
+
 .badge{
-  font-size:10px; font-weight:700; letter-spacing:1.5px;
-  text-transform:uppercase; padding:4px 10px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  padding:4px 10px;
   border-radius:20px;
 }
-.badge-online { background:rgba(83,246,255,.12);  color:var(--cyan); border:1px solid rgba(83,246,255,.25); }
-.badge-local  { background:rgba(143,95,255,.12);  color:#c4a0ff;     border:1px solid rgba(143,95,255,.25); }
-.badge-soon   { background:rgba(255,255,255,.06); color:rgba(255,255,255,.35); border:1px solid rgba(255,255,255,.1); }
-.badge-new    { background:rgba(94,255,155,.12);  color:var(--green); border:1px solid rgba(94,255,155,.25); }
-.badge-players{ background:rgba(255,79,216,.1);   color:var(--pink);  border:1px solid rgba(255,79,216,.2); }
 
-/* ── Card: Content ── */
+.badge-online{
+  background:rgba(83,246,255,.12);
+  color:var(--cyan);
+  border:1px solid rgba(83,246,255,.25);
+}
+
+.badge-local{
+  background:rgba(143,95,255,.12);
+  color:#c4a0ff;
+  border:1px solid rgba(143,95,255,.25);
+}
+
+.badge-players{
+  background:rgba(255,79,216,.1);
+  color:var(--pink);
+  border:1px solid rgba(255,79,216,.2);
+}
+
 .card-title{
   font-size:clamp(22px,4vw,28px);
   font-weight:900;
   line-height:1.05;
   letter-spacing:-.5px;
 }
-.card.glow-cyan  .card-title{ background:linear-gradient(90deg,var(--cyan),var(--lila));  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.card.glow-pink  .card-title{ background:linear-gradient(90deg,var(--pink),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.card.glow-lila  .card-title{ background:linear-gradient(90deg,var(--lila),var(--cyan));  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.card.glow-green .card-title{ background:linear-gradient(90deg,var(--green),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.card.coming-soon .card-title{ background:none; -webkit-text-fill-color:rgba(255,255,255,.4); }
+
+.card.glow-cyan .card-title{
+  background:linear-gradient(90deg,var(--cyan),var(--lila));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.card.glow-pink .card-title{
+  background:linear-gradient(90deg,var(--pink),var(--orange));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.card.glow-lila .card-title{
+  background:linear-gradient(90deg,var(--lila),var(--cyan));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.card.glow-green .card-title{
+  background:linear-gradient(90deg,var(--green),var(--cyan));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 
 .card-desc{
   font-size:14px;
-  font-weight:400;
   color:rgba(255,255,255,.45);
   line-height:1.6;
   flex:1;
 }
 
-/* ── Card: Divider ── */
 .card-divider{
   height:1px;
   background:rgba(255,255,255,.07);
-  margin:0 -4px;
 }
 
-/* ── Card: CTA ── */
 .card-cta{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding-top:2px;
 }
+
 .cta-label{
   font-size:15px;
   font-weight:800;
   color:rgba(255,255,255,.7);
-  transition:color .2s;
 }
-.card:hover .cta-label{ color:#fff; }
-.cta-arrow{
-  width:38px; height:38px;
-  border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:17px;
-  transition:transform .25s, background .25s;
-}
-.card.glow-cyan  .cta-arrow{ background:rgba(83,246,255,.15);  color:var(--cyan); }
-.card.glow-pink  .cta-arrow{ background:rgba(255,79,216,.15);  color:var(--pink); }
-.card.glow-lila  .cta-arrow{ background:rgba(143,95,255,.15);  color:#c4a0ff; }
-.card.glow-green .cta-arrow{ background:rgba(94,255,155,.15);  color:var(--green); }
-.card:hover .cta-arrow{ transform:translateX(4px) scale(1.1); }
-.coming-label{ font-size:13px; color:rgba(255,255,255,.25); font-weight:600; }
 
-/* ── Decorative corner glow ── */
+.cta-arrow{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:17px;
+}
+
+.card.glow-cyan .cta-arrow{
+  background:rgba(83,246,255,.15);
+  color:var(--cyan);
+}
+
+.card.glow-pink .cta-arrow{
+  background:rgba(255,79,216,.15);
+  color:var(--pink);
+}
+
+.card.glow-lila .cta-arrow{
+  background:rgba(143,95,255,.15);
+  color:#c4a0ff;
+}
+
+.card.glow-green .cta-arrow{
+  background:rgba(94,255,155,.15);
+  color:var(--green);
+}
+
 .card-glow-dot{
   position:absolute;
-  top:-30px; right:-30px;
-  width:120px; height:120px;
+  top:-30px;
+  right:-30px;
+  width:120px;
+  height:120px;
   border-radius:50%;
   opacity:.15;
   filter:blur(30px);
-  pointer-events:none;
 }
-.card.glow-cyan  .card-glow-dot{ background:var(--cyan); }
-.card.glow-pink  .card-glow-dot{ background:var(--pink); }
-.card.glow-lila  .card-glow-dot{ background:var(--lila); }
+
+.card.glow-cyan .card-glow-dot{ background:var(--cyan); }
+.card.glow-pink .card-glow-dot{ background:var(--pink); }
+.card.glow-lila .card-glow-dot{ background:var(--lila); }
 .card.glow-green .card-glow-dot{ background:var(--green); }
 
-/* ════════════════════════════
-   SECTION LABEL
-════════════════════════════ */
 .section-label{
-  position:relative; z-index:1;
-  max-width:1080px; margin:0 auto;
+  position:relative;
+  z-index:1;
+  max-width:1080px;
+  margin:0 auto;
   padding:0 24px 16px;
-  font-size:11px; font-weight:700;
-  letter-spacing:3px; text-transform:uppercase;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:3px;
+  text-transform:uppercase;
   color:rgba(255,255,255,.25);
-  display:flex; align-items:center; gap:14px;
+  display:flex;
+  align-items:center;
+  gap:14px;
 }
+
 .section-label::after{
-  content:''; flex:1; height:1px;
+  content:'';
+  flex:1;
+  height:1px;
   background:rgba(255,255,255,.07);
-}
-
-/* ════════════════════════════
-   FOOTER
-════════════════════════════ */
-footer{
-  position:relative; z-index:1;
-  text-align:center;
-  padding:0 20px 40px;
-  font-size:13px;
-  color:rgba(255,255,255,.18);
-  letter-spacing:1px;
-}
-
-/* ════════════════════════════
-   ENTRANCE ANIMATION
-════════════════════════════ */
-.hero-eyebrow { animation:fadeUp .6s ease both; }
-.hero-title   { animation:fadeUp .6s .1s ease both; }
-.hero-sub     { animation:fadeUp .6s .2s ease both; }
-.hero-divider { animation:fadeUp .6s .3s ease both; }
-.section-label{ animation:fadeUp .6s .35s ease both; }
-.card         { animation:fadeUp .6s ease both; }
-.card:nth-child(1){ animation-delay:.4s; }
-.card:nth-child(2){ animation-delay:.5s; }
-.card:nth-child(3){ animation-delay:.6s; }
-.card:nth-child(4){ animation-delay:.7s; }
-.card:nth-child(5){ animation-delay:.8s; }
-.card:nth-child(6){ animation-delay:.9s; }
-
-@keyframes fadeUp{
-  0%  { opacity:0; transform:translateY(22px); }
-  100%{ opacity:1; transform:translateY(0); }
-}
-.card.coming-soon{ opacity:.0; animation:fadeUpDim .6s ease both; }
-.card.coming-soon:nth-child(3){ animation-delay:.6s; }
-.card.coming-soon:nth-child(4){ animation-delay:.7s; }
-@keyframes fadeUpDim{
-  0%  { opacity:0;   transform:translateY(22px); }
-  100%{ opacity:.55; transform:translateY(0); }
 }
 </style>
 </head>
+
 <body>
 
-<!-- ── Hero ── -->
 <header class="hero">
   <div class="hero-eyebrow">Willkommen im</div>
   <div class="hero-title">SCHNUPPES</div>
-  <div class="hero-sub">Spielportal · Spiel gegen echte Mitspieler oder eine KI</div>
+  <div class="hero-sub">Browsergames für Freunde, Familie und gemeinsame Spielabende.</div>
   <div class="hero-divider"></div>
 </header>
 
-<!-- ── Aktive Spiele ── -->
-<div class="section-label">Jetzt spielen</div>
+<div class="section-label">Empfohlen für Tablet</div>
+
 <div class="portal-grid">
 
-  <!-- Zehntausend -->
-  <a class="card glow-cyan" href="./zehntausend/index.html">
+  <a class="card glow-pink" href="./kniffel/index.html">
     <div class="card-glow-dot"></div>
     <div class="card-icon">🎲</div>
+
+    <div class="card-badges">
+      <span class="badge badge-online">🌐 Online</span>
+      <span class="badge badge-players">1–6 Spieler</span>
+      <span class="badge badge-local">📲 Tablet empfohlen</span>
+    </div>
+
+    <div class="card-title">Dani's Kniffelchen</div>
+
+    <div class="card-desc">
+      Würfeln, kombinieren und Bonuspunkte sichern. Der beliebte Klassiker mit Risiko, Taktik und perfekten Glücksmomenten.
+    </div>
+
+    <div class="card-divider"></div>
+
+    <div class="card-cta">
+      <span class="cta-label">Jetzt spielen</span>
+      <span class="cta-arrow">→</span>
+    </div>
+  </a>
+
+  <a class="card glow-green" href="./phase10/index.html">
+    <div class="card-glow-dot"></div>
+    <div class="card-icon">🃏</div>
+
     <div class="card-badges">
       <span class="badge badge-online">🌐 Online</span>
       <span class="badge badge-players">2–6 Spieler</span>
-      <span class="badge badge-new">Klassiker</span>
+      <span class="badge badge-local">📲 Tablet empfohlen</span>
     </div>
-    <div class="card-title">Moni's Zehntausend</div>
-    <div class="card-desc">Das klassische Würfelspiel — sammle Punkte mit Einsen, Fünfen und Kombinationen. Wer als Erster 10.000 erreicht, gewinnt.</div>
+
+    <div class="card-title">Oma + Opa's Phase 10</div>
+
+    <div class="card-desc">
+      Karten clever ausspielen, Phasen erfüllen und den perfekten Zeitpunkt abpassen. Entspanntes Kartenspiel mit überraschend viel Strategie.
+    </div>
+
     <div class="card-divider"></div>
+
     <div class="card-cta">
       <span class="cta-label">Jetzt spielen</span>
       <span class="cta-arrow">→</span>
     </div>
   </a>
 
-  <!-- Tic Tac Toe -->
+</div>
+
+<div class="section-label">Perfekt für Smartphone</div>
+
+<div class="portal-grid">
+
+  <a class="card glow-cyan" href="./zehntausend/index.html">
+    <div class="card-glow-dot"></div>
+    <div class="card-icon">🎲</div>
+
+    <div class="card-badges">
+      <span class="badge badge-online">🌐 Online</span>
+      <span class="badge badge-players">2–6 Spieler</span>
+      <span class="badge badge-local">📱 Ab Smartphone möglich</span>
+    </div>
+
+    <div class="card-title">Moni's Zehntausend</div>
+
+    <div class="card-desc">
+      Das klassische Würfelspiel rund um Risiko, Punkteserien und den perfekten Wurf bis 10.000 Punkte.
+    </div>
+
+    <div class="card-divider"></div>
+
+    <div class="card-cta">
+      <span class="cta-label">Jetzt spielen</span>
+      <span class="cta-arrow">→</span>
+    </div>
+  </a>
+
   <a class="card glow-pink" href="./tictactoe/index.html">
     <div class="card-glow-dot"></div>
     <div class="card-icon">⭕</div>
+
     <div class="card-badges">
       <span class="badge badge-online">🌐 Online</span>
       <span class="badge badge-players">2 Spieler</span>
-      <span class="badge badge-local">🤖 KI verfügbar</span>
+      <span class="badge badge-local">📱 Smartphone gut möglich</span>
     </div>
+
     <div class="card-title">Tic Tac Toe</div>
-    <div class="card-desc">Drei in einer Reihe — Zeile, Spalte oder Diagonale. Einfach erklärt, schwer zu meistern. Gegen KI oder echten Gegner.</div>
+
+    <div class="card-desc">
+      Drei Symbole in einer Reihe entscheiden über Sieg oder Niederlage. Schnell gelernt und ideal für kurze Duelle.
+    </div>
+
     <div class="card-divider"></div>
+
+    <div class="card-cta">
+      <span class="cta-label">Jetzt spielen</span>
+      <span class="cta-arrow">→</span>
+    </div>
+  </a>
+
+  <a class="card glow-lila" href="./4gewinnt/index.html">
+    <div class="card-glow-dot"></div>
+    <div class="card-icon">🔴</div>
+
+    <div class="card-badges">
+      <span class="badge badge-online">🌐 Online</span>
+      <span class="badge badge-players">2 Spieler</span>
+      <span class="badge badge-local">📱 Smartphone gut möglich</span>
+    </div>
+
+    <div class="card-title">Schnuppes 4 Gewinnt</div>
+
+    <div class="card-desc">
+      Vier Steine in einer Linie reichen zum Sieg. Einfacher Einstieg trifft auf überraschend taktische Spielzüge.
+    </div>
+
+    <div class="card-divider"></div>
+
     <div class="card-cta">
       <span class="cta-label">Jetzt spielen</span>
       <span class="cta-arrow">→</span>
@@ -351,42 +459,6 @@ footer{
   </a>
 
 </div>
-
-<!-- ── Demnächst ── -->
-<div class="section-label">Demnächst</div>
-<div class="portal-grid">
-
-  <div class="card glow-lila coming-soon">
-    <div class="card-glow-dot"></div>
-    <div class="card-icon">🃏</div>
-    <div class="card-badges">
-      <span class="badge badge-soon">In Planung</span>
-    </div>
-    <div class="card-title">Neues Spiel</div>
-    <div class="card-desc">Ein weiteres Schnuppes-Spiel ist in Vorbereitung. Stay tuned.</div>
-    <div class="card-divider"></div>
-    <div class="card-cta">
-      <span class="coming-label">Bald verfügbar</span>
-    </div>
-  </div>
-
-  <div class="card glow-green coming-soon">
-    <div class="card-glow-dot"></div>
-    <div class="card-icon">🧩</div>
-    <div class="card-badges">
-      <span class="badge badge-soon">In Planung</span>
-    </div>
-    <div class="card-title">Neues Spiel</div>
-    <div class="card-desc">Ein weiteres Schnuppes-Spiel ist in Vorbereitung. Stay tuned.</div>
-    <div class="card-divider"></div>
-    <div class="card-cta">
-      <span class="coming-label">Bald verfügbar</span>
-    </div>
-  </div>
-
-</div>
-
-<footer>© Schnuppes Spielportal &nbsp;·&nbsp; Viel Spaß beim Spielen</footer>
 
 </body>
 </html>
