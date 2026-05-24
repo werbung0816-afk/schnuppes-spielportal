@@ -179,10 +179,17 @@ body::before{
 .ph-dot.done.goal{background:rgba(255,215,0,.4)}
 
 /* Board */
-.board-scroll{overflow-x:auto;padding:4px 0}
-.board-track{display:flex;gap:3px;padding:6px;min-width:max-content}
+.board-round{width:100%}
+.brd-top{display:flex;gap:3px;justify-content:center;flex-wrap:nowrap}
+.brd-mid{display:flex;gap:3px}
+.brd-bot{display:flex;gap:3px;flex-direction:row-reverse;justify-content:center;flex-wrap:nowrap}
+.brd-left{display:flex;flex-direction:column-reverse;gap:3px}
+.brd-right{display:flex;flex-direction:column;gap:3px}
+.brd-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(0,0,0,.2);border-radius:10px;padding:8px;min-height:60px}
+.brd-ctitle{font-size:clamp(9px,1.1vw,13px);color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.05em;text-align:center}
+.brd-cinfo{font-size:clamp(9px,1vw,12px);color:var(--c);text-align:center;font-weight:600}
 .bf{
-  width:clamp(33px,3.8vw,46px);height:clamp(44px,5vw,58px);
+  width:clamp(22px,2.9vw,40px);height:clamp(22px,2.9vw,40px);
   border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;
   font-size:clamp(12px,1.4vw,18px);border:1px solid rgba(255,255,255,.09);
   position:relative;transition:transform var(--t);cursor:default;flex-shrink:0;
@@ -359,7 +366,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.8</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.9</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -394,7 +401,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.8</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.9</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -415,8 +422,7 @@ body::before{
     <div class="center">
       <!-- Board -->
       <div class="glass" style="padding:10px">
-        <div class="sec-lbl">🎯 Spielfeld</div>
-        <div class="board-scroll"><div id="board-track" class="board-track"></div></div>
+        <div id="board-container" class="board-round"></div>
       </div>
 
       <!-- Piles + Dice + Action -->
@@ -1379,24 +1385,40 @@ function renderHeader(){
 }
 
 function renderBoard(){
-  const track = document.getElementById('board-track');
-  if (!track) return;
-  const positions = {};
-  GS.players.forEach((p,i) => {
-    if (!positions[p.position]) positions[p.position] = [];
-    positions[p.position].push(i);
-  });
-  track.innerHTML = BOARD.map((f,i) => {
-    const type = f.t==='action'?'f-action':f.t==='phase'?'f-phase':f.t==='goal'?'f-goal':'f-start';
-    const toks = (positions[i]||[]).map(pi =>
-      `<div class="tok" style="background:${TOKEN_COLORS[pi%4]}"></div>`
-    ).join('');
-    return `<div class="bf ${type}" title="${f.lbl||''}">
-      <div class="bf-ic">${f.ic||''}</div>
-      <div class="bf-lbl">${f.lbl||''}</div>
-      <div class="bf-tokens">${toks}</div>
-    </div>`;
-  }).join('');
+  var con=document.getElementById('board-container');
+  if(!con) return;
+  var pos={};
+  GS.players.forEach(function(p,i){ if(!pos[p.position])pos[p.position]=[]; pos[p.position].push(i); });
+  var reach=new Map();
+  try{
+    if(GS.turnPhase==='choose_die'&&iAmActive()){
+      var _d=GS.dice;
+      if(GS.isPasch){var pA=aiSimPos(_d[0]),pB=aiSimPos(_d[0]*2);reach.set(pA,{i:0,p:false});if(pB!==pA)reach.set(pB,{i:2,p:true});}
+      else{var pC=aiSimPos(_d[0]),pD=aiSimPos(_d[1]);reach.set(pC,{i:0,p:false});if(pD!==pC)reach.set(pD,{i:1,p:false});}
+    }
+  }catch(e){}
+  function fld(f,gi){
+    var ri=reach.get(gi);
+    var rc=ri?(ri.p?' reach-p':' reach'):'';
+    var rk=ri?'onclick="chooseDie('+ri.i+')"':'';
+    var type=f.t==='action'?'f-action':f.t==='phase'?'f-phase':f.t==='goal'?'f-goal':'f-start';
+    var toks=(pos[gi]||[]).map(function(pi){return '<div class="tok" style="background:'+TOKEN_COLORS[pi%4]+'"></div>';}).join('');
+    return '<div class="bf '+type+rc+'" title="'+(f.lbl||'')+'" '+rk+'><div class="bf-ic">'+(f.ic||'')+'</div><div class="bf-lbl">'+(f.lbl||'')+'</div><div class="bf-tokens">'+toks+'</div></div>';
+  }
+  var topF=BOARD.slice(0,14),rightF=BOARD.slice(14,24),botF=BOARD.slice(24,38),leftF=BOARD.slice(38,47);
+  var topH=topF.map(function(f,i){return fld(f,i);}).join('');
+  var rightH=rightF.map(function(f,i){return fld(f,14+i);}).join('');
+  var botH=botF.map(function(f,i){return fld(f,24+i);}).join('');
+  var leftH=leftF.map(function(f,i){return fld(f,38+i);}).join('');
+  var cp=currentPlayer();
+  var cInfo='';
+  if(cp&&GS.turnPhase!=='roll'){var bf=BOARD[cp.position||0];if(bf)cInfo='<div class="brd-cinfo">'+bf.ic+' '+bf.lbl+'</div>';}
+  if(GS.turnPhase==='roll'&&cp&&cp.id===myId)cInfo='<div class="brd-cinfo" style="color:var(--p)">🎲 Würfeln!</div>';
+  con.innerHTML='<div class="brd-top">'+topH+'</div>'
+    +'<div class="brd-mid"><div class="brd-left">'+leftH+'</div>'
+    +'<div class="brd-center"><div style="font-size:clamp(16px,2.5vw,28px)">🎯</div><div class="brd-ctitle">10er Phase</div>'+cInfo+'</div>'
+    +'<div class="brd-right">'+rightH+'</div></div>'
+    +'<div class="brd-bot">'+botH+'</div>';
 }
 
 function renderPanels(){
