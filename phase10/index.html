@@ -361,7 +361,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.16</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.17</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -396,7 +396,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.16</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.17</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -600,6 +600,7 @@ let selectedCardIds = new Set();
 let addCardMode = false;
 let addingCardId = null;
 let confAnim=null; let _hs='default'; let _ho=[]; let _mode='classic'; let _dragIdx=null;
+let _discardTimer=null;
 
 /* ================================================================
    FIREBASE INIT
@@ -626,6 +627,14 @@ function onStateChange(raw){
   GS = raw.gs;
   updateHostStatus();
   renderAll();
+  // Abwurf-Hinweis-Timer
+  clearTimeout(_discardTimer);
+  if(GS.status==='playing' && GS.turnPhase==='lay_discard' && GS.players&&GS.players.find&&GS.players.find(function(p){return p.id===myId&&p.id===GS.players[GS.currentPlayerIdx].id;})){
+    _discardTimer=setTimeout(function(){
+      if(GS&&GS.turnPhase==='lay_discard'&&isMyTurn())
+        showToast('⚠️ Nicht vergessen: eine Karte abwerfen! 🃏', 4000);
+    },6000);
+  }
   if (isHost) scheduleAITurns();
 }
 
@@ -1142,12 +1151,42 @@ function tryPartition(cards, parts){
   return null;
 }
 
+// Übererfüllung: Gruppe braucht mind. part.n Karten, darf aber mehr haben
+function isValidGroupFlex(cards, part){
+  if(cards.length < part.n) return false;
+  const reals=cards.filter(c=>!c.j), jokers=cards.filter(c=>c.j);
+  if(reals.length===0) return false;
+  if(part.t==='set'){const v=reals[0].v; return reals.every(c=>c.v===v);}
+  if(part.t==='color'){const col=reals[0].col; return reals.every(c=>c.col===col);}
+  if(part.t==='run'){
+    const vals=[...new Set(reals.map(c=>c.v))].sort((a,b)=>a-b);
+    if(vals.length!==reals.length) return false; // Duplikate in Folge
+    const span=vals[vals.length-1]-vals[0]+1;
+    return span<=cards.length && vals[0]>=1 && vals[vals.length-1]<=12;
+  }
+  return false;
+}
+function tryPartitionFlex(cards, parts){
+  if(parts.length===0) return cards.length===0?[]:null;
+  const part=parts[0], rest=parts.slice(1);
+  const minRest=rest.reduce((s,p)=>s+p.n,0);
+  for(let sz=part.n; sz<=cards.length-minRest; sz++){
+    for(const combo of combinations(cards,sz)){
+      if(isValidGroupFlex(combo,part)){
+        const rem=cards.filter(c=>!combo.includes(c));
+        const res=tryPartitionFlex(rem,rest);
+        if(res!==null) return [combo,...res];
+      }
+    }
+  }
+  return null;
+}
 function validatePhaseLayout(hand, selectedIds, phaseIdx){
   const phase = PHASES[phaseIdx];
   const sel = hand.filter(c => selectedIds.has(c.id));
   const need = phase.parts.reduce((s,p)=>s+p.n, 0);
-  if (sel.length !== need) return {ok:false, msg:`Genau ${need} Karten wählen`};
-  const groups = tryPartition(sel, phase.parts);
+  if (sel.length < need) return {ok:false, msg:`Mind. ${need} Karten wählen (${sel.length}/${need})`};
+  const groups = tryPartitionFlex(sel, phase.parts);
   if (!groups) return {ok:false, msg:'Ungültige Kombination für diese Phase'};
   return {ok:true, groups};
 }
@@ -1202,37 +1241,50 @@ function onLayPhase(){
   writeState(GS);
 }
 
-function onAddCard(cardId){
+function onAddMultiple(){
   if (!isMyTurn()) return;
   if (GS.turnPhase !== 'lay_discard') return;
-  addCardMode = true; addingCardId = cardId;
-  showToast('Klicke eine ausgelegte Gruppe zum Anlegen…', 3000);
+  if (!GS.table || Object.keys(GS.table).length===0) return;
+  addCardMode = true; addingCardId = null;
+  showToast('Gruppe antippen zum Anlegen aller passenden Karten…', 3000);
   renderTable();
 }
 
 function onTableGroupClick(ownerId, gIdx){
-  if (!addCardMode || !addingCardId) return;
+  if (!addCardMode) return;
   const p = currentPlayer();
-  const card = p.hand.find(c => c.id === addingCardId);
-  if (!card){ addCardMode=false; addingCardId=null; return; }
   const group = GS.table[ownerId]?.[gIdx];
-  if (!group){ addCardMode=false; addingCardId=null; return; }
-  if (!canAddToGroup(card, group)){
-    showToast('Diese Karte passt nicht in diese Gruppe!');
-    addCardMode=false; addingCardId=null; return;
+  if (!group){ addCardMode=false; addingCardId=null; renderTable(); return; }
+  const selCards = [...selectedCardIds].map(id=>p.hand.find(c=>c.id===id)).filter(Boolean);
+  // Einzelne Karte im alten Modus
+  if(selCards.length===0 && addingCardId){
+    selCards.push(p.hand.find(c=>c.id===addingCardId));
   }
-  // Add card
-  group.cards.push(card);
-  if (!card.j){
-    if (group.type==='run'){
-      if (card.v < group.runMin) group.runMin = card.v;
-      if (card.v > group.runMax) group.runMax = card.v;
+  let added=0;
+  // Iterativ: solange Karten passen anlegen (wichtig für Folgen die sich erweitern)
+  let changed=true;
+  const toAdd=selCards.filter(Boolean);
+  while(changed){
+    changed=false;
+    for(let i=toAdd.length-1;i>=0;i--){
+      const card=toAdd[i];
+      if(!card||!p.hand.find(c=>c.id===card.id)) continue;
+      if(canAddToGroup(card,group)){
+        group.cards.push(card);
+        if(!card.j && group.type==='run'){
+          if(card.v<group.runMin) group.runMin=card.v;
+          if(card.v>group.runMax) group.runMax=card.v;
+        }
+        p.hand=p.hand.filter(c=>c.id!==card.id);
+        selectedCardIds.delete(card.id);
+        toAdd.splice(i,1);
+        added++; changed=true;
+      }
     }
   }
-  p.hand = p.hand.filter(c => c.id !== card.id);
-  selectedCardIds.delete(card.id);
-  addCardMode = false; addingCardId = null;
-  writeState(GS);
+  addCardMode=false; addingCardId=null;
+  if(added>0){ showToast(added+' Karte'+(added>1?'n':'')+' angelegt ✓', 2000); writeState(GS); }
+  else { showToast('Keine passenden Karten für diese Gruppe.'); renderTable(); }
 }
 
 function onDiscard(cardId){
@@ -1678,6 +1730,18 @@ function renderHand(){
   var _disp=(_hs==='value')?[...(me.hand||[])].sort(function(a,b){return a.j?99:b.j?-99:a.v-b.v;}):
             (_hs==='color')?(function(){var O={rot:0,blau:1,gruen:2,gelb:3,joker:4};return[...(me.hand||[])].sort(function(a,b){return(O[a.col]||0)-(O[b.col]||0)||a.v-b.v;});}()):
             _ho.map(function(id){return _byId[id];}).filter(Boolean);
+  // Symmetrisches Layout: gerade Anzahl >5 → 2 gleich große Reihen
+  var _cnt=_disp.length;
+  if(_cnt>5 && _cnt%2===0){
+    hc.style.display='grid';
+    hc.style.gridTemplateColumns='repeat('+(_cnt/2)+',auto)';
+    hc.style.gap='4px';
+  } else {
+    hc.style.display='flex';
+    hc.style.flexWrap='wrap';
+    hc.style.gridTemplateColumns='';
+    hc.style.gap='4px';
+  }
   hc.innerHTML='';
   _disp.forEach(function(c,i){
     var sel=selectedCardIds.has(c.id);
@@ -1753,15 +1817,15 @@ function renderHandActions(){
   let html = '';
   // Phase auslegen
   if (!me.phaseComplete && phI<10){
-    const ok = sel.length === need;
+    const ok = sel.length >= need;
     html += `<button class="btn ${ok?'btn-prime':'btn-ghost'}" ${ok?'':'disabled'} onclick="onLayPhase()">
-      📋 Phase ${phI+1} auslegen${ok?' ✓':` (${sel.length}/${need})`}
+      📋 Phase ${phI+1} auslegen${ok?' ✓ ('+sel.length+')':` (${sel.length}/${need})`}
     </button>`;
   }
   // Anlegen
-  if (sel.length===1 && !addCardMode){
+  if (sel.length>=1 && !addCardMode){
     const canAnlegen = GS.table && Object.keys(GS.table).length>0;
-    if (canAnlegen) html += `<button class="btn btn-ghost" onclick="onAddCard(${sel[0]})">➕ Anlegen</button>`;
+    if (canAnlegen) html += `<button class="btn btn-ghost" onclick="onAddMultiple()">➕ Anlegen${sel.length>1?' ('+sel.length+')':''}</button>`;
   }
   if (addCardMode) html += `<button class="btn btn-danger btn-sm" onclick="addCardMode=false;addingCardId=null;renderHand();">✕ Abbrechen</button>`;
   // Abwerfen
