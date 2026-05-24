@@ -36,6 +36,13 @@
 }
 
 html,body{height:100%;overflow-x:hidden}
+#splash{position:fixed;inset:0;z-index:9999;background:#000;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;transition:opacity .85s ease}
+#splash.out{opacity:0;pointer-events:none}
+#splash img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+#splash-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+  font-size:13px;color:rgba(255,255,255,.5);letter-spacing:.1em;
+  animation:pulse 1.8s ease-in-out infinite}
 body{font-family:'Outfit',sans-serif;background:linear-gradient(135deg,var(--bg0) 0%,var(--bg1) 50%,var(--bg2) 100%);color:var(--txt);min-height:100vh}
 
 body::before{
@@ -138,7 +145,7 @@ body::before{
 
 .game-body{display:grid;grid-template-columns:380px 1fr;gap:10px;padding:10px;flex:1;min-height:0;align-items:start}
 .panel{display:flex;flex-direction:column;gap:10px;padding:12px;overflow-y:auto}
-.left-stack{display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:calc(100vh - 60px)}
+.left-stack{display:flex;flex-direction:column;gap:8px}
 .board-col{display:flex;flex-direction:column}
 .center{display:flex;flex-direction:column;gap:8px;min-width:0}
 
@@ -358,10 +365,14 @@ body::before{
 <canvas id="conf-canvas"></canvas>
 
 <!-- ═══════════════ SETUP SCREEN ═══════════════ -->
+<div id="splash" onclick="hideSplash()">
+  <img src="Oma_Opa6.jpg" alt="Oma &amp; Opas Phase 10"/>
+  <div id="splash-hint">▶ &nbsp; Tippen zum Starten</div>
+</div>
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.19</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.22</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -396,15 +407,14 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.19</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.22</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
       <button class="btn btn-ghost btn-sm" onclick="resync()" title="Neu synchronisieren">⟳ Sync</button>
       <span id="host-reset-game" style="display:none">
-        <button class="btn btn-danger btn-sm" onclick="resetRoom()">Reset</button>
+        <button class="btn btn-danger btn-sm" onclick="resetRoom()">⭕ Reset</button>
       </span>
-      <button class="btn btn-danger btn-sm" onclick="resetRoom()">⟳ Reset</button>
     </div>
   </div>
 
@@ -599,7 +609,14 @@ let isHost  = false;
 let selectedCardIds = new Set();
 let addCardMode = false;
 let addingCardId = null;
-let confAnim=null; let _hs='default'; let _ho=[]; let _mode='classic'; let _dragIdx=null;
+let confAnim=null; let _hs='default'; let _ho=[]; let _mode='classic'; function hideSplash(){
+  var s=document.getElementById('splash');
+  if(!s||s.classList.contains('out'))return;
+  s.classList.add('out');
+  setTimeout(function(){if(s)s.style.display='none';},900);
+}
+setTimeout(hideSplash,4000);
+let _dragIdx=null;
 let _discardTimer=null;
 
 /* ================================================================
@@ -675,8 +692,19 @@ function joinGame(){
       let p = state.players.find(x => x.id === myId);
       if (!p) {
         if (state.players.length >= 4){ showToast('Raum voll! Max. 4 Spieler.'); return; }
-        if (state.status !== 'lobby'){ showToast('Spiel bereits läuft!'); return; }
-        state.players.push(makePlayer(myId, myName, false));
+        const newP = makePlayer(myId, myName, false);
+        if (state.status !== 'lobby'){
+          // Spiel läuft: neuer Spieler 1 Phase unter dem schlechtesten Spieler einsteigen
+          const worstPhase = state.players.reduce((mn,p)=>Math.min(mn,p.phaseIndicator||0), 10);
+          newP.phaseIndicator = Math.max(0, worstPhase - 1);
+          newP.position = 0;
+          // Karten austeilen wenn Runde läuft
+          if (state.deck && state.deck.length >= 10){
+            newP.hand = state.deck.splice(0, 10);
+          }
+          showToast(myName + ' tritt dem laufenden Spiel bei (Phase ' + (newP.phaseIndicator+1) + ')');
+        }
+        state.players.push(newP);
       } else {
         p.name = myName; p.connected = true; p.lastSeen = Date.now();
       }
@@ -1356,6 +1384,15 @@ function onCardClick(cardId){
   else selectedCardIds.add(cardId);
   renderHand();
   renderHandActions();
+  // Sicherheitsnetz: Hand leer in lay_discard → Runde automatisch beenden
+  if(isHost&&GS.status==='playing'&&GS.turnPhase==='lay_discard'){
+    var _acp=currentPlayer();
+    if(_acp&&(!_acp.hand||_acp.hand.length===0)){
+      setTimeout(function(){
+        if(GS&&GS.turnPhase==='lay_discard'){var _acp2=currentPlayer();if(_acp2&&(!_acp2.hand||_acp2.hand.length===0)){endRound(GS,_acp2.id);writeState(GS);}}
+      },600);
+    }
+  }
 }
 
 /* ================================================================
@@ -1557,12 +1594,12 @@ function renderBoard(){
   }else if(ph==='choose_die'){
     var dd=GS.dice;
     if(GS.isPasch){
-      sv+=svgD(dd[0],cx-62,diceY,'','p')+svgD(dd[1],cx+8,diceY,'','p');
+      sv+=svgD(dd[0],cx-55,diceY,'','p')+svgD(dd[1],cx+55-dSz,diceY,'','p');
       if(active2){
         sv+='<rect x="'+(cx-54)+'" y="'+(diceY+40)+'" width="48" height="20" rx="5" fill="#3a3a6a" onclick="chooseDie(0)" style="cursor:pointer"/>';
-        sv+='<text x="'+(cx-30)+'" y="'+(diceY+dSz+21)+'" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="white" style="pointer-events:none">×1 ('+dd[0]+')</text>';
+        sv+='<text x="'+(cx-30)+'" y="'+(diceY+dSz+17)+'" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="white" style="pointer-events:none">×1 ('+dd[0]+')</text>';
         sv+='<rect x="'+(cx+6)+'" y="'+(diceY+40)+'" width="48" height="20" rx="5" fill="#ff4fd8" onclick="chooseDie(2)" style="cursor:pointer"/>';
-        sv+='<text x="'+(cx+30)+'" y="'+(diceY+dSz+21)+'" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="white" style="pointer-events:none">×2 ('+(dd[0]*2)+')</text>';
+        sv+='<text x="'+(cx+30)+'" y="'+(diceY+dSz+17)+'" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="white" style="pointer-events:none">×2 ('+(dd[0]*2)+')</text>';
       }
     }else{
       sv+=svgD(dd[0],cx-62,diceY,active2?'chooseDie(0)':null,active2?'c':'');
@@ -1736,7 +1773,7 @@ function renderHand(){
   var _cnt=_disp.length;
   if(_cnt>5 && _cnt%2===0){
     hc.style.display='grid';
-    hc.style.gridTemplateColumns='repeat('+(_cnt/2)+',auto)';
+    hc.style.gridTemplateColumns='repeat('+(_cnt/2)+',1fr)';
     hc.style.gap='4px';
   } else {
     hc.style.display='flex';
