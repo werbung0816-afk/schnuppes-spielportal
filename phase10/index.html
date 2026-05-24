@@ -136,7 +136,7 @@ body::before{
 .s-active{color:var(--c);font-weight:700;animation:sPulse 2s infinite}
 @keyframes sPulse{0%,100%{opacity:1}50%{opacity:.55}}
 
-.game-body{display:grid;grid-template-columns:280px 1fr;gap:10px;padding:10px;flex:1;min-height:0;align-items:start}
+.game-body{display:grid;grid-template-columns:380px 1fr;gap:10px;padding:10px;flex:1;min-height:0;align-items:start}
 .panel{display:flex;flex-direction:column;gap:10px;padding:12px;overflow-y:auto}
 .left-stack{display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:calc(100vh - 60px)}
 .board-col{display:flex;flex-direction:column}
@@ -361,7 +361,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.15</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.16</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -396,7 +396,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.15</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.16</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -416,27 +416,26 @@ body::before{
       <!-- Mitspieler -->
       <div id="panel-l" class="glass panel"></div>
 
-      <!-- Deine Hand -->
-      <div class="hand-area">
-        <div class="hand-hdr">
-          <div class="hand-lbl">✋ Deine Hand</div>
-          <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-            <div id="hand-info" style="font-size:11px;color:var(--dim)"></div>
-            <div style="display:flex;gap:2px" oncontextmenu="return false">
-              <button id="sb-def" class="sort-btn active" onclick="setHS('default')">Std</button>
-              <button id="sb-val" class="sort-btn" onclick="setHS('value')">1→12</button>
-              <button id="sb-col" class="sort-btn" onclick="setHS('color')">Farbe</button>
-            </div>
-          </div>
-        </div>
-        <div id="hand-cards" class="hand-cards"></div>
-        <div id="hand-acts" class="hand-actions"></div>
-      </div>
-
-      <!-- Ausgelegte Phasen -->
+      <!-- Ausgelegte Phasen: ganz oben nach Mitspieler -->
       <div id="table-area" class="glass" style="padding:10px">
         <div class="tbl-lbl">🃏 Ausgelegte Phasen</div>
         <div id="table-content"></div>
+      </div>
+
+      <!-- Deine Hand + Sort-Buttons darunter -->
+      <div class="hand-area">
+        <div class="hand-hdr">
+          <div class="hand-lbl">✋ Deine Hand</div>
+          <div id="hand-info" style="font-size:11px;color:var(--dim)"></div>
+        </div>
+        <div id="hand-cards" class="hand-cards"></div>
+        <div id="hand-acts" class="hand-actions"></div>
+        <!-- Sort-Buttons unter den Karten -->
+        <div style="display:flex;gap:4px;margin-top:8px;flex-wrap:wrap" oncontextmenu="return false">
+          <button id="sb-def" class="sort-btn active" onclick="setHS('default')">Standard</button>
+          <button id="sb-val" class="sort-btn" onclick="setHS('value')">1→12</button>
+          <button id="sb-col" class="sort-btn" onclick="setHS('color')">Farbe</button>
+        </div>
       </div>
     </div>
 
@@ -1391,7 +1390,7 @@ function renderBoard(){
     exchange:'#bf5af2',all_draw:'#5dce8c',joker_draw:'#ff6b9d',
     ask_card:'#ffd60a',free_choice:'#ff7043'};
 
-  var sv='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-height:calc(100vh - 70px);display:block">';
+  var sv='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:min(100%,calc(100vh - 80px));height:auto;display:block;margin:0 auto">';
   sv+='<defs><linearGradient id="gbk" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8f5fff"/><stop offset="100%" stop-color="#ff4fd8"/></linearGradient></defs>';
   sv+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(oR+7)+'" fill="#12122a"/>';
 
@@ -1479,7 +1478,7 @@ function renderBoard(){
   sv+='<text x="'+(dpcx+pw/2)+'" y="'+(dpcy-9)+'" text-anchor="middle" font-size="8" fill="#5555aa" font-weight="700">ABLAGE</text>';
 
   // Würfel / Button je nach Phase
-  var dSz=36,diceY=cy+14;
+  var dSz=46,diceY=cy+12;
   var cp2=currentPlayer(),active2=iAmActive(),ph=GS.turnPhase;
   var DPIPS2=[[4],[2,6],[2,4,6],[0,2,6,8],[0,2,4,6,8],[0,2,3,5,6,8]];
   function svgD(val,dx,dy,clickFn,selCol){
@@ -1496,15 +1495,15 @@ function renderBoard(){
 
   if(ph==='roll'){
     if(active2){
-      sv+='<rect x="'+(cx-55)+'" y="'+diceY+'" width="110" height="32" rx="9" fill="#ff4fd8" onclick="doRoll()" style="cursor:pointer;filter:drop-shadow(0 3px 12px rgba(255,79,216,0.7))"/>';
-      sv+='<text x="'+cx+'" y="'+(diceY+16)+'" text-anchor="middle" dominant-baseline="middle" font-size="13" fill="white" font-weight="900" style="pointer-events:none">🎲 Würfeln!</text>';
+      sv+='<rect x="'+(cx-65)+'" y="'+diceY+'" width="130" height="36" rx="10" fill="#ff4fd8" onclick="doRoll()" style="cursor:pointer;filter:drop-shadow(0 3px 14px rgba(255,79,216,0.8))"/>';
+      sv+='<text x="'+cx+'" y="'+(diceY+18)+'" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="white" font-weight="900" style="pointer-events:none">🎲 Würfeln!</text>';
     }else{
       sv+='<text x="'+cx+'" y="'+(diceY+12)+'" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="#555577">wartet...</text>';
     }
   }else if(ph==='choose_die'){
     var dd=GS.dice;
     if(GS.isPasch){
-      sv+=svgD(dd[0],cx-42,diceY,'','p')+svgD(dd[1],cx+6,diceY,'','p');
+      sv+=svgD(dd[0],cx-50,diceY,'','p')+svgD(dd[1],cx+4+dSz,diceY,'','p');
       if(active2){
         sv+='<rect x="'+(cx-54)+'" y="'+(diceY+40)+'" width="48" height="20" rx="5" fill="#3a3a6a" onclick="chooseDie(0)" style="cursor:pointer"/>';
         sv+='<text x="'+(cx-30)+'" y="'+(diceY+50)+'" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="white" style="pointer-events:none">×1 ('+dd[0]+')</text>';
@@ -1512,9 +1511,9 @@ function renderBoard(){
         sv+='<text x="'+(cx+30)+'" y="'+(diceY+50)+'" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="white" style="pointer-events:none">×2 ('+(dd[0]*2)+')</text>';
       }
     }else{
-      sv+=svgD(dd[0],cx-42,diceY,active2?'chooseDie(0)':'',active2?'c':'');
-      sv+=svgD(dd[1],cx+6,diceY,active2?'chooseDie(1)':'',active2?'c':'');
-      if(active2)sv+='<text x="'+cx+'" y="'+(diceY+42)+'" text-anchor="middle" font-size="9" fill="#53f6ff">↑ Würfel anklicken</text>';
+      sv+=svgD(dd[0],cx-50,diceY,active2?'chooseDie(0)':'',active2?'c':'');
+      sv+=svgD(dd[1],cx+4+dSz,diceY,active2?'chooseDie(1)':'',active2?'c':'');
+      if(active2)sv+='<text x="'+cx+'" y="'+(diceY+dSz+14)+'" text-anchor="middle" font-size="10" fill="#53f6ff">↑ Würfel wählen</text>';
     }
   }else if(ph==='action'&&active2){
     var bf2=BOARD[cp2&&cp2.position||0];
