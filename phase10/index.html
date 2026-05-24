@@ -214,15 +214,21 @@ body::before{
 /* Dice */
 .dice-area{display:flex;gap:9px;align-items:center;justify-content:center}
 .die{
-  width:clamp(40px,5vw,56px);height:clamp(40px,5vw,56px);border-radius:10px;
-  background:#f0f0f0;display:flex;align-items:center;justify-content:center;
-  font-size:clamp(20px,3vw,32px);cursor:pointer;transition:all var(--t);
-  border:3px solid transparent;color:#222;flex-shrink:0;
+  width:clamp(44px,5.5vw,64px);height:clamp(44px,5.5vw,64px);border-radius:12px;
+  background:linear-gradient(145deg,#ffffff,#e8e8f0);
+  display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);
+  padding:clamp(6px,1vw,10px);gap:clamp(3px,0.4vw,5px);
+  cursor:pointer;transition:all var(--t);border:3px solid transparent;flex-shrink:0;
+  box-shadow:0 6px 18px rgba(0,0,0,.45),inset 0 1px 2px rgba(255,255,255,.9);
 }
-.die:hover:not(.disabled-die){transform:scale(1.1)}
-.die.sel-die{border-color:var(--c);box-shadow:0 0 15px rgba(83,246,255,.55)}
-.die.pasch-die{border-color:var(--p);box-shadow:0 0 15px rgba(255,79,216,.55)}
+.die:hover:not(.disabled-die){transform:scale(1.12)}
+.die.sel-die{border-color:var(--c);box-shadow:0 0 0 3px var(--c),0 6px 20px rgba(83,246,255,.5)}
+.die.pasch-die{border-color:var(--p);box-shadow:0 0 0 3px var(--p),0 6px 20px rgba(255,79,216,.5)}
 .die.disabled-die{opacity:.45;cursor:default}
+.pip{border-radius:50%;background:#1a1030;width:100%;height:100%}
+.pip.h{visibility:hidden}
+@keyframes dieRoll{0%{transform:rotate(0)scale(1)}25%{transform:rotate(-18deg)scale(1.2)}50%{transform:rotate(14deg)scale(1.2)}75%{transform:rotate(-8deg)scale(1.1)}100%{transform:rotate(0)scale(1)}}
+.die.rolling{animation:dieRoll .45s ease}
 
 /* ---- CARDS ---- */
 .card{
@@ -353,7 +359,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.6</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.7</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -388,7 +394,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.6</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.7</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -1452,42 +1458,43 @@ function renderPiles(){
   document.getElementById('draw-count').textContent = (GS.deck?.length||0) + ' Karten';
 }
 
-function renderDice(){
-  const area = document.getElementById('dice-area');
-  const ai   = document.getElementById('action-indicator');
-  if (!area) return;
-  if (GS.turnPhase === 'roll'){
-    area.innerHTML = '';
-    ai.innerHTML = '';
-    return;
-  }
-  const d = GS.dice;
-  const FACES = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
-  const isPasch = GS.isPasch;
-  const cp = currentPlayer();
-  const active = iAmActive();
+// Punkte-Positionen im 3x3-Grid für Würfelseiten 1-6
+const DIE_PIPS=[[4],[2,6],[2,4,6],[0,2,6,8],[0,2,4,6,8],[0,2,3,5,6,8]];
+function makeDie(val,cls,oc){
+  var pips=DIE_PIPS[val-1]||[];
+  var dots=Array.from({length:9},function(_,i){return '<div class="pip'+(pips.includes(i)?'':' h')+'"></div>';}).join('');
+  return '<div class="die '+cls+'"'+(oc?' onclick="'+oc+'"':'')+'>'+dots+'</div>';
+}
+function animateDice(){
+  document.querySelectorAll('.die:not(.disabled-die)').forEach(function(el){
+    el.classList.add('rolling');
+    setTimeout(function(){el.classList.remove('rolling');},450);
+  });
+}
 
-  if (GS.turnPhase === 'choose_die'){
-    if (isPasch){
-      area.innerHTML = `
-        <div class="die pasch-die">${FACES[d[0]]}</div>
-        <div class="die pasch-die">${FACES[d[1]]}</div>`;
-      if (active) ai.innerHTML =
-        `<button class="btn btn-prime btn-sm" onclick="chooseDie(0)">Einfach (${d[0]})</button>
-         <button class="btn btn-hot btn-sm" onclick="chooseDie(2)">Doppelt (${d[0]*2})</button>`;
+function renderDice(){
+  var area=document.getElementById('dice-area');
+  var ai=document.getElementById('action-indicator');
+  if(!area) return;
+  if(GS.turnPhase==='roll'){area.innerHTML='';ai.innerHTML='';return;}
+  var d=GS.dice, isPasch=GS.isPasch, cp=currentPlayer(), active=iAmActive();
+
+  if(GS.turnPhase==='choose_die'){
+    if(isPasch){
+      area.innerHTML=makeDie(d[0],'pasch-die','')+makeDie(d[1],'pasch-die','');
+      if(active) ai.innerHTML=
+        '<button class="btn btn-prime btn-sm" onclick="chooseDie(0)">Einfach ('+d[0]+')</button> '+
+        '<button class="btn btn-hot btn-sm" onclick="chooseDie(2)">Doppelt ('+(d[0]*2)+')</button>';
     } else {
-      area.innerHTML = `
-        <div class="die ${active?'':'disabled-die'}" onclick="${active?'chooseDie(0)':''}">${FACES[d[0]]}</div>
-        <div class="die ${active?'':'disabled-die'}" onclick="${active?'chooseDie(1)':''}">${FACES[d[1]]}</div>`;
-      if (active) ai.innerHTML = '<div style="font-size:12px;color:var(--dim)">Würfel wählen →</div>';
+      area.innerHTML=makeDie(d[0],active?'':'disabled-die',active?'chooseDie(0)':'')+
+                     makeDie(d[1],active?'':'disabled-die',active?'chooseDie(1)':'');
+      if(active) ai.innerHTML='<div style="font-size:12px;color:var(--dim)">Würfel wählen →</div>';
     }
+    setTimeout(animateDice,10);
   } else {
-    const chosen = GS.selDie === 2 ? d[0]*2 : (GS.selDie>=0?d[GS.selDie]:0);
-    area.innerHTML = `
-      <div class="die disabled-die">${FACES[d[0]]}</div>
-      <div class="die disabled-die">${FACES[d[1]]}</div>`;
-    const f = BOARD[cp?.position||0];
-    ai.innerHTML = f ? `<div class="action-badge">${f.ic} ${f.lbl}</div>` : '';
+    area.innerHTML=makeDie(d[0],'disabled-die','')+makeDie(d[1],'disabled-die','');
+    var f=BOARD[cp&&cp.position||0];
+    ai.innerHTML=f?'<div class="action-badge">'+f.ic+' '+f.lbl+'</div>':'';
   }
 }
 
@@ -1786,12 +1793,28 @@ function stopConfetti(){
 /* ================================================================
    SOUND
    ================================================================ */
+function playDiceTone(){
+  try{
+    var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    [0,0.07,0.15].forEach(function(t){
+      var buf=ctx.createBuffer(1,Math.floor(ctx.sampleRate*0.06),ctx.sampleRate);
+      var data=buf.getChannelData(0);
+      for(var i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,2)*0.45;
+      var s=ctx.createBufferSource(); s.buffer=buf;
+      var g=ctx.createGain(); g.gain.value=0.35;
+      var f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=900;
+      s.connect(f); f.connect(g); g.connect(ctx.destination);
+      s.start(ctx.currentTime+t);
+    });
+  }catch(e){}
+}
 function playSound(name){
-  try {
-    const id = name==='dice'?'snd-dice':'snd-applause';
-    const el = document.getElementById(id);
-    if (el){ el.currentTime=0; el.play().catch(()=>{}); }
-  } catch(e){}
+  try{
+    var id=name==='dice'?'snd-dice':'snd-applause';
+    var el=document.getElementById(id);
+    if(el){ el.currentTime=0; el.play().catch(function(){if(name==='dice')playDiceTone();}); }
+    else if(name==='dice') playDiceTone();
+  }catch(e){}
 }
 
 /* ================================================================
