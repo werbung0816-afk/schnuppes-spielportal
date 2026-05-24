@@ -1869,8 +1869,9 @@ function showModal(cfg){
   const mc = document.getElementById('modal-cards');
   if (cfg.cards && cfg.cards.length>0){
     mc.innerHTML = cfg.cards.map(c=>`
-      <div class="card ${c.j?'card-joker':COLOR_CSS[c.col]||''} no-hover" 
-        onclick="modalCardClick(${c.id})" 
+      <div class="card ${c.j?'card-joker':COLOR_CSS[c.col]||''}"
+        data-card-id="${c.id}"
+        onclick="modalCardClick(${c.id})"
         style="cursor:pointer">${c.j?'⭐':c.v}</div>`).join('');
   } else if (cfg.input){
     mc.innerHTML = `<input class="field" type="number" id="modal-inp" 
@@ -1889,17 +1890,26 @@ function showModal(cfg){
 
 function modalCardClick(cardId){
   if (_modalOnCard){
-    const card = [...(_modalSelIds.values())];
-    const all = GS.discardPile||[];
-    const c = all.find(x=>x.id===cardId) || currentPlayer()?.hand?.find(x=>x.id===cardId);
+    const c = (GS.discardPile||[]).find(x=>x.id===cardId)
+           || currentPlayer()?.hand?.find(x=>x.id===cardId);
     if (c) _modalOnCard(c);
     return;
   }
-  // Selectable mode
+  // Selectable mode: toggle
   if (_modalSelIds.has(cardId)) _modalSelIds.delete(cardId);
   else _modalSelIds.add(cardId);
+  // Visuelles Feedback
   document.querySelectorAll('#modal-cards .card').forEach(el=>{
-    // Re-render selected state
+    const id = parseInt(el.getAttribute('data-card-id'));
+    if (_modalSelIds.has(id)){
+      el.classList.add('sel');
+      el.style.transform='translateY(-10px)';
+      el.style.boxShadow='0 0 14px rgba(83,246,255,.8)';
+    } else {
+      el.classList.remove('sel');
+      el.style.transform='';
+      el.style.boxShadow='';
+    }
   });
 }
 
