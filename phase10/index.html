@@ -1346,7 +1346,7 @@ function renderBoard(){
     const toks = (positions[i]||[]).map(pi =>
       `<div class="tok" style="background:${TOKEN_COLORS[pi%4]}"></div>`
     ).join('');
-    return `<div class="bf ${type}" title="${f.lbl||''}">
+    return `<div class="bf ${type}${_rc}" title="${f.lbl||''}" ${_rk}>
       <div class="bf-ic">${f.ic||''}</div>
       <div class="bf-lbl">${f.lbl||''}</div>
       <div class="bf-tokens">${toks}</div>
