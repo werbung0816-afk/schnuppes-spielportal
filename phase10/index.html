@@ -179,15 +179,7 @@ body::before{
 .ph-dot.done.goal{background:rgba(255,215,0,.4)}
 
 /* Board */
-.board-round{width:100%}
-.brd-top{display:flex;gap:3px;justify-content:center;flex-wrap:nowrap}
-.brd-mid{display:flex;gap:3px}
-.brd-bot{display:flex;gap:3px;flex-direction:row-reverse;justify-content:center;flex-wrap:nowrap}
-.brd-left{display:flex;flex-direction:column-reverse;gap:3px}
-.brd-right{display:flex;flex-direction:column;gap:3px}
-.brd-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(0,0,0,.2);border-radius:10px;padding:8px;min-height:60px}
-.brd-ctitle{font-size:clamp(9px,1.1vw,13px);color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.05em;text-align:center}
-.brd-cinfo{font-size:clamp(9px,1vw,12px);color:var(--c);text-align:center;font-weight:600}
+.board-round{width:100%;display:flex;justify-content:center}
 .bf{
   width:clamp(22px,2.9vw,40px);height:clamp(22px,2.9vw,40px);
   border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -366,7 +358,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.10</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.11</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -401,7 +393,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.10</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.11</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -1382,9 +1374,12 @@ function renderHeader(){
 
 function renderBoard(){
   var con=document.getElementById('board-container');
-  if(!con) return;
-  var pos={};
-  GS.players.forEach(function(p,i){ if(!pos[p.position])pos[p.position]=[]; pos[p.position].push(i); });
+  if(!con)return;
+  var W=480,H=480,cx=240,cy=240;
+  var oR=220,iR=138,phR=124,cR=108;
+  var N=BOARD.length,step=2*Math.PI/N,off=-Math.PI/2;
+  var gpos={};
+  GS.players.forEach(function(p,i){if(!gpos[p.position])gpos[p.position]=[];gpos[p.position].push(i);});
   var reach=new Map();
   try{
     if(GS.turnPhase==='choose_die'&&iAmActive()){
@@ -1393,28 +1388,68 @@ function renderBoard(){
       else{var pC=aiSimPos(_d[0]),pD=aiSimPos(_d[1]);reach.set(pC,{i:0,p:false});if(pD!==pC)reach.set(pD,{i:1,p:false});}
     }
   }catch(e){}
-  function fld(f,gi){
-    var ri=reach.get(gi);
-    var rc=ri?(ri.p?' reach-p':' reach'):'';
-    var rk=ri?'onclick="chooseDie('+ri.i+')"':'';
-    var type=f.t==='action'?'f-action':f.t==='phase'?'f-phase':f.t==='goal'?'f-goal':'f-start';
-    var toks=(pos[gi]||[]).map(function(pi){return '<div class="tok" style="background:'+TOKEN_COLORS[pi%4]+'"></div>';}).join('');
-    return '<div class="bf '+type+rc+'" title="'+(f.lbl||'')+'" '+rk+'><div class="bf-ic">'+(f.ic||'')+'</div><div class="bf-lbl">'+(f.lbl||'')+'</div><div class="bf-tokens">'+toks+'</div></div>';
+  var FC={start:'#f5c518',goal:'#f5c518',phase:'#4a5580',
+    draw_plus:'#4a9eff',extra_turn:'#4cd96e',search_discard:'#ff9f0a',
+    exchange:'#bf5af2',all_draw:'#5dce8c',joker_draw:'#ff6b9d',
+    ask_card:'#ffd60a',free_choice:'#ff7043'};
+  var sv='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:300px;display:block">';
+  sv+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(oR+5)+'" fill="#12122a"/>';
+  for(var i=0;i<N;i++){
+    var a1=off+i*step,a2=off+(i+1)*step,mA=(a1+a2)/2;
+    var f=BOARD[i],ri=reach.get(i);
+    var fc=ri?(ri.p?'#ff4fd8':'#53f6ff'):(f.t==='phase'?FC.phase:f.t==='goal'?FC.goal:f.t==='start'?FC.start:(FC[f.a]||FC.draw_plus));
+    var x1o=cx+oR*Math.cos(a1),y1o=cy+oR*Math.sin(a1);
+    var x2o=cx+oR*Math.cos(a2),y2o=cy+oR*Math.sin(a2);
+    var x1i=cx+iR*Math.cos(a1),y1i=cy+iR*Math.sin(a1);
+    var x2i=cx+iR*Math.cos(a2),y2i=cy+iR*Math.sin(a2);
+    var pd='M '+x1o.toFixed(2)+' '+y1o.toFixed(2)+' A '+oR+' '+oR+' 0 0 1 '+x2o.toFixed(2)+' '+y2o.toFixed(2)
+      +' L '+x2i.toFixed(2)+' '+y2i.toFixed(2)+' A '+iR+' '+iR+' 0 0 0 '+x1i.toFixed(2)+' '+y1i.toFixed(2)+' Z';
+    var oc=ri?' onclick="chooseDie('+ri.i+')"':'';
+    sv+='<path d="'+pd+'" fill="'+fc+'" stroke="#080816" stroke-width="1.5" style="cursor:'+(ri?'pointer':'default')+'"'+oc+'><title>'+(f.lbl||'')+'</title></path>';
+    if(ri)sv+='<path d="'+pd+'" fill="none" stroke="'+(ri.p?'#ff4fd8':'#53f6ff')+'" stroke-width="3" opacity="0.9" style="pointer-events:none"/>';
+    var mx=cx+((oR+iR)/2)*Math.cos(mA),my=cy+((oR+iR)/2)*Math.sin(mA);
+    sv+='<text x="'+mx.toFixed(1)+'" y="'+my.toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="white" style="pointer-events:none;font-family:system-ui">'+(f.ic||'')+'</text>';
+    var tsr=oR-11,pls=gpos[i]||[];
+    if(pls.length===0){
+      sv+='<circle cx="'+(cx+tsr*Math.cos(mA)).toFixed(1)+'" cy="'+(cy+tsr*Math.sin(mA)).toFixed(1)+'" r="6" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.12)" stroke-width="1" style="pointer-events:none"/>';
+    }else{
+      pls.forEach(function(pi,ti){
+        var ta=mA+(ti-pls.length/2+0.5)*0.09;
+        sv+='<circle cx="'+(cx+tsr*Math.cos(ta)).toFixed(1)+'" cy="'+(cy+tsr*Math.sin(ta)).toFixed(1)+'" r="8" fill="'+TOKEN_COLORS[pi%4]+'" stroke="white" stroke-width="2" style="pointer-events:none"/>';
+      });
+    }
   }
-  var topF=BOARD.slice(0,14),rightF=BOARD.slice(14,24),botF=BOARD.slice(24,38),leftF=BOARD.slice(38,47);
-  var topH=topF.map(function(f,i){return fld(f,i);}).join('');
-  var rightH=rightF.map(function(f,i){return fld(f,14+i);}).join('');
-  var botH=botF.map(function(f,i){return fld(f,24+i);}).join('');
-  var leftH=leftF.map(function(f,i){return fld(f,38+i);}).join('');
+  sv+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(iR-2)+'" fill="#0d0d1e"/>';
+  sv+='<circle cx="'+cx+'" cy="'+cy+'" r="'+phR+'" fill="none" stroke="#252545" stroke-width="2" stroke-dasharray="4 3"/>';
+  var phN=11;
+  for(var j=0;j<phN;j++){
+    var pa=off+j*(2*Math.PI/phN);
+    var ppx=(cx+phR*Math.cos(pa)).toFixed(1),ppy=(cy+phR*Math.sin(pa)).toFixed(1);
+    sv+='<circle cx="'+ppx+'" cy="'+ppy+'" r="9" fill="#16163a" stroke="#303060" stroke-width="1"/>';
+    sv+='<text x="'+ppx+'" y="'+ppy+'" text-anchor="middle" dominant-baseline="middle" font-size="7" fill="#6666aa">'+(j<10?(j+1):'🏆')+'</text>';
+  }
+  GS.players.forEach(function(p,pi){
+    var phIdx=Math.min(p.phaseIndicator||0,10);
+    var pa=off+phIdx*(2*Math.PI/phN);
+    var ppx=(cx+phR*Math.cos(pa)).toFixed(1),ppy=(cy+phR*Math.sin(pa)).toFixed(1);
+    sv+='<circle cx="'+ppx+'" cy="'+ppy+'" r="7" fill="'+TOKEN_COLORS[pi%4]+'" stroke="white" stroke-width="1.5" style="pointer-events:none"/>';
+    sv+='<text x="'+ppx+'" y="'+ppy+'" text-anchor="middle" dominant-baseline="middle" font-size="6" fill="white" font-weight="700">'+(phIdx<10?(phIdx+1):'★')+'</text>';
+  });
+  sv+='<circle cx="'+cx+'" cy="'+cy+'" r="'+cR+'" fill="#080816"/>';
+  sv+='<circle cx="'+cx+'" cy="'+cy+'" r="'+cR+'" fill="none" stroke="#1e1e3e" stroke-width="2"/>';
+  sv+='<text x="'+cx+'" y="'+(cy-20)+'" text-anchor="middle" dominant-baseline="middle" font-size="30">🎯</text>';
+  sv+='<text x="'+cx+'" y="'+(cy+10)+'" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#5555aa" font-weight="700" letter-spacing="1">10ER PHASE</text>';
   var cp=currentPlayer();
-  var cInfo='';
-  if(cp&&GS.turnPhase!=='roll'){var bf=BOARD[cp.position||0];if(bf)cInfo='<div class="brd-cinfo">'+bf.ic+' '+bf.lbl+'</div>';}
-  if(GS.turnPhase==='roll'&&cp&&cp.id===myId)cInfo='<div class="brd-cinfo" style="color:var(--p)">🎲 Würfeln!</div>';
-  con.innerHTML='<div class="brd-top">'+topH+'</div>'
-    +'<div class="brd-mid"><div class="brd-left">'+leftH+'</div>'
-    +'<div class="brd-center"><div style="font-size:clamp(16px,2.5vw,28px)">🎯</div><div class="brd-ctitle">10er Phase</div>'+cInfo+'</div>'
-    +'<div class="brd-right">'+rightH+'</div></div>'
-    +'<div class="brd-bot">'+botH+'</div>';
+  if(cp){
+    if(GS.turnPhase==='roll'&&cp.id===myId){
+      sv+='<text x="'+cx+'" y="'+(cy+26)+'" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#ff4fd8" font-weight="700">🎲 Würfeln!</text>';
+    }else if(GS.turnPhase!=='roll'){
+      var bf=BOARD[cp.position||0];
+      if(bf)sv+='<text x="'+cx+'" y="'+(cy+26)+'" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="#53f6ff">'+(bf.ic||'')+' '+(bf.lbl||'')+'</text>';
+    }
+  }
+  sv+='</svg>';
+  con.innerHTML=sv;
 }
 
 function renderPanels(){
