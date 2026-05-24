@@ -339,6 +339,10 @@ body::before{
 .res-minus{color:#f87171;font-weight:700}
 .sort-btn{padding:3px 9px;font-size:11px;border-radius:6px;border:1px solid var(--gb);background:transparent;color:var(--dim);cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;transition:all var(--t)}
 .sort-btn.active,.sort-btn:hover{background:rgba(83,246,255,.15);border-color:var(--c);color:var(--c)}
+.card-drag{position:relative;display:inline-block;cursor:grab;user-select:none}
+.card-drag:active{cursor:grabbing}
+.card.dragging{opacity:.3;transform:scale(.95)}
+.card.drag-over{transform:translateY(-12px) scale(1.08)!important;outline:2.5px solid var(--c);border-radius:8px}
 </style>
 </head>
 <body>
@@ -349,7 +353,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.5</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.6</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -384,7 +388,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.5</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.6</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -449,7 +453,7 @@ body::before{
   <div class="hand-area">
     <div class="hand-hdr">
       <div class="hand-lbl">✋ Deine Hand</div>
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><div id="hand-info" style="font-size:12px;color:var(--dim)"></div><div style="display:flex;gap:2px" oncontextmenu="return false"><button id="sb-def" class="sort-btn active" onclick="setHS('default')">Standard</button><button id="sb-val" class="sort-btn" onclick="setHS('value')">1→12</button><button id="sb-col" class="sort-btn" onclick="setHS('color')">Farbe</button><button id="sb-man" class="sort-btn" onclick="setHS('manual')">✋</button></div></div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><div id="hand-info" style="font-size:12px;color:var(--dim)"></div><div style="display:flex;gap:2px" oncontextmenu="return false"><button id="sb-def" class="sort-btn active" onclick="setHS('default')">Standard</button><button id="sb-val" class="sort-btn" onclick="setHS('value')">1→12</button><button id="sb-col" class="sort-btn" onclick="setHS('color')">Farbe</button></div></div>
     </div>
     <div id="hand-cards" class="hand-cards"></div>
     <div id="hand-acts" class="hand-actions"></div>
@@ -598,7 +602,7 @@ let isHost  = false;
 let selectedCardIds = new Set();
 let addCardMode = false;
 let addingCardId = null;
-let confAnim=null; let _hs='default'; let _ho=[]; let _mode='classic';
+let confAnim=null; let _hs='default'; let _ho=[]; let _mode='classic'; let _dragIdx=null;
 
 /* ================================================================
    FIREBASE INIT
@@ -735,19 +739,23 @@ function setMode(m){
 }
 function setHS(m){
   _hs=m;
-  ['def','val','col','man'].forEach(function(k){
+  ['def','val','col'].forEach(function(k){
     var el=document.getElementById('sb-'+k);
-    if(el) el.className='sort-btn'+({'default':'def','value':'val','color':'col','manual':'man'}[m]===k?' active':'');
+    if(el) el.className='sort-btn'+({'default':'def','value':'val','color':'col'}[m]===k?' active':'');
   });
-  if(m==='manual'){var me=GS&&GS.players&&GS.players.find(function(p){return p.id===myId;});if(me)_ho=(me.hand||[]).map(function(c){return c.id;});}
+  // Nach Auto-Sort _ho aktualisieren damit Drag-Reihenfolge stimmt
+  var me2=GS&&GS.players&&GS.players.find(function(p){return p.id===myId;});
+  if(me2){
+    var h2=me2.hand||[];
+    var O={rot:0,blau:1,gruen:2,gelb:3,joker:4};
+    var s2=m==='value'?h2.slice().sort(function(a,b){return a.j?99:b.j?-99:a.v-b.v;}):
+            m==='color'?h2.slice().sort(function(a,b){return(O[a.col]||0)-(O[b.col]||0)||a.v-b.v;}):
+            h2;
+    _ho=s2.map(function(c){return c.id;});
+  }
   renderHand();
 }
-function moveCard(id,dir){
-  if(_hs!=='manual')return;
-  var i=_ho.indexOf(id);if(i<0)return;
-  var j=Math.max(0,Math.min(_ho.length-1,i+dir));
-  _ho.splice(i,1);_ho.splice(j,0,id);renderHand();
-}
+
 
 let heartbeatInt = null;
 function startHeartbeat(){
@@ -1525,22 +1533,71 @@ function renderHand(){
   const need = phI < 10 ? PHASES[phI].parts.reduce((s,p)=>s+p.n,0) : 0;
   if (hi) hi.textContent = !me.phaseComplete && phI<10 ? `Phase ${phI+1}: ${PHASES[phI].desc} (${need} Karten)` : me.phaseComplete?'✓ Phase ausgelegt':'';
 
-  function _srt(h){
-    if(!h||!h.length)return h||[];
-    if(_hs==='value')return h.slice().sort(function(a,b){return a.j?99:b.j?-99:a.v-b.v;});
-    if(_hs==='color'){var O={rot:0,blau:1,gruen:2,gelb:3,joker:4};return h.slice().sort(function(a,b){return(O[a.col]||0)-(O[b.col]||0)||a.v-b.v;});}
-    if(_hs==='manual'){var ids={};h.forEach(function(c){ids[c.id]=c;});_ho=_ho.filter(function(id){return!!ids[id];});h.forEach(function(c){if(_ho.indexOf(c.id)<0)_ho.push(c.id);});return _ho.map(function(id){return ids[id];}).filter(Boolean);}
-    return h;
-  }
-  hc.innerHTML = _srt(me.hand||[]).map(c => {
-    const sel = selectedCardIds.has(c.id);
-    const adding = addCardMode && c.id===addingCardId;
-    return `<div class="card ${c.j?'card-joker':COLOR_CSS[c.col]||''} ${sel?'sel':''}" 
-      onclick="onCardClick(${c.id})" title="${c.j?'Joker':COLOR_LABEL[c.col]+' '+c.v}"
-      style="${adding?'border-color:var(--p);transform:translateY(-12px)':''}">
-      ${c.j?'⭐':c.v}
-    </div>`;
-  }).join('');
+  // _ho synchronisieren
+  var _byId={};(me.hand||[]).forEach(function(c){_byId[c.id]=c;});
+  _ho=_ho.filter(function(id){return!!_byId[id];});
+  (me.hand||[]).forEach(function(c){if(_ho.indexOf(c.id)<0)_ho.push(c.id);});
+  var _disp=(_hs==='value')?[...(me.hand||[])].sort(function(a,b){return a.j?99:b.j?-99:a.v-b.v;}):
+            (_hs==='color')?(function(){var O={rot:0,blau:1,gruen:2,gelb:3,joker:4};return[...(me.hand||[])].sort(function(a,b){return(O[a.col]||0)-(O[b.col]||0)||a.v-b.v;});}()):
+            _ho.map(function(id){return _byId[id];}).filter(Boolean);
+  hc.innerHTML='';
+  _disp.forEach(function(c,i){
+    var sel=selectedCardIds.has(c.id);
+    var adding=addCardMode&&c.id===addingCardId;
+    var wrap=document.createElement('div');
+    wrap.className='card-drag'; wrap.setAttribute('data-id',c.id); wrap.draggable=true;
+    var cardEl=document.createElement('div');
+    cardEl.className='card '+(c.j?'card-joker':COLOR_CSS[c.col]||'')+(sel?' sel':'');
+    cardEl.title=c.j?'Joker':COLOR_LABEL[c.col]+' '+c.v;
+    cardEl.textContent=c.j?'⭐':c.v;
+    if(adding) cardEl.style.cssText='border-color:var(--p);transform:translateY(-12px)';
+    cardEl.addEventListener('click',function(){onCardClick(c.id);});
+    wrap.appendChild(cardEl);
+    // Desktop drag
+    wrap.addEventListener('dragstart',function(e){_dragIdx=i;e.dataTransfer.setData('text/plain',String(i));e.dataTransfer.effectAllowed='move';setTimeout(function(){cardEl.classList.add('dragging');},0);});
+    wrap.addEventListener('dragend',function(){_dragIdx=null;document.querySelectorAll('.card').forEach(function(x){x.classList.remove('dragging','drag-over');});});
+    wrap.addEventListener('dragover',function(e){e.preventDefault();e.dataTransfer.dropEffect='move';if(_dragIdx!==null&&_dragIdx!==i)cardEl.classList.add('drag-over');});
+    wrap.addEventListener('dragleave',function(){cardEl.classList.remove('drag-over');});
+    wrap.addEventListener('drop',function(e){
+      e.preventDefault();cardEl.classList.remove('drag-over');
+      var src=parseInt(e.dataTransfer.getData('text/plain'));
+      var from=isNaN(src)?_dragIdx:src;
+      if(from===null||from===i)return;
+      var ws=[...hc.children];
+      var ids=ws.map(function(w){return parseInt(w.getAttribute('data-id'));});
+      var moved=ids.splice(from,1)[0]; ids.splice(i,0,moved);
+      _ho=ids; _hs='default'; _dragIdx=null;
+      renderHand();
+    });
+    // Mobile touch
+    wrap.addEventListener('touchstart',function(e){wrap._tx=e.touches[0].clientX;wrap._ty=e.touches[0].clientY;wrap._td=false;wrap._tt=null;},{passive:true});
+    wrap.addEventListener('touchmove',function(e){
+      if(!wrap._tx)return;
+      var dx=e.touches[0].clientX-wrap._tx, dy=e.touches[0].clientY-wrap._ty;
+      if(!wrap._td&&Math.abs(dx)>8){wrap._td=true;_dragIdx=i;cardEl.classList.add('dragging');}
+      if(!wrap._td)return;
+      e.preventDefault();
+      var el=document.elementFromPoint(e.touches[0].clientX,e.touches[0].clientY);
+      var tw=el&&el.closest('.card-drag');
+      document.querySelectorAll('.card').forEach(function(x){x.classList.remove('drag-over');});
+      if(tw&&tw!==wrap){var tc=tw.querySelector('.card');if(tc)tc.classList.add('drag-over');wrap._tt=tw;}
+    },{passive:false});
+    wrap.addEventListener('touchend',function(){
+      cardEl.classList.remove('dragging');
+      document.querySelectorAll('.card').forEach(function(x){x.classList.remove('drag-over');});
+      if(wrap._td&&wrap._tt){
+        var ws2=[...hc.children];
+        var toI=ws2.indexOf(wrap._tt);
+        if(toI>=0&&toI!==i){
+          var ids2=ws2.map(function(w){return parseInt(w.getAttribute('data-id'));});
+          var mv=ids2.splice(i,1)[0]; ids2.splice(toI,0,mv);
+          _ho=ids2; _hs='default'; renderHand();
+        }
+      }
+      wrap._td=false;wrap._tt=null;_dragIdx=null;
+    });
+    hc.appendChild(wrap);
+  });
 }
 
 function renderHandActions(){
