@@ -361,7 +361,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.18</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.19</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -396,7 +396,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.18</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.19</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -854,22 +854,24 @@ function startRound(state){
 
 function endRound(state, enderId){
   if(state.mode==='schnell'){
-    state.players.forEach(function(p){if(p.phaseComplete)p.schnellScore=(p.schnellScore||0)+1;p.hand=[];});
+    state.players.forEach(function(p){
+      p.roundPenalty=(p.hand||[]).reduce(function(s,c){return s+cardPenalty(c);},0);
+      if(p.phaseComplete)p.schnellScore=(p.schnellScore||0)+1;
+      p.hand=[];
+    });
     if(state.round>=10){var ss=state.players.slice().sort(function(a,b){return(b.schnellScore||0)-(a.schnellScore||0);});state.winner={name:ss[0].name,score:ss[0].schnellScore||0,id:ss[0].id,isSchnell:true};state.status='gameOver';}
     else state.status='roundEnd';
     return;
   }
   const winner = [];
   for (const p of state.players){
+    p.roundPenalty = (p.hand||[]).reduce((s,c) => s + cardPenalty(c), 0);
+    p.score = (p.score||0) + p.roundPenalty;
     if (p.phaseComplete){
       const steps = (p.id === enderId) ? 2 : 1;
       p.phaseIndicator = Math.min(10, p.phaseIndicator + steps);
-      p.hand = []; // discard remaining
+      p.hand = [];
       if (p.phaseIndicator >= 10) winner.push(p);
-    } else {
-      // Penalty for remaining cards
-      const penalty = (p.hand||[]).reduce((s,c) => s + cardPenalty(c), 0);
-      p.score = (p.score||0) + penalty;
     }
   }
 
@@ -1941,7 +1943,7 @@ function showRoundSummary(state){
     rows = state.players.map(p=>{
       const got = p.phaseComplete;
       const total = p.schnellScore || 0;
-      const pen = (p.hand||[]).reduce((s,c)=>s+cardPenalty(c),0);
+      const pen = p.roundPenalty||0;
       return `<div class="res-row">
         <span>${p.name}</span>
         <span>${got?'<span class="res-plus">+1 Punkt ✓</span>':'<span style="color:var(--dim)">✗ kein Punkt</span>'}</span>
@@ -1958,7 +1960,7 @@ function showRoundSummary(state){
   } else {
     // Classic: Phasen-Fortschritt + Strafpunkte
     rows = state.players.map(p=>{
-      const pen = (p.hand||[]).reduce((s,c)=>s+cardPenalty(c),0);
+      const pen = p.roundPenalty||0;
       return `<div class="res-row">
         <span>${p.name}</span>
         <span>${p.phaseComplete?'<span class="res-plus">✓ Phase</span>':'<span style="color:var(--dim)">✗</span>'}</span>
