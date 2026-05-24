@@ -136,18 +136,17 @@ body::before{
 .s-active{color:var(--c);font-weight:700;animation:sPulse 2s infinite}
 @keyframes sPulse{0%,100%{opacity:1}50%{opacity:.55}}
 
-.game-body{display:grid;grid-template-columns:260px 1fr 260px;gap:10px;padding:10px;flex:1;overflow-y:auto;min-height:0}
+.game-body{display:grid;grid-template-columns:240px 1fr;gap:10px;padding:10px;flex:1;overflow-y:auto;min-height:0}
 .panel{display:flex;flex-direction:column;gap:10px;padding:12px;overflow-y:auto}
 .center{display:flex;flex-direction:column;gap:8px;min-width:0}
 
 @media(max-width:700px){
-  .game-body{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
-  .center{grid-column:1/-1;order:-1}
+  .game-body{grid-template-columns:1fr}
+  .center{order:-1}
   #screen-game{max-height:none}
 }
 @media(max-width:450px){
   .game-body{grid-template-columns:1fr}
-  .panel-r{order:3}
 }
 
 /* Panel content */
@@ -267,7 +266,7 @@ body::before{
 .tbl-gtype{position:absolute;top:2px;left:4px;font-size:8px;color:var(--dim);pointer-events:none}
 
 /* Hand */
-.hand-area{background:var(--gl);border:1px solid var(--gb);border-radius:var(--r);margin:0 10px 10px;padding:12px;flex-shrink:0}
+.hand-area{background:var(--gl);border:1px solid var(--gb);border-radius:var(--r);padding:12px}
 .hand-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px}
 .hand-lbl{font-size:clamp(11px,1.3vw,13px);color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.07em}
 .hand-cards{display:flex;flex-wrap:wrap;gap:5px;min-height:40px}
@@ -358,7 +357,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.13</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.14</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -393,7 +392,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.13</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.14</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -438,6 +437,23 @@ body::before{
         </div>
       </div>
 
+      <!-- Deine Hand (in der Mitte) -->
+      <div class="hand-area">
+        <div class="hand-hdr">
+          <div class="hand-lbl">✋ Deine Hand</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <div id="hand-info" style="font-size:12px;color:var(--dim)"></div>
+            <div style="display:flex;gap:2px" oncontextmenu="return false">
+              <button id="sb-def" class="sort-btn active" onclick="setHS('default')">Standard</button>
+              <button id="sb-val" class="sort-btn" onclick="setHS('value')">1→12</button>
+              <button id="sb-col" class="sort-btn" onclick="setHS('color')">Farbe</button>
+            </div>
+          </div>
+        </div>
+        <div id="hand-cards" class="hand-cards"></div>
+        <div id="hand-acts" class="hand-actions"></div>
+      </div>
+
       <!-- Table (laid phases) -->
       <div id="table-area" class="glass" style="padding:10px">
         <div class="tbl-lbl">🃏 Ausgelegte Phasen</div>
@@ -445,18 +461,8 @@ body::before{
       </div>
     </div>
 
-    <!-- Right panel -->
-    <div id="panel-r" class="glass panel panel-r"></div>
-  </div>
-
-  <!-- Hand (sticky bottom) -->
-  <div class="hand-area">
-    <div class="hand-hdr">
-      <div class="hand-lbl">✋ Deine Hand</div>
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><div id="hand-info" style="font-size:12px;color:var(--dim)"></div><div style="display:flex;gap:2px" oncontextmenu="return false"><button id="sb-def" class="sort-btn active" onclick="setHS('default')">Standard</button><button id="sb-val" class="sort-btn" onclick="setHS('value')">1→12</button><button id="sb-col" class="sort-btn" onclick="setHS('color')">Farbe</button></div></div>
-    </div>
-    <div id="hand-cards" class="hand-cards"></div>
-    <div id="hand-acts" class="hand-actions"></div>
+    <!-- panel-r hidden but kept for JS compatibility -->
+    <div id="panel-r" style="display:none"></div>
   </div>
 </div>
 
@@ -1375,8 +1381,8 @@ function renderHeader(){
 function renderBoard(){
   var con=document.getElementById('board-container');
   if(!con)return;
-  var W=580,H=580,cx=290,cy=290;
-  var oR=272,iR=170,phR=154,cR=136;
+  var W=640,H=640,cx=320,cy=320;
+  var oR=302,iR=192,phR=176,cR=154;
   var N=BOARD.length,step=2*Math.PI/N,off=-Math.PI/2;
   var gpos={};
   GS.players.forEach(function(p,i){if(!gpos[p.position])gpos[p.position]=[];gpos[p.position].push(i);});
@@ -1393,7 +1399,7 @@ function renderBoard(){
     exchange:'#bf5af2',all_draw:'#5dce8c',joker_draw:'#ff6b9d',
     ask_card:'#ffd60a',free_choice:'#ff7043'};
 
-  var sv='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:min(560px,55vw);display:block">';
+  var sv='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:min(600px,70vw);display:block">';
   sv+='<defs><linearGradient id="gbk" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8f5fff"/><stop offset="100%" stop-color="#ff4fd8"/></linearGradient></defs>';
   sv+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(oR+7)+'" fill="#12122a"/>';
 
@@ -1545,20 +1551,14 @@ function renderPanels(){
   const left  = others.filter((_,i)=>i%2===0);
   const right  = others.filter((_,i)=>i%2===1);
 
-  document.getElementById('panel-l').innerHTML = [...left].map(p=>playerPanelHTML(p)).join('');
-  document.getElementById('panel-r').innerHTML = [...right].map(p=>playerPanelHTML(p)).join('');
+  // Alle anderen Spieler im linken Panel
+  document.getElementById('panel-l').innerHTML = others.map(p=>playerPanelHTML(p)).join(
+    '<div style="height:1px;background:var(--gb);margin:8px 0"></div>');
 
-  // Highlight active player panel
-  ['panel-l','panel-r'].forEach(id=>{
-    const el = document.getElementById(id);
-    el.classList.remove('active-panel');
-  });
+  const pl = document.getElementById('panel-l');
+  pl.classList.remove('active-panel');
   const cp = currentPlayer();
-  if (cp && cp.id !== myId){
-    const inLeft = left.find(p=>p.id===cp.id);
-    const el = document.getElementById(inLeft ? 'panel-l' : 'panel-r');
-    if (el) el.classList.add('active-panel');
-  }
+  if (cp && cp.id !== myId) pl.classList.add('active-panel');
 }
 
 function playerPanelHTML(p){
