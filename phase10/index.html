@@ -359,7 +359,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.7</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.8</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -394,7 +394,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.7</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.8</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -490,7 +490,7 @@ body::before{
 <div id="toast"></div>
 
 <!-- Audio -->
-<audio id="snd-dice" src="dice.mp3" preload="none"></audio>
+<audio id="snd-dice" src="dice.mp3" preload="auto"></audio>
 <audio id="snd-applause" src="applause.mp3" preload="none"></audio>
 
 <script>
@@ -1812,8 +1812,18 @@ function playSound(name){
   try{
     var id=name==='dice'?'snd-dice':'snd-applause';
     var el=document.getElementById(id);
-    if(el){ el.currentTime=0; el.play().catch(function(){if(name==='dice')playDiceTone();}); }
-    else if(name==='dice') playDiceTone();
+    if(el && el.readyState>=2){
+      // Datei geladen → mp3 abspielen
+      el.currentTime=0; el.play().catch(function(){});
+    } else if(el){
+      // Noch nicht geladen → einmalig laden und dann spielen
+      el.load();
+      el.oncanplaythrough=function(){ el.currentTime=0; el.play().catch(function(){}); el.oncanplaythrough=null; };
+      // Fallback nach 300ms falls Laden fehlschlägt
+      if(name==='dice') setTimeout(function(){ if(el.readyState<2) playDiceTone(); },300);
+    } else if(name==='dice'){
+      playDiceTone();
+    }
   }catch(e){}
 }
 
