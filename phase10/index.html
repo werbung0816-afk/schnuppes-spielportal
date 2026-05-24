@@ -358,7 +358,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.11</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.12</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -393,7 +393,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.11</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.12</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -1392,7 +1392,7 @@ function renderBoard(){
     draw_plus:'#4a9eff',extra_turn:'#4cd96e',search_discard:'#ff9f0a',
     exchange:'#bf5af2',all_draw:'#5dce8c',joker_draw:'#ff6b9d',
     ask_card:'#ffd60a',free_choice:'#ff7043'};
-  var sv='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:300px;display:block">';
+  var sv='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-height:min(480px,48vw);display:block">';
   sv+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(oR+5)+'" fill="#12122a"/>';
   for(var i=0;i<N;i++){
     var a1=off+i*step,a2=off+(i+1)*step,mA=(a1+a2)/2;
@@ -1406,9 +1406,30 @@ function renderBoard(){
       +' L '+x2i.toFixed(2)+' '+y2i.toFixed(2)+' A '+iR+' '+iR+' 0 0 0 '+x1i.toFixed(2)+' '+y1i.toFixed(2)+' Z';
     var oc=ri?' onclick="chooseDie('+ri.i+')"':'';
     sv+='<path d="'+pd+'" fill="'+fc+'" stroke="#080816" stroke-width="1.5" style="cursor:'+(ri?'pointer':'default')+'"'+oc+'><title>'+(f.lbl||'')+'</title></path>';
-    if(ri)sv+='<path d="'+pd+'" fill="none" stroke="'+(ri.p?'#ff4fd8':'#53f6ff')+'" stroke-width="3" opacity="0.9" style="pointer-events:none"/>';
+    // Erreichbares Feld: nach außen springen + Pulsring + Würfelzahl
     var mx=cx+((oR+iR)/2)*Math.cos(mA),my=cy+((oR+iR)/2)*Math.sin(mA);
-    sv+='<text x="'+mx.toFixed(1)+'" y="'+my.toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="white" style="pointer-events:none;font-family:system-ui">'+(f.ic||'')+'</text>';
+    if(ri){
+      var eR=oR+18; // springt nach außen
+      var xe1=cx+eR*Math.cos(a1),ye1=cy+eR*Math.sin(a1);
+      var xe2=cx+eR*Math.cos(a2),ye2=cy+eR*Math.sin(a2);
+      var pe='M '+xe1.toFixed(2)+' '+ye1.toFixed(2)+' A '+eR+' '+eR+' 0 0 1 '+xe2.toFixed(2)+' '+ye2.toFixed(2)
+        +' L '+x2i.toFixed(2)+' '+y2i.toFixed(2)+' A '+iR+' '+iR+' 0 0 0 '+x1i.toFixed(2)+' '+y1i.toFixed(2)+' Z';
+      var hc=ri.p?'#ff4fd8':'#53f6ff';
+      sv+='<path d="'+pe+'" fill="'+hc+'" stroke="white" stroke-width="1.5" style="pointer-events:none">';
+      sv+='<animate attributeName="opacity" values="0.55;1;0.55" dur="0.9s" repeatCount="indefinite"/></path>';
+      // Pulsring
+      var pmx=cx+((eR+iR)/2)*Math.cos(mA),pmy=cy+((eR+iR)/2)*Math.sin(mA);
+      sv+='<circle cx="'+pmx.toFixed(1)+'" cy="'+pmy.toFixed(1)+'" r="18" fill="none" stroke="'+hc+'" stroke-width="3" style="pointer-events:none">';
+      sv+='<animate attributeName="r" values="14;22;14" dur="0.9s" repeatCount="indefinite"/>';
+      sv+='<animate attributeName="opacity" values="0.9;0.1;0.9" dur="0.9s" repeatCount="indefinite"/></circle>';
+      // Icon im größeren Sektor
+      sv+='<text x="'+pmx.toFixed(1)+'" y="'+(pmy-6).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-size="13" fill="white" font-weight="700" style="pointer-events:none;font-family:system-ui">'+(f.ic||'')+'</text>';
+      // Würfelzahl
+      var dv=ri.i===2?(GS.dice[0]*2):(ri.i===0?GS.dice[0]:GS.dice[1]);
+      sv+='<text x="'+pmx.toFixed(1)+'" y="'+(pmy+9).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="white" font-weight="900" style="pointer-events:none">'+dv+'</text>';
+    } else {
+      sv+='<text x="'+mx.toFixed(1)+'" y="'+my.toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="white" style="pointer-events:none;font-family:system-ui">'+(f.ic||'')+'</text>';
+    }
     var tsr=oR-11,pls=gpos[i]||[];
     if(pls.length===0){
       sv+='<circle cx="'+(cx+tsr*Math.cos(mA)).toFixed(1)+'" cy="'+(cy+tsr*Math.sin(mA)).toFixed(1)+'" r="6" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.12)" stroke-width="1" style="pointer-events:none"/>';
