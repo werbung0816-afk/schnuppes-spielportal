@@ -506,6 +506,7 @@ function aiPickCat(){
   return best;
 }
 function aiTurn(){
+  if(go)return;
   if(MP.on&&!MP.host)return;
   if(aiBusy)return;
   if(!players[cp]?.isAI||players[cp]?.left)return;
@@ -516,7 +517,7 @@ function aiTurn(){
 }
 function _aiS(n,tid){
   try{
-  if(tid!==_aiTid||!players[cp]?.isAI||players[cp]?.left){aiBusy=F;return;}
+  if(go||tid!==_aiTid||!players[cp]?.isAI||players[cp]?.left){aiBusy=F;return;}
   doRoll();renderDice();renderSheet();if(MP.on)MP.push();
   // maxRolls fixed per turn: 1 or 2 extra rolls (total 2–3)
   if(n===0)_aiS._max=1+Math.floor(Math.random()*2);
@@ -740,18 +741,24 @@ function bldBonus(vis){
 // VICTORY
 function trigVic(){
   if(MP.on&&!MP.host)return;
+  go=T; // ensure go is set
+  aiBusy=F; _aiTid++; // stop any running AI
   const sorted=activeP().sort((a,b)=>gTot(b.sc)-gTot(a.sc));
+  if(!sorted.length)return;
   _bldVic(sorted);
-  // Hide dice/button area, show inline victory
-  const da=document.querySelector('.dice-area');if(da)da.style.display='none';
-  const rb=document.getElementById('rollBtn');if(rb)rb.style.display='none';
-  const rd=document.getElementById('rollDots');if(rd)rd.style.display='none';
-  const sb=document.getElementById('SB');if(sb){sb.textContent='🏆 Spiel beendet!';}
-  const vz=document.getElementById('vicZone');
-  if(vz)vz.style.display='block';
-  let st=0;_rendVicInline(st);
-  clearInterval(_vicT);
-  _vicT=setInterval(()=>{st++;if(st>=_vicSeq.length){clearInterval(_vicT);return;}_rendVicInline(st);},2800);
+  function _showVic(){
+    const da=document.querySelector('.dice-area');if(da)da.style.display='none';
+    const rb=document.getElementById('rollBtn');if(rb)rb.style.display='none';
+    const rd=document.getElementById('rollDots');if(rd)rd.style.display='none';
+    const sb=document.getElementById('SB');if(sb)sb.textContent='🏆 Spiel beendet!';
+    const vz=document.getElementById('vicZone');
+    if(!vz){setTimeout(_showVic,300);return;} // retry if not ready
+    vz.style.display='block';
+    let st=0;_rendVicInline(st);
+    clearInterval(_vicT);
+    _vicT=setInterval(()=>{st++;if(st>=_vicSeq.length){clearInterval(_vicT);return;}_rendVicInline(st);},2800);
+  }
+  _showVic();
 }
 let _vicSeq=[],_vicT=null;
 const _medals=[
@@ -889,7 +896,7 @@ function _hydrate(s){
   if(mine){ss('⭐ Du bist dran ✦ — Jetzt würfeln!');checkSignal(s.ts);}
   else if(!isAI)ss('⏳ '+esc(players[cp]?.name||'?')+' ist am Zug…');
   if(s.ovl&&s.ovl.name){const age=Date.now()-(s.ts||0);if(age<3500)setTimeout(()=>showTurnOv(s.ovl.name,s.ovl.comment||'',s.ovl.scored||null),80);}
-  if(s.go&&!go){go=T;setTimeout(()=>{_bldVic(activeP().sort((a,b)=>gTot(b.sc)-gTot(a.sc)));const da=document.querySelector('.dice-area');if(da)da.style.display='none';const rb=document.getElementById('rollBtn');if(rb)rb.style.display='none';const rd=document.getElementById('rollDots');if(rd)rd.style.display='none';const vz=document.getElementById('vicZone');if(vz)vz.style.display='block';let st=0;_rendVicInline(st);clearInterval(_vicT);_vicT=setInterval(()=>{st++;if(st>=_vicSeq.length){clearInterval(_vicT);return;}_rendVicInline(st);},2800);},600);return;}
+  if(s.go&&!go){go=T;setTimeout(()=>trigVic(),600);return;}
   if(MP.host&&isAI&&!aiBusy)setTimeout(()=>{if(players[cp]?.isAI&&!players[cp]?.left&&!aiBusy)aiTurn();},900);
   // Set onDisconnect for this player's left flag (ensures tab-close marks player as left)
   if(MP.on&&MP.myIdx>=0&&!window._dcSet){
