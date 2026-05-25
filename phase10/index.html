@@ -132,7 +132,7 @@ body::before{
 .wait-dot{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex-shrink:0}
 
 /* ---- GAME SCREEN ---- */
-#screen-game{flex-direction:column;overflow:hidden;max-height:100vh}
+#screen-game{flex-direction:column;overflow:hidden;max-height:100vh;max-height:100dvh}
 .game-header{
   display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
   padding:8px 14px;background:rgba(0,0,0,.32);border-bottom:1px solid var(--gb);
@@ -151,9 +151,11 @@ body::before{
 
 @media(max-width:700px){
   .game-body{grid-template-columns:1fr;padding:6px}
-  .left-stack{max-height:none;order:2}
+  .game-body{display:flex;flex-direction:column}
+  .left-stack{order:2}
   .board-col{order:1}
-  #screen-game{max-height:none}
+  #panel-r{order:3}
+  #screen-game{max-height:none;overflow-y:auto}
 }
 @media(max-width:450px){
   .game-body{grid-template-columns:1fr}
@@ -372,7 +374,7 @@ body::before{
 <div id="screen-setup" class="screen active">
   <div class="logo-title">Oma &amp; Opas's<br>10er Phase</div>
   <div class="logo-sub">Bärbel &amp; Heinz laden zum ultimativen Showdown</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.22</div>
+  <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:-8px">v3.23</div>
   <div class="glass2 setup-box">
     <div style="font-size:13px;color:var(--dim)">Dein Spielername</div>
     <input id="inp-name" class="field" type="text" maxlength="20" placeholder="Name eingeben…" autocomplete="off">
@@ -407,7 +409,7 @@ body::before{
 <div id="screen-game" class="screen">
   <!-- Header -->
   <div class="game-header">
-    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.22</div>
+    <div class="game-logo">🎲 10er Phase</div><div style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400">v3.23</div>
     <div id="status-bar" class="status-bar"></div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span id="round-badge" class="round-badge">Runde 1</span>
@@ -1990,10 +1992,24 @@ function showRoundSummary(state){
     }).join('');
     const rndLeft = 10 - state.round;
     const leader = sorted[0];
-    const subtitle = rndLeft > 0
-      ? `Runde ${state.round}/10 · noch ${rndLeft} Runde${rndLeft!==1?'n':''} · Führung: ${leader.name} (${leader.schnellScore||0} Pkt)`
-      : `Finale Auswertung · Gewinner: ${leader.name} mit ${leader.schnellScore||0} Punkten`;
-    showModal({ title:`⚡ Schnelle 10 – Runde ${state.round}`, body: subtitle, actions: nextAction });
+    const leaderScore = leader.schnellScore||0;
+    // Prüfen ob Führender noch einholbar ist
+    const canBeCaught = state.players.some(p=>p.id!==leader.id&&((p.schnellScore||0)+rndLeft)>=leaderScore);
+    const earlyWin = rndLeft > 0 && !canBeCaught;
+    let subtitle, actions2;
+    if (rndLeft <= 0 || earlyWin) {
+      subtitle = earlyWin
+        ? `🏆 ${leader.name} ist mit ${leaderScore} Pkt nicht mehr einzuholen! (${rndLeft} Runde${rndLeft!==1?'n':''} verbleiben)`
+        : `Finale Auswertung · Gewinner: ${leader.name} mit ${leaderScore} Punkten`;
+      actions2 = isHost
+        ? [{label:'🏆 Siegerehrung', cls:'btn-prime', fn:()=>{ hideModal(); showWinner(leader); }},
+           ...(earlyWin?[{label:'Weiterspielen', cls:'btn-ghost', fn:()=>{ hideModal(); nextRound(GS); writeState(GS); }}]:[]) ]
+        : [{label:'Warte auf Host…', cls:'btn-ghost', fn:()=>{}}];
+    } else {
+      subtitle = `Runde ${state.round}/10 · noch ${rndLeft} Runde${rndLeft!==1?'n':''} · Führung: ${leader.name} (${leaderScore} Pkt)`;
+      actions2 = nextAction;
+    }
+    showModal({ title:`⚡ Schnelle 10 – Runde ${state.round}`, body: subtitle, actions: actions2 });
   } else {
     // Classic: Phasen-Fortschritt + Strafpunkte
     rows = state.players.map(p=>{
@@ -2077,6 +2093,13 @@ function playDiceTone(){
       s.start(ctx.currentTime+t);
     });
   }catch(e){}
+}
+function showWinner(p){
+  stopConfetti(); startConfetti();
+  var ov=document.getElementById('win-overlay');
+  var wn=document.getElementById('win-name');
+  var ws=document.getElementById('win-score');
+  if(ov&&wn){ wn.textContent='🏆 '+p.name; if(ws) ws.textContent=p.schnellScore+' Punkte'; ov.classList.add('show'); }
 }
 function playSound(name){
   try{
