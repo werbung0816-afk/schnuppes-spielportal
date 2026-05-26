@@ -30,8 +30,8 @@ input[type=file]{display:none}
 .room-badge{margin-top:14px;padding:10px 14px;border-radius:12px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);font-size:12px;color:rgba(255,255,255,.4);}
 .dots::after{content:'';animation:dots 1.5s steps(4,end) infinite;}
 @keyframes dots{0%{content:''}25%{content:'.}50%{content:'..'}75%{content:'...'}100%{content:''}}
-#setupScreen{min-height:100vh;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
-#waitScreen{min-height:100vh;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
+#setupScreen{display:flex;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
+#waitScreen{display:flex;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
 .wait-name{font-size:clamp(26px,5.5vw,42px);font-weight:900;line-height:.95;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
 .wait-sub{font-size:clamp(13px,2.3vw,15px);color:rgba(255,255,255,.4);margin-bottom:14px;}
 /* ── Gallery Picker ── */
@@ -384,8 +384,11 @@ function rRef(sub){
 
 /* ── Helpers ── */
 function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id)?.classList.add('active');
+  document.querySelectorAll('.screen').forEach(s=>{
+    s.classList.remove('active'); s.style.display='none';
+  });
+  const el=document.getElementById(id);
+  if(el){ el.classList.add('active'); el.style.display='flex'; }
 }
 function fixArr(v){
   if(!v) return [];
@@ -468,9 +471,9 @@ function selectGallery(key, btn){
   if(!gal){ return; }
 
   /* Vorschau: erste 8 Bilder */
-  preview.innerHTML = gal.images.slice(0,8).map(url=>
-    '<img class="gal-prev-img" src="'+url+'" loading="lazy" onerror="this.style.opacity='0.2'">'
-  ).join('');
+  preview.innerHTML = gal.images.slice(0,8).map(function(url){
+    return '<img class="gal-prev-img" src="'+url+'" loading="lazy" onerror="this.style.opacity=0.2">';
+  }).join('');
 
   if(note) note.textContent = gal.label+' — '+gal.images.length+' Motive · werden mit eigenen Fotos kombiniert';
 }
@@ -508,21 +511,36 @@ function buildCards(){
    SETUP SCREEN
 ══════════════════════════════════════ */
 window.addEventListener('load',()=>{
+  showScreen('setupScreen');
   initDB();
   const s=localStorage.getItem('mem_name');
   if(s) document.getElementById('nameInput').value=s;
   watchSetupBadge();
 });
 function watchSetupBadge(){
-  rRef()?.on('value',snap=>{
-    const r=snap?.val(), el=document.getElementById('setupBadge');
-    if(!el) return;
+  const badge=document.getElementById('setupBadge');
+  const ref=rRef();
+  if(!ref){
+    if(badge){ badge.textContent='Fehler: Firebase SDK nicht geladen — Adblocker prüfen'; badge.style.color='rgba(239,68,68,.9)'; }
+    return;
+  }
+  const t=setTimeout(()=>{
+    if(badge&&badge.textContent.includes('Verbinde')){
+      badge.textContent='Keine Antwort von Firebase — Adblocker aktiv? Seite neu laden.';
+      badge.style.color='rgba(251,191,36,.9)';
+    }
+  },6000);
+  ref.on('value',snap=>{
+    clearTimeout(t);
+    const r=snap?.val();
+    if(!badge) return;
+    badge.style.color='';
     if(!r||r.status==='idle'||r.status==='finished')
-      el.textContent='⚪ Kein Raum aktiv — du startest ihn';
+      badge.textContent='⚪ Kein Raum aktiv — du startest ihn';
     else if(r.status==='waiting')
-      el.textContent='🟢 Warteraum offen — Host: '+(r.hostName||'?');
+      badge.textContent='🟢 Warteraum offen — Host: '+(r.hostName||'?');
     else if(r.status==='playing')
-      el.textContent='🟡 Spiel läuft — beitreten möglich';
+      badge.textContent='🟡 Spiel läuft — beitreten möglich';
   });
 }
 async function startJoin(){
@@ -531,7 +549,19 @@ async function startJoin(){
   if(!name){ inp.focus(); return; }
   myName=name;
   localStorage.setItem('mem_name',name);
-  const snap=await rRef().once('value'), room=snap.val();
+  const ref=rRef();
+  if(!ref){
+    const b=document.getElementById('setupBadge');
+    if(b){ b.textContent='Fehler: Firebase nicht erreichbar. Adblocker pruefen oder Seite neu laden.'; b.style.color='rgba(239,68,68,.9)'; }
+    return;
+  }
+  let snap,room;
+  try{ snap=await ref.once('value'); room=snap.val(); }
+  catch(e){
+    const b=document.getElementById('setupBadge');
+    if(b){ b.textContent='Verbindungsfehler: '+e.message; b.style.color='rgba(239,68,68,.9)'; }
+    return;
+  }
   if(!room||room.status==='idle'||room.status==='finished'){
     isHost=true;
     await rRef().set({status:'waiting',hostName:myName,hostId:myId,
