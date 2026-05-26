@@ -41,23 +41,96 @@ input[type=file]{display:none}
 .emoji-thumb{aspect-ratio:1;border-radius:7px;background:rgba(143,95,255,.1);border:1px solid rgba(143,95,255,.15);display:flex;align-items:center;justify-content:center;font-size:clamp(13px,2.8vw,20px);}
 .wait-slot{display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(83,246,255,.12);margin-bottom:6px;font-size:clamp(13px,2.4vw,15px);font-weight:600;}
 .slot-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,.6);flex-shrink:0;}
-#gameScreen{min-height:100vh;padding:clamp(8px,1.8vw,18px);gap:clamp(8px,1.2vw,14px);align-items:flex-start;}
-@media(min-width:701px){#gameScreen{display:grid!important;grid-template-columns:clamp(148px,16vw,206px) 1fr clamp(148px,16vw,206px);padding-top:clamp(14px,2vw,26px);}}
-@media(min-width:451px) and (max-width:700px){#gameScreen{display:grid!important;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;}#boardArea{grid-column:1/-1;grid-row:1}#p1Panel{grid-column:1;grid-row:2}#p2Panel{grid-column:2;grid-row:2}}
-@media(max-width:450px){#gameScreen{display:flex!important;flex-direction:column;align-items:stretch;}}
-.player-panel{background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.07);border-radius:22px;padding:clamp(12px,1.8vw,20px);backdrop-filter:blur(18px);transition:border-color .3s,box-shadow .3s;}
-.player-panel.active{border-color:#53f6ff;box-shadow:0 0 24px rgba(83,246,255,.28);}
-.player-panel.me.active{border-color:#ff4fd8;box-shadow:0 0 24px rgba(255,79,216,.3);}
-.p-name{font-size:clamp(12px,1.7vw,14px);font-weight:700;color:rgba(255,255,255,.5);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px;}
-.p-score{font-size:clamp(40px,6.5vw,56px);font-weight:900;color:#53f6ff;line-height:1;}
-.p-pairs{font-size:clamp(10px,1.3vw,12px);color:rgba(255,255,255,.27);margin-top:2px;}
-.p-status{margin-top:10px;font-size:clamp(10px,1.3vw,12px);color:#ff4fd8;font-weight:700;min-height:16px;letter-spacing:.2px;}
-#boardArea{display:flex;flex-direction:column;align-items:center;gap:clamp(7px,1.1vw,11px);}
-.board-title{font-size:clamp(20px,3.5vw,32px);font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.status-bar{background:rgba(143,95,255,.17);border:1px solid rgba(143,95,255,.14);border-radius:14px;padding:clamp(7px,1.2vw,11px) clamp(12px,2vw,18px);font-size:clamp(11px,1.8vw,14px);font-weight:600;text-align:center;width:100%;}
-#gridWrap{width:100%;padding:clamp(7px,1.2vw,12px);border-radius:clamp(16px,2.5vw,26px);background:rgba(120,40,255,.06);border:1px solid rgba(220,120,255,.2);box-shadow:0 0 30px rgba(180,80,255,.1) inset;}
-#memoryGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(3px,.65vw,7px);}
-.move-counter{font-size:clamp(10px,1.3vw,13px);color:rgba(255,255,255,.27);font-weight:600;}
+/* Single-Column Layout — Board maximal groß */
+#gameScreen{
+  min-height:100vh;
+  flex-direction:column;
+  align-items:center;
+  padding:clamp(10px,2vw,20px);
+  gap:clamp(8px,1.2vw,12px);
+}
+/* Spieler-Kopfzeile: beide Karten nebeneinander */
+.score-header{
+  display:flex;
+  gap:clamp(8px,1.5vw,14px);
+  width:100%;
+  max-width:700px;
+}
+.player-panel{
+  flex:1;
+  background:rgba(10,12,38,.85);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:18px;
+  padding:clamp(12px,1.8vw,18px);
+  backdrop-filter:blur(18px);
+  transition:border-color .3s,box-shadow .3s;
+  min-width:0;
+}
+.player-panel.active{
+  border-color:#53f6ff;
+  box-shadow:0 0 22px rgba(83,246,255,.28);
+}
+.player-panel.me.active{
+  border-color:#ff4fd8;
+  box-shadow:0 0 22px rgba(255,79,216,.3);
+}
+.p-name{
+  font-size:clamp(11px,2vw,14px);font-weight:700;
+  color:rgba(255,255,255,.5);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  margin-bottom:2px;
+}
+.p-score{
+  font-size:clamp(34px,6vw,52px);font-weight:900;
+  color:#53f6ff;line-height:1;
+}
+.p-pairs{
+  font-size:clamp(10px,1.5vw,12px);
+  color:rgba(255,255,255,.27);margin-top:1px;
+}
+.p-status{
+  margin-top:6px;
+  font-size:clamp(10px,1.5vw,12px);
+  color:#ff4fd8;font-weight:700;
+  min-height:15px;letter-spacing:.2px;
+}
+#boardArea{
+  display:flex;flex-direction:column;
+  align-items:center;
+  gap:clamp(7px,1.1vw,10px);
+  width:100%;
+  max-width:700px;
+}
+.board-title{
+  font-size:clamp(20px,3.5vw,32px);font-weight:900;
+  background:linear-gradient(90deg,#ff4fd8,#53f6ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.status-bar{
+  background:rgba(143,95,255,.17);
+  border:1px solid rgba(143,95,255,.14);
+  border-radius:14px;
+  padding:clamp(7px,1.2vw,11px) clamp(12px,2vw,18px);
+  font-size:clamp(11px,1.8vw,14px);font-weight:600;
+  text-align:center;width:100%;
+}
+#gridWrap{
+  width:100%;
+  padding:clamp(7px,1.2vw,12px);
+  border-radius:clamp(16px,2.5vw,26px);
+  background:rgba(120,40,255,.06);
+  border:1px solid rgba(220,120,255,.2);
+  box-shadow:0 0 30px rgba(180,80,255,.1) inset;
+}
+#memoryGrid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:clamp(3px,.65vw,7px);
+}
+.move-counter{
+  font-size:clamp(10px,1.3vw,13px);
+  color:rgba(255,255,255,.27);font-weight:600;
+}
 .card{aspect-ratio:1;position:relative;cursor:pointer;perspective:700px;}
 .card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .44s cubic-bezier(.4,0,.2,1);border-radius:clamp(6px,.95vw,12px);}
 .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg)}
@@ -88,7 +161,7 @@ input[type=file]{display:none}
 .confetti{position:absolute;top:-120px;pointer-events:none;animation:fall linear infinite;opacity:.9;filter:saturate(1.4);}
 @keyframes fall{0%{transform:translateY(-120px) rotate(0deg)}100%{transform:translateY(120vh) rotate(360deg)}}
 @keyframes zoomIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
-@media(max-width:450px){.player-panel{padding:10px 12px;border-radius:16px}.p-score{font-size:30px}#memoryGrid{gap:3px}body{padding-bottom:20px}}
+@media(max-width:450px){.player-panel{padding:9px 10px;border-radius:14px}.p-score{font-size:clamp(26px,8vw,36px)}#memoryGrid{gap:2px}body{padding-bottom:20px}}
 @media(max-width:700px){body{padding-bottom:20px}.victoryStage{padding:22px 12px;gap:18px}.playerCard{min-width:0;width:84vw;padding:20px 16px}.bigComment{font-size:clamp(17px,5vw,28px);padding:0 8px}.bigPlace{font-size:clamp(36px,12vw,56px)}.playerName{font-size:clamp(18px,5.5vw,26px)}.playerScore{font-size:clamp(38px,11vw,54px)}}
 </style>
 </head>
@@ -138,26 +211,32 @@ input[type=file]{display:none}
   </div>
 </div>
 
-<!-- GAME SCREEN -->
+<!-- GAME SCREEN — Single Column -->
 <div id="gameScreen" class="screen">
-  <div class="player-panel" id="p1Panel">
-    <div class="p-name" id="p1Name">—</div>
-    <div class="p-score" id="p1Score">0</div>
-    <div class="p-pairs" id="p1Pairs">0 Paare</div>
-    <div class="p-status" id="p1Status"></div>
+
+  <!-- Spieler-Kopfzeile: beide Panels nebeneinander -->
+  <div class="score-header">
+    <div class="player-panel" id="p1Panel">
+      <div class="p-name" id="p1Name">—</div>
+      <div class="p-score" id="p1Score">0</div>
+      <div class="p-pairs" id="p1Pairs">0 Paare</div>
+      <div class="p-status" id="p1Status"></div>
+    </div>
+    <div class="player-panel" id="p2Panel">
+      <div class="p-name" id="p2Name">—</div>
+      <div class="p-score" id="p2Score">0</div>
+      <div class="p-pairs" id="p2Pairs">0 Paare</div>
+      <div class="p-status" id="p2Status"></div>
+    </div>
   </div>
+
+  <!-- Board: volle Breite, max 700px -->
   <div id="boardArea">
-    <div class="board-title">Memory</div>
     <div class="status-bar" id="statusBar">Laden…</div>
     <div id="gridWrap"><div id="memoryGrid"></div></div>
     <div class="move-counter" id="moveCounter">0 Züge</div>
   </div>
-  <div class="player-panel" id="p2Panel">
-    <div class="p-name" id="p2Name">—</div>
-    <div class="p-score" id="p2Score">0</div>
-    <div class="p-pairs" id="p2Pairs">0 Paare</div>
-    <div class="p-status" id="p2Status"></div>
-  </div>
+
 </div>
 
 <!-- VICTORY OVERLAY -->
@@ -599,13 +678,15 @@ async function resolveMatch(i1,i2,players,cards,game,byAI){
     const newPlayers=[...players];
     newPlayers[cp]={...newPlayers[cp],score:(newPlayers[cp].score??0)+1};
     const allDone=newCards.every(c=>c.matched);
-    await rRef().update({players:newPlayers,'game/cards':newCards,'game/flipped':[]});
+    /* Flags VOR dem Write leeren → Listener sieht sauberen Zustand */
     isProcessing=false; if(byAI) aiThinking=false;
+    await rRef().update({players:newPlayers,'game/cards':newCards,'game/flipped':[]});
     if(allDone){ await sleep(420); triggerVictory(newPlayers); }
   }else{
     const next=(game.currentPlayer+1)%players.length;
-    await rRef('game').update({flipped:[],currentPlayer:next});
+    /* Flags VOR dem Write leeren → Listener triggert KI korrekt */
     isProcessing=false; if(byAI) aiThinking=false;
+    await rRef('game').update({flipped:[],currentPlayer:next});
   }
 }
 
