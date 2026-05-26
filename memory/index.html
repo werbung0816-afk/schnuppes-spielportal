@@ -58,41 +58,47 @@ input[type=file]{display:none}
 }
 .player-panel{
   flex:1;
+  display:flex;
+  align-items:center;
+  gap:clamp(10px,1.5vw,16px);
   background:rgba(10,12,38,.85);
   border:1px solid rgba(255,255,255,.07);
-  border-radius:18px;
-  padding:clamp(12px,1.8vw,18px);
+  border-radius:16px;
+  padding:clamp(10px,1.5vw,14px) clamp(12px,1.8vw,18px);
   backdrop-filter:blur(18px);
   transition:border-color .3s,box-shadow .3s;
   min-width:0;
 }
 .player-panel.active{
   border-color:#53f6ff;
-  box-shadow:0 0 22px rgba(83,246,255,.28);
+  box-shadow:0 0 20px rgba(83,246,255,.26);
 }
 .player-panel.me.active{
   border-color:#ff4fd8;
-  box-shadow:0 0 22px rgba(255,79,216,.3);
+  box-shadow:0 0 20px rgba(255,79,216,.28);
 }
+/* Große Zahl links */
+.p-score{
+  font-size:clamp(30px,5vw,46px);font-weight:900;
+  color:#53f6ff;line-height:1;flex-shrink:0;
+}
+/* Texte rechts */
+.p-info{flex:1;min-width:0;}
 .p-name{
-  font-size:clamp(11px,2vw,14px);font-weight:700;
+  font-size:clamp(11px,1.8vw,14px);font-weight:700;
   color:rgba(255,255,255,.5);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  margin-bottom:2px;
-}
-.p-score{
-  font-size:clamp(34px,6vw,52px);font-weight:900;
-  color:#53f6ff;line-height:1;
+  margin-bottom:1px;
 }
 .p-pairs{
-  font-size:clamp(10px,1.5vw,12px);
-  color:rgba(255,255,255,.27);margin-top:1px;
+  font-size:clamp(10px,1.4vw,12px);
+  color:rgba(255,255,255,.27);
 }
 .p-status{
-  margin-top:6px;
-  font-size:clamp(10px,1.5vw,12px);
+  font-size:clamp(10px,1.4vw,12px);
   color:#ff4fd8;font-weight:700;
-  min-height:15px;letter-spacing:.2px;
+  min-height:14px;letter-spacing:.2px;
+  margin-top:2px;
 }
 #boardArea{
   display:flex;flex-direction:column;
@@ -161,7 +167,7 @@ input[type=file]{display:none}
 .confetti{position:absolute;top:-120px;pointer-events:none;animation:fall linear infinite;opacity:.9;filter:saturate(1.4);}
 @keyframes fall{0%{transform:translateY(-120px) rotate(0deg)}100%{transform:translateY(120vh) rotate(360deg)}}
 @keyframes zoomIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
-@media(max-width:450px){.player-panel{padding:9px 10px;border-radius:14px}.p-score{font-size:clamp(26px,8vw,36px)}#memoryGrid{gap:2px}body{padding-bottom:20px}}
+@media(max-width:450px){.player-panel{padding:8px 10px;border-radius:12px;gap:8px}.p-score{font-size:clamp(24px,7.5vw,34px)}#memoryGrid{gap:2px}body{padding-bottom:50px}}
 @media(max-width:700px){body{padding-bottom:20px}.victoryStage{padding:22px 12px;gap:18px}.playerCard{min-width:0;width:84vw;padding:20px 16px}.bigComment{font-size:clamp(17px,5vw,28px);padding:0 8px}.bigPlace{font-size:clamp(36px,12vw,56px)}.playerName{font-size:clamp(18px,5.5vw,26px)}.playerScore{font-size:clamp(38px,11vw,54px)}}
 </style>
 </head>
@@ -214,19 +220,23 @@ input[type=file]{display:none}
 <!-- GAME SCREEN — Single Column -->
 <div id="gameScreen" class="screen">
 
-  <!-- Spieler-Kopfzeile: beide Panels nebeneinander -->
+  <!-- Spieler-Kopfzeile: Score links, Info rechts -->
   <div class="score-header">
     <div class="player-panel" id="p1Panel">
-      <div class="p-name" id="p1Name">—</div>
       <div class="p-score" id="p1Score">0</div>
-      <div class="p-pairs" id="p1Pairs">0 Paare</div>
-      <div class="p-status" id="p1Status"></div>
+      <div class="p-info">
+        <div class="p-name" id="p1Name">—</div>
+        <div class="p-pairs" id="p1Pairs">0 Paare</div>
+        <div class="p-status" id="p1Status"></div>
+      </div>
     </div>
     <div class="player-panel" id="p2Panel">
-      <div class="p-name" id="p2Name">—</div>
       <div class="p-score" id="p2Score">0</div>
-      <div class="p-pairs" id="p2Pairs">0 Paare</div>
-      <div class="p-status" id="p2Status"></div>
+      <div class="p-info">
+        <div class="p-name" id="p2Name">—</div>
+        <div class="p-pairs" id="p2Pairs">0 Paare</div>
+        <div class="p-status" id="p2Status"></div>
+      </div>
     </div>
   </div>
 
@@ -241,6 +251,20 @@ input[type=file]{display:none}
 
 <!-- VICTORY OVERLAY -->
 <div id="victoryOverlay"></div>
+
+<!-- Utility Buttons (Spiel läuft) -->
+<div id="gameControls" style="display:none;position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:9999;display:none;gap:8px;flex-wrap:wrap;justify-content:center">
+  <button id="resyncBtn" onclick="resync()" style="
+    padding:9px 16px;border:none;border-radius:12px;
+    background:rgba(83,246,255,.12);border:1px solid rgba(83,246,255,.3);
+    color:#53f6ff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;
+    cursor:pointer;backdrop-filter:blur(10px);">🔄 Re-Sync</button>
+  <button onclick="resetRoom()" style="
+    padding:9px 16px;border:none;border-radius:12px;
+    background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
+    color:rgba(239,68,68,.8);font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;
+    cursor:pointer;backdrop-filter:blur(10px);">⚠️ Reset</button>
+</div>
 
 <script>
 'use strict';
@@ -518,6 +542,9 @@ function loadImgs(room){
   if(room.images) Object.entries(room.images).forEach(([pid,img])=>{ loadedImgs[pid]=img; });
 }
 function watchGame(){
+  /* Utility Buttons einblenden */
+  const gc=document.getElementById('gameControls');
+  if(gc) gc.style.display='flex';
   rRef().on('value',snap=>{
     const r=snap?.val();
     if(!r||r.status!=='playing'||!r.game) return;
@@ -690,36 +717,79 @@ async function resolveMatch(i1,i2,players,cards,game,byAI){
   }
 }
 
-/* ── KI-Zug (Host steuert KI) ── */
+/* ── KI-Zug (Host steuert KI) — mit try/catch ── */
 async function doAIMove(){
-  const r=latestRoom;
-  if(!r?.game){ aiThinking=false; return; }
-  const game=r.game, players=fixArr(r.players), cards=fixArr(game.cards);
-  const cur=players[game.currentPlayer];
-  if(!cur?.isAI){ aiThinking=false; return; }
+  try{
+    const r=latestRoom;
+    if(!r?.game){ aiThinking=false; return; }
+    const game=r.game, players=fixArr(r.players), cards=fixArr(game.cards);
+    const cur=players[game.currentPlayer];
+    if(!cur?.isAI){ aiThinking=false; return; }
 
-  const unmatched=cards.map((c,i)=>({...c,idx:i})).filter(c=>!c.matched);
-  if(unmatched.length<2){ aiThinking=false; return; }
+    const unmatched=cards.map((c,i)=>({...c,idx:i})).filter(c=>!c.matched);
+    if(unmatched.length<2){ aiThinking=false; return; }
 
-  /* 1. Karte zufällig */
-  const first=rnd(unmatched);
-  if(aiSeen[first.idx]===undefined) aiSeen[first.idx]=first.pairId;
-  await rRef('game/flipped').set([first.idx]);
-  await sleep(530+Math.random()*500);
+    /* 1. Karte zufällig */
+    const first=rnd(unmatched);
+    if(aiSeen[first.idx]===undefined) aiSeen[first.idx]=first.pairId;
+    await rRef('game/flipped').set([first.idx]);
+    await sleep(530+Math.random()*500);
 
-  /* 2. Karte: 55% Gedächtnis-Nutzung */
-  const rem=unmatched.filter(c=>c.idx!==first.idx);
-  const known=rem.find(c=>aiSeen[c.idx]!==undefined&&aiSeen[c.idx]===first.pairId);
-  const second=(known&&Math.random()<0.55)?known:rnd(rem);
-  if(!second){ aiThinking=false; return; }
-  if(aiSeen[second.idx]===undefined) aiSeen[second.idx]=second.pairId;
+    /* Prüfen ob noch KI dran (könnte sich inzwischen geändert haben) */
+    const check=latestRoom;
+    if(!check?.game||!fixArr(check.players)[check.game.currentPlayer]?.isAI){
+      aiThinking=false; isProcessing=false; return;
+    }
 
-  isProcessing=true;
-  await rRef('game').update({flipped:[first.idx,second.idx],moves:(game.moves??0)+1});
-  await sleep(970);
+    /* 2. Karte: 55% Gedächtnis-Nutzung */
+    const rem=unmatched.filter(c=>c.idx!==first.idx);
+    const known=rem.find(c=>aiSeen[c.idx]!==undefined&&aiSeen[c.idx]===first.pairId);
+    const second=(known&&Math.random()<0.55)?known:rnd(rem);
+    if(!second){ aiThinking=false; return; }
+    if(aiSeen[second.idx]===undefined) aiSeen[second.idx]=second.pairId;
 
-  const fresh=(await rRef().once('value')).val();
-  await resolveMatch(first.idx,second.idx,fixArr(fresh?.players),fixArr(fresh?.game?.cards),fresh?.game,true);
+    isProcessing=true;
+    await rRef('game').update({flipped:[first.idx,second.idx],moves:(game.moves??0)+1});
+    await sleep(970);
+
+    const fresh=(await rRef().once('value')).val();
+    await resolveMatch(first.idx,second.idx,fixArr(fresh?.players),fixArr(fresh?.game?.cards),fresh?.game,true);
+  }catch(e){
+    console.error('KI-Fehler:',e);
+    /* Flags immer freigeben damit KI weiterlaufen kann */
+    aiThinking=false;
+    isProcessing=false;
+    localFlip=[];
+  }
+}
+
+/* ── Re-Sync: Flags zurücksetzen + KI manuell antriggern ── */
+function resync(){
+  console.log('Re-Sync: aiThinking='+aiThinking+' isProcessing='+isProcessing);
+  aiThinking=false;
+  isProcessing=false;
+  localFlip=[];
+  const btn=document.getElementById('resyncBtn');
+  if(btn){ btn.textContent='✅ Done!'; setTimeout(()=>btn.textContent='🔄 Re-Sync',1800); }
+  if(!latestRoom?.game) return;
+  const players=fixArr(latestRoom.players);
+  const cur=players[latestRoom.game.currentPlayer];
+  if(isHost&&cur?.isAI){
+    aiThinking=true;
+    setTimeout(doAIMove,400);
+  }
+  /* Flipped-State säubern falls geklemmt */
+  const fbFlip=fixArr(latestRoom.game.flipped);
+  if(fbFlip.length>0&&!cur?.isAI){
+    rRef('game/flipped').set([]).catch(()=>{});
+  }
+}
+
+/* ── Reset: Raum leeren, Seite neu laden ── */
+async function resetRoom(){
+  if(!confirm('Spiel zurücksetzen?')) return;
+  await rRef().update({status:'idle'});
+  location.reload();
 }
 
 /* ══════════════════════════════════════
