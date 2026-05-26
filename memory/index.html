@@ -29,19 +29,11 @@ input[type=file]{display:none}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07);}
 .room-badge{margin-top:14px;padding:10px 14px;border-radius:12px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);font-size:12px;color:rgba(255,255,255,.4);}
 .dots::after{content:'';animation:dots 1.5s steps(4,end) infinite;}
-@keyframes dots{0%{content:''}25%{content:'.}50%{content:'..'}75%{content:'...'}100%{content:''}}
-#setupScreen{display:flex;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
-#waitScreen{display:flex;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}100%{content:''}}
+#setupScreen{min-height:100vh;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
+#waitScreen{min-height:100vh;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
 .wait-name{font-size:clamp(26px,5.5vw,42px);font-weight:900;line-height:.95;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
 .wait-sub{font-size:clamp(13px,2.3vw,15px);color:rgba(255,255,255,.4);margin-bottom:14px;}
-/* ── Gallery Picker ── */
-.gallery-picker{display:flex;gap:7px;margin:10px 0;}
-.gal-btn{flex:1;padding:10px 6px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);font-family:'Outfit',sans-serif;font-size:clamp(11px,2vw,13px);font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
-.gal-btn:hover{border-color:rgba(83,246,255,.35);color:rgba(255,255,255,.85);}
-.gal-btn.active{border-color:#53f6ff;background:rgba(83,246,255,.1);color:#53f6ff;box-shadow:0 0 12px rgba(83,246,255,.2);}
-.gal-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:4px;margin-top:8px;max-height:110px;overflow:hidden;}
-.gal-prev-img{aspect-ratio:1;width:100%;border-radius:6px;object-fit:cover;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);}
-.upload-note{font-size:11px;color:rgba(255,255,255,.3);text-align:center;margin-top:8px;line-height:1.4;}
 .upload-zone{border:2px dashed rgba(83,246,255,.28);border-radius:16px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;margin:10px 0;}
 .upload-zone:hover{border-color:#53f6ff;background:rgba(83,246,255,.04)}
 .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:4px;margin-top:8px;}
@@ -185,7 +177,7 @@ input[type=file]{display:none}
 <div id="setupScreen" class="screen active">
   <div class="glass" style="width:min(450px,94vw)">
     <div class="logo-title">Memory</div>
-    <div class="logo-sub">Deine Fotos — Dein Vorteil? ✦</div>
+    <div class="logo-sub">✦ Schnuppes Spielportal</div>
     <label class="field-label" for="nameInput">DEIN NAME</label>
     <input type="text" id="nameInput" placeholder="Name eingeben…" maxlength="16" autocomplete="off" onkeydown="if(event.key==='Enter')startJoin()">
     <button class="btn-primary" onclick="startJoin()">Spielen →</button>
@@ -198,31 +190,19 @@ input[type=file]{display:none}
   <div class="glass" style="width:min(520px,94vw)">
     <div style="margin-bottom:16px">
       <div style="font-size:clamp(26px,5vw,36px);font-weight:900;line-height:.9;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Memory</div>
-      <div style="font-size:13px;color:#ff9ef0;margin-top:5px">Deine Fotos — Dein Vorteil? ✦</div>
+      <div style="font-size:13px;color:#ff9ef0;margin-top:5px">✦ Schnuppes Spielportal</div>
     </div>
     <div class="wait-name" id="waitName"></div>
     <div class="wait-sub"><span class="dots">wartet auf Mitspieler</span></div>
     <div id="waitPlayerList" style="margin-bottom:12px"></div>
-    <!-- Upload + Gallery für ALLE Spieler -->
-    <div id="uploadSection">
+    <div id="hostUploadSection" style="display:none">
       <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
         <div style="font-size:20px;margin-bottom:3px">📷</div>
-        <div style="font-size:clamp(12px,2.4vw,14px);font-weight:700;color:rgba(255,255,255,.75)">Eigene Fotos hochladen</div>
-        <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:2px">Bis zu 18 Bilder · Rest wird aufgefüllt · <b style="color:rgba(255,255,255,.5)">Dein Vorteil!</b></div>
+        <div style="font-size:clamp(12px,2.4vw,14px);font-weight:700;color:rgba(255,255,255,.75)">Fotos hochladen (optional)</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:2px">Bis zu 18 Bilder — Rest wird mit Emojis aufgefüllt</div>
       </div>
       <input type="file" id="fileInput" multiple accept="image/*" onchange="handlePhotos(this.files)">
       <div id="photoPreview" class="photo-grid"></div>
-
-      <!-- Gallery Picker -->
-      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:1px;margin-top:12px;margin-bottom:4px">ODER MOTIV-SET WÄHLEN</div>
-      <div class="gallery-picker">
-        <button class="gal-btn" id="galFlaggen" onclick="selectGallery('flaggen',this)">🏳️<br>Flaggen</button>
-        <button class="gal-btn" id="galPlatten" onclick="selectGallery('platten',this)">🎵<br>Platten</button>
-        <button class="gal-btn" id="galFotos"   onclick="selectGallery('fotos',this)">📸<br>Fotos</button>
-        <button class="gal-btn" id="galNone"    onclick="selectGallery(null,this)" style="border-color:rgba(255,255,255,.2)">✕<br>Keins</button>
-      </div>
-      <div id="galPreview" class="gal-preview"></div>
-      <div id="uploadNote" class="upload-note"></div>
     </div>
     <div id="waitBadge" class="room-badge" style="margin-bottom:14px"></div>
     <div id="hostActions" style="display:none">
@@ -232,7 +212,6 @@ input[type=file]{display:none}
       <button class="btn-danger" onclick="leaveRoom()">← Verlassen</button>
     </div>
     <div id="guestActions" style="display:none">
-      <div class="upload-note" style="margin-bottom:10px">Fotos hochladen — der Host sieht sie beim Spielstart.</div>
       <button class="btn-danger" onclick="leaveRoom()">← Verlassen</button>
     </div>
   </div>
@@ -314,32 +293,6 @@ const EMOJI_POOL = ['🦊','🐬','🦋','🌺','⭐','🍕','🎸','🏆','🚀
                     '🎭','🦄','🔮','🍄','🎨','🐙','🦁','🍀','💎','🎯',
                     '🌙','🔥','🎪','🦜','🌊'];
 
-/* ── GitHub Base URL (anpassen auf dein Repo) ──
-   Ordnerstruktur: /memory/images/platten/ und /memory/images/fotos/
-   Dort liegen Bilder als 01.jpg, 02.jpg … 18.jpg  */
-const GITHUB_IMG = 'https://raw.githubusercontent.com/schnuppes-spielportal/schnuppes-spielportal/main/memory/images';
-
-/* ── Vordefinierte Galerien ── */
-const GALLERIES = {
-  flaggen: {
-    label:'🏳️ Länderflaggen',
-    images: ['de','fr','it','es','gb','us','jp','br','au','ca',
-             'mx','ar','cn','in','ru','nl','se','pt','at','ch',
-             'tr','pl','no','dk'].slice(0,18)
-      .map(c=>'https://flagcdn.com/w160/'+c+'.png')
-  },
-  platten: {
-    label:'🎵 Plattencover',
-    images: Array.from({length:18},(_,i)=>GITHUB_IMG+'/platten/'+(String(i+1).padStart(2,'0'))+'.jpg')
-  },
-  fotos: {
-    label:'📸 Fotos',
-    images: Array.from({length:18},(_,i)=>GITHUB_IMG+'/fotos/'+(String(i+1).padStart(2,'0'))+'.jpg')
-  }
-};
-
-let selectedGallery = null; // 'flaggen' | 'platten' | 'fotos' | null
-
 /* Sieger-Sequenz (wie Zehntausend: Verlierer zuerst → Sieger zuletzt) */
 const PODIUM = [
   {
@@ -384,11 +337,8 @@ function rRef(sub){
 
 /* ── Helpers ── */
 function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>{
-    s.classList.remove('active'); s.style.display='none';
-  });
-  const el=document.getElementById(id);
-  if(el){ el.classList.add('active'); el.style.display='flex'; }
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
 }
 function fixArr(v){
   if(!v) return [];
@@ -434,10 +384,6 @@ async function handlePhotos(files){
     uploadedB64.push(await compressImg(f));
   }
   renderPreview();
-  /* Fotos in Firebase stagen damit Host sie beim Spielstart lesen kann */
-  try{
-    await rRef('staged/'+myId).set(uploadedB64);
-  }catch(e){ console.warn('Staging fehlgeschlagen:',e); }
 }
 function renderPreview(){
   const grid=document.getElementById('photoPreview');
@@ -457,44 +403,13 @@ function renderPreview(){
     }
   }
 }
-/* ── Gallery auswählen ── */
-function selectGallery(key, btn){
-  selectedGallery = key;
-  document.querySelectorAll('.gal-btn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-
-  const preview = document.getElementById('galPreview');
-  const note    = document.getElementById('uploadNote');
-  if(!key){ preview.innerHTML=''; if(note) note.textContent=''; return; }
-
-  const gal = GALLERIES[key];
-  if(!gal){ return; }
-
-  /* Vorschau: erste 8 Bilder */
-  preview.innerHTML = gal.images.slice(0,8).map(function(url){
-    return '<img class="gal-prev-img" src="'+url+'" loading="lazy" onerror="this.style.opacity=0.2">';
-  }).join('');
-
-  if(note) note.textContent = gal.label+' — '+gal.images.length+' Motive · werden mit eigenen Fotos kombiniert';
-}
-
-function buildImages(extraPhotos){
-  /* extraPhotos: base64-Array von Gast-Fotos (aus Firebase) */
-  const all = [...uploadedB64, ...(extraPhotos||[])];
-  const emojis = shuffle(EMOJI_POOL);
-  const galImgs = selectedGallery ? GALLERIES[selectedGallery]?.images||[] : [];
-  const imgs = {};
+function buildImages(){
+  const emojis=shuffle(EMOJI_POOL);
+  const imgs={};
   for(let i=0;i<18;i++){
-    if(i < all.length){
-      imgs[i] = {type:'img', value:all[i]};
-    } else {
-      const galIdx = i - all.length;
-      if(galIdx < galImgs.length){
-        imgs[i] = {type:'url', value:galImgs[galIdx]};
-      } else {
-        imgs[i] = {type:'emoji', value:emojis[(i-all.length-galImgs.length)%emojis.length]};
-      }
-    }
+    imgs[i]=i<uploadedB64.length
+      ? {type:'img',   value:uploadedB64[i]}
+      : {type:'emoji', value:emojis[(i-uploadedB64.length)%emojis.length]};
   }
   return imgs;
 }
@@ -511,36 +426,21 @@ function buildCards(){
    SETUP SCREEN
 ══════════════════════════════════════ */
 window.addEventListener('load',()=>{
-  showScreen('setupScreen');
   initDB();
   const s=localStorage.getItem('mem_name');
   if(s) document.getElementById('nameInput').value=s;
   watchSetupBadge();
 });
 function watchSetupBadge(){
-  const badge=document.getElementById('setupBadge');
-  const ref=rRef();
-  if(!ref){
-    if(badge){ badge.textContent='Fehler: Firebase SDK nicht geladen — Adblocker prüfen'; badge.style.color='rgba(239,68,68,.9)'; }
-    return;
-  }
-  const t=setTimeout(()=>{
-    if(badge&&badge.textContent.includes('Verbinde')){
-      badge.textContent='Keine Antwort von Firebase — Adblocker aktiv? Seite neu laden.';
-      badge.style.color='rgba(251,191,36,.9)';
-    }
-  },6000);
-  ref.on('value',snap=>{
-    clearTimeout(t);
-    const r=snap?.val();
-    if(!badge) return;
-    badge.style.color='';
+  rRef()?.on('value',snap=>{
+    const r=snap?.val(), el=document.getElementById('setupBadge');
+    if(!el) return;
     if(!r||r.status==='idle'||r.status==='finished')
-      badge.textContent='⚪ Kein Raum aktiv — du startest ihn';
+      el.textContent='⚪ Kein Raum aktiv — du startest ihn';
     else if(r.status==='waiting')
-      badge.textContent='🟢 Warteraum offen — Host: '+(r.hostName||'?');
+      el.textContent='🟢 Warteraum offen — Host: '+(r.hostName||'?');
     else if(r.status==='playing')
-      badge.textContent='🟡 Spiel läuft — beitreten möglich';
+      el.textContent='🟡 Spiel läuft — beitreten möglich';
   });
 }
 async function startJoin(){
@@ -549,19 +449,7 @@ async function startJoin(){
   if(!name){ inp.focus(); return; }
   myName=name;
   localStorage.setItem('mem_name',name);
-  const ref=rRef();
-  if(!ref){
-    const b=document.getElementById('setupBadge');
-    if(b){ b.textContent='Fehler: Firebase nicht erreichbar. Adblocker pruefen oder Seite neu laden.'; b.style.color='rgba(239,68,68,.9)'; }
-    return;
-  }
-  let snap,room;
-  try{ snap=await ref.once('value'); room=snap.val(); }
-  catch(e){
-    const b=document.getElementById('setupBadge');
-    if(b){ b.textContent='Verbindungsfehler: '+e.message; b.style.color='rgba(239,68,68,.9)'; }
-    return;
-  }
+  const snap=await rRef().once('value'), room=snap.val();
   if(!room||room.status==='idle'||room.status==='finished'){
     isHost=true;
     await rRef().set({status:'waiting',hostName:myName,hostId:myId,
@@ -589,7 +477,7 @@ async function startJoin(){
 function showWait(){
   showScreen('waitScreen');
   document.getElementById('waitName').textContent=myName;
-  /* uploadSection ist jetzt für alle sichtbar */
+  document.getElementById('hostUploadSection').style.display=isHost?'block':'none';
   document.getElementById('hostActions').style.display=isHost?'block':'none';
   document.getElementById('guestActions').style.display=isHost?'none':'block';
   renderPreview();
@@ -630,7 +518,7 @@ async function startVsAI(){
   const taken=[myName.toLowerCase()];
   const avail=AI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));
   const aiName=shuffle(avail)[0]+' (KI)';
-  const imgs=buildImages(await getStagedPhotos()), cards=buildCards();
+  const imgs=buildImages(), cards=buildCards();
   await rRef().update({
     status:'playing',
     players:[
@@ -639,31 +527,16 @@ async function startVsAI(){
     ],
     images:imgs, game:{cards,currentPlayer:0,flipped:[],moves:0}
   });
-  rRef('staged').remove().catch(()=>{});
 }
 async function startWithHumans(){
-  const imgs=buildImages(await getStagedPhotos()), cards=buildCards();
+  const imgs=buildImages(), cards=buildCards();
   await rRef().update({status:'playing',images:imgs,
     game:{cards,currentPlayer:0,flipped:[],moves:0}});
-  rRef('staged').remove().catch(()=>{});
 }
 
 /* ══════════════════════════════════════
    GAME SCREEN
 ══════════════════════════════════════ */
-/* Alle gestageden Fotos von anderen Spielern lesen */
-async function getStagedPhotos(){
-  try{
-    const snap = await rRef('staged').once('value');
-    const data = snap.val()||{};
-    let extra = [];
-    Object.entries(data).forEach(([uid,photos])=>{
-      if(uid!==myId && Array.isArray(photos)) extra=[...extra,...photos];
-    });
-    return extra;
-  }catch(e){ return []; }
-}
-
 function loadImgs(room){
   loadedImgs={};
   if(room.images) Object.entries(room.images).forEach(([pid,img])=>{ loadedImgs[pid]=img; });
@@ -762,10 +635,9 @@ function renderGrid(game){
 
     const imgData=loadedImgs[card.pairId];
     if(imgData){
-      if(imgData.type==='img'||imgData.type==='url'){
+      if(imgData.type==='img'){
         const img=document.createElement('img');
         img.src=imgData.value; img.alt='';
-        img.loading='lazy';
         front.appendChild(img);
       }else{
         const em=document.createElement('div');
