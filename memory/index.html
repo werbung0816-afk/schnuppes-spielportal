@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Memory v1.8 — Schnuppes Spielportal</title>
+<title>Memory v1.9 — Schnuppes Spielportal</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -188,7 +188,7 @@ input[type=file]{display:none}
   <div class="glass" style="width:min(450px,94vw)">
     <div class="logo-title">Memory</div>
     <div class="logo-sub">Deine Fotos — Dein Vorteil? ✦</div>
-    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.8</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.9</div>
     <label class="field-label" for="nameInput">DEIN NAME</label>
     <input type="text" id="nameInput" placeholder="Name eingeben…" maxlength="16" autocomplete="off" onkeydown="if(event.key==='Enter')startJoin()">
     <button class="btn-primary" onclick="startJoin()">Spielen →</button>
@@ -333,7 +333,7 @@ const FB_CFG = {
   appId:'1:399927026314:web:5fab639228c5b42efd0373'
 };
 const ROOM_PATH = 'rooms/memory_main';
-     const VERSION   = 'v1.8';
+      const VERSION   = 'v1.9';
 
 /* KI-Namen — werden zufällig gemischt, Human-Name ausgeschlossen */
 const AI_NAMES = ['Bärbel','Heinz','Nici','Marco','Leni','Mia','Nele','Dani','Finn','Sascha'];
@@ -360,6 +360,10 @@ async function loadBilderPool(){
     console.log('Bilder-Ordner nicht erreichbar, nutze Emojis:',e.message);
   }
 }
+
+/* 4 Spielerfarben: Index 0–3 */
+const PLAYER_COLORS = ['#ff4fd8','#53f6ff','#4ade80','#fbbf24'];
+let uploadCountsCache = {}; /* uid → {name,count,thumbs} */
 
 /* Emoji-Fallback (≥18 verschiedene) */
 const EMOJI_POOL = ['🦊','🐬','🦋','🌺','⭐','🍕','🎸','🏆','🚀','🌈',
@@ -499,27 +503,45 @@ function renderPreview(){
   grid.innerHTML='';
   const emojis=shuffle(EMOJI_POOL);
   const bilder=shuffle([...bilderPool]);
+  /* Thumbnails anderer Spieler sammeln (mit Farbe) */
+  const otherEntries=Object.entries(uploadCountsCache)
+    .filter(([uid])=>uid!==myId)
+    .map(([uid,d],idx)=>({thumbs:d.thumbs||[],color:PLAYER_COLORS[(idx+1)%PLAYER_COLORS.length]}));
+  const otherThumbs=[];
+  otherEntries.forEach(e=>e.thumbs.forEach(t=>otherThumbs.push({src:t,color:e.color})));
+  let otherIdx=0, bilderIdx=0, emojiIdx=0;
   for(let i=0;i<18;i++){
     if(i<uploadedB64.length){
+      /* Eigenes Foto */
       const img=document.createElement('img');
-      img.className='photo-thumb'; img.src=uploadedB64[i];
+      img.className='photo-thumb';
+      img.src=uploadedB64[i];
+      img.style.border='2px solid '+PLAYER_COLORS[0];
+      grid.appendChild(img);
+    }else if(otherIdx<otherThumbs.length){
+      /* Thumbnail anderer Spieler */
+      const ot=otherThumbs[otherIdx++];
+      const img=document.createElement('img');
+      img.className='photo-thumb';
+      img.src=ot.src;
+      img.style.border='2px solid '+ot.color;
+      img.style.opacity='0.75';
+      img.title='Anderer Spieler';
+      grid.appendChild(img);
+    }else if(bilderIdx<bilder.length){
+      /* Bilder-Pool */
+      const img=document.createElement('img');
+      img.className='photo-thumb'; img.src=bilder[bilderIdx++];
+      img.loading='lazy';
       grid.appendChild(img);
     }else{
-      const fi=i-uploadedB64.length;
-      if(fi<bilder.length){
-        const img=document.createElement('img');
-        img.className='photo-thumb'; img.src=bilder[fi];
-        img.loading='lazy';
-        grid.appendChild(img);
-      }else{
-        const d=document.createElement('div');
-        d.className='emoji-thumb';
-        d.textContent=emojis[(i-uploadedB64.length-bilder.length)%emojis.length];
-        grid.appendChild(d);
-      }
+      /* Emoji-Fallback */
+      const d=document.createElement('div');
+      d.className='emoji-thumb';
+      d.textContent=emojis[emojiIdx++%emojis.length];
+      grid.appendChild(d);
     }
   }
-  /* Revoke-Button zeigen wenn Fotos vorhanden */
   const rb=document.getElementById('revokeBtn');
   if(rb) rb.style.display=uploadedB64.length>0?'block':'none';
 }
@@ -727,6 +749,8 @@ function watchWait(){
   /* Upload-Sync: uploadCounts beobachten */
   rRef('uploadCounts').on('value',snap=>{
     const data=snap.val()||{};
+    uploadCountsCache=data;
+    renderPreview(); /* Preview mit fremden Thumbnails aktualisieren */
     const box=document.getElementById('syncInfo');
     if(!box) return;
     const entries=Object.values(data);
@@ -853,12 +877,19 @@ function renderGame(room){
     document.getElementById('p'+(i+1)+'Name').textContent=p.name;
     document.getElementById('p'+(i+1)+'Score').textContent=p.score??0;
     document.getElementById('p'+(i+1)+'Pairs').textContent=pairStr(p.score??0);
-    panel.classList.toggle('active',game.currentPlayer===i);
+    const pColor=PLAYER_COLORS[i]||PLAYER_COLORS[0];
+    const isActive=game.currentPlayer===i;
+    panel.classList.toggle('active',isActive);
     panel.classList.toggle('me',myIdx===i);
+    /* Spielerfarbe für Border + Score */
+    panel.style.borderColor=isActive?pColor:'';
+    panel.style.boxShadow=isActive?'0 0 22px '+pColor+'55':'';
+    document.getElementById('p'+(i+1)+'Score').style.color=pColor;
     const isMyTurn=game.currentPlayer===i;
     const iAmHere=myIdx===i;
-    document.getElementById('p'+(i+1)+'Status').textContent=
-      isMyTurn?(iAmHere?'— du bist dran ✦':'▶ am Zug'):'';
+    const stEl=document.getElementById('p'+(i+1)+'Status');
+    stEl.textContent=isMyTurn?(iAmHere?'— du bist dran ✦':'▶ am Zug'):'';
+    stEl.style.color=pColor;
   }
 
   const isMy=players[game.currentPlayer]?.id===myId;
@@ -889,6 +920,12 @@ function renderGrid(game){
     front.className='card-face card-front';
 
     const imgData=loadedImgs[card.pairId];
+    /* Spielerfarbe für gematchte Karten */
+    if(card.matched&&card.matchedBy!==undefined){
+      const mc=PLAYER_COLORS[card.matchedBy]||PLAYER_COLORS[0];
+      front.style.borderColor=mc;
+      front.style.boxShadow='0 0 14px '+mc+'55, 0 0 28px '+mc+'22';
+    }
     if(imgData){
       if(imgData.type==='img'||imgData.type==='url'){
         const img=document.createElement('img');
@@ -956,8 +993,8 @@ async function resolveMatch(i1,i2,players,cards,game,byAI){
   }
   const isMatch=cards[i1].pairId===cards[i2].pairId;
   if(isMatch){
-    const newCards=cards.map((c,i)=>(i===i1||i===i2)?{...c,matched:true}:c);
     const cp=game.currentPlayer;
+    const newCards=cards.map((c,i)=>(i===i1||i===i2)?{...c,matched:true,matchedBy:cp}:c);
     const newPlayers=[...players];
     newPlayers[cp]={...newPlayers[cp],score:(newPlayers[cp].score??0)+1};
     const allDone=newCards.every(c=>c.matched);
@@ -1040,10 +1077,29 @@ async function sameRound(){
 /* ── Neues Spiel: alles zurücksetzen ── */
 async function fullReset(){
   applause.pause(); applause.currentTime=0;
-  if(!confirm('Raum leeren und ganz neu starten?')) return;
+  if(!await showConfirm('Raum leeren und ganz neu starten?<br>Alle Spieler werden getrennt.')) return;
   await rRef().set({status:'idle',ts:Date.now()});
   location.reload();
 }
+/* ── Custom Confirm Dialog (ersetzt Browser-confirm) ── */
+function showConfirm(msg){
+  return new Promise(resolve=>{
+    const ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(5,5,20,.88);backdrop-filter:blur(10px);z-index:199999;display:flex;align-items:center;justify-content:center';
+    const box=document.createElement('div');
+    box.style.cssText='background:rgba(10,12,38,.95);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:32px 28px;max-width:340px;width:90vw;text-align:center;box-shadow:0 0 60px rgba(139,92,246,.3)';
+    box.innerHTML='<div style="font-size:clamp(15px,3vw,18px);font-weight:700;line-height:1.5;margin-bottom:24px;color:#fff">'+msg+'</div>'
+      +'<div style="display:flex;gap:12px;justify-content:center">'
+      +'<button id="_cfmOk" style="padding:13px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#ec4899);color:#fff;font-family:\'Outfit\',sans-serif;font-size:16px;font-weight:900;cursor:pointer">OK</button>'
+      +'<button id="_cfmNo" style="padding:13px 28px;border:1px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);font-family:\'Outfit\',sans-serif;font-size:16px;font-weight:700;cursor:pointer">Abbrechen</button>'
+      +'</div>';
+    ov.appendChild(box);
+    document.body.appendChild(ov);
+    box.querySelector('#_cfmOk').onclick=()=>{ov.remove();resolve(true);};
+    box.querySelector('#_cfmNo').onclick=()=>{ov.remove();resolve(false);};
+  });
+}
+
 /* ── Re-Sync: Flags zurücksetzen + KI manuell antriggern ── */
 function resync(){
   console.log('Re-Sync: aiThinking='+aiThinking+' isProcessing='+isProcessing);
@@ -1068,7 +1124,7 @@ function resync(){
 
 /* ── Reset: Raum leeren, Seite neu laden ── */
 async function resetRoom(){
-  if(!confirm('Spiel zurücksetzen?')) return;
+  if(!await showConfirm('Spiel zurücksetzen?')) return;
   await rRef().update({status:'idle'});
   location.reload();
 }
