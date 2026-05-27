@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Memory v1.2 — Schnuppes Spielportal</title>
+<title>Memory v1.3 — Schnuppes Spielportal</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -188,7 +188,7 @@ input[type=file]{display:none}
   <div class="glass" style="width:min(450px,94vw)">
     <div class="logo-title">Memory</div>
     <div class="logo-sub">Deine Fotos — Dein Vorteil? ✦</div>
-    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.2</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.3</div>
     <label class="field-label" for="nameInput">DEIN NAME</label>
     <input type="text" id="nameInput" placeholder="Name eingeben…" maxlength="16" autocomplete="off" onkeydown="if(event.key==='Enter')startJoin()">
     <button class="btn-primary" onclick="startJoin()">Spielen →</button>
@@ -326,7 +326,7 @@ const FB_CFG = {
   appId:'1:399927026314:web:5fab639228c5b42efd0373'
 };
 const ROOM_PATH = 'rooms/memory_main';
-const VERSION   = 'v1.2';
+const VERSION   = 'v1.3';
 
 /* KI-Namen — werden zufällig gemischt, Human-Name ausgeschlossen */
 const AI_NAMES = ['Bärbel','Heinz','Nici','Marco','Leni','Mia','Nele','Dani','Finn','Sascha'];
@@ -512,7 +512,10 @@ function watchSetupBadge(){
       el.textContent='⚪ Kein Raum aktiv — du startest ihn';
       if(hint) hint.style.display='none';
     }else if(r.status==='waiting'){
-      el.textContent='🟢 Warteraum — Host: '+(r.hostName||'?')+'  ('+(Object.keys(r.players||{}).length)+' Spieler)';
+      const pc=Object.keys(r.players||{}).length;
+      const full=pc>=4;
+      el.textContent=(full?'🔴':'🟢')+' Warteraum — Host: '+(r.hostName||'?')+'  ('+pc+'/4'+(full?' — voll':'')+')' ;
+      el.style.color=full?'rgba(239,68,68,.8)':'';
       if(hint) hint.style.display='block';
     }else if(r.status==='playing'){
       el.textContent='🟡 Spiel läuft — beitreten möglich';
@@ -535,6 +538,13 @@ async function startJoin(){
   }else if(room.status==='waiting'){
     isHost=false;
     const p=fixArr(room.players);
+    const humans=p.filter(x=>!x.isAI);
+    /* Raum voll? */
+    if(humans.length>=4&&!p.find(x=>x.id===myId)){
+      const b=document.getElementById('setupBadge');
+      if(b){ b.textContent='🔴 Raum ist voll (4/4) — warte auf nächste Runde'; b.style.color='rgba(239,68,68,.8)'; }
+      return;
+    }
     if(!p.find(x=>x.id===myId))
       await rRef('players/'+p.length).set({name:myName,score:0,isAI:false,id:myId});
     showWait();
@@ -575,17 +585,25 @@ function watchWait(){
     const r=snap?.val();
     if(!r) return;
     const players=fixArr(r.players);
+    const humans=players.filter(p=>!p.isAI);
     const badge=document.getElementById('waitBadge');
-    if(badge) badge.textContent='👥 '+players.length+' Spieler verbunden';
+    if(badge){
+      const full=humans.length>=4;
+      badge.textContent='👥 '+humans.length+' / 4 Spieler'+(full?' — Raum voll':'');
+      badge.style.color=full?'rgba(74,222,128,.8)':'';
+    }
     const list=document.getElementById('waitPlayerList');
     if(list) list.innerHTML=players.map(p=>
       '<div class="wait-slot"><div class="slot-dot"></div>'+
       '<span style="font-weight:700">'+p.name+'</span>'+
       (p.id===r.hostId?'<span style="font-size:11px;color:#ff9ef0;margin-left:7px">HOST</span>':'')+
       '</div>').join('');
-    const humans=players.filter(p=>!p.isAI).length;
     const stBtn=document.getElementById('startHumanBtn');
-    if(stBtn) stBtn.style.display=(isHost&&humans>=2)?'block':'none';
+    if(stBtn){
+      const show=isHost&&humans.length>=2;
+      stBtn.style.display=show?'block':'none';
+      if(show) stBtn.textContent='🎮 Spiel starten ('+humans.length+' Spieler)';
+    }
     if(r.status==='playing'&&r.game){
       rRef().off();
       loadImgs(r);
