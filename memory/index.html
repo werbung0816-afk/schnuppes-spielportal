@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Memory v1.6 — Schnuppes Spielportal</title>
+<title>Memory v1.8 — Schnuppes Spielportal</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -36,7 +36,7 @@ input[type=file]{display:none}
 .wait-sub{font-size:clamp(13px,2.3vw,15px);color:rgba(255,255,255,.4);margin-bottom:14px;}
 .upload-zone{border:2px dashed rgba(83,246,255,.28);border-radius:16px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;margin:10px 0;}
 .upload-zone:hover{border-color:#53f6ff;background:rgba(83,246,255,.04)}
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:4px;margin-top:8px;}
+.photo-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:8px;}
 .photo-thumb{aspect-ratio:1;width:100%;border-radius:7px;object-fit:cover;border:1px solid rgba(83,246,255,.2);}
 .emoji-thumb{aspect-ratio:1;border-radius:7px;background:rgba(143,95,255,.1);border:1px solid rgba(143,95,255,.15);display:flex;align-items:center;justify-content:center;font-size:clamp(13px,2.8vw,20px);}
 .wait-slot{display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(83,246,255,.12);margin-bottom:6px;font-size:clamp(13px,2.4vw,15px);font-weight:600;}
@@ -188,7 +188,7 @@ input[type=file]{display:none}
   <div class="glass" style="width:min(450px,94vw)">
     <div class="logo-title">Memory</div>
     <div class="logo-sub">Deine Fotos — Dein Vorteil? ✦</div>
-    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.6</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.8</div>
     <label class="field-label" for="nameInput">DEIN NAME</label>
     <input type="text" id="nameInput" placeholder="Name eingeben…" maxlength="16" autocomplete="off" onkeydown="if(event.key==='Enter')startJoin()">
     <button class="btn-primary" onclick="startJoin()">Spielen →</button>
@@ -218,13 +218,19 @@ input[type=file]{display:none}
       </div>
       <input type="file" id="fileInput" multiple accept="image/*" onchange="handlePhotos(this.files)">
       <div id="photoPreview" class="photo-grid"></div>
+      <div id="revokeBtn" style="display:none;text-align:center;margin-top:6px">
+        <button onclick="revokePhotos()" style="background:none;border:none;color:rgba(239,68,68,.55);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-decoration:underline">✕ Fotos löschen</button>
+      </div>
       <div id="stageNote" style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;margin-top:6px;display:none">📤 Fotos werden beim Spielstart eingebaut</div>
       <!-- Upload-Sync: zeigt allen wieviele Fotos jeder hat -->
       <div id="syncInfo" style="margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(83,246,255,.05);border:1px solid rgba(83,246,255,.1);font-size:11px;color:rgba(255,255,255,.4);display:none"></div>
     </div>
     <div id="waitBadge" class="room-badge" style="margin-bottom:14px"></div>
     <div id="hostActions" style="display:none">
-      <!-- KI-Anzahl -->
+      <!-- 1. Multiplayer -->
+      <button class="btn-primary" id="startHumanBtn" style="display:none;margin-bottom:11px" onclick="startWithHumans()">🎮 Spiel starten</button>
+      <div class="divider">oder direkt mit KI</div>
+      <!-- 2. KI -->
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px">KI-SPIELER</span>
         <div style="display:flex;gap:5px">
@@ -234,8 +240,7 @@ input[type=file]{display:none}
         </div>
       </div>
       <button class="btn-green" onclick="startVsAI()">🤖 Gegen KI starten</button>
-      <div class="divider">oder warte auf Mitspieler</div>
-      <button class="btn-primary" id="startHumanBtn" style="display:none;margin-bottom:11px" onclick="startWithHumans()">🎮 Spiel starten</button>
+      <div class="divider"></div>
       <button class="btn-danger" onclick="leaveRoom()">← Verlassen</button>
     </div>
     <div id="guestActions" style="display:none">
@@ -328,10 +333,33 @@ const FB_CFG = {
   appId:'1:399927026314:web:5fab639228c5b42efd0373'
 };
 const ROOM_PATH = 'rooms/memory_main';
-   const VERSION   = 'v1.6';
+     const VERSION   = 'v1.8';
 
 /* KI-Namen — werden zufällig gemischt, Human-Name ausgeschlossen */
 const AI_NAMES = ['Bärbel','Heinz','Nici','Marco','Leni','Mia','Nele','Dani','Finn','Sascha'];
+
+/* Bilder-Ordner (GitHub): Fallback statt Emojis wenn vorhanden */
+const BILDER_BASE = './Bilder/';
+let bilderPool = []; /* Geladen aus Bilder/manifest.json */
+
+/* GitHub-Repo für API-Abfrage */
+const GH_API = 'https://api.github.com/repos/werbung0816-afk/schnuppes-spielportal/contents/memory/Bilder';
+
+async function loadBilderPool(){
+  try{
+    const r=await fetch(GH_API,{headers:{Accept:'application/vnd.github.v3+json'},cache:'no-store'});
+    if(!r.ok) throw new Error('GitHub API: '+r.status);
+    const files=await r.json();
+    /* Alle Bild-Dateien (jpg/jpeg/png/webp/gif) — egal wie sie heißen */
+    bilderPool=files
+      .filter(f=>f.type==='file'&&/\.(jpe?g|png|webp|gif)$/i.test(f.name))
+      .map(f=>f.download_url);
+    console.log('Bilder-Pool geladen:',bilderPool.length,'Bilder');
+  }catch(e){
+    bilderPool=[];
+    console.log('Bilder-Ordner nicht erreichbar, nutze Emojis:',e.message);
+  }
+}
 
 /* Emoji-Fallback (≥18 verschiedene) */
 const EMOJI_POOL = ['🦊','🐬','🦋','🌺','⭐','🍕','🎸','🏆','🚀','🌈',
@@ -375,6 +403,8 @@ let uploadedB64 = [], loadedImgs = {}, latestRoom = null;
 let localFlip = [], isProcessing = false, aiThinking = false;
 let aiSeen = {}; /* KI-Gedächtnis: cardIdx → pairId */
 let podiumSeq = [], victTimer = null;
+const applause = new Audio('./applause.mp3');
+applause.volume = 0.75;
 let kiCount = 1; /* Anzahl KI-Spieler (1–3) */
 localStorage.setItem('mem_uid', myId);
 
@@ -436,48 +466,92 @@ function compressImg(file){
 }
 
 /* ── Foto-Upload ── */
+/* Kleines Thumbnail für Sync (48×48) */
+function makeThumbnail(b64){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      c.width=c.height=48;
+      const s=Math.min(img.width,img.height);
+      c.getContext('2d').drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,48,48);
+      res(c.toDataURL('image/jpeg',0.55));
+    };
+    img.src=b64;
+  });
+}
 async function handlePhotos(files){
   const max=18-uploadedB64.length;
   for(const f of Array.from(files).slice(0,max)){
     uploadedB64.push(await compressImg(f));
   }
   renderPreview();
-  /* Fotos in Firebase stagen damit Host sie beim Spielstart lesen kann */
-  try{ await rRef('staged/'+myId).set(uploadedB64); }
-  catch(e){ console.warn('Staging:',e); }
-  /* Upload-Zähler für Sync-Anzeige */
-  try{ await rRef('uploadCounts/'+myId).set({name:myName,count:uploadedB64.length}); }
-  catch(e){}
+  /* Thumbnails für Live-Sync erstellen (max 6) */
+  const thumbs=await Promise.all(uploadedB64.slice(0,6).map(b=>makeThumbnail(b)));
+  try{
+    await rRef('staged/'+myId).set(uploadedB64);
+    await rRef('uploadCounts/'+myId).set({name:myName,count:uploadedB64.length,thumbs});
+  }catch(e){ console.warn('Staging:',e); }
 }
 function renderPreview(){
   const grid=document.getElementById('photoPreview');
   if(!grid) return;
   grid.innerHTML='';
   const emojis=shuffle(EMOJI_POOL);
+  const bilder=shuffle([...bilderPool]);
   for(let i=0;i<18;i++){
     if(i<uploadedB64.length){
       const img=document.createElement('img');
       img.className='photo-thumb'; img.src=uploadedB64[i];
       grid.appendChild(img);
     }else{
-      const d=document.createElement('div');
-      d.className='emoji-thumb';
-      d.textContent=emojis[(i-uploadedB64.length)%emojis.length];
-      grid.appendChild(d);
+      const fi=i-uploadedB64.length;
+      if(fi<bilder.length){
+        const img=document.createElement('img');
+        img.className='photo-thumb'; img.src=bilder[fi];
+        img.loading='lazy';
+        grid.appendChild(img);
+      }else{
+        const d=document.createElement('div');
+        d.className='emoji-thumb';
+        d.textContent=emojis[(i-uploadedB64.length-bilder.length)%emojis.length];
+        grid.appendChild(d);
+      }
     }
   }
+  /* Revoke-Button zeigen wenn Fotos vorhanden */
+  const rb=document.getElementById('revokeBtn');
+  if(rb) rb.style.display=uploadedB64.length>0?'block':'none';
 }
 function buildImages(extra){
   const all=[...uploadedB64,...(extra||[])];
   const emojis=shuffle(EMOJI_POOL);
+  const bilder=shuffle([...bilderPool]);
   const imgs={};
   for(let i=0;i<18;i++){
-    imgs[i]=i<all.length
-      ? {type:'img', value:all[i]}
-      : {type:'emoji', value:emojis[(i-all.length)%emojis.length]};
+    if(i<all.length){
+      imgs[i]={type:'img', value:all[i]};
+    }else{
+      const fi=i-all.length;
+      imgs[i]=fi<bilder.length
+        ? {type:'url', value:bilder[fi]}
+        : {type:'emoji', value:emojis[(i-all.length-bilder.length)%emojis.length]};
+    }
   }
   return imgs;
 }
+/* Eigene Fotos löschen */
+async function revokePhotos(){
+  uploadedB64=[];
+  renderPreview();
+  try{
+    await rRef('staged/'+myId).remove();
+    await rRef('uploadCounts/'+myId).remove();
+  }catch(e){ console.warn('Revoke:',e); }
+  const rb=document.getElementById('revokeBtn');
+  if(rb) rb.style.display='none';
+}
+
 /* Gestagede Fotos anderer Spieler aus Firebase holen */
 async function getStagedPhotos(){
   try{
@@ -503,6 +577,7 @@ function buildCards(){
    SETUP SCREEN
 ══════════════════════════════════════ */
 window.addEventListener('load',()=>{
+  loadBilderPool();
   initDB();
   const s=localStorage.getItem('mem_name');
   if(s) document.getElementById('nameInput').value=s;
@@ -658,8 +733,14 @@ function watchWait(){
     if(entries.length===0){ box.style.display='none'; return; }
     box.style.display='block';
     const total=Math.min(entries.reduce((s,e)=>s+(e.count||0),0),18);
-    const parts=entries.map(e=>'<b>'+e.name+'</b>: '+e.count+'📸').join(' · ');
-    box.innerHTML='📷 '+parts+'<br>Gesamt: '+total+'/18'+(total<18?' — '+(18-total)+' Emojis füllen auf':'  ✅');
+    const rows=entries.map(e=>{
+      const th=(e.thumbs||[]).slice(0,6).map(t=>
+        '<img src="'+t+'" style="width:24px;height:24px;border-radius:5px;'+'object-fit:cover;border:1px solid rgba(255,255,255,.12)">'
+      ).join('');
+      return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">'+
+        '<b>'+e.name+'</b> '+e.count+'📸 '+th+'</div>';
+    }).join('');
+    box.innerHTML=rows+'<div style="margin-top:6px;color:rgba(255,255,255,.35)">Gesamt: '+total+'/18'+(total<18?' — '+(18-total)+(bilderPool.length>0?' aus Bilder-Ordner':' Emojis')+' füllen auf':'  ✅')+'</div>';
   });
 }
 function leaveRoom(){
@@ -809,9 +890,10 @@ function renderGrid(game){
 
     const imgData=loadedImgs[card.pairId];
     if(imgData){
-      if(imgData.type==='img'){
+      if(imgData.type==='img'||imgData.type==='url'){
         const img=document.createElement('img');
         img.src=imgData.value; img.alt='';
+        img.loading='lazy';
         front.appendChild(img);
       }else{
         const em=document.createElement('div');
@@ -939,6 +1021,7 @@ async function doAIMove(){
 
 /* ── Gleiche Runde: Scores reset, gleiche Fotos, neues Deck ── */
 async function sameRound(){
+  applause.pause(); applause.currentTime=0;
   if(!latestRoom) return;
   const players=fixArr(latestRoom.players).map(p=>({...p,score:0}));
   const cards=buildCards();
@@ -956,6 +1039,7 @@ async function sameRound(){
 }
 /* ── Neues Spiel: alles zurücksetzen ── */
 async function fullReset(){
+  applause.pause(); applause.currentTime=0;
   if(!confirm('Raum leeren und ganz neu starten?')) return;
   await rRef().set({status:'idle',ts:Date.now()});
   location.reload();
@@ -1000,6 +1084,7 @@ async function forceResetRoom(){
    Verlierer zuerst → Sieger zuletzt
 ══════════════════════════════════════ */
 function triggerVictory(players){
+  applause.currentTime=0; applause.play().catch(()=>{});
   if(isHost) setTimeout(()=>rRef()?.update({status:'finished'}),3200);
   const sorted=[...players].sort((a,b)=>(b.score??0)-(a.score??0));
   podiumSeq=[];
