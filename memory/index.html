@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Memory v1.3 — Schnuppes Spielportal</title>
+<title>Memory v1.5 — Schnuppes Spielportal</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -188,7 +188,7 @@ input[type=file]{display:none}
   <div class="glass" style="width:min(450px,94vw)">
     <div class="logo-title">Memory</div>
     <div class="logo-sub">Deine Fotos — Dein Vorteil? ✦</div>
-    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.3</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.5</div>
     <label class="field-label" for="nameInput">DEIN NAME</label>
     <input type="text" id="nameInput" placeholder="Name eingeben…" maxlength="16" autocomplete="off" onkeydown="if(event.key==='Enter')startJoin()">
     <button class="btn-primary" onclick="startJoin()">Spielen →</button>
@@ -219,6 +219,8 @@ input[type=file]{display:none}
       <input type="file" id="fileInput" multiple accept="image/*" onchange="handlePhotos(this.files)">
       <div id="photoPreview" class="photo-grid"></div>
       <div id="stageNote" style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;margin-top:6px;display:none">📤 Fotos werden beim Spielstart eingebaut</div>
+      <!-- Upload-Sync: zeigt allen wieviele Fotos jeder hat -->
+      <div id="syncInfo" style="margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(83,246,255,.05);border:1px solid rgba(83,246,255,.1);font-size:11px;color:rgba(255,255,255,.4);display:none"></div>
     </div>
     <div id="waitBadge" class="room-badge" style="margin-bottom:14px"></div>
     <div id="hostActions" style="display:none">
@@ -326,7 +328,7 @@ const FB_CFG = {
   appId:'1:399927026314:web:5fab639228c5b42efd0373'
 };
 const ROOM_PATH = 'rooms/memory_main';
-const VERSION   = 'v1.3';
+  const VERSION   = 'v1.5';
 
 /* KI-Namen — werden zufällig gemischt, Human-Name ausgeschlossen */
 const AI_NAMES = ['Bärbel','Heinz','Nici','Marco','Leni','Mia','Nele','Dani','Finn','Sascha'];
@@ -443,6 +445,9 @@ async function handlePhotos(files){
   /* Fotos in Firebase stagen damit Host sie beim Spielstart lesen kann */
   try{ await rRef('staged/'+myId).set(uploadedB64); }
   catch(e){ console.warn('Staging:',e); }
+  /* Upload-Zähler für Sync-Anzeige */
+  try{ await rRef('uploadCounts/'+myId).set({name:myName,count:uploadedB64.length}); }
+  catch(e){}
 }
 function renderPreview(){
   const grid=document.getElementById('photoPreview');
@@ -510,13 +515,15 @@ function watchSetupBadge(){
     const hint=document.getElementById('resetHint');
     if(!r||r.status==='idle'||r.status==='finished'){
       el.textContent='⚪ Kein Raum aktiv — du startest ihn';
+      el.style.color='';
       if(hint) hint.style.display='none';
     }else if(r.status==='waiting'){
       const pc=Object.keys(r.players||{}).length;
       const full=pc>=4;
       el.textContent=(full?'🔴':'🟢')+' Warteraum — Host: '+(r.hostName||'?')+'  ('+pc+'/4'+(full?' — voll':'')+')' ;
       el.style.color=full?'rgba(239,68,68,.8)':'';
-      if(hint) hint.style.display='block';
+      /* resetHint nur wenn Raum voll — nicht für normale Beitreter */
+      if(hint) hint.style.display=full?'block':'none';
     }else if(r.status==='playing'){
       el.textContent='🟡 Spiel läuft — beitreten möglich';
       if(hint) hint.style.display='block';
@@ -529,7 +536,21 @@ async function startJoin(){
   if(!name){ inp.focus(); return; }
   myName=name;
   localStorage.setItem('mem_name',name);
-  const snap=await rRef().once('value'), room=snap.val();
+  /* Feedback während Verbindungsaufbau */
+  const btn=document.querySelector('#setupScreen .btn-primary');
+  if(btn){ btn.textContent='Verbinde…'; btn.disabled=true; }
+  const badge=document.getElementById('setupBadge');
+  let snap, room;
+  try{
+    if(!rRef()){ throw new Error('Firebase nicht erreichbar'); }
+    snap=await rRef().once('value');
+    room=snap.val();
+  }catch(e){
+    if(btn){ btn.textContent='Spielen →'; btn.disabled=false; }
+    if(badge){ badge.textContent='❌ '+e.message+' — Seite neu laden'; badge.style.color='rgba(239,68,68,.8)'; }
+    return;
+  }
+  if(btn){ btn.textContent='Spielen →'; btn.disabled=false; }
   if(!room||room.status==='idle'||room.status==='finished'){
     isHost=true;
     await rRef().set({status:'waiting',hostName:myName,hostId:myId,
@@ -545,8 +566,12 @@ async function startJoin(){
       if(b){ b.textContent='🔴 Raum ist voll (4/4) — warte auf nächste Runde'; b.style.color='rgba(239,68,68,.8)'; }
       return;
     }
-    if(!p.find(x=>x.id===myId))
-      await rRef('players/'+p.length).set({name:myName,score:0,isAI:false,id:myId});
+    if(!p.find(x=>x.id===myId)){
+      /* Sicherer Index: max bestehender + 1, um Überschreiben zu vermeiden */
+      const existingKeys=Object.keys(room.players||{}).map(Number);
+      const nextIdx=existingKeys.length>0?Math.max(...existingKeys)+1:0;
+      await rRef('players/'+nextIdx).set({name:myName,score:0,isAI:false,id:myId});
+    }
     showWait();
   }else if(room.status==='playing'){
     isHost=(room.hostId===myId);
@@ -602,7 +627,7 @@ function watchWait(){
     if(stBtn){
       const show=isHost&&humans.length>=2;
       stBtn.style.display=show?'block':'none';
-      if(show) stBtn.textContent='🎮 Spiel starten ('+humans.length+' Spieler)';
+      if(show) stBtn.textContent='🎮 Spiel starten';
     }
     if(r.status==='playing'&&r.game){
       rRef().off();
@@ -611,6 +636,18 @@ function watchWait(){
       renderGame(r);
       watchGame();
     }
+  });
+  /* Upload-Sync: uploadCounts beobachten */
+  rRef('uploadCounts').on('value',snap=>{
+    const data=snap.val()||{};
+    const box=document.getElementById('syncInfo');
+    if(!box) return;
+    const entries=Object.values(data);
+    if(entries.length===0){ box.style.display='none'; return; }
+    box.style.display='block';
+    const total=Math.min(entries.reduce((s,e)=>s+(e.count||0),0),18);
+    const parts=entries.map(e=>'<b>'+e.name+'</b>: '+e.count+'📸').join(' · ');
+    box.innerHTML='📷 '+parts+'<br>Gesamt: '+total+'/18'+(total<18?' — '+(18-total)+' Emojis füllen auf':'  ✅');
   });
 }
 function leaveRoom(){
@@ -638,6 +675,7 @@ async function startVsAI(){
     images:imgs, game:{cards,currentPlayer:0,flipped:[],moves:0}
   });
   rRef('staged').remove().catch(()=>{});
+  rRef('uploadCounts').remove().catch(()=>{});
 }
 async function startWithHumans(){
   const extra=await getStagedPhotos();
@@ -645,6 +683,7 @@ async function startWithHumans(){
   await rRef().update({status:'playing',images:imgs,
     game:{cards,currentPlayer:0,flipped:[],moves:0}});
   rRef('staged').remove().catch(()=>{});
+  rRef('uploadCounts').remove().catch(()=>{});
 }
 
 /* ══════════════════════════════════════
@@ -661,6 +700,13 @@ function watchGame(){
   rRef().on('value',snap=>{
     const r=snap?.val();
     if(!r||r.status!=='playing'||!r.game) return;
+    /* Rematch: Overlay schließen falls noch offen */
+    const ov=document.getElementById('victoryOverlay');
+    if(ov&&ov.classList.contains('show')){
+      ov.classList.remove('show'); ov.innerHTML='';
+      clearInterval(victTimer);
+      localFlip=[]; isProcessing=false; aiThinking=false; aiSeen={};
+    }
     if(r.images) Object.entries(r.images).forEach(([pid,img])=>{
       if(!loadedImgs[pid]) loadedImgs[pid]=img;
     });
@@ -879,6 +925,29 @@ async function doAIMove(){
   }
 }
 
+/* ── Gleiche Runde: Scores reset, gleiche Fotos, neues Deck ── */
+async function sameRound(){
+  if(!latestRoom) return;
+  const players=fixArr(latestRoom.players).map(p=>({...p,score:0}));
+  const cards=buildCards();
+  /* status→playing, gleiche images bleiben, neues game */
+  await rRef().update({
+    status:'playing',
+    players,
+    'game':{cards,currentPlayer:0,flipped:[],moves:0}
+  });
+  /* Overlay lokal schließen */
+  const ov=document.getElementById('victoryOverlay');
+  if(ov){ ov.classList.remove('show'); ov.innerHTML=''; }
+  clearInterval(victTimer);
+  localFlip=[]; isProcessing=false; aiThinking=false; aiSeen={};
+}
+/* ── Neues Spiel: alles zurücksetzen ── */
+async function fullReset(){
+  if(!confirm('Raum leeren und ganz neu starten?')) return;
+  await rRef().set({status:'idle',ts:Date.now()});
+  location.reload();
+}
 /* ── Re-Sync: Flags zurücksetzen + KI manuell antriggern ── */
 function resync(){
   console.log('Re-Sync: aiThinking='+aiThinking+' isProcessing='+isProcessing);
@@ -959,7 +1028,7 @@ function renderVictoryStage(idx){
       '<div class="playerScore">'+d.score+'</div>'+
       '<div class="playerPairsSub">'+d.pairs+'</div>'+
     '</div>'+
-    (d.isLast?'<div class="finalButtons"><button class="finalBtn" onclick="location.reload()">🔄 Neues Spiel</button></div>':'')+
+    (d.isLast?'<div class="finalButtons"><button class="finalBtn" onclick="sameRound()">🔄 Gleiche Runde</button><button class="finalBtn" style="background:linear-gradient(135deg,#374151,#111827)" onclick="fullReset()">🆕 Neue Spieler</button></div>':'')+
     '</div>';
 }
 
