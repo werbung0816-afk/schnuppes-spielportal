@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Memory — Schnuppes Spielportal</title>
+<title>Memory v1.0 — Schnuppes Spielportal</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -178,6 +178,7 @@ input[type=file]{display:none}
   <div class="glass" style="width:min(450px,94vw)">
     <div class="logo-title">Memory</div>
     <div class="logo-sub">✦ Schnuppes Spielportal</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.0</div>
     <label class="field-label" for="nameInput">DEIN NAME</label>
     <input type="text" id="nameInput" placeholder="Name eingeben…" maxlength="16" autocomplete="off" onkeydown="if(event.key==='Enter')startJoin()">
     <button class="btn-primary" onclick="startJoin()">Spielen →</button>
@@ -269,7 +270,7 @@ input[type=file]{display:none}
 <script>
 'use strict';
 /* ═══════════════════════════════════════════════════════
-   MEMORY — Schnuppes Spielportal
+   MEMORY v1.0 — Schnuppes Spielportal
    Firebase: monis-zehntausend-default-rtdb.europe-west1
    Raum:     rooms/memory_main
    ═══════════════════════════════════════════════════════ */
@@ -284,6 +285,7 @@ const FB_CFG = {
   appId:'1:399927026314:web:5fab639228c5b42efd0373'
 };
 const ROOM_PATH = 'rooms/memory_main';
+const VERSION   = 'v1.0';
 
 /* KI-Namen — werden zufällig gemischt, Human-Name ausgeschlossen */
 const AI_NAMES = ['Bärbel','Heinz','Nici','Marco','Leni','Mia','Nele','Dani','Finn','Sascha'];
