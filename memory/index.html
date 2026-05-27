@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Memory v1.0 — Schnuppes Spielportal</title>
+<title>Memory v1.1 — Schnuppes Spielportal</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -177,12 +177,15 @@ input[type=file]{display:none}
 <div id="setupScreen" class="screen active">
   <div class="glass" style="width:min(450px,94vw)">
     <div class="logo-title">Memory</div>
-    <div class="logo-sub">✦ Schnuppes Spielportal</div>
-    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.0</div>
+    <div class="logo-sub">Deine Fotos — Dein Vorteil? ✦</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.2);font-weight:600;letter-spacing:1px;margin-top:-18px;margin-bottom:14px">v1.1</div>
     <label class="field-label" for="nameInput">DEIN NAME</label>
     <input type="text" id="nameInput" placeholder="Name eingeben…" maxlength="16" autocomplete="off" onkeydown="if(event.key==='Enter')startJoin()">
     <button class="btn-primary" onclick="startJoin()">Spielen →</button>
     <div id="setupBadge" class="room-badge">⏳ Verbinde mit Firebase…</div>
+    <div id="resetHint" style="display:none;margin-top:8px;text-align:center">
+      <button onclick="forceResetRoom()" style="background:none;border:none;color:rgba(239,68,68,.6);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-decoration:underline">⚠️ Raum ist besetzt — zurücksetzen?</button>
+    </div>
   </div>
 </div>
 
@@ -191,19 +194,21 @@ input[type=file]{display:none}
   <div class="glass" style="width:min(520px,94vw)">
     <div style="margin-bottom:16px">
       <div style="font-size:clamp(26px,5vw,36px);font-weight:900;line-height:.9;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Memory</div>
-      <div style="font-size:13px;color:#ff9ef0;margin-top:5px">✦ Schnuppes Spielportal</div>
+      <div style="font-size:13px;color:#ff9ef0;margin-top:5px">Deine Fotos — Dein Vorteil? ✦</div>
     </div>
     <div class="wait-name" id="waitName"></div>
     <div class="wait-sub"><span class="dots">wartet auf Mitspieler</span></div>
     <div id="waitPlayerList" style="margin-bottom:12px"></div>
-    <div id="hostUploadSection" style="display:none">
+    <!-- Upload für ALLE Spieler -->
+    <div id="uploadSection">
       <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
         <div style="font-size:20px;margin-bottom:3px">📷</div>
-        <div style="font-size:clamp(12px,2.4vw,14px);font-weight:700;color:rgba(255,255,255,.75)">Fotos hochladen (optional)</div>
-        <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:2px">Bis zu 18 Bilder — Rest wird mit Emojis aufgefüllt</div>
+        <div style="font-size:clamp(12px,2.4vw,14px);font-weight:700;color:rgba(255,255,255,.75)">Eigene Fotos hochladen</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.3);margin-top:2px">Bis zu 18 Bilder · Rest mit Emojis · <b style="color:rgba(255,255,255,.5)">Dein Vorteil!</b></div>
       </div>
       <input type="file" id="fileInput" multiple accept="image/*" onchange="handlePhotos(this.files)">
       <div id="photoPreview" class="photo-grid"></div>
+      <div id="stageNote" style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;margin-top:6px;display:none">📤 Fotos werden beim Spielstart eingebaut</div>
     </div>
     <div id="waitBadge" class="room-badge" style="margin-bottom:14px"></div>
     <div id="hostActions" style="display:none">
@@ -213,6 +218,7 @@ input[type=file]{display:none}
       <button class="btn-danger" onclick="leaveRoom()">← Verlassen</button>
     </div>
     <div id="guestActions" style="display:none">
+      <div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;margin-bottom:10px">Fotos hochladen — der Host sieht sie beim Spielstart.</div>
       <button class="btn-danger" onclick="leaveRoom()">← Verlassen</button>
     </div>
   </div>
@@ -270,7 +276,7 @@ input[type=file]{display:none}
 <script>
 'use strict';
 /* ═══════════════════════════════════════════════════════
-   MEMORY v1.0 — Schnuppes Spielportal
+   MEMORY — Schnuppes Spielportal
    Firebase: monis-zehntausend-default-rtdb.europe-west1
    Raum:     rooms/memory_main
    ═══════════════════════════════════════════════════════ */
@@ -285,7 +291,7 @@ const FB_CFG = {
   appId:'1:399927026314:web:5fab639228c5b42efd0373'
 };
 const ROOM_PATH = 'rooms/memory_main';
-const VERSION   = 'v1.0';
+const VERSION   = 'v1.1';
 
 /* KI-Namen — werden zufällig gemischt, Human-Name ausgeschlossen */
 const AI_NAMES = ['Bärbel','Heinz','Nici','Marco','Leni','Mia','Nele','Dani','Finn','Sascha'];
@@ -386,6 +392,9 @@ async function handlePhotos(files){
     uploadedB64.push(await compressImg(f));
   }
   renderPreview();
+  /* Fotos in Firebase stagen damit Host sie beim Spielstart lesen kann */
+  try{ await rRef('staged/'+myId).set(uploadedB64); }
+  catch(e){ console.warn('Staging:',e); }
 }
 function renderPreview(){
   const grid=document.getElementById('photoPreview');
@@ -405,15 +414,28 @@ function renderPreview(){
     }
   }
 }
-function buildImages(){
+function buildImages(extra){
+  const all=[...uploadedB64,...(extra||[])];
   const emojis=shuffle(EMOJI_POOL);
   const imgs={};
   for(let i=0;i<18;i++){
-    imgs[i]=i<uploadedB64.length
-      ? {type:'img',   value:uploadedB64[i]}
-      : {type:'emoji', value:emojis[(i-uploadedB64.length)%emojis.length]};
+    imgs[i]=i<all.length
+      ? {type:'img', value:all[i]}
+      : {type:'emoji', value:emojis[(i-all.length)%emojis.length]};
   }
   return imgs;
+}
+/* Gestagede Fotos anderer Spieler aus Firebase holen */
+async function getStagedPhotos(){
+  try{
+    const snap=await rRef('staged').once('value');
+    const data=snap.val()||{};
+    let extra=[];
+    Object.entries(data).forEach(([uid,photos])=>{
+      if(uid!==myId&&Array.isArray(photos)) extra=[...extra,...photos];
+    });
+    return extra;
+  }catch(e){ return []; }
 }
 function buildCards(){
   const c=[];
@@ -437,12 +459,17 @@ function watchSetupBadge(){
   rRef()?.on('value',snap=>{
     const r=snap?.val(), el=document.getElementById('setupBadge');
     if(!el) return;
-    if(!r||r.status==='idle'||r.status==='finished')
+    const hint=document.getElementById('resetHint');
+    if(!r||r.status==='idle'||r.status==='finished'){
       el.textContent='⚪ Kein Raum aktiv — du startest ihn';
-    else if(r.status==='waiting')
-      el.textContent='🟢 Warteraum offen — Host: '+(r.hostName||'?');
-    else if(r.status==='playing')
+      if(hint) hint.style.display='none';
+    }else if(r.status==='waiting'){
+      el.textContent='🟢 Warteraum — Host: '+(r.hostName||'?')+'  ('+(Object.keys(r.players||{}).length)+' Spieler)';
+      if(hint) hint.style.display='block';
+    }else if(r.status==='playing'){
       el.textContent='🟡 Spiel läuft — beitreten möglich';
+      if(hint) hint.style.display='block';
+    }
   });
 }
 async function startJoin(){
@@ -479,9 +506,11 @@ async function startJoin(){
 function showWait(){
   showScreen('waitScreen');
   document.getElementById('waitName').textContent=myName;
-  document.getElementById('hostUploadSection').style.display=isHost?'block':'none';
+  /* Upload für alle sichtbar */
   document.getElementById('hostActions').style.display=isHost?'block':'none';
   document.getElementById('guestActions').style.display=isHost?'none':'block';
+  const sn=document.getElementById('stageNote');
+  if(sn) sn.style.display=isHost?'none':'block';
   renderPreview();
   watchWait();
 }
@@ -520,7 +549,8 @@ async function startVsAI(){
   const taken=[myName.toLowerCase()];
   const avail=AI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));
   const aiName=shuffle(avail)[0]+' (KI)';
-  const imgs=buildImages(), cards=buildCards();
+  const extra=await getStagedPhotos();
+  const imgs=buildImages(extra), cards=buildCards();
   await rRef().update({
     status:'playing',
     players:[
@@ -529,11 +559,14 @@ async function startVsAI(){
     ],
     images:imgs, game:{cards,currentPlayer:0,flipped:[],moves:0}
   });
+  rRef('staged').remove().catch(()=>{});
 }
 async function startWithHumans(){
-  const imgs=buildImages(), cards=buildCards();
+  const extra=await getStagedPhotos();
+  const imgs=buildImages(extra), cards=buildCards();
   await rRef().update({status:'playing',images:imgs,
     game:{cards,currentPlayer:0,flipped:[],moves:0}});
+  rRef('staged').remove().catch(()=>{});
 }
 
 /* ══════════════════════════════════════
@@ -791,6 +824,12 @@ function resync(){
 async function resetRoom(){
   if(!confirm('Spiel zurücksetzen?')) return;
   await rRef().update({status:'idle'});
+  location.reload();
+}
+/* ── Force Reset vom Setup-Screen (bei stuck room) ── */
+async function forceResetRoom(){
+  if(!confirm('Raum leeren und neu starten? Alle verbundenen Spieler werden getrennt.')) return;
+  await rRef().set({status:'idle',ts:Date.now()});
   location.reload();
 }
 
