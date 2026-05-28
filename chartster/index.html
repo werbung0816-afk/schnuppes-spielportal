@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Hitster – Musterkarte</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
 <style>
 :root{
   --cyan:#53f6ff;--pink:#ff4fd8;--purple:#8f5fff;
@@ -106,6 +106,19 @@ body{
   border:1px solid var(--glass-b);
 }
 .btn-reveal:active{background:rgba(255,255,255,.12)}
+.reveal-artist{
+  font-family:'DM Sans',sans-serif;
+  font-size:clamp(13px,2vw,15px);font-weight:700;
+  color:var(--text);text-align:center;margin-top:10px;
+  opacity:0;transition:opacity .4s ease .3s;
+}
+.reveal-title{
+  font-family:'DM Sans',sans-serif;
+  font-size:clamp(13px,2vw,15px);font-weight:400;
+  color:var(--cyan);text-align:center;margin-top:3px;
+  opacity:0;transition:opacity .4s ease .45s;
+}
+.reveal-artist.on,.reveal-title.on{opacity:1}
 .btn-next{
   background:rgba(255,255,255,.04);color:var(--muted);
   border:1px solid rgba(255,255,255,.08);font-size:14px;
@@ -119,9 +132,11 @@ body{
   <div class="info" id="info">
     <div class="qmark" id="qmark">?</div>
     <div class="year-big" id="year" style="display:none">2023</div>
+    <div class="reveal-artist" id="reveal-artist">Udo Lindenberg &amp; Apache 207</div>
+    <div class="reveal-title" id="reveal-title">Komet</div>
   </div>
 
-  <div style="position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif">v15</div>
+  <div style="position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif">v16</div>
   <div class="sep"></div>
 
   <div class="player-outer" id="player-outer">
@@ -173,6 +188,10 @@ function next(){
     document.getElementById('overlay').classList.add('gone');
     document.getElementById('overlay-text').classList.add('gone');
     document.getElementById('year').style.display='block';
+    setTimeout(function(){
+      document.getElementById('reveal-artist').classList.add('on');
+      document.getElementById('reveal-title').classList.add('on');
+    },50);
     var btn=document.getElementById('main-btn');
     btn.textContent='↩ Nächste Karte';btn.className='btn btn-next';
     phase=3;
@@ -184,6 +203,8 @@ function next(){
     document.getElementById('overlay-text').classList.remove('gone');
     document.getElementById('qmark').classList.remove('gone');
     document.getElementById('year').style.display='none';
+    document.getElementById('reveal-artist').classList.remove('on');
+    document.getElementById('reveal-title').classList.remove('on');
     var btn=document.getElementById('main-btn');
     btn.textContent='Ich bin bereit ...';btn.className='btn btn-ready';
   }
