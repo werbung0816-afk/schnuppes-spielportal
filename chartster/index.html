@@ -121,7 +121,7 @@ body{
     <div class="year-big" id="year" style="display:none">2023</div>
   </div>
 
-  <div style="position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif">v11</div>
+  <div style="position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif">v12</div>
   <div class="sep"></div>
 
   <div class="player-outer" id="player-outer">
@@ -136,7 +136,7 @@ body{
         <mask id="hole">
           <rect width="9999" height="152" fill="white"/>
           <!-- Kreis: cx wird per JS gesetzt, cy und r hier anpassen -->
-          <circle id="play-hole" cx="374" cy="124" r="32" fill="black"/>
+          <circle id="play-hole" cx="374" cy="124" r="28" fill="black"/>
         </mask>
       </defs>
       <rect width="9999" height="152" fill="#121212" mask="url(#hole)" rx="13"/>
@@ -193,7 +193,14 @@ function next(){
 function updateHole(){
   var outer = document.getElementById('player-outer');
   var w = outer.offsetWidth || 412;
-  document.getElementById('play-hole').setAttribute('cx', w - 42);
+  var mobile = window.innerWidth < 600;
+  // PC: w-28 r=28 (passt) | iPhone: cx und r noch anzupassen
+  var cx = mobile ? w - 55 : w - 28;
+  var r  = mobile ? 28     : 28;
+  var cy = mobile ? 124    : 124;
+  document.getElementById('play-hole').setAttribute('cx', cx);
+  document.getElementById('play-hole').setAttribute('r',  r);
+  document.getElementById('play-hole').setAttribute('cy', cy);
 }
 window.addEventListener('resize', updateHole);
 updateHole();
