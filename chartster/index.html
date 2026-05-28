@@ -8,128 +8,57 @@
 <style>
 :root{
   --cyan:#53f6ff;--pink:#ff4fd8;--purple:#8f5fff;
-  --bg:#07000f;
-  --glass:rgba(255,255,255,0.055);
-  --glass-b:rgba(255,255,255,0.10);
-  --text:rgba(240,240,255,1);
-  --muted:rgba(240,240,255,0.45);
+  --bg:#07000f;--glass:rgba(255,255,255,.055);--glass-b:rgba(255,255,255,.10);
+  --text:rgba(240,240,255,1);--muted:rgba(240,240,255,.45);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{
-  font-family:'Outfit',sans-serif;
-  background:var(--bg);
+html,body{font-family:'Outfit',sans-serif;background:var(--bg);
   background-image:
     radial-gradient(ellipse 60% 50% at 15% 40%,rgba(143,95,255,.18) 0%,transparent 70%),
     radial-gradient(ellipse 50% 40% at 85% 15%,rgba(83,246,255,.12) 0%,transparent 60%),
     radial-gradient(ellipse 45% 45% at 65% 85%,rgba(255,79,216,.12) 0%,transparent 60%);
-  min-height:100vh;
-  color:var(--text);
-}
-
-/* ── SCREENS ── */
+  min-height:100vh;color:var(--text)}
 .screen{display:none;min-height:100vh;padding:16px;align-items:center;justify-content:flex-start;flex-direction:column}
 .screen.active{display:flex}
-
-/* ── GLASS CARD ── */
-.card{
-  width:100%;max-width:480px;
-  background:var(--glass);
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border:1px solid var(--glass-b);border-radius:24px;
-  padding:28px 20px 20px;
-  display:flex;flex-direction:column;align-items:center;gap:14px;
-  position:relative;
-}
+.card{width:100%;max-width:480px;background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:28px 20px 20px;display:flex;flex-direction:column;align-items:center;gap:14px;position:relative}
 .sep{width:100%;height:1px;background:var(--glass-b)}
-
-/* ── TYPOGRAPHY ── */
-.game-title{
-  font-size:38px;font-weight:900;letter-spacing:-1px;
-  background:linear-gradient(135deg,var(--cyan),var(--pink));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 20px rgba(83,246,255,.4));
-}
+.game-title{font-size:38px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px rgba(83,246,255,.4))}
 .label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-
-/* ── BUTTONS ── */
-.btn{
-  width:100%;padding:14px;border-radius:14px;
-  font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;
-  cursor:pointer;transition:all .2s;border:none;outline:none;
-  -webkit-appearance:none;touch-action:manipulation;user-select:none;
-}
+.btn{width:100%;padding:14px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;border:none;outline:none;-webkit-appearance:none;touch-action:manipulation;user-select:none}
 .btn[disabled]{opacity:.35;pointer-events:none}
-.btn-primary{
-  background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));
-  color:var(--cyan);border:1px solid rgba(83,246,255,.4);
-  box-shadow:0 0 20px rgba(83,246,255,.12);
-}
+.btn-primary{background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));color:var(--cyan);border:1px solid rgba(83,246,255,.4);box-shadow:0 0 20px rgba(83,246,255,.12)}
 .btn-primary:active{box-shadow:0 0 32px rgba(83,246,255,.4);border-color:var(--cyan)}
 .btn-secondary{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--glass-b)}
 .btn-secondary:active{background:rgba(255,255,255,.13)}
 .btn-muted{background:rgba(255,255,255,.03);color:var(--muted);border:1px solid rgba(255,255,255,.06);font-size:14px}
 .btn-muted:active{background:rgba(255,255,255,.08);color:var(--text)}
 
-/* ── SETUP SCREEN ── */
+/* SETUP */
 .setup-section{width:100%;display:flex;flex-direction:column;gap:8px}
 .tc-row{display:flex;gap:8px;justify-content:center}
-.tc-btn{
-  width:46px;height:46px;border-radius:12px;
-  border:1px solid var(--glass-b);background:var(--glass);
-  color:var(--muted);font-size:18px;font-weight:700;
-  cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;
-}
+.tc-btn{width:46px;height:46px;border-radius:12px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif}
 .tc-btn.on{border-color:var(--cyan);color:var(--cyan);background:rgba(83,246,255,.1);box-shadow:0 0 16px rgba(83,246,255,.2)}
-.team-row{display:flex;align-items:center;gap:10px}
+.team-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .team-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-.team-input{
-  flex:1;background:var(--glass);border:1px solid var(--glass-b);border-radius:10px;
-  padding:10px 14px;color:var(--text);font-family:'Outfit',sans-serif;font-size:15px;outline:none;
-  transition:border-color .2s;
-}
+.team-input{flex:1;background:var(--glass);border:1px solid var(--glass-b);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'Outfit',sans-serif;font-size:15px;outline:none;transition:border-color .2s}
 .team-input:focus{border-color:var(--cyan)}
 .filter-wrap{display:flex;flex-wrap:wrap;gap:7px}
-.flt{
-  padding:7px 13px;border-radius:10px;border:1px solid var(--glass-b);
-  background:var(--glass);color:var(--muted);font-size:13px;font-weight:600;
-  cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;
-}
+.flt{padding:7px 13px;border-radius:10px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif}
 .flt.on{border-color:var(--purple);color:var(--purple);background:rgba(143,95,255,.12)}
 .flt.off{opacity:.3;pointer-events:none}
 
-/* ── WHEEL SCREEN ── */
+/* WHEEL */
 .wheel-wrap{position:relative;width:280px;height:280px;margin:8px auto}
-#wheel-svg{width:280px;height:280px;transition:transform 0s linear}
-.wheel-ptr{
-  position:absolute;top:-10px;left:50%;transform:translateX(-50%);
-  width:0;height:0;
-  border-left:10px solid transparent;border-right:10px solid transparent;
-  border-top:22px solid var(--cyan);
-  filter:drop-shadow(0 0 8px var(--cyan));
-  z-index:5;
-}
+#wheel-svg{width:280px;height:280px}
+.wheel-ptr{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:22px solid var(--cyan);filter:drop-shadow(0 0 8px var(--cyan));z-index:5}
 @keyframes glow-in{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-.year-big-result{
-  font-size:72px;font-weight:900;line-height:1;text-align:center;
-  background:linear-gradient(135deg,var(--cyan),var(--pink));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 24px rgba(83,246,255,.5));
-  animation:glow-in .4s ease;
-}
+.year-big-result{font-size:72px;font-weight:900;text-align:center;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 24px rgba(83,246,255,.5));animation:glow-in .4s ease}
 
-/* ── GAME LAYOUT ── */
+/* GAME LAYOUT */
 #screen-game{padding:8px;align-items:stretch;justify-content:flex-start}
-#game-wrap{
-  width:100%;display:grid;gap:10px;
-  grid-template-columns:1fr 460px 1fr;
-  grid-template-rows:auto;
-  align-items:start;
-}
+#game-wrap{width:100%;display:grid;gap:10px;grid-template-columns:1fr 460px 1fr;align-items:start}
 @media(max-width:700px){
-  #game-wrap{
-    grid-template-columns:1fr 1fr;
-    grid-template-rows:auto auto;
-  }
+  #game-wrap{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
   #game-center{grid-column:1/-1;grid-row:1}
   #panels-left{grid-column:1;grid-row:2}
   #panels-right{grid-column:2;grid-row:2}
@@ -141,95 +70,71 @@ html,body{
   #panels-right{order:3}
 }
 
-/* ── TEAM PANEL ── */
-.t-panel{
-  background:var(--glass);backdrop-filter:blur(18px);
-  border:1px solid var(--glass-b);border-radius:20px;
-  padding:14px;display:flex;flex-direction:column;gap:9px;
-  margin-bottom:8px;transition:border-color .3s,box-shadow .3s;
-}
-.t-panel.active{box-shadow:0 0 24px rgba(83,246,255,.12)}
+/* RIGHT PANELS: permanently rotated for opposite-side players */
+#panels-right{transform:rotate(180deg);transform-origin:center center}
+
+/* CENTER: auto-rotates when right-side team is active */
+#game-center{display:flex;flex-direction:column;gap:10px;transition:transform .5s ease}
+#game-center.facing-right{transform:rotate(180deg)}
+
+/* TEAM PANEL */
+.t-panel{background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:9px;margin-bottom:8px;transition:border-color .3s,box-shadow .3s}
+.t-panel.active-team{box-shadow:0 0 28px rgba(83,246,255,.15)}
 .p-head{display:flex;align-items:center;gap:9px}
-.p-avatar{
-  width:34px;height:34px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:14px;color:#07000f;flex-shrink:0;
-}
+.p-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#07000f;flex-shrink:0}
 .p-name{font-weight:700;font-size:14px;flex:1}
 .p-tokens{display:flex;gap:3px}
-.coin{
-  width:17px;height:17px;border-radius:50%;border:2px solid;
-  font-size:8px;font-weight:800;color:#07000f;
-  display:flex;align-items:center;justify-content:center;
-}
+.coin{width:17px;height:17px;border-radius:50%;border:2px solid;font-size:8px;font-weight:800;color:#07000f;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .coin.empty{background:transparent!important;opacity:.2}
-.active-badge{
-  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
-  padding:3px 8px;border-radius:6px;text-align:center;
-}
+.active-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:6px;text-align:center}
 .year-chips{display:flex;flex-wrap:wrap;gap:4px}
-.y-chip{
-  height:26px;min-width:48px;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:700;
-}
+.y-chip{height:26px;min-width:48px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
 .y-chip.empty{background:rgba(255,255,255,.03);color:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.06)}
 .y-chip.filled{color:#07000f}
 
-/* ── GAME CENTER ── */
-#game-center{display:flex;flex-direction:column;gap:10px;transition:transform .4s}
-.banner{
-  background:var(--glass);backdrop-filter:blur(18px);
-  border:1px solid var(--glass-b);border-radius:16px;
-  padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;
-}
+/* BANNER */
+.banner{background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:16px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .banner-info{flex:1}
 .banner-team{font-size:16px;font-weight:800}
 .banner-comment{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
-.rotate-btn{
-  background:none;border:none;cursor:pointer;
-  font-size:22px;color:var(--muted);padding:4px 8px;transition:transform .3s;
-}
-.rotate-btn:active{transform:rotate(180deg)}
 
-/* ── YEAR TIMELINE ── */
-#year-tl{
-  background:var(--glass);border:1px solid var(--glass-b);border-radius:16px;
-  padding:12px;display:none;flex-wrap:wrap;gap:5px;
-  align-items:center;justify-content:center;min-height:52px;
-}
+/* COUNTDOWN */
+#countdown-bar-wrap{width:100%;background:var(--glass);border:1px solid var(--glass-b);border-radius:12px;padding:10px 12px;display:none;flex-direction:column;gap:6px}
+#countdown-bar-wrap.show{display:flex}
+.cd-top{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600}
+.cd-track{width:100%;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+.cd-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .1s linear}
+
+/* HITSTER PANEL */
+#hitster-panel{background:var(--glass);border:1px solid rgba(255,79,216,.2);border-radius:16px;padding:12px 14px;display:none;flex-direction:column;gap:8px}
+#hitster-panel.show{display:flex}
+.hst-title{font-size:12px;font-weight:700;color:var(--pink);text-transform:uppercase;letter-spacing:.06em}
+.hst-teams{display:flex;flex-wrap:wrap;gap:8px}
+.hst-bet-btn{padding:7px 12px;border-radius:10px;border:2px solid;background:transparent;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.hst-bet-btn.placed{opacity:.5;pointer-events:none}
+
+/* YEAR TIMELINE */
+#year-tl{background:var(--glass);border:1px solid var(--glass-b);border-radius:16px;padding:12px;display:none;flex-wrap:wrap;gap:5px;align-items:center;justify-content:center;min-height:52px}
 #year-tl.show{display:flex}
-.tl-chip{
-  padding:5px 11px;border-radius:9px;
-  font-size:13px;font-weight:700;color:#07000f;
-}
-.tl-box{
-  width:28px;height:28px;border-radius:8px;
-  border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.04);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:all .15s;font-size:14px;flex-shrink:0;
-}
+.tl-chip{padding:5px 11px;border-radius:9px;font-size:13px;font-weight:700;color:#07000f;position:relative}
+.tl-box{width:28px;height:28px;border-radius:8px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.04);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;position:relative}
 .tl-box.sel{border-color:#fff;background:rgba(255,255,255,.18)}
+.bet-dots{position:absolute;top:-5px;right:-5px;display:flex;gap:2px}
+.bet-dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(0,0,0,.4)}
 
-/* ── CARD AREA ── */
+/* GAME CARD */
 .game-card{background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:24px 18px 18px;display:flex;flex-direction:column;align-items:center;gap:14px}
 .c-info{width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:88px;justify-content:center}
-.team-name-big{font-size:clamp(28px,8vw,56px);font-weight:900;line-height:1;text-align:center;transition:opacity .3s,font-size .3s}
+.team-name-big{font-size:clamp(26px,7vw,52px);font-weight:900;line-height:1;text-align:center;transition:opacity .3s,font-size .3s}
 .team-name-big.gone{opacity:0;font-size:0;min-height:0}
-.card-comment{font-size:13px;color:var(--muted);text-align:center;transition:opacity .3s}
+.card-comment{font-size:13px;color:var(--muted);text-align:center;transition:opacity .3s;line-height:1.4}
 .card-comment.gone{opacity:0}
-.year-reveal{
-  font-size:72px;font-weight:900;line-height:1;
-  background:linear-gradient(135deg,var(--cyan),var(--pink));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 24px rgba(83,246,255,.5));
-  animation:glow-in .4s ease;
-}
+.year-reveal{font-size:72px;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 24px rgba(83,246,255,.5));animation:glow-in .4s ease}
 .rev-artist{font-family:'DM Sans',sans-serif;font-size:clamp(13px,2vw,15px);font-weight:700;color:var(--text);text-align:center;opacity:0;transition:opacity .4s ease .3s}
 .rev-title{font-family:'DM Sans',sans-serif;font-size:clamp(13px,2vw,15px);font-weight:400;color:var(--cyan);text-align:center;opacity:0;transition:opacity .4s ease .45s}
 .rev-artist.on,.rev-title.on{opacity:1}
 
-/* ── SPOTIFY EMBED ── */
+/* SPOTIFY */
 .player-outer{position:relative;width:100%;height:152px;border-radius:14px;overflow:hidden;border:1px solid rgba(83,246,255,.2);box-shadow:0 0 24px rgba(83,246,255,.08);opacity:0;pointer-events:none;transition:opacity .3s ease}
 .player-outer.show{opacity:1;pointer-events:auto}
 .player-outer iframe{position:absolute;top:0;left:0;width:100%;height:152px;border:none}
@@ -239,56 +144,109 @@ html,body{
 .sp-name{font-size:20px;font-weight:700;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center}
 .sp-q{font-size:13px;color:rgba(255,255,255,.4);text-align:center}
 
-/* ── SCORING BUTTONS ── */
+/* TOKEN BUTTON + NEUER SONG */
+.token-row{width:100%;display:flex;gap:8px;align-items:center}
+.btn-new-song{flex:1;padding:11px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:rgba(143,95,255,.1);color:var(--purple);border:1px solid rgba(143,95,255,.3)}
+.btn-new-song[disabled]{opacity:.3;pointer-events:none}
+.btn-new-song:active{background:rgba(143,95,255,.22)}
+
+/* SCORING */
 .score-btns{width:100%;display:none;flex-direction:column;gap:8px}
 .score-btns.show{display:flex}
-.s-year{background:rgba(83,246,255,.1);color:var(--cyan);border:1px solid rgba(83,246,255,.3);padding:14px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;width:100%}
+.s-year{background:rgba(83,246,255,.1);color:var(--cyan);border:1px solid rgba(83,246,255,.3);padding:14px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;width:100%}
 .s-year:active{background:rgba(83,246,255,.2)}
-.s-both{background:rgba(255,79,216,.1);color:var(--pink);border:1px solid rgba(255,79,216,.3);padding:14px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;width:100%}
+.s-both{background:rgba(255,79,216,.1);color:var(--pink);border:1px solid rgba(255,79,216,.3);padding:14px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;width:100%}
 .s-both:active{background:rgba(255,79,216,.2)}
 .s-none{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid rgba(255,255,255,.07);padding:12px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;width:100%}
 .s-none:active{background:rgba(255,255,255,.09)}
 
-/* ── IN-GAME FILTER ── */
-#ingame-filter{width:100%;background:var(--glass);border:1px solid var(--glass-b);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+/* HINT TOAST */
+#hint-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(255,79,216,.18);border:1px solid rgba(255,79,216,.4);color:var(--pink);padding:10px 18px;border-radius:12px;font-size:13px;font-weight:600;z-index:800;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;white-space:nowrap}
+#hint-toast.show{opacity:1}
+
+/* IN-GAME FILTER */
+#ingame-filter{width:100%;background:var(--glass);border:1px solid var(--glass-b);border-radius:16px;padding:12px 14px}
 #ingame-filter summary{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;cursor:pointer;list-style:none}
 #ingame-filter summary::-webkit-details-marker{display:none}
 
-/* ── TRANSITION ── */
+/* TRANSITION */
 #screen-transition .card{max-width:420px;margin-top:15vh;text-align:center;gap:18px}
 .tr-from{font-size:13px;color:var(--muted)}
 .tr-arrow{font-size:28px;color:var(--muted)}
 .tr-to{font-size:34px;font-weight:900}
 .tr-comment{font-size:14px;color:var(--muted);line-height:1.6}
 
-/* ── WIN SCREEN ── */
-#screen-won .card{max-width:420px;margin-top:15vh;text-align:center;gap:16px}
-.won-trophy{font-size:56px}
-.won-name{font-size:30px;font-weight:900}
-.won-comment{font-size:14px;color:var(--muted)}
+/* CARL CHARTSTER */
+#carl{position:fixed;bottom:16px;left:16px;z-index:850;cursor:pointer;user-select:none;display:flex;flex-direction:column;align-items:center;gap:2px}
+#carl-emoji{font-size:36px;display:block;animation:carl-idle 5s ease-in-out infinite}
+@keyframes carl-idle{0%,80%,100%{transform:translateY(0) rotate(0deg)}85%{transform:translateY(-5px) rotate(-4deg)}90%{transform:translateY(-2px) rotate(3deg)}95%{transform:translateY(-4px) rotate(-2deg)}}
+@keyframes carl-impatient{0%{transform:translateY(0) rotate(0deg)}15%{transform:translateY(-10px) rotate(-8deg)}30%{transform:translateY(-2px) rotate(6deg)}45%{transform:translateY(-8px) rotate(-5deg)}60%{transform:translateY(-1px) rotate(4deg)}75%{transform:translateY(-6px) rotate(-3deg)}100%{transform:translateY(0) rotate(0deg)}}
+#carl.impatient #carl-emoji{animation:carl-impatient .7s ease-in-out 3}
+#carl-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.05em}
+#carl-bubble{position:fixed;bottom:76px;left:16px;background:rgba(15,5,30,.95);backdrop-filter:blur(16px);border:1px solid var(--glass-b);border-radius:16px;padding:14px;z-index:851;display:none;flex-direction:column;gap:8px;min-width:220px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+#carl-bubble.show{display:flex}
+.carl-opt{padding:10px 12px;border-radius:10px;border:1px solid var(--glass-b);background:var(--glass);color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-align:left;transition:all .2s}
+.carl-opt:active{background:rgba(255,255,255,.12)}
+#carl-confirm{position:fixed;bottom:76px;left:16px;background:rgba(15,5,30,.97);backdrop-filter:blur(16px);border:1px solid rgba(255,79,216,.3);border-radius:16px;padding:14px;z-index:852;display:none;flex-direction:column;gap:8px;min-width:220px}
+#carl-confirm.show{display:flex}
+.carl-confirm-btns{display:flex;gap:8px}
+.carl-confirm-btns button{flex:1;padding:9px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none}
 
-/* ── CONFETTI ── */
-#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1000;overflow:hidden}
-.cf{position:absolute;width:8px;height:8px;border-radius:2px;animation:cf-fall linear forwards}
-@keyframes cf-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:0}}
+/* CONFETTI */
+#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:700;overflow:hidden}
+@keyframes cf-fall{0%{transform:translateY(-30px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(900deg);opacity:0}}
 
-/* ── MISC ── */
+/* VICTORY OVERLAY */
+#victoryOverlay{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);z-index:999;overflow:hidden}
+#victoryOverlay.show{display:flex}
+@keyframes zoomIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.vstage{display:none;flex-direction:column;align-items:center;justify-content:center;gap:32px;padding:40px 20px;text-align:center;animation:zoomIn .5s ease}
+.vstage.active{display:flex}
+.v-comment{font-size:clamp(20px,5vw,42px);font-weight:900;line-height:1.2;text-shadow:0 0 30px currentColor}
+.v-place{font-size:clamp(36px,10vw,80px);font-weight:900;line-height:1;text-shadow:0 0 30px currentColor}
+.v-card{min-width:260px;padding:28px;border-radius:24px;background:rgba(20,20,40,.9);border:2px solid rgba(255,255,255,.15);text-align:center}
+.v-name{font-size:clamp(24px,6vw,44px);font-weight:900;margin-bottom:8px}
+.v-score{font-size:clamp(36px,9vw,72px);font-weight:900;line-height:1}
+.v-score-label{font-size:14px;color:var(--muted);margin-top:4px}
+.vgold{color:#ffd84d;border-color:#ffd84d;box-shadow:0 0 60px rgba(255,216,77,.5)}
+.vsilver{color:#dce8ff;border-color:#dce8ff;box-shadow:0 0 50px rgba(200,220,255,.4)}
+.vbronze{color:#ffb36b;border-color:#ffb36b;box-shadow:0 0 50px rgba(255,180,100,.4)}
+.vfinal-btn{padding:16px 28px;border:none;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(90deg,var(--purple),var(--pink));font-family:'Outfit',sans-serif}
+
 .version{position:fixed;bottom:8px;right:12px;font-size:10px;color:rgba(255,255,255,.15)}
 </style>
 </head>
 <body>
 <div id="confetti"></div>
-<div class="version">v1.0</div>
+<div class="version">v2.0</div>
+<div id="hint-toast"></div>
 
-<!-- ════════════════════════════════════════════
-     LOBBY
-════════════════════════════════════════════ -->
+<!-- CARL CHARTSTER -->
+<div id="carl" onclick="carlClick()">
+  <span id="carl-emoji">👨‍⚖️</span>
+  <span id="carl-label">Carl</span>
+</div>
+<div id="carl-bubble">
+  <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:2px">⚖️ Carl Chartster</div>
+  <button class="carl-opt" onclick="carlNewSong()">🃏 Neuer Song für <span id="carl-cur-team">Team</span><br><span style="font-size:11px;font-weight:400;color:var(--muted)">Schiedsrichter – kein Token</span></button>
+  <button class="carl-opt" onclick="carlResetPrompt()" style="color:var(--pink)">🔄 Spiel zurücksetzen</button>
+  <button class="carl-opt btn-muted" onclick="closeBubble()" style="font-size:12px;color:var(--muted)">✕ Schließen</button>
+</div>
+<div id="carl-confirm">
+  <div style="font-size:14px;font-weight:600;color:var(--pink)">Wirklich zurücksetzen?</div>
+  <div style="font-size:12px;color:var(--muted)">Alle Punkte gehen verloren.</div>
+  <div class="carl-confirm-btns">
+    <button onclick="doReset()" style="background:var(--pink);color:#07000f">Ja, reset!</button>
+    <button onclick="closeBubble()" style="background:rgba(255,255,255,.1);color:var(--text)">Abbrechen</button>
+  </div>
+</div>
+<div id="victoryOverlay"></div>
+
+<!-- LOBBY -->
 <div id="screen-lobby" class="screen active">
 <div class="card" style="max-width:480px;margin-top:28px">
   <div class="game-title">Chartster</div>
   <div class="sep"></div>
-
-  <!-- Team count -->
   <div class="setup-section">
     <div class="label">Anzahl Teams</div>
     <div class="tc-row" id="tc-row">
@@ -299,14 +257,10 @@ html,body{
       <button class="tc-btn" onclick="setTC(6)">6</button>
     </div>
   </div>
-
-  <!-- Team names -->
   <div class="setup-section">
     <div class="label">Teamnamen</div>
     <div id="team-inputs"></div>
   </div>
-
-  <!-- Year filter -->
   <div class="setup-section">
     <div class="label">Chartsjahre</div>
     <div class="filter-wrap" id="flt-wrap">
@@ -322,16 +276,13 @@ html,body{
       <button class="flt"    data-f="top10" onclick="toggleFlt(this)">Nur Top 10</button>
     </div>
   </div>
-
   <div class="sep"></div>
   <button class="btn btn-primary" id="start-btn" onclick="startGame()" disabled>Spiel starten</button>
   <div id="lobby-status" style="font-size:12px;color:var(--muted);text-align:center"></div>
 </div>
 </div>
 
-<!-- ════════════════════════════════════════════
-     WHEEL
-════════════════════════════════════════════ -->
+<!-- WHEEL -->
 <div id="screen-wheel" class="screen">
 <div class="card" style="max-width:420px;margin-top:20px;text-align:center">
   <div style="font-size:12px;color:var(--muted)" id="wh-sub">dreht am Glücksrad</div>
@@ -340,39 +291,43 @@ html,body{
     <div class="wheel-ptr"></div>
     <svg id="wheel-svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg"></svg>
   </div>
-  <div style="min-height:88px;display:flex;align-items:center;justify-content:center" id="wh-result-wrap">
+  <div style="min-height:88px;display:flex;align-items:center;justify-content:center">
     <div class="year-big-result" id="wh-result" style="display:none"></div>
   </div>
   <button class="btn btn-primary" id="wh-spin-btn" onclick="spinWheel()">Drehen!</button>
-  <button class="btn btn-muted"   id="wh-next-btn" onclick="nextWheelTeam()" style="display:none">Weiter →</button>
+  <button class="btn btn-muted" id="wh-next-btn" onclick="nextWheelTeam()" style="display:none">Weiter →</button>
 </div>
 </div>
 
-<!-- ════════════════════════════════════════════
-     GAME
-════════════════════════════════════════════ -->
+<!-- GAME -->
 <div id="screen-game" class="screen">
 <div id="game-wrap">
-
-  <!-- Left panels -->
   <div id="panels-left"></div>
-
-  <!-- Center -->
   <div id="game-center">
-
-    <!-- Active team banner -->
+    <!-- Banner -->
     <div class="banner">
       <div class="banner-info">
         <div class="banner-team" id="banner-name">—</div>
         <div class="banner-comment" id="banner-comment"></div>
       </div>
-      <button class="rotate-btn" onclick="rotateField()" title="Drehen">⟳</button>
+      <button onclick="rotateBanner()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--muted);padding:4px 8px" title="Drehen">⟳</button>
     </div>
-
-    <!-- Year timeline (phase 2) -->
+    <!-- Countdown -->
+    <div id="countdown-bar-wrap">
+      <div class="cd-top">
+        <span id="cd-label" style="color:var(--pink)">🎯 Jetzt Position wählen!</span>
+        <span id="cd-secs" style="font-weight:800;color:var(--pink)">10</span>
+      </div>
+      <div class="cd-track"><div class="cd-fill" id="cd-fill" style="width:100%"></div></div>
+    </div>
+    <!-- HITSTER panel -->
+    <div id="hitster-panel">
+      <div class="hst-title">⚡ HITSTER! – Token jetzt setzen</div>
+      <div class="hst-teams" id="hst-teams"></div>
+    </div>
+    <!-- Year timeline -->
     <div id="year-tl"></div>
-
-    <!-- Card -->
+    <!-- Game card -->
     <div class="game-card">
       <div class="c-info" id="c-info">
         <div class="team-name-big" id="c-team-name"></div>
@@ -381,461 +336,340 @@ html,body{
         <div class="rev-artist"    id="c-artist"></div>
         <div class="rev-title"     id="c-title"></div>
       </div>
-
       <div class="sep"></div>
-
-      <!-- Spotify embed -->
       <div class="player-outer" id="player-outer">
-        <iframe id="sp-frame" src=""
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          allowfullscreen></iframe>
+        <iframe id="sp-frame" src="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
         <svg id="sp-overlay" xmlns="http://www.w3.org/2000/svg"
           style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;border-radius:13px;overflow:hidden;transition:opacity .45s ease">
-          <defs>
-            <mask id="hole">
-              <rect width="9999" height="152" fill="white"/>
-              <circle id="play-hole" cx="374" cy="124" r="28" fill="black"/>
-            </mask>
-          </defs>
+          <defs><mask id="hole">
+            <rect width="9999" height="152" fill="white"/>
+            <circle id="play-hole" cx="374" cy="124" r="28" fill="black"/>
+          </mask></defs>
           <rect width="9999" height="152" fill="#121212" mask="url(#hole)" rx="13"/>
         </svg>
         <div class="sp-ot" id="sp-ot">
           <div class="sp-name" id="sp-team">Team</div>
-          <div class="sp-q"   id="sp-comment">kennt Ihr den Song?</div>
+          <div class="sp-q" id="sp-comment">kennt Ihr den Song?</div>
         </div>
       </div>
-
-      <!-- Main button -->
+      <!-- Neuer Song Button -->
+      <div class="token-row" id="token-row" style="display:none">
+        <button class="btn-new-song" id="new-song-btn" onclick="newSongWithToken()">🔄 Neuer Song (1 Token)</button>
+      </div>
       <button class="btn btn-primary" id="main-btn" onclick="cardNext()">Wir sind bereit …</button>
-
-      <!-- Scoring -->
       <div class="score-btns" id="score-btns">
-        <button class="s-year" onclick="score('year')">📅  Jahreszahl richtig (+1 Karte)</button>
-        <button class="s-both" onclick="score('both')">🌟  Interpret, Titel + Jahr (+1 Karte + 1 Token)</button>
+        <button class="s-year" onclick="score('year')">📅  Jahreszahl richtig – Karte platziert</button>
+        <button class="s-both" onclick="score('both')">🌟  Interpret, Titel + Jahr richtig – Karte + 1 Token</button>
         <button class="s-none" onclick="score('none')">Leider nicht!</button>
       </div>
     </div>
-
-    <!-- In-game filter (collapsible) -->
+    <!-- In-game filter -->
     <details id="ingame-filter">
       <summary>⚙ Jahresfilter anpassen</summary>
-      <div style="margin-top:8px">
-        <div class="filter-wrap" id="flt-wrap-game"></div>
-      </div>
+      <div style="margin-top:8px"><div class="filter-wrap" id="flt-wrap-game"></div></div>
     </details>
-
-  </div><!-- /game-center -->
-
-  <!-- Right panels -->
+  </div>
   <div id="panels-right"></div>
-
-</div><!-- /game-wrap -->
+</div>
 </div>
 
-<!-- ════════════════════════════════════════════
-     TRANSITION
-════════════════════════════════════════════ -->
+<!-- TRANSITION -->
 <div id="screen-transition" class="screen">
 <div class="card" style="max-width:420px;margin-top:15vh;text-align:center">
-  <div class="tr-from"    id="tr-from">War dran: —</div>
+  <div class="tr-from" id="tr-from">War dran: —</div>
   <div class="tr-arrow">↓</div>
-  <div class="tr-to"      id="tr-to">Nächstes Team</div>
+  <div class="tr-to" id="tr-to">Nächstes Team</div>
   <div class="tr-comment" id="tr-comment"></div>
   <div class="sep"></div>
   <button class="btn btn-primary" onclick="continueGame()">Los geht's →</button>
 </div>
 </div>
 
-<!-- ════════════════════════════════════════════
-     WIN
-════════════════════════════════════════════ -->
-<div id="screen-won" class="screen">
-<div class="card" style="max-width:420px;margin-top:15vh;text-align:center">
-  <div class="won-trophy">🏆</div>
-  <div class="won-name"    id="won-name"></div>
-  <div class="won-comment" id="won-comment"></div>
-  <div class="sep"></div>
-  <button class="btn btn-primary" onclick="resetGame()">Neues Spiel</button>
-</div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     FIREBASE
-════════════════════════════════════════════ -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-// ══════════════════════════════════════════════
-// FIREBASE SETUP
-// ══════════════════════════════════════════════
-const fbConfig = {
-  apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",
-  authDomain:"schnuppes-spielportal.firebaseapp.com",
-  databaseURL:"https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:"schnuppes-spielportal",
-  storageBucket:"schnuppes-spielportal.firebasestorage.app",
-  messagingSenderId:"1022973500272",
-  appId:"1:1022973500272:web:f9e39d0dfd3c61c3c88db5"
-};
+// ══ FIREBASE ══════════════════════════════════
+const fbConfig={apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",authDomain:"schnuppes-spielportal.firebaseapp.com",databaseURL:"https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",projectId:"schnuppes-spielportal",storageBucket:"schnuppes-spielportal.firebasestorage.app",messagingSenderId:"1022973500272",appId:"1:1022973500272:web:f9e39d0dfd3c61c3c88db5"};
 firebase.initializeApp(fbConfig);
-const DB  = firebase.database();
-const REF = DB.ref('chartster/game');
-var IS_HOST = false;
+const DB=firebase.database(), REF=DB.ref('chartster/game');
+var IS_HOST=false;
 
-// ══════════════════════════════════════════════
-// CONSTANTS
-// ══════════════════════════════════════════════
-const COLORS   = ['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f4d','#f6ff53'];
-const DEFAULTS = ['Die Helden','Die Legenden','Die Stars','Die Cracks','Die Asses','Die Profis'];
-const MAX_TOK  = 5;
-const WIN      = 10;
-const DECADES  = ['70','80','90','00','10','20'];
+// ══ CONSTANTS ══════════════════════════════════
+const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f4d','#f6ff53'];
+const DEFAULTS=['Die Helden','Die Legenden','Die Stars','Die Cracks','Die Asses','Die Profis'];
+const DECADES=['70','80','90','00','10','20'];
+const MAX_TOK=5, WIN=10, CD_SECS=10;
 
-const CP1 = [
+const CP1=[
   t=>`${t} – Ihr seid dran! Was habt Ihr drauf?`,
-  t=>`Jetzt kommt ${t}! Kein Stress – na ja, vielleicht doch.`,
+  t=>`Jetzt kommen ${t}! Kein Stress – na ja, vielleicht doch.`,
   t=>`Alle Ohren auf ${t}! Konzentration!`,
-  t=>`${t} übernimmt das Mikro. Ready?`,
+  t=>`${t} übernehmen das Mikro. Seid Ihr ready?`,
   t=>`${t} – zeigt Euren Musikgeschmack!`,
-  t=>`Augen zu, Ohren auf! ${t} ist dran.`,
+  t=>`Augen zu, Ohren auf! ${t} sind dran.`,
   t=>`${t}: Keine Ausreden, nur gute Antworten!`,
-  t=>`Zeit für ${t}! Die Bühne gehört Euch.`,
+  t=>`Die Bühne gehört ${t}! Viel Glück!`,
 ];
-const CP2 = [
+const CP2=[
   (t,o)=>`${t}: Welches Jahr steckt dahinter?`,
   (t,o)=>o.length?`${t} gegen ${o[0]}. Wer hat die bessere Musiknase?`:`Lauscht gut, ${t}!`,
   (t,o)=>`Vertraut Eurem Bauchgefühl, ${t}. Der Beat verrät alles.`,
-  (t,o)=>o.length?`${o.join(' & ')} schwitzt schon…`:`30 Sekunden, ${t}!`,
-  (t,o)=>`Groß oder klein? Alt oder neu? ${t} entscheidet!`,
-  (t,o)=>`Der Song flüstert die Antwort, ${t}. Hört hin!`,
-  (t,o)=>o.length?`${o[0]} wartet schon ungeduldig, ${t}!`:`Ihr könnt das, ${t}!`,
+  (t,o)=>o.length?`${o.join(' & ')} warten schon ungeduldig…`:`30 Sekunden, ${t}!`,
+  (t,o)=>`Groß oder klein? Alt oder neu? ${t} entscheiden!`,
+  (t,o)=>o.length?`${o[0]} überlegen gerade, ob sie einen Token setzen…`:`Ihr könnt das, ${t}!`,
+  (t,o)=>`Hört rein – der Song flüstert die Antwort, ${t}!`,
 ];
-const CPI = [
-  (a,b,n)=>`${a} hat gespielt – ${n} Karte${n===1?'':'n'}! ${b} ist dran.`,
-  (a,b)=>`Bühne frei für ${b}! ${a} tritt kurz ab.`,
+const CPI=[
+  (a,b,n)=>`${a} haben gespielt – ${n} Karte${n===1?'':'n'}! Jetzt kommen ${b}.`,
+  (a,b)=>`Bühne frei für ${b}! ${a} treten kurz ab.`,
   (a,b,n)=>`${b}: Schafft Ihr mehr als ${a}'s ${n} Karte${n===1?'':'n'}?`,
-  (a,b)=>`${a} macht Pause. ${b} übernimmt!`,
+  (a,b)=>`${a} machen Pause. ${b} übernehmen!`,
   (a,b)=>`Weiter mit ${b}! Zeigt Euren Rhythmus.`,
   (a,b)=>`Von ${a} an ${b}. Los geht's!`,
 ];
-const CPW = [
-  t=>`${t} hat gewonnen! Legendäre Musikkenntnis!`,
-  t=>`Chapeau, ${t}! Ihr seid die wahren Chartster!`,
-  t=>`${t} dominiert die Charts – und dieses Spiel!`,
-  t=>`Ergebnis: ${t} ist unschlagbar. Respect!`,
+const CPW=[
+  t=>`${t} haben gewonnen! Legendäre Musikkenntnis!`,
+  t=>`Chapeau, ${t}! Die wahren Chartster!`,
+  t=>`${t} dominieren die Charts – und dieses Spiel!`,
+  t=>`Ergebnis: ${t} sind unschlagbar. Respect!`,
+];
+const MEDAL_DATA=[
+  {place:'👑 1. PLATZ',comments:['🥇 ABSOLUTE MUSIKLEGENDEN!','🏆 UNSCHLAGBAR!','👑 DAS WAR EINE SHOW!','🎆 CHAMPIONS DES ABENDS!','🌟 ABSOLUT LEGENDÄR!'],cls:'vgold',cf:500},
+  {place:'🥈 2. PLATZ',comments:['🔥 GANZ KNAPP DANEBEN!','🥈 SO NAH – UND DOCH SO WEIT!','😤 NÄCHSTES MAL SEID IHR BOSS!','💪 STARK GESPIELT – RESPEKT!'],cls:'vsilver',cf:250},
+  {place:'🥉 3. PLATZ',comments:['😎 STARK GEKÄMPFT!','🥉 PODIUM ERREICHT!','🔥 DRITTER – ABER MIT STIL!'],cls:'vbronze',cf:120},
+  {place:'🏅 4. PLATZ',comments:['🎲 NÄCHSTE RUNDE GEHÖRT EUCH!','😅 KNAPP AM PODIUM VORBEI!'],cls:'vbronze',cf:60},
+  {place:'5. PLATZ',comments:['🌱 ÜBUNG MACHT DEN MEISTER!','🔄 REVANCHE GEFÄLLIG?'],cls:'vbronze',cf:40},
+  {place:'6. PLATZ',comments:['💤 HEUTE WAR NICHT EUER TAG!','🎯 DER BEAT HAT NOCH PLÄNE MIT EUCH!'],cls:'vbronze',cf:40},
 ];
 
-// ══════════════════════════════════════════════
-// GAME STATE
-// ══════════════════════════════════════════════
-var G = {
-  tc:3, filters:new Set(['all']),
+// ══ AUDIO ══════════════════════════════════
+var applauseAudio=new Audio('applause.mp3');
+applauseAudio.volume=0.7;
+function playApplause(){try{applauseAudio.pause();applauseAudio.currentTime=0;applauseAudio.play();}catch(e){}}
+
+// ══ GAME STATE ══════════════════════════════
+var G={
+  tc:3,filters:new Set(['all']),
   songs:[],deck:[],
-  teams:[], cur:0,
-  phase:1, cardLoaded:false, readyToReveal:false,
-  selBox:null, commentIdx:0,
-  wTeam:0, wYears:[],
-  centerRotated:false,
+  teams:[],cur:0,
+  phase:1,cardLoaded:false,readyToReveal:false,
+  selBox:null,commentIdx:0,
+  wTeam:0,wYears:[],
+  bets:{},betMode:null,
+  cdTimer:null,cdRemain:0,cdDone:false,
+  screen:'lobby'
 };
 
-// ══════════════════════════════════════════════
-// FIREBASE – LOBBY HANDSHAKE
-// ══════════════════════════════════════════════
+// ══ FIREBASE LOBBY ══════════════════════════
 REF.once('value').then(snap=>{
-  var d = snap.val();
-  if(!d || !d.host || d.screen === 'lobby'){
-    IS_HOST = true;
-    REF.update({host: Date.now(), screen:'lobby'});
-    document.getElementById('lobby-status').textContent = 'Du bist Host';
-    loadSongsAndEnable();
+  var d=snap.val();
+  if(!d||!d.host||d.screen==='lobby'){
+    IS_HOST=true;
+    REF.update({host:Date.now(),screen:'lobby'});
+    document.getElementById('lobby-status').textContent='Host';
+    loadSongs();
   } else {
-    IS_HOST = false;
-    document.getElementById('lobby-status').textContent = 'Zuschauer – warte auf Host …';
-    document.getElementById('start-btn').disabled = true;
-    listenFirebase();
+    IS_HOST=false;
+    document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';
+    document.getElementById('start-btn').disabled=true;
+    REF.on('value',snap=>{var d=snap.val();if(d)applyRemote(d);});
   }
 });
-
-function listenFirebase(){
-  REF.on('value', snap=>{
-    var d = snap.val();
-    if(!d) return;
-    if(d.screen && d.screen !== G.screen){
-      applyRemoteState(d);
+function applyRemote(d){
+  if(d.screen&&d.screen!==G.screen){
+    if(d.screen==='game'&&d.teams){
+      G.teams=d.teams;G.cur=d.cur||0;G.phase=1;
+      G.currentCard=d.card||null;
+      showScreen('game');renderPanels();updateGameUI();
     }
-  });
-}
-
-function applyRemoteState(d){
-  // Spectators mirror host state
-  if(d.screen === 'game' && d.teams && d.cur !== undefined){
-    G.teams = d.teams;
-    G.cur   = d.cur;
-    G.phase = d.phase || 1;
-    G.currentCard = d.card || null;
-    G.songs = d.songs || G.songs;
-    G.deck  = d.deck  || G.deck;
-    showScreen('game');
-    renderPanels();
-    syncGameUI();
   }
 }
-
 function pushState(){
-  if(!IS_HOST) return;
-  REF.update({
-    screen: G.screen,
-    teams:  G.teams,
-    cur:    G.cur,
-    phase:  G.phase,
-    card:   G.currentCard || null,
-    deck:   G.deck.slice(0,50), // limit size
-    songs:  null // don't push all songs
-  });
+  if(!IS_HOST)return;
+  REF.update({screen:G.screen,teams:G.teams,cur:G.cur,phase:G.phase,card:G.currentCard||null});
 }
 
-// ══════════════════════════════════════════════
-// SONGS
-// ══════════════════════════════════════════════
-function loadSongsAndEnable(){
+// ══ SONGS ══════════════════════════════════
+function loadSongs(){
   fetch('songs.json')
     .then(r=>r.ok?r.json():Promise.reject(r.status))
     .then(data=>{
-      G.songs = data.filter(s=>s.l);
-      document.getElementById('start-btn').disabled = false;
-      document.getElementById('lobby-status').textContent =
-        `${G.songs.length} Songs geladen · Host`;
+      G.songs=data.filter(s=>s.l);
+      document.getElementById('start-btn').disabled=false;
+      document.getElementById('lobby-status').textContent=`${G.songs.length} Songs · Host`;
     })
     .catch(e=>{
-      document.getElementById('lobby-status').textContent = '⚠ songs.json nicht gefunden';
+      document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';
     });
 }
 
 function filteredSongs(){
-  var s = G.songs;
-  if(G.filters.has('all') && !G.filters.has('top10') && !G.filters.has('top20')) return s;
-  var dec = DECADES.filter(d=>G.filters.has(d));
-  if(dec.length) s = s.filter(x=>dec.some(d=>{
-    if(d==='70') return x.y>=1970&&x.y<1980;
-    if(d==='80') return x.y>=1980&&x.y<1990;
-    if(d==='90') return x.y>=1990&&x.y<2000;
-    if(d==='00') return x.y>=2000&&x.y<2010;
-    if(d==='10') return x.y>=2010&&x.y<2020;
-    if(d==='20') return x.y>=2020;
-  }));
-  if(G.filters.has('top10')) s = s.filter(x=>x.p<=10);
-  else if(G.filters.has('top20')) s = s.filter(x=>x.p<=20);
+  var s=G.songs.filter(x=>x.l);
+  // If only 'all' active and no top filter: return everything
+  var dec=DECADES.filter(d=>G.filters.has(d));
+  if(G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20')) return s;
+  // Apply decade filter
+  if(dec.length>0){
+    s=s.filter(x=>dec.some(d=>{
+      if(d==='70')return x.y>=1970&&x.y<1980;
+      if(d==='80')return x.y>=1980&&x.y<1990;
+      if(d==='90')return x.y>=1990&&x.y<2000;
+      if(d==='00')return x.y>=2000&&x.y<2010;
+      if(d==='10')return x.y>=2010&&x.y<2020;
+      if(d==='20')return x.y>=2020;
+      return false;
+    }));
+  }
+  if(G.filters.has('top10'))s=s.filter(x=>x.p<=10);
+  else if(G.filters.has('top20'))s=s.filter(x=>x.p<=20);
   return s;
 }
 
-function shuffle(a){
-  var b=a.slice();
-  for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}
-  return b;
-}
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 
-// ══════════════════════════════════════════════
-// SETUP UI
-// ══════════════════════════════════════════════
+// ══ SETUP UI ══════════════════════════════
 function setTC(n){
-  G.tc = n;
+  G.tc=n;
   document.querySelectorAll('.tc-btn').forEach(b=>b.classList.toggle('on',+b.textContent===n));
   renderTeamInputs();
 }
-
 function renderTeamInputs(){
-  var c=document.getElementById('team-inputs'); c.innerHTML='';
+  var c=document.getElementById('team-inputs');c.innerHTML='';
   for(var i=0;i<G.tc;i++){
-    c.innerHTML+=`<div class="team-row" style="margin-bottom:6px">
+    c.innerHTML+=`<div class="team-row">
       <div class="team-dot" style="background:${COLORS[i]}"></div>
       <input class="team-input" placeholder="${DEFAULTS[i]}" value="${DEFAULTS[i]}" data-i="${i}">
     </div>`;
   }
 }
-
-function toggleFlt(btn, isGame){
-  var f = btn.dataset.f;
-  var wrapId = isGame ? 'flt-wrap-game' : 'flt-wrap';
-  if(f==='all'){
-    G.filters = new Set(['all']);
-  } else if(f==='top10'){
-    G.filters.delete('all'); G.filters.delete('top20');
-    G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');
-  } else if(f==='top20'){
-    G.filters.delete('all'); G.filters.delete('top10');
-    G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');
-  } else {
+function toggleFlt(btn,isGame){
+  var f=btn.dataset.f;
+  if(f==='all'){G.filters=new Set(['all']);}
+  else if(f==='top10'){G.filters.delete('all');G.filters.delete('top20');G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');}
+  else if(f==='top20'){G.filters.delete('all');G.filters.delete('top10');G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');}
+  else{
     G.filters.delete('all');
     G.filters.has(f)?G.filters.delete(f):G.filters.add(f);
-    if(G.filters.size===0) G.filters.add('all');
+    if(G.filters.size===0)G.filters.add('all');
   }
-  syncFilterBtns(wrapId);
-  if(isGame) syncFilterBtns('flt-wrap');
-  else       syncFilterBtns('flt-wrap-game');
+  syncFltUI('flt-wrap');syncFltUI('flt-wrap-game');
+  // Reshuffle deck if in-game filter changed
+  if(isGame){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}
 }
-
-function syncFilterBtns(wrapId){
-  var wrap = document.getElementById(wrapId);
-  if(!wrap) return;
-  wrap.querySelectorAll('.flt').forEach(b=>{
-    b.classList.toggle('on', G.filters.has(b.dataset.f));
-    b.classList.remove('off');
-  });
-  if(G.filters.has('all')){
-    DECADES.forEach(d=>{ var el=wrap.querySelector(`[data-f="${d}"]`); if(el) el.classList.add('off'); });
-  }
-  var t10=wrap.querySelector('[data-f="top10"]'), t20=wrap.querySelector('[data-f="top20"]');
-  if(G.filters.has('top10') && t20) t20.classList.add('off');
-  if(G.filters.has('top20') && t10) t10.classList.add('off');
+function syncFltUI(wid){
+  var w=document.getElementById(wid);if(!w)return;
+  w.querySelectorAll('.flt').forEach(b=>{b.classList.toggle('on',G.filters.has(b.dataset.f));b.classList.remove('off');});
+  if(G.filters.has('all')){DECADES.forEach(d=>{var el=w.querySelector(`[data-f="${d}"]`);if(el)el.classList.add('off');});}
+  var t10=w.querySelector('[data-f="top10"]'),t20=w.querySelector('[data-f="top20"]');
+  if(G.filters.has('top10')&&t20)t20.classList.add('off');
+  if(G.filters.has('top20')&&t10)t10.classList.add('off');
 }
-
-// Clone filter buttons for in-game panel
 function buildGameFilter(){
-  var wrap = document.getElementById('flt-wrap-game');
-  wrap.innerHTML = document.getElementById('flt-wrap').innerHTML;
-  wrap.querySelectorAll('.flt').forEach(b=>{
-    b.onclick = function(){ toggleFlt(b, true); };
-  });
-  syncFilterBtns('flt-wrap-game');
+  var w=document.getElementById('flt-wrap-game');
+  w.innerHTML=document.getElementById('flt-wrap').innerHTML;
+  w.querySelectorAll('.flt').forEach(b=>{b.onclick=function(){toggleFlt(b,true);};});
+  syncFltUI('flt-wrap-game');
 }
 
-// ══════════════════════════════════════════════
-// START GAME
-// ══════════════════════════════════════════════
+// ══ START GAME ══════════════════════════════
 function startGame(){
-  var inputs = document.querySelectorAll('#team-inputs .team-input');
-  G.teams = [];
-  inputs.forEach((inp,i)=>{
-    G.teams.push({name:inp.value.trim()||DEFAULTS[i], color:COLORS[i], years:[], tokens:2});
-  });
-  var pool = filteredSongs();
-  if(pool.length < 10){ alert('Zu wenige Songs – bitte Filter anpassen.'); return; }
-  G.deck = shuffle(pool);
-  G.wTeam = 0; G.wYears = [];
-  showScreen('wheel');
-  buildWheel();
-  updateWheelUI();
+  var inputs=document.querySelectorAll('#team-inputs .team-input');
+  G.teams=[];
+  inputs.forEach((inp,i)=>G.teams.push({name:inp.value.trim()||DEFAULTS[i],color:COLORS[i],years:[],tokens:2}));
+  var pool=filteredSongs();
+  if(pool.length<10){showHint('Zu wenige Songs mit diesen Filtern!');return;}
+  G.deck=shuffle(pool);
+  G.wTeam=0;G.wYears=[];
+  showScreen('wheel');buildWheel();updateWheelUI();
 }
 
-// ══════════════════════════════════════════════
-// WHEEL
-// ══════════════════════════════════════════════
-var WHEEL_YEARS=[];
-(function(){ for(var y=1960;y<=2026;y+=4) WHEEL_YEARS.push(y); })();
-
+// ══ WHEEL ══════════════════════════════════
+var WYEARS=[];(function(){for(var y=1960;y<=2026;y+=4)WYEARS.push(y);})();
 function buildWheel(){
   var svg=document.getElementById('wheel-svg');
-  var n=WHEEL_YEARS.length, cx=140,cy=140,r=128, step=2*Math.PI/n;
-  var h='';
+  var n=WYEARS.length,cx=140,cy=140,r=128,step=2*Math.PI/n,h='';
   for(var i=0;i<n;i++){
-    var a1=-Math.PI/2+i*step, a2=a1+step;
+    var a1=-Math.PI/2+i*step,a2=a1+step;
     var x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
     var x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
     var col=i%2===0?'rgba(83,246,255,.18)':'rgba(143,95,255,.18)';
     h+=`<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 0,1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${col}" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;
-    var la=a1+step/2, lx=cx+r*.65*Math.cos(la), ly=cy+r*.65*Math.sin(la);
-    h+=`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="rgba(240,240,255,.75)" font-size="10" font-family="Outfit,sans-serif" font-weight="700">${WHEEL_YEARS[i]}</text>`;
+    var la=a1+step/2,lx=cx+r*.65*Math.cos(la),ly=cy+r*.65*Math.sin(la);
+    h+=`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="rgba(240,240,255,.75)" font-size="10" font-family="Outfit,sans-serif" font-weight="700">${WYEARS[i]}</text>`;
   }
   svg.innerHTML=h;
 }
-
-var wRot=0, wSpinning=false;
+var wRot=0,wSpinning=false;
 function spinWheel(){
-  if(wSpinning) return;
-  wSpinning=true;
-  var btn=document.getElementById('wh-spin-btn');
-  btn.disabled=true;
+  if(wSpinning)return;wSpinning=true;
+  document.getElementById('wh-spin-btn').disabled=true;
   document.getElementById('wh-result').style.display='none';
-  var extra=1440+Math.random()*1440, dur=3200, start=null, from=wRot, to=wRot+extra;
-  function ease(t){return 1-Math.pow(1-t,4)}
-  function step(ts){
+  var extra=1440+Math.random()*1440,dur=3200,start=null,from=wRot,to=wRot+extra;
+  function ease(t){return 1-Math.pow(1-t,4);}
+  (function step(ts){
     if(!start)start=ts;
     var p=Math.min((ts-start)/dur,1);
     wRot=from+(to-from)*ease(p);
     document.getElementById('wheel-svg').style.transform=`rotate(${wRot}deg)`;
-    if(p<1) requestAnimationFrame(step);
-    else wheelDone();
-  }
-  requestAnimationFrame(step);
+    if(p<1)requestAnimationFrame(step);else wheelDone();
+  })(performance.now());
 }
-
 function wheelDone(){
   wSpinning=false;
-  var n=WHEEL_YEARS.length;
-  var norm=((wRot%360)+360)%360;
-  var ptr=(360-norm+270)%360;
+  var n=WYEARS.length,norm=((wRot%360)+360)%360,ptr=(360-norm+270)%360;
   var idx=Math.floor(ptr/(360/n))%n;
-  var year=WHEEL_YEARS[idx]+Math.floor(Math.random()*4); // ±0-3 y
-  year=Math.max(1960,Math.min(2026,year));
+  var year=Math.max(1960,Math.min(2026,WYEARS[idx]+Math.floor(Math.random()*4)));
   G.wYears.push(year);
   var el=document.getElementById('wh-result');
-  el.textContent=year;
-  el.style.display='block';
-  el.style.color=G.teams[G.wTeam].color;
+  el.textContent=year;el.style.display='block';el.style.color=G.teams[G.wTeam].color;
   document.getElementById('wh-spin-btn').style.display='none';
   document.getElementById('wh-next-btn').style.display='block';
 }
-
 function updateWheelUI(){
   var team=G.teams[G.wTeam];
-  var nameEl=document.getElementById('wh-team');
-  nameEl.textContent=team.name; nameEl.style.color=team.color;
+  var el=document.getElementById('wh-team');el.textContent=team.name;el.style.color=team.color;
   document.getElementById('wh-spin-btn').style.display='block';
   document.getElementById('wh-spin-btn').disabled=false;
   document.getElementById('wh-next-btn').style.display='none';
   document.getElementById('wh-result').style.display='none';
 }
-
 function nextWheelTeam(){
   G.wTeam++;
-  if(G.wTeam >= G.teams.length){
-    // Assign starting years, find lowest → first team
-    G.teams.forEach((t,i)=>{ t.years=[G.wYears[i]]; });
-    var minY=Math.min(...G.wYears);
-    G.cur=G.wYears.indexOf(minY);
+  if(G.wTeam>=G.teams.length){
+    G.teams.forEach((t,i)=>{t.years=[G.wYears[i]];});
+    G.cur=G.wYears.indexOf(Math.min(...G.wYears));
     beginPlay();
-  } else {
-    updateWheelUI();
-  }
+  }else{updateWheelUI();}
 }
 
-// ══════════════════════════════════════════════
-// PLAY
-// ══════════════════════════════════════════════
+// ══ PLAY ══════════════════════════════════
 function beginPlay(){
-  G.phase=1; G.cardLoaded=false; G.readyToReveal=false; G.selBox=null;
-  if(G.deck.length===0) G.deck=shuffle(filteredSongs());
+  G.phase=1;G.cardLoaded=false;G.readyToReveal=false;G.selBox=null;G.bets={};G.betMode=null;G.cdDone=false;
+  clearCd();
+  if(G.deck.length===0)G.deck=shuffle(filteredSongs());
   G.currentCard=G.deck.pop();
-  showScreen('game');
-  buildGameFilter();
-  renderPanels();
-  updateGameUI();
-  pushState();
+  showScreen('game');buildGameFilter();renderPanels();updateGameUI();pushState();
 }
-
 function drawCard(){
-  if(G.deck.length===0) G.deck=shuffle(filteredSongs());
+  if(G.deck.length===0)G.deck=shuffle(filteredSongs());
   G.currentCard=G.deck.pop();
 }
 
-// ══════════════════════════════════════════════
-// PANELS
-// ══════════════════════════════════════════════
+// ══ PANELS ══════════════════════════════
 function renderPanels(){
-  var L=document.getElementById('panels-left');
-  var R=document.getElementById('panels-right');
-  L.innerHTML=''; R.innerHTML='';
-  G.teams.forEach((team,i)=>{
-    (i%2===0?L:R).innerHTML += panelHTML(team,i);
-  });
+  var L=document.getElementById('panels-left'),R=document.getElementById('panels-right');
+  L.innerHTML='';R.innerHTML='';
+  G.teams.forEach((team,i)=>{(i%2===0?L:R).innerHTML+=panelHTML(team,i);});
+  // Auto-rotate center based on active team side
+  var isRight=(G.cur%2===1);
+  document.getElementById('game-center').classList.toggle('facing-right',isRight);
 }
-
 function panelHTML(team,idx){
-  var isActive=(idx===G.cur);
-  var tokenH='';
+  var isA=(idx===G.cur);
+  var tH='';
   for(var t=0;t<MAX_TOK;t++){
     var f=t<team.tokens;
-    tokenH+=`<div class="coin ${f?'':'empty'}" style="background:${f?team.color:'transparent'};border-color:${team.color}">¢</div>`;
+    tH+=`<div class="coin ${f?'':'empty'}" style="background:${f?team.color:'transparent'};border-color:${team.color}">¢</div>`;
   }
   var chips='';
   var sorted=team.years.slice().sort((a,b)=>a-b);
@@ -844,67 +678,110 @@ function panelHTML(team,idx){
       ?`<div class="y-chip filled" style="background:${team.color}">${sorted[s]}</div>`
       :`<div class="y-chip empty">—</div>`;
   }
-  var init=team.name.substring(0,2).toUpperCase();
-  var borderS=isActive?`border-color:${team.color};box-shadow:0 0 20px ${team.color}25`:'';
-  return `<div class="t-panel ${isActive?'active':''}" style="${borderS}">
+  var bStyle=isA?`border-color:${team.color};box-shadow:0 0 24px ${team.color}28`:'';
+  return `<div class="t-panel ${isA?'active-team':''}" style="${bStyle}">
     <div class="p-head">
-      <div class="p-avatar" style="background:${team.color}">${init}</div>
+      <div class="p-avatar" style="background:${team.color}">${team.name.substring(0,2).toUpperCase()}</div>
       <div class="p-name" style="color:${team.color}">${team.name}</div>
-      <div class="p-tokens">${tokenH}</div>
+      <div class="p-tokens">${tH}</div>
     </div>
-    ${isActive?`<div class="active-badge" style="background:${team.color}22;color:${team.color}">▶ AM ZUG</div>`:''}
+    ${isA?`<div class="active-badge" style="background:${team.color}22;color:${team.color}">▶ AM ZUG</div>`:''}
     <div class="year-chips">${chips}</div>
   </div>`;
 }
 
-// ══════════════════════════════════════════════
-// GAME UI
-// ══════════════════════════════════════════════
+// ══ GAME UI ══════════════════════════════
 function updateGameUI(){
   var team=G.teams[G.cur];
-
-  // Banner
   document.getElementById('banner-name').textContent=team.name;
   document.getElementById('banner-name').style.color=team.color;
   document.getElementById('banner-comment').textContent=comment('p1',team);
-
-  // Card phase 1
-  var cn=document.getElementById('c-team-name');
-  cn.textContent=team.name; cn.style.color=team.color;
-  cn.classList.remove('gone');
+  document.getElementById('c-team-name').textContent=team.name;
+  document.getElementById('c-team-name').style.color=team.color;
+  document.getElementById('c-team-name').classList.remove('gone');
   document.getElementById('c-comment').textContent=comment('p1',team);
   document.getElementById('c-comment').classList.remove('gone');
   document.getElementById('c-year').style.display='none';
   document.getElementById('c-artist').classList.remove('on');
   document.getElementById('c-title').classList.remove('on');
-
-  // Player
   document.getElementById('player-outer').classList.remove('show');
   document.getElementById('sp-overlay').classList.remove('gone');
   document.getElementById('sp-ot').classList.remove('gone');
   document.getElementById('sp-frame').src='';
   document.getElementById('sp-team').textContent=team.name;
   document.getElementById('sp-team').style.color=team.color;
-  document.getElementById('sp-comment').textContent=comment('p2',team);
-
-  // Timeline
   document.getElementById('year-tl').classList.remove('show');
-
-  // Buttons
+  document.getElementById('countdown-bar-wrap').classList.remove('show');
+  document.getElementById('hitster-panel').classList.remove('show');
+  document.getElementById('token-row').style.display='none';
   var btn=document.getElementById('main-btn');
-  btn.textContent='Wir sind bereit …'; btn.className='btn btn-primary'; btn.style.display='';
+  btn.textContent='Wir sind bereit …';btn.className='btn btn-primary';btn.style.display='';
   document.getElementById('score-btns').classList.remove('show');
+  // Carl: update team name
+  document.getElementById('carl-cur-team').textContent=team.name;
 }
 
-function syncGameUI(){
-  // Called for spectators to refresh visuals
+// ══ COUNTDOWN ══════════════════════════
+function startCountdown(){
+  G.cdRemain=CD_SECS;G.cdDone=false;
+  var wrap=document.getElementById('countdown-bar-wrap');
+  wrap.classList.add('show');
+  var fill=document.getElementById('cd-fill');
+  var secs=document.getElementById('cd-secs');
+  fill.style.width='100%';
+  secs.textContent=G.cdRemain;
+  G.cdTimer=setInterval(function(){
+    G.cdRemain--;
+    fill.style.width=(G.cdRemain/CD_SECS*100)+'%';
+    secs.textContent=G.cdRemain;
+    if(G.cdRemain<=0){
+      clearCd();G.cdDone=true;G.readyToReveal=true;
+      wrap.classList.remove('show');
+      document.getElementById('hitster-panel').classList.remove('show');
+      document.getElementById('main-btn').disabled=false;
+      document.getElementById('cd-label').textContent='✅ Jetzt aufdecken!';
+    }
+  },1000);
+}
+function clearCd(){clearInterval(G.cdTimer);G.cdTimer=null;}
+
+// ══ HITSTER PANEL ══════════════════════
+function renderHitsterPanel(){
+  var panel=document.getElementById('hitster-panel');
+  var teams=document.getElementById('hst-teams');
+  teams.innerHTML='';
+  var any=false;
+  G.teams.forEach(function(team,i){
+    if(i===G.cur||team.tokens<=0)return;
+    any=true;
+    var placed=G.bets.hasOwnProperty(i);
+    teams.innerHTML+=`<button class="hst-bet-btn ${placed?'placed':''}"
+      style="color:${team.color};border-color:${team.color};background:${team.color}15"
+      onclick="startBetMode(${i})" ${placed?'disabled':''}>
+      ${team.name.split(' ')[1]||team.name} HITSTER! (${team.tokens} ¢)
+    </button>`;
+  });
+  if(any)panel.classList.add('show');
+}
+
+function startBetMode(teamIdx){
+  G.betMode=teamIdx;
+  showHint(`${G.teams[teamIdx].name}: Jetzt Checkbox auswählen!`);
+}
+
+function placeBet(checkboxIdx){
+  if(G.betMode===null)return;
+  var teamIdx=G.betMode;
+  if(G.teams[teamIdx].tokens<=0)return;
+  G.teams[teamIdx].tokens--;
+  G.bets[teamIdx]=checkboxIdx;
+  G.betMode=null;
   renderPanels();
-  updateGameUI();
+  renderTimeline();
+  renderHitsterPanel();
 }
 
-// ══════════════════════════════════════════════
-// CARD PHASES
-// ══════════════════════════════════════════════
+// ══ CARD PHASES ══════════════════════════
 function cardNext(){
   if(G.phase===1){
     G.phase=2;
@@ -914,192 +791,311 @@ function cardNext(){
     updateHole();
     renderTimeline();
     document.getElementById('year-tl').classList.add('show');
-
+    document.getElementById('token-row').style.display='flex';
+    updateNewSongBtn();
+    renderHitsterPanel();
     if(!G.cardLoaded){
-      document.getElementById('sp-frame').src=
-        'https://open.spotify.com/embed/track/'+G.currentCard.l+
-        '?utm_source=generator&theme=0&autoplay=1';
+      document.getElementById('sp-frame').src='https://open.spotify.com/embed/track/'+G.currentCard.l+'?utm_source=generator&theme=0&autoplay=1';
       G.cardLoaded=true;
     }
+    document.getElementById('sp-comment').textContent=comment('p2',G.teams[G.cur]);
     G.readyToReveal=false;
-    setTimeout(()=>{G.readyToReveal=true;},1000);
-
     var btn=document.getElementById('main-btn');
-    btn.textContent='Aufdecken'; btn.className='btn btn-secondary';
-
-  } else if(G.phase===2 && G.readyToReveal){
+    btn.textContent='Aufdecken';btn.className='btn btn-secondary';btn.disabled=true;
+    startCountdown();
+  } else if(G.phase===2){
+    // Guard: checkbox must be selected
+    if(G.selBox===null){
+      showHint('Bitte erst eine Position im Zeitstrahl markieren!');return;
+    }
+    if(!G.readyToReveal){
+      showHint('Noch kurz warten – Countdown läuft noch!');return;
+    }
+    // Reveal
     G.phase=3;
+    clearCd();
     document.getElementById('sp-overlay').classList.add('gone');
     document.getElementById('sp-ot').classList.add('gone');
-    document.getElementById('year-tl').classList.remove('show');
-
+    document.getElementById('token-row').style.display='none';
+    // Keep timeline visible in phase 3
+    document.getElementById('year-tl').classList.add('show');
     var yr=document.getElementById('c-year');
-    yr.textContent=G.currentCard.y; yr.style.display='block';
+    yr.textContent=G.currentCard.y;yr.style.display='block';
     document.getElementById('c-artist').textContent=G.currentCard.a;
     document.getElementById('c-title').textContent=G.currentCard.t;
-    setTimeout(()=>{
+    setTimeout(function(){
       document.getElementById('c-artist').classList.add('on');
       document.getElementById('c-title').classList.add('on');
     },50);
-
     document.getElementById('main-btn').style.display='none';
     document.getElementById('score-btns').classList.add('show');
   }
 }
 
-// ══════════════════════════════════════════════
-// YEAR TIMELINE
-// ══════════════════════════════════════════════
+// ══ YEAR TIMELINE ══════════════════════
 function renderTimeline(){
   var team=G.teams[G.cur];
   var sorted=team.years.slice().sort((a,b)=>a-b);
   var tl=document.getElementById('year-tl');
-  tl.innerHTML='';
-  G.selBox=null;
-
-  // checkbox BEFORE first year
-  tl.appendChild(mkBox(0));
-  sorted.forEach((year,i)=>{
+  tl.innerHTML='';G.selBox=null;
+  tl.appendChild(mkBox(0,sorted));
+  sorted.forEach(function(year,i){
     var chip=document.createElement('div');
-    chip.className='tl-chip';
-    chip.style.background=team.color;
-    chip.textContent=year;
-    tl.appendChild(chip);
-    tl.appendChild(mkBox(i+1));
+    chip.className='tl-chip';chip.style.background=team.color;chip.textContent=year;
+    tl.appendChild(chip);tl.appendChild(mkBox(i+1,sorted));
   });
 }
-
-function mkBox(idx){
+function mkBox(idx,sorted){
   var el=document.createElement('div');
-  el.className='tl-box'; el.dataset.idx=idx;
-  el.onclick=function(){
+  el.className='tl-box';el.dataset.idx=idx;
+  // Bet dots
+  var dotsH='<div class="bet-dots">';
+  for(var ti in G.bets){
+    if(parseInt(G.bets[ti])===idx){
+      dotsH+=`<div class="bet-dot" style="background:${G.teams[parseInt(ti)].color}"></div>`;
+    }
+  }
+  dotsH+='</div>';
+  el.innerHTML=dotsH;
+  el.onclick=(function(i){return function(){
+    if(G.betMode!==null){placeBet(i);return;}
     document.querySelectorAll('.tl-box').forEach(b=>b.classList.remove('sel'));
-    el.classList.add('sel');
-    G.selBox=idx;
-  };
+    el.classList.add('sel');G.selBox=i;
+  };})(idx);
   return el;
 }
+function getCorrectPos(cardYear,sortedYears){
+  for(var i=0;i<sortedYears.length;i++){if(cardYear<sortedYears[i])return i;}
+  return sortedYears.length;
+}
 
-// ══════════════════════════════════════════════
-// SCORING
-// ══════════════════════════════════════════════
+// ══ SCORING ════════════════════════════
 function score(type){
   var team=G.teams[G.cur];
+  var sorted=team.years.slice().sort((a,b)=>a-b);
+  var correctPos=getCorrectPos(G.currentCard.y,sorted);
+
   if(type==='year'||type==='both'){
     team.years.push(G.currentCard.y);
     team.years.sort((a,b)=>a-b);
-    if(type==='both') team.tokens=Math.min(MAX_TOK,team.tokens+1);
-    spawnConfetti(team.color);
+    if(type==='both')team.tokens=Math.min(MAX_TOK,team.tokens+1);
+    spawnConfetti(team.color,80);
+  } else {
+    // Check if any betters were correct (got the right position)
+    for(var i=0;i<G.teams.length;i++){
+      if(i!==G.cur&&G.bets[i]===correctPos){
+        G.teams[i].years.push(G.currentCard.y);
+        G.teams[i].years.sort((a,b)=>a-b);
+        spawnConfetti(G.teams[i].color,60);
+        showHint(`${G.teams[i].name} stehlen die Jahreszahl!`);
+        break;
+      }
+    }
   }
-  if(team.years.length>=WIN){ showWin(G.cur); return; }
+  G.bets={};G.betMode=null;
+  if(team.years.length>=WIN){showVictory();return;}
   showTransition();
 }
 
+// ══ NEW SONG (Token) ══════════════════
+function newSongWithToken(){
+  var team=G.teams[G.cur];
+  if(team.tokens<=0){showHint('Keine Token mehr!');return;}
+  team.tokens--;
+  clearCd();
+  G.deck.push(G.currentCard);G.deck=shuffle(G.deck);
+  drawCard();
+  G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.phase=1;
+  updateGameUI();renderPanels();
+  // Immediately start phase 2
+  cardNext();
+}
+function updateNewSongBtn(){
+  var team=G.teams[G.cur];
+  var btn=document.getElementById('new-song-btn');
+  btn.disabled=(team.tokens<=0);
+  btn.textContent=`🔄 Neuer Song (${team.tokens} Token)`;
+}
+
+// ══ TRANSITION ════════════════════════
 function showTransition(){
   var from=G.teams[G.cur];
-  var nextIdx=(G.cur+1)%G.teams.length;
-  var to=G.teams[nextIdx];
+  var nxt=(G.cur+1)%G.teams.length;
+  var to=G.teams[nxt];
   document.getElementById('tr-from').textContent='War dran: '+from.name;
   document.getElementById('tr-to').textContent=to.name;
   document.getElementById('tr-to').style.color=to.color;
-  document.getElementById('tr-comment').textContent=
-    comment('tr',to,[from.name,from.years.length]);
+  document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);
   showScreen('transition');
 }
-
 function continueGame(){
   G.cur=(G.cur+1)%G.teams.length;
-  G.phase=1;
-  G.cardLoaded=false;
-  G.readyToReveal=false;
-  G.selBox=null;
-  drawCard();
-  showScreen('game');
-  renderPanels();
-  updateGameUI();
-  pushState();
+  G.phase=1;G.cardLoaded=false;G.readyToReveal=false;G.selBox=null;G.bets={};G.betMode=null;
+  clearCd();drawCard();
+  showScreen('game');renderPanels();updateGameUI();pushState();
 }
 
-function showWin(idx){
-  var team=G.teams[idx];
-  document.getElementById('won-name').textContent='🏆 '+team.name;
-  document.getElementById('won-name').style.color=team.color;
-  document.getElementById('won-comment').textContent=comment('won',team);
-  spawnConfetti(team.color);
-  setTimeout(()=>spawnConfetti(team.color),400);
-  setTimeout(()=>spawnConfetti(team.color),800);
-  showScreen('won');
-  if(IS_HOST) REF.update({screen:'won',winner:team.name});
+// ══ VICTORY ════════════════════════════
+function showVictory(){
+  // Sort teams: most years, then most tokens
+  var sorted=G.teams.slice().sort((a,b)=>b.years.length-a.years.length||(b.tokens-a.tokens));
+  // Build podium sequence (worst → best)
+  var seq=sorted.map(function(team,rank){
+    var m=MEDAL_DATA[rank]||MEDAL_DATA[MEDAL_DATA.length-1];
+    return{
+      place:m.place,
+      comment:m.comments[Math.floor(Math.random()*m.comments.length)],
+      name:team.name,
+      color:team.color,
+      score:team.years.length+' Karten',
+      tokens:team.tokens+' Token',
+      cls:m.cls,cf:m.cf
+    };
+  }).reverse(); // worst first, best last
+
+  var overlay=document.getElementById('victoryOverlay');
+  overlay.classList.add('show');
+  var stage=0;
+  function renderStage(i){
+    var d=seq[i];
+    overlay.innerHTML=buildConfettiHTML(d.cf)+`
+      <div class="vstage active ${d.cls}">
+        <div class="v-comment">${d.comment}</div>
+        <div class="v-place">${d.place}</div>
+        <div class="v-card ${d.cls}">
+          <div class="v-name" style="color:${d.color}">${d.name}</div>
+          <div class="v-score" style="color:${d.color}">${d.score}</div>
+          <div class="v-score-label">${d.tokens}</div>
+        </div>
+        ${i===seq.length-1?`<button class="vfinal-btn" onclick="location.reload()">🔄 Neues Spiel</button>`:''}
+      </div>`;
+    playApplause();
+  }
+  renderStage(0);
+  var timer=setInterval(function(){
+    stage++;
+    if(stage>=seq.length){clearInterval(timer);return;}
+    renderStage(stage);
+  },3000);
+  if(IS_HOST)REF.update({screen:'won'});
 }
 
-function resetGame(){
-  G.teams=[]; G.deck=[]; G.cur=0; G.phase=1;
-  if(IS_HOST) REF.update({screen:'lobby',host:Date.now()});
-  showScreen('lobby');
-  setTC(3);
-  renderTeamInputs();
+function buildConfettiHTML(n){
+  var colors=['#ff4d6d','#ffd166','#06d6a0','#4cc9f0','#b5179e','#f72585','#53f6ff','#ff4fd8'];
+  var shapes=['50%','4px','0'];var h='';
+  for(var i=0;i<n;i++){
+    var sz=7+Math.random()*14;
+    h+=`<div style="position:absolute;top:-30px;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${colors[i%colors.length]};border-radius:${shapes[i%3]};transform:rotate(${Math.random()*360}deg);animation:cf-fall ${2+Math.random()*4}s ${Math.random()*1.5}s linear forwards"></div>`;
+  }
+  return h;
 }
 
-// ══════════════════════════════════════════════
-// COMMENTS
-// ══════════════════════════════════════════════
-function comment(type, team, extra){
-  var others=G.teams.filter((_,i)=>i!==G.cur).map(t=>t.name);
-  var pool=type==='p1'?CP1:type==='p2'?CP2:type==='tr'?CPI:CPW;
-  var idx=G.commentIdx%pool.length; G.commentIdx++;
-  try{
-    if(type==='tr' && extra) return pool[idx](extra[0], team.name, extra[1]);
-    return pool[idx](team.name, others);
-  } catch(e){ return pool[idx](team.name); }
-}
-
-// ══════════════════════════════════════════════
-// CONFETTI
-// ══════════════════════════════════════════════
-function spawnConfetti(color){
+// ══ CONFETTI ════════════════════════════
+function spawnConfetti(color,count){
   var c=document.getElementById('confetti');
-  for(var i=0;i<40;i++){
+  count=count||80;
+  var cols=[color,'#fff','#ffd84d',COLORS[Math.floor(Math.random()*6)]];
+  for(var i=0;i<count;i++){
     var p=document.createElement('div');
-    p.className='cf';
-    p.style.cssText=`left:${Math.random()*100}vw;background:${[color,'#fff',COLORS[i%6]][i%3]};transform:rotate(${Math.random()*360}deg);animation-duration:${1.2+Math.random()*1.5}s;animation-delay:${Math.random()*.6}s`;
-    c.appendChild(p);
-    p.addEventListener('animationend',()=>p.remove());
+    var sz=6+Math.random()*12;
+    p.style.cssText=`position:absolute;top:-20px;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};border-radius:${['50%','3px','0'][i%3]};transform:rotate(${Math.random()*360}deg);animation:cf-fall ${1.2+Math.random()*2}s ${Math.random()*.8}s linear forwards`;
+    c.appendChild(p);p.addEventListener('animationend',()=>p.remove());
+  }
+  // Second wave
+  setTimeout(()=>spawnConfetti(color,Math.floor(count*.5)),600);
+}
+
+// ══ CARL CHARTSTER ══════════════════════
+var carlOpen=false;
+function carlClick(){
+  closeBubble();
+  if(!carlOpen){
+    document.getElementById('carl-cur-team').textContent=G.teams[G.cur]?G.teams[G.cur].name:'Team';
+    document.getElementById('carl-bubble').classList.add('show');
+    carlOpen=true;
+    // Trigger impatient animation
+    var carl=document.getElementById('carl');
+    carl.classList.add('impatient');
+    setTimeout(()=>carl.classList.remove('impatient'),2500);
   }
 }
+function closeBubble(){
+  document.getElementById('carl-bubble').classList.remove('show');
+  document.getElementById('carl-confirm').classList.remove('show');
+  carlOpen=false;
+}
+function carlNewSong(){
+  closeBubble();
+  if(!G.currentCard)return;
+  // Free new song (referee override)
+  clearCd();
+  G.deck.push(G.currentCard);G.deck=shuffle(G.deck);
+  drawCard();
+  G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.phase=1;
+  updateGameUI();renderPanels();
+  showHint('Carl sagt: Neuer Song für alle! ⚖️');
+}
+function carlResetPrompt(){
+  document.getElementById('carl-bubble').classList.remove('show');
+  document.getElementById('carl-confirm').classList.add('show');
+}
+function doReset(){
+  closeBubble();
+  clearCd();
+  G.teams=[];G.deck=[];G.cur=0;G.phase=1;
+  if(IS_HOST)REF.update({screen:'lobby',host:Date.now()});
+  showScreen('lobby');setTC(3);renderTeamInputs();syncFltUI('flt-wrap');
+  G.filters=new Set(['all']);syncFltUI('flt-wrap');
+  document.getElementById('start-btn').disabled=IS_HOST?false:true;
+}
 
-// ══════════════════════════════════════════════
-// UTILS
-// ══════════════════════════════════════════════
+// Occasionally trigger impatient animation
+setInterval(function(){
+  if(G.screen==='game'&&Math.random()<0.3){
+    var carl=document.getElementById('carl');
+    carl.classList.add('impatient');
+    setTimeout(()=>carl.classList.remove('impatient'),2500);
+  }
+},15000);
+
+// ══ COMMENTS ════════════════════════════
+function comment(type,team,extra){
+  var others=G.teams.filter((_,i)=>i!==G.cur).map(t=>t.name);
+  var pool=type==='p1'?CP1:type==='p2'?CP2:type==='tr'?CPI:CPW;
+  var idx=G.commentIdx%pool.length;G.commentIdx++;
+  try{
+    if(type==='tr'&&extra)return pool[idx](extra[0],team.name,extra[1]);
+    return pool[idx](team.name,others);
+  }catch(e){return pool[idx](team.name);}
+}
+
+// ══ UTILS ════════════════════════════
 function showScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   var el=document.getElementById('screen-'+name);
-  if(el){ el.classList.add('active'); G.screen=name; }
+  if(el){el.classList.add('active');G.screen=name;}
 }
-
-var fieldFlipped=false;
-function rotateField(){
-  fieldFlipped=!fieldFlipped;
-  document.getElementById('game-center').style.transform=
-    fieldFlipped?'rotate(180deg)':'rotate(0deg)';
+function showHint(msg){
+  var el=document.getElementById('hint-toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2800);
 }
-
+function rotateBanner(){
+  var gc=document.getElementById('game-center');
+  gc.classList.toggle('facing-right');
+}
 function updateHole(){
   var o=document.getElementById('player-outer');
-  var w=o.offsetWidth||412, mob=window.innerWidth<600;
-  var cx=mob?w-32:w-28, r=mob?18:22, cy=mob?128:124;
+  var w=o.offsetWidth||412,mob=window.innerWidth<600;
+  var cx=mob?w-32:w-28,r=mob?18:22,cy=mob?128:124;
   document.getElementById('play-hole').setAttribute('cx',cx);
   document.getElementById('play-hole').setAttribute('r',r);
   document.getElementById('play-hole').setAttribute('cy',cy);
 }
-window.addEventListener('resize',updateHole);
-updateHole();
+window.addEventListener('resize',updateHole);updateHole();
 
-// ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
-setTC(3);
-renderTeamInputs();
-syncFilterBtns('flt-wrap');
+// ══ INIT ════════════════════════════════
+setTC(3);renderTeamInputs();syncFltUI('flt-wrap');
 </script>
 </body>
 </html>
