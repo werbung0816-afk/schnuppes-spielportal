@@ -1,1 +1,202 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Hitster – Musterkarte</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cyan:#53f6ff;--pink:#ff4fd8;--purple:#8f5fff;
+  --bg:#07000f;
+  --glass:rgba(255,255,255,0.055);
+  --glass-b:rgba(255,255,255,0.1);
+  --text:rgba(240,240,255,1);
+  --muted:rgba(240,240,255,0.45);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 40%,rgba(143,95,255,.18) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 15%,rgba(83,246,255,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 45% at 65% 85%,rgba(255,79,216,.12) 0%,transparent 60%);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+}
 
+/* Karte */
+.card{
+  width:460px;max-width:calc(100vw - 32px);
+  background:var(--glass);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--glass-b);
+  border-radius:24px;
+  padding:32px 24px 24px;
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+}
+
+/* Info-Bereich */
+.info{
+  width:100%;display:flex;flex-direction:column;
+  align-items:center;gap:6px;
+  min-height:100px;justify-content:center;
+}
+.qmark{
+  font-size:80px;font-weight:900;
+  color:rgba(255,255,255,.1);line-height:1;
+  transition:opacity .3s,font-size .3s;
+}
+.qmark.gone{opacity:0;font-size:0;min-height:0}
+
+.year-big{
+  font-size:72px;font-weight:900;line-height:1;
+  background:linear-gradient(135deg,var(--cyan),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 24px rgba(83,246,255,.5));
+  animation:glow-in .4s ease forwards;
+}
+@keyframes glow-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+
+.sep{width:100%;height:1px;background:var(--glass-b)}
+
+/* Spotify Player */
+.player-outer{
+  position:relative;width:100%;height:152px;
+  border-radius:14px;overflow:hidden;
+  border:1px solid rgba(83,246,255,.2);
+  box-shadow:0 0 24px rgba(83,246,255,.08);
+  opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.player-outer.visible{opacity:1;pointer-events:auto}
+.player-outer iframe{
+  position:absolute;top:0;left:0;
+  width:100%;height:152px;border:none;
+}
+
+/* Maske oben: volle Breite, 95px hoch */
+.mask-top{
+  position:absolute;top:0;left:0;
+  width:100%;height:95px;
+  background:#0e0018;
+  border-radius:13px 13px 0 0;
+  pointer-events:none;z-index:10;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;
+  transition:opacity .45s ease;
+}
+/* Maske unten: 91% breit – Play-Button rechts frei */
+.mask-bot{
+  position:absolute;top:95px;left:0;
+  width:86%;height:57px;
+  background:#0e0018;
+  border-radius:0 12px 12px 0;
+  pointer-events:none;z-index:10;
+  transition:opacity .45s ease;
+}
+.mask-top.gone,.mask-bot.gone{opacity:0}
+
+.mask-name{
+  font-size:22px;font-weight:700;
+  background:linear-gradient(135deg,var(--cyan),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  text-align:center;
+}
+.mask-q{font-size:14px;color:rgba(255,255,255,.4);text-align:center}
+
+/* Buttons */
+.btn{
+  width:100%;padding:15px;border-radius:14px;
+  font-family:'Outfit',sans-serif;
+  font-size:16px;font-weight:600;
+  cursor:pointer;transition:all .2s;
+  -webkit-appearance:none;touch-action:manipulation;user-select:none;
+}
+.btn-ready{
+  background:linear-gradient(135deg,rgba(83,246,255,.12),rgba(143,95,255,.12));
+  color:var(--cyan);border:1px solid rgba(83,246,255,.35);
+  box-shadow:0 0 20px rgba(83,246,255,.12);
+}
+.btn-ready:active{box-shadow:0 0 32px rgba(83,246,255,.4);border-color:var(--cyan)}
+.btn-reveal{
+  background:rgba(255,255,255,.06);color:var(--text);
+  border:1px solid var(--glass-b);
+}
+.btn-reveal:active{background:rgba(255,255,255,.12)}
+.btn-next{
+  background:rgba(255,255,255,.04);color:var(--muted);
+  border:1px solid rgba(255,255,255,.08);font-size:14px;
+}
+.btn-next:active{background:rgba(255,255,255,.09);color:var(--text)}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="info" id="info">
+    <div class="qmark" id="qmark">?</div>
+    <div class="year-big" id="year" style="display:none">2023</div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="player-outer" id="player-outer">
+    <iframe id="sp-frame" src=""
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      allowfullscreen></iframe>
+    <!-- Vollflächige Maske mit kreisförmigem Ausschnitt via radial-gradient background -->
+    <div class="overlay" id="overlay"></div>
+    <div class="overlay-text" id="overlay-text">
+      <div class="mask-name">Leni,</div>
+      <div class="mask-q">kennst Du den Song?</div>
+    </div>
+  </div>
+
+  <button class="btn btn-ready" id="main-btn">Ich bin bereit ...</button>
+
+</div>
+<script>
+var TRACK_ID='7oQepKHmXDaPC3rgeLRvQu';
+var phase=1,loaded=false;
+
+function next(){
+  if(phase===1){
+    document.getElementById('qmark').classList.add('gone');
+    document.getElementById('player-outer').classList.add('visible');
+    document.getElementById('main-btn').textContent='Aufdecken';
+    document.getElementById('main-btn').className='btn btn-reveal';
+    if(!loaded){
+      document.getElementById('sp-frame').src=
+        'https://open.spotify.com/embed/track/'+TRACK_ID+
+        '?utm_source=generator&theme=0&autoplay=1';
+      loaded=true;
+    }
+    phase=2;
+  } else if(phase===2){
+    document.getElementById('overlay').classList.add('gone');
+    document.getElementById('overlay-text').classList.add('gone');
+    document.getElementById('year').style.display='block';
+    document.getElementById('main-btn').textContent='↩ Nächste Karte';
+    document.getElementById('main-btn').className='btn btn-next';
+    phase=3;
+  } else {
+    loaded=false;phase=1;
+    document.getElementById('sp-frame').src='';
+    document.getElementById('player-outer').classList.remove('visible');
+    document.getElementById('overlay').classList.remove('gone');
+    document.getElementById('overlay-text').classList.remove('gone');
+    document.getElementById('qmark').classList.remove('gone');
+    document.getElementById('year').style.display='none';
+    document.getElementById('main-btn').textContent='Ich bin bereit ...';
+    document.getElementById('main-btn').className='btn btn-ready';
+  }
+}
+
+var b=document.getElementById('main-btn');
+b.addEventListener('touchend',function(e){e.preventDefault();next();});
+b.addEventListener('click',next);
+</script>
+</body>
+</html>
