@@ -13,6 +13,10 @@
   --glass-b:rgba(255,255,255,0.1);
   --text:rgba(240,240,255,1);
   --muted:rgba(240,240,255,0.45);
+  /* Kreis-Position: hier anpassen bis er auf dem Play-Button sitzt */
+  --cx:calc(100% - 38px);
+  --cy:124px;
+  --cr:30px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{
@@ -23,34 +27,22 @@ body{
     radial-gradient(ellipse 50% 40% at 85% 15%,rgba(83,246,255,.12) 0%,transparent 60%),
     radial-gradient(ellipse 45% 45% at 65% 85%,rgba(255,79,216,.12) 0%,transparent 60%);
   min-height:100vh;
-  display:flex;align-items:center;justify-content:center;
-  padding:24px;
+  display:flex;align-items:center;justify-content:center;padding:24px;
 }
-
-/* Karte */
 .card{
   width:460px;max-width:calc(100vw - 32px);
   background:var(--glass);
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border:1px solid var(--glass-b);
-  border-radius:24px;
+  border:1px solid var(--glass-b);border-radius:24px;
   padding:32px 24px 24px;
   display:flex;flex-direction:column;align-items:center;gap:18px;
 }
-
-/* Info-Bereich */
 .info{
   width:100%;display:flex;flex-direction:column;
-  align-items:center;gap:6px;
-  min-height:100px;justify-content:center;
+  align-items:center;gap:6px;min-height:100px;justify-content:center;
 }
-.qmark{
-  font-size:80px;font-weight:900;
-  color:rgba(255,255,255,.1);line-height:1;
-  transition:opacity .3s,font-size .3s;
-}
+.qmark{font-size:80px;font-weight:900;color:rgba(255,255,255,.1);line-height:1;transition:opacity .3s,font-size .3s}
 .qmark.gone{opacity:0;font-size:0;min-height:0}
-
 .year-big{
   font-size:72px;font-weight:900;line-height:1;
   background:linear-gradient(135deg,var(--cyan),var(--pink));
@@ -59,10 +51,9 @@ body{
   animation:glow-in .4s ease forwards;
 }
 @keyframes glow-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-
 .sep{width:100%;height:1px;background:var(--glass-b)}
 
-/* Spotify Player */
+/* ── Spotify Player ── */
 .player-outer{
   position:relative;width:100%;height:152px;
   border-radius:14px;overflow:hidden;
@@ -76,28 +67,19 @@ body{
   width:100%;height:152px;border:none;
 }
 
-/* Maske oben: volle Breite, 95px hoch */
-.mask-top{
+/* Overlay via SVG – gone-Klasse via JS */
+#overlay.gone{opacity:0}
+
+/* Text über dem Overlay */
+.overlay-text{
   position:absolute;top:0;left:0;
   width:100%;height:95px;
-  background:#0e0018;
-  border-radius:13px 13px 0 0;
-  pointer-events:none;z-index:10;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:8px;
+  pointer-events:none;z-index:11;
   transition:opacity .45s ease;
 }
-/* Maske unten: 91% breit – Play-Button rechts frei */
-.mask-bot{
-  position:absolute;top:95px;left:0;
-  width:86%;height:57px;
-  background:#0e0018;
-  border-radius:0 12px 12px 0;
-  pointer-events:none;z-index:10;
-  transition:opacity .45s ease;
-}
-.mask-top.gone,.mask-bot.gone{opacity:0}
-
+.overlay-text.gone{opacity:0}
 .mask-name{
   font-size:22px;font-weight:700;
   background:linear-gradient(135deg,var(--cyan),var(--pink));
@@ -106,11 +88,10 @@ body{
 }
 .mask-q{font-size:14px;color:rgba(255,255,255,.4);text-align:center}
 
-/* Buttons */
+/* ── Buttons ── */
 .btn{
   width:100%;padding:15px;border-radius:14px;
-  font-family:'Outfit',sans-serif;
-  font-size:16px;font-weight:600;
+  font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;
   cursor:pointer;transition:all .2s;
   -webkit-appearance:none;touch-action:manipulation;user-select:none;
 }
@@ -146,8 +127,20 @@ body{
     <iframe id="sp-frame" src=""
       allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
       allowfullscreen></iframe>
-    <!-- Vollflächige Maske mit kreisförmigem Ausschnitt via radial-gradient background -->
-    <div class="overlay" id="overlay"></div>
+
+    <!-- SVG-Overlay: Rechteck mit rundem Loch für Play-Button -->
+    <svg id="overlay" xmlns="http://www.w3.org/2000/svg"
+      style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;border-radius:13px;overflow:hidden;transition:opacity .45s ease">
+      <defs>
+        <mask id="hole">
+          <rect width="9999" height="152" fill="white"/>
+          <!-- Kreis: cx wird per JS gesetzt, cy und r hier anpassen -->
+          <circle id="play-hole" cx="374" cy="124" r="30" fill="black"/>
+        </mask>
+      </defs>
+      <rect width="9999" height="152" fill="#121212" mask="url(#hole)" rx="13"/>
+    </svg>
+
     <div class="overlay-text" id="overlay-text">
       <div class="mask-name">Leni,</div>
       <div class="mask-q">kennst Du den Song?</div>
@@ -165,8 +158,8 @@ function next(){
   if(phase===1){
     document.getElementById('qmark').classList.add('gone');
     document.getElementById('player-outer').classList.add('visible');
-    document.getElementById('main-btn').textContent='Aufdecken';
-    document.getElementById('main-btn').className='btn btn-reveal';
+    var btn=document.getElementById('main-btn');
+    btn.textContent='Aufdecken';btn.className='btn btn-reveal';
     if(!loaded){
       document.getElementById('sp-frame').src=
         'https://open.spotify.com/embed/track/'+TRACK_ID+
@@ -178,8 +171,8 @@ function next(){
     document.getElementById('overlay').classList.add('gone');
     document.getElementById('overlay-text').classList.add('gone');
     document.getElementById('year').style.display='block';
-    document.getElementById('main-btn').textContent='↩ Nächste Karte';
-    document.getElementById('main-btn').className='btn btn-next';
+    var btn=document.getElementById('main-btn');
+    btn.textContent='↩ Nächste Karte';btn.className='btn btn-next';
     phase=3;
   } else {
     loaded=false;phase=1;
@@ -189,10 +182,19 @@ function next(){
     document.getElementById('overlay-text').classList.remove('gone');
     document.getElementById('qmark').classList.remove('gone');
     document.getElementById('year').style.display='none';
-    document.getElementById('main-btn').textContent='Ich bin bereit ...';
-    document.getElementById('main-btn').className='btn btn-ready';
+    var btn=document.getElementById('main-btn');
+    btn.textContent='Ich bin bereit ...';btn.className='btn btn-ready';
   }
 }
+
+// Play-Button Kreis-Position dynamisch berechnen
+function updateHole(){
+  var outer = document.getElementById('player-outer');
+  var w = outer.offsetWidth || 412;
+  document.getElementById('play-hole').setAttribute('cx', w - 38);
+}
+window.addEventListener('resize', updateHole);
+updateHole();
 
 var b=document.getElementById('main-btn');
 b.addEventListener('touchend',function(e){e.preventDefault();next();});
