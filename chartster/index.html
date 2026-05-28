@@ -30,7 +30,7 @@ body{
   display:flex;align-items:center;justify-content:center;padding:24px;
 }
 .card{
-  width:460px;max-width:calc(100vw - 28px);
+  width:460px;max-width:calc(100vw - 42px);
   background:var(--glass);
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   border:1px solid var(--glass-b);border-radius:24px;
@@ -121,7 +121,7 @@ body{
     <div class="year-big" id="year" style="display:none">2023</div>
   </div>
 
-  <div style="position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif">v10</div>
+  <div style="position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif">v11</div>
   <div class="sep"></div>
 
   <div class="player-outer" id="player-outer">
@@ -136,7 +136,7 @@ body{
         <mask id="hole">
           <rect width="9999" height="152" fill="white"/>
           <!-- Kreis: cx wird per JS gesetzt, cy und r hier anpassen -->
-          <circle id="play-hole" cx="374" cy="124" r="28" fill="black"/>
+          <circle id="play-hole" cx="374" cy="124" r="32" fill="black"/>
         </mask>
       </defs>
       <rect width="9999" height="152" fill="#121212" mask="url(#hole)" rx="13"/>
@@ -193,7 +193,7 @@ function next(){
 function updateHole(){
   var outer = document.getElementById('player-outer');
   var w = outer.offsetWidth || 412;
-  document.getElementById('play-hole').setAttribute('cx', w - 28);
+  document.getElementById('play-hole').setAttribute('cx', w - 42);
 }
 window.addEventListener('resize', updateHole);
 updateHole();
