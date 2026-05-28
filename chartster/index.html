@@ -121,7 +121,7 @@ body{
     <div class="year-big" id="year" style="display:none">2023</div>
   </div>
 
-  <div style="position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif">v13</div>
+  <div style="position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif">v14</div>
   <div class="sep"></div>
 
   <div class="player-outer" id="player-outer">
@@ -195,7 +195,7 @@ function updateHole(){
   var w = outer.offsetWidth || 412;
   var mobile = window.innerWidth < 600;
   // PC: w-28 r=28 (passt) | iPhone: cx und r noch anzupassen
-  var cx = mobile ? w - 48 : w - 28;
+  var cx = mobile ? w - 40 : w - 28;
   var r  = mobile ? 22     : 22;
   var cy = mobile ? 124    : 124;
   document.getElementById('play-hole').setAttribute('cx', cx);
