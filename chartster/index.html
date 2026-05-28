@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Hitster – Musterkarte</title>
+<title>Chartster</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -13,10 +13,6 @@
   --glass-b:rgba(255,255,255,0.1);
   --text:rgba(240,240,255,1);
   --muted:rgba(240,240,255,0.45);
-  /* Kreis-Position: hier anpassen bis er auf dem Play-Button sitzt */
-  --cx:calc(100% - 38px);
-  --cy:124px;
-  --cr:30px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{
@@ -36,7 +32,11 @@ body{
   border:1px solid var(--glass-b);border-radius:24px;
   padding:32px 24px 24px;
   display:flex;flex-direction:column;align-items:center;gap:18px;
+  position:relative;
 }
+.version{position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif}
+.counter{position:absolute;top:10px;left:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif}
+
 .info{
   width:100%;display:flex;flex-direction:column;
   align-items:center;gap:6px;min-height:100px;justify-content:center;
@@ -53,6 +53,14 @@ body{
 @keyframes glow-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 .sep{width:100%;height:1px;background:var(--glass-b)}
 
+/* ── Loading ── */
+.loading{
+  font-size:14px;color:var(--muted);text-align:center;padding:20px 0;
+}
+.error{
+  font-size:13px;color:var(--pink);text-align:center;padding:20px 0;line-height:1.6;
+}
+
 /* ── Spotify Player ── */
 .player-outer{
   position:relative;width:100%;height:152px;
@@ -66,11 +74,7 @@ body{
   position:absolute;top:0;left:0;
   width:100%;height:152px;border:none;
 }
-
-/* Overlay via SVG – gone-Klasse via JS */
 #overlay.gone{opacity:0}
-
-/* Text über dem Overlay */
 .overlay-text{
   position:absolute;top:0;left:0;
   width:100%;height:95px;
@@ -95,6 +99,7 @@ body{
   cursor:pointer;transition:all .2s;
   -webkit-appearance:none;touch-action:manipulation;user-select:none;
 }
+.btn[disabled]{opacity:.35;pointer-events:none}
 .btn-ready{
   background:linear-gradient(135deg,rgba(83,246,255,.12),rgba(143,95,255,.12));
   color:var(--cyan);border:1px solid rgba(83,246,255,.35);
@@ -129,14 +134,16 @@ body{
 <body>
 <div class="card">
 
+  <div class="counter" id="counter"></div>
+  <div class="version">v18</div>
+
   <div class="info" id="info">
     <div class="qmark" id="qmark">?</div>
-    <div class="year-big" id="year" style="display:none">2023</div>
-    <div class="reveal-artist" id="reveal-artist">Udo Lindenberg &amp; Apache 207</div>
-    <div class="reveal-title" id="reveal-title">Komet</div>
+    <div class="year-big" id="year" style="display:none"></div>
+    <div class="reveal-artist" id="reveal-artist"></div>
+    <div class="reveal-title" id="reveal-title"></div>
   </div>
 
-  <div style="position:absolute;top:10px;right:14px;font-size:10px;color:rgba(255,255,255,.2);font-family:Outfit,sans-serif">v17</div>
   <div class="sep"></div>
 
   <div class="player-outer" id="player-outer">
@@ -144,13 +151,11 @@ body{
       allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
       allowfullscreen></iframe>
 
-    <!-- SVG-Overlay: Rechteck mit rundem Loch für Play-Button -->
     <svg id="overlay" xmlns="http://www.w3.org/2000/svg"
       style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;border-radius:13px;overflow:hidden;transition:opacity .45s ease">
       <defs>
         <mask id="hole">
           <rect width="9999" height="152" fill="white"/>
-          <!-- Kreis: cx wird per JS gesetzt, cy und r hier anpassen -->
           <circle id="play-hole" cx="374" cy="124" r="28" fill="black"/>
         </mask>
       </defs>
@@ -158,69 +163,144 @@ body{
     </svg>
 
     <div class="overlay-text" id="overlay-text">
-      <div class="mask-name">Leni,</div>
-      <div class="mask-q">kennst Du den Song?</div>
+      <div class="mask-name" id="overlay-name">Kennst Du</div>
+      <div class="mask-q">den Song?</div>
     </div>
   </div>
 
-  <button class="btn btn-ready" id="main-btn">Ich bin bereit ...</button>
+  <button class="btn btn-ready" id="main-btn" disabled>Lädt …</button>
 
 </div>
 <script>
-var TRACK_ID='7oQepKHmXDaPC3rgeLRvQu';
-var phase=1,loaded=false,readyToReveal=false;
+// ── Zustand ──────────────────────────────────────────────
+var songs = [];       // alle geladenen Songs
+var deck  = [];       // noch nicht gezogene Karten (shuffled)
+var current = null;   // aktueller Song
+var phase = 0;        // 0=loading, 1=bereit, 2=player, 3=aufgedeckt
+var loaded = false;
+var readyToReveal = false;
 
+// ── Hilfsfunktionen ──────────────────────────────────────
+function shuffle(arr){
+  var a = arr.slice();
+  for(var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function refillDeck(){
+  deck = shuffle(songs);
+}
+
+function drawCard(){
+  if(deck.length === 0) refillDeck();
+  current = deck.pop();
+  updateCounter();
+}
+
+function updateCounter(){
+  var el = document.getElementById('counter');
+  if(songs.length > 0){
+    el.textContent = (songs.length - deck.length) + ' / ' + songs.length;
+  }
+}
+
+// ── songs.json laden ─────────────────────────────────────
+fetch('songs.json')
+  .then(function(r){
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(data){
+    // nur Songs mit Spotify-Link
+    songs = data.filter(function(s){ return s.l; });
+    if(songs.length === 0) throw new Error('Keine Songs mit Spotify-Link gefunden.');
+    refillDeck();
+    drawCard();
+    phase = 1;
+    var btn = document.getElementById('main-btn');
+    btn.textContent = 'Ich bin bereit …';
+    btn.className = 'btn btn-ready';
+    btn.disabled = false;
+  })
+  .catch(function(err){
+    document.getElementById('info').innerHTML =
+      '<div class="error">⚠️ songs.json konnte nicht geladen werden.<br>' +
+      '<small>' + err.message + '</small></div>';
+    var btn = document.getElementById('main-btn');
+    btn.textContent = 'Neu laden';
+    btn.className = 'btn btn-ready';
+    btn.disabled = false;
+    btn.onclick = function(){ location.reload(); };
+  });
+
+// ── Phasen-Logik ─────────────────────────────────────────
 function next(){
-  if(phase===1){
+  if(phase === 1){
+    // Phase 1 → 2: Player anzeigen
     document.getElementById('qmark').classList.add('gone');
     document.getElementById('player-outer').classList.add('visible');
     setTimeout(updateHole, 50);
-    readyToReveal=false;
-    setTimeout(function(){readyToReveal=true;},1000);
-    var btn=document.getElementById('main-btn');
-    btn.textContent='Aufdecken';btn.className='btn btn-reveal';
+    readyToReveal = false;
+    setTimeout(function(){ readyToReveal = true; }, 1000);
+    var btn = document.getElementById('main-btn');
+    btn.textContent = 'Aufdecken';
+    btn.className = 'btn btn-reveal';
     if(!loaded){
-      document.getElementById('sp-frame').src=
-        'https://open.spotify.com/embed/track/'+TRACK_ID+
+      document.getElementById('sp-frame').src =
+        'https://open.spotify.com/embed/track/' + current.l +
         '?utm_source=generator&theme=0&autoplay=1';
-      loaded=true;
+      loaded = true;
     }
-    phase=2;
-  } else if(phase===2 && readyToReveal){
+    phase = 2;
+
+  } else if(phase === 2 && readyToReveal){
+    // Phase 2 → 3: Aufdecken
     document.getElementById('overlay').classList.add('gone');
     document.getElementById('overlay-text').classList.add('gone');
-    document.getElementById('year').style.display='block';
+    var yearEl = document.getElementById('year');
+    yearEl.textContent = current.y;
+    yearEl.style.display = 'block';
     setTimeout(function(){
       document.getElementById('reveal-artist').classList.add('on');
       document.getElementById('reveal-title').classList.add('on');
-    },50);
-    var btn=document.getElementById('main-btn');
-    btn.textContent='↩ Nächste Karte';btn.className='btn btn-next';
-    phase=3;
-  } else {
-    loaded=false;phase=1;
-    document.getElementById('sp-frame').src='';
+    }, 50);
+    document.getElementById('reveal-artist').textContent = current.a;
+    document.getElementById('reveal-title').textContent = current.t;
+    var btn = document.getElementById('main-btn');
+    btn.textContent = '↩ Nächste Karte';
+    btn.className = 'btn btn-next';
+    phase = 3;
+
+  } else if(phase === 3){
+    // Phase 3 → 1: Reset + neue Karte ziehen
+    drawCard();
+    loaded = false;
+    phase = 1;
+    document.getElementById('sp-frame').src = '';
     document.getElementById('player-outer').classList.remove('visible');
     document.getElementById('overlay').classList.remove('gone');
     document.getElementById('overlay-text').classList.remove('gone');
     document.getElementById('qmark').classList.remove('gone');
-    document.getElementById('year').style.display='none';
+    document.getElementById('year').style.display = 'none';
     document.getElementById('reveal-artist').classList.remove('on');
     document.getElementById('reveal-title').classList.remove('on');
-    var btn=document.getElementById('main-btn');
-    btn.textContent='Ich bin bereit ...';btn.className='btn btn-ready';
+    var btn = document.getElementById('main-btn');
+    btn.textContent = 'Ich bin bereit …';
+    btn.className = 'btn btn-ready';
   }
 }
 
-// Play-Button Kreis-Position dynamisch berechnen
+// ── Overlay-Loch berechnen ───────────────────────────────
 function updateHole(){
   var outer = document.getElementById('player-outer');
   var w = outer.offsetWidth || 412;
   var mobile = window.innerWidth < 600;
-  // PC: w-28 r=28 (passt) | iPhone: cx und r noch anzupassen
   var cx = mobile ? w - 32 : w - 28;
-  var r  = mobile ? 18     : 22;
-  var cy = mobile ? 128    : 124;
+  var r  = mobile ? 18 : 22;
+  var cy = mobile ? 128 : 124;
   document.getElementById('play-hole').setAttribute('cx', cx);
   document.getElementById('play-hole').setAttribute('r',  r);
   document.getElementById('play-hole').setAttribute('cy', cy);
@@ -228,9 +308,10 @@ function updateHole(){
 window.addEventListener('resize', updateHole);
 updateHole();
 
-var b=document.getElementById('main-btn');
-b.addEventListener('touchend',function(e){e.preventDefault();next();});
-b.addEventListener('click',next);
+// ── Button Events ────────────────────────────────────────
+var b = document.getElementById('main-btn');
+b.addEventListener('touchend', function(e){ e.preventDefault(); next(); });
+b.addEventListener('click', next);
 </script>
 </body>
 </html>
