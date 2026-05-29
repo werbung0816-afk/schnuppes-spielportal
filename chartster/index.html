@@ -509,14 +509,17 @@ SEAT_ORDER.forEach(p=>G.seatCfg[p]=null);
 function initFirebase(){
   if(fbListener){try{REF.off('value',fbListener);}catch(e){}}
   fbListener=null;
+  var wasHost=sessionStorage.getItem('chartster_host')==='1';
   REF.once('value').then(snap=>{
     var d=snap.val();
-    if(!d||d.screen==='lobby'||!d.host)setHost();
+    // Become host if: no Firebase data, screen is lobby, no host set, OR this device was host before (reload)
+    if(!d||d.screen==='lobby'||!d.host||wasHost)setHost();
     else setGuest();
   }).catch(()=>setHost());
 }
 function setHost(){
   IS_HOST=true;
+  sessionStorage.setItem('chartster_host','1');
   REF.set({host:Date.now(),screen:'lobby'});
   document.getElementById('lobby-status').textContent='Host · lädt …';
   if(G.songs.length===0)loadSongs();
@@ -524,6 +527,7 @@ function setHost(){
 }
 function setGuest(){
   IS_HOST=false;
+  sessionStorage.removeItem('chartster_host');
   document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';
   document.getElementById('start-btn').disabled=true;
   fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});
