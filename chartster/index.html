@@ -65,10 +65,11 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);
 .slot-overlay-top{position:absolute;top:0;left:0;right:0;height:28px;background:linear-gradient(to bottom,#07000f,transparent);z-index:2;pointer-events:none}
 .slot-overlay-bot{position:absolute;bottom:0;left:0;right:0;height:28px;background:linear-gradient(to top,#07000f,transparent);z-index:2;pointer-events:none}
 .slot-line{position:absolute;left:8px;right:8px;top:50%;height:2px;background:var(--cyan);opacity:.5;z-index:3;transform:translateY(-50%)}
-.slot-lever{position:absolute;right:-28px;top:10px;display:flex;flex-direction:column;align-items:center;cursor:pointer}
-.lever-bar{width:8px;height:56px;background:linear-gradient(to bottom,#888,#555);border-radius:4px}
-.lever-ball{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--pink),#a0006a);border:2px solid rgba(255,255,255,.3);box-shadow:0 0 12px var(--pink);margin-top:-4px;transition:transform .15s}
-.slot-lever:active .lever-ball{transform:translateY(12px)}
+/* Lever: ball travels full length top→bottom */
+.slot-lever{position:absolute;right:-32px;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;cursor:pointer;width:28px}
+.lever-track{width:8px;flex:1;background:linear-gradient(to bottom,#aaa,#444);border-radius:4px;position:relative}
+.lever-ball{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--pink),#a0006a);border:2px solid rgba(255,255,255,.35);box-shadow:0 0 14px var(--pink);position:absolute;left:50%;top:0;transform:translateX(-50%);transition:top .5s cubic-bezier(.25,.46,.45,.94)}
+.slot-lever.pulled .lever-ball{top:calc(100% - 24px)}
 @keyframes glow-in{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
 .year-big-result{font-size:72px;font-weight:900;text-align:center;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 24px rgba(83,246,255,.5));animation:glow-in .4s ease}
 
@@ -80,9 +81,9 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);
    right col: side panel rotated 90°
    bot panels span all 3 cols, normal
 ═══════════════════════════════════════════*/
-#screen-game{padding:8px;align-items:stretch;justify-content:flex-start}
+#screen-game{padding:8px;align-items:center;justify-content:flex-start}
 #game-outer{
-  width:100%;
+  width:100%;max-width:900px;
   display:grid;
   grid-template-columns:56px 1fr 56px;
   grid-template-rows:auto 1fr auto;
@@ -95,11 +96,9 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);
 #area-right{grid-column:3;grid-row:2;display:flex;align-items:center;justify-content:center;overflow:visible;z-index:2}
 #area-bot{grid-column:1/-1;grid-row:3;display:flex;gap:10px;justify-content:space-around}
 
-/* Center rotation: 4 sides */
+/* Center rotation: only 0° and 180° – long sides of table */
 #game-center.r0  {transform:rotate(0deg)}
-#game-center.r90 {transform:rotate(90deg)}
 #game-center.r180{transform:rotate(180deg)}
-#game-center.r270{transform:rotate(270deg)}
 
 /* ── TEAM PANELS (top/bottom rows, normal width) ── */
 .t-panel{flex:1;max-width:280px;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:18px;padding:11px;display:flex;flex-direction:column;gap:7px;transition:border-color .3s,box-shadow .3s}
@@ -260,6 +259,7 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);
 <div id="screen-lobby" class="screen active">
 <div class="card" style="max-width:500px;margin-top:24px">
   <div class="game-title">Chartster</div>
+  <div style="font-size:10px;color:rgba(255,255,255,.25);margin-top:-10px">v3.2</div>
   <div class="sep"></div>
 
   <div class="setup-section">
@@ -346,9 +346,10 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);
         <div class="slot-line"></div>
       </div>
     </div>
-    <div class="slot-lever" onclick="spinSlot()">
-      <div class="lever-bar"></div>
-      <div class="lever-ball"></div>
+    <div class="slot-lever" id="slot-lever" onclick="spinSlot()">
+      <div class="lever-track">
+        <div class="lever-ball"></div>
+      </div>
     </div>
   </div>
   <div style="min-height:84px;display:flex;align-items:center;justify-content:center">
@@ -468,7 +469,7 @@ const SEAT_DEF={
   'bot-l':{side:'bot',area:'bot'},'bot-r':{side:'bot',area:'bot'},
 };
 // Center rotation per team side
-const CENTER_ROT={bot:'r0',top:'r180',left:'r270',right:'r90'};
+const CENTER_ROT={bot:'r0',top:'r180',left:'r0',right:'r0'};
 
 const CP1=[t=>`${t} – Ihr seid dran! Was habt Ihr drauf?`,t=>`Jetzt kommen ${t}! Kein Stress – na ja, vielleicht doch.`,t=>`Alle Ohren auf ${t}! Konzentration!`,t=>`${t} übernehmen das Mikro. Ready?`,t=>`${t} – zeigt Euren Musikgeschmack!`,t=>`Augen zu, Ohren auf! ${t} sind dran.`,t=>`${t}: Keine Ausreden, nur gute Antworten!`,t=>`Die Bühne gehört ${t}! Viel Glück!`];
 const CP2=[(t,o)=>`${t}: Welches Jahr steckt dahinter?`,(t,o)=>o.length?`${t} gegen ${o[0]}. Wer hat die bessere Musiknase?`:`Lauscht gut, ${t}!`,(t,o)=>`Vertraut Eurem Bauchgefühl! Der Beat verrät alles.`,(t,o)=>o.length?`${o.join(' & ')} warten schon ungeduldig…`:`30 Sekunden, ${t}!`,(t,o)=>`Hört rein – der Song flüstert die Antwort!`,(t,o)=>o.length?`${o[0]} überlegen gerade, ob sie wetten…`:`Ihr könnt das, ${t}!`];
@@ -619,7 +620,7 @@ function startGame(){
 }
 
 // ══ SLOT MACHINE ════════════════════════
-var SLOT_H=100,slotYearList=[],slotSpinning=false;
+var SLOT_H=100,slotYearList=[],slotSpinning=false,slotPulled=false;
 function initSlot(){
   var years=[];for(var y=1960;y<=2026;y++)years.push(y);
   slotYearList=[...years,...years,...years,...years,...years];
@@ -629,25 +630,35 @@ function initSlot(){
   reel.style.height=(slotYearList.length*SLOT_H)+'px';
   var startIdx=years.length*2+Math.floor(Math.random()*years.length);
   reel.style.transform=`translateY(${-startIdx*SLOT_H}px)`;
+  slotPulled=false;
+  // Reset lever position
+  var lever=document.getElementById('slot-lever');
+  if(lever)lever.classList.remove('pulled');
 }
 function spinSlot(){
-  if(slotSpinning)return;slotSpinning=true;
-  document.getElementById('slot-spin-btn').disabled=true;
+  if(slotSpinning||slotPulled)return; // one pull per team
+  slotSpinning=true;slotPulled=true;
+  // Animate lever down
+  var lever=document.getElementById('slot-lever');
+  if(lever)lever.classList.add('pulled');
+  document.getElementById('slot-spin-btn').style.display='none';
   document.getElementById('slot-result').style.display='none';
   var yearCount=2026-1960+1;
   var targetIdx=yearCount*3+Math.floor(Math.random()*yearCount);
   var reel=document.getElementById('slot-reel');
-  reel.style.transition='transform 3.2s cubic-bezier(0.12,0.57,0.14,0.99)';
-  reel.style.transform=`translateY(${-targetIdx*SLOT_H}px)`;
+  // Delay reel spin slightly so lever animation leads
+  setTimeout(function(){
+    reel.style.transition='transform 3.0s cubic-bezier(0.12,0.57,0.14,0.99)';
+    reel.style.transform=`translateY(${-targetIdx*SLOT_H}px)`;
+  },200);
   setTimeout(function(){
     slotSpinning=false;
     var year=slotYearList[targetIdx];G.slotYears.push(year);
     var el=document.getElementById('slot-result');
     el.textContent=year;el.style.display='block';el.style.color=G.teams[G.slotTeam].color;
-    document.getElementById('slot-spin-btn').style.display='none';
     document.getElementById('slot-next-btn').style.display='block';
     reel.querySelectorAll('.slot-item').forEach((item,i)=>{if(i===targetIdx)item.style.color=G.teams[G.slotTeam].color;});
-  },3200);
+  },3400);
 }
 function updateSlotUI(){
   var team=G.teams[G.slotTeam];
@@ -661,8 +672,11 @@ function updateSlotUI(){
 function nextSlotTeam(){
   G.slotTeam++;
   if(G.slotTeam>=G.teams.length){
-    G.teams.forEach((t,i)=>{t.years=[G.slotYears[i]];});
-    G.cur=G.slotYears.indexOf(Math.min(...G.slotYears));
+    // Only use first G.teams.length years (prevent multi-spin index overflow)
+    var validYears=G.slotYears.slice(0,G.teams.length);
+    G.teams.forEach((t,i)=>{t.years=[validYears[i]||1990];});
+    var minY=Math.min(...validYears);
+    G.cur=validYears.indexOf(minY); // always within bounds
     beginPlay();
   }else{updateSlotUI();initSlot();}
 }
@@ -971,7 +985,7 @@ function doReset(){
 // ══ UTILS ════════════════════════════════
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el){el.classList.add('active');G.screen=name;}}
 function showHint(msg){var el=document.getElementById('hint-toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
-function toggleCenter(){var gc=document.getElementById('game-center');var rots=['r0','r90','r180','r270'];var ci=rots.indexOf(gc.className.split(' ').find(c=>c.startsWith('r'))||'r0');gc.className=rots[(ci+1)%4];}
+function toggleCenter(){var gc=document.getElementById('game-center');gc.className=gc.className.includes('r180')?'r0':'r180';}
 function updateHole(){var o=document.getElementById('player-outer');var w=o.offsetWidth||412,mob=window.innerWidth<600;document.getElementById('play-hole').setAttribute('cx',mob?w-32:w-28);document.getElementById('play-hole').setAttribute('r',mob?18:22);document.getElementById('play-hole').setAttribute('cy',mob?128:124);}
 window.addEventListener('resize',updateHole);updateHole();
 function comment(type,team,extra){var others=G.teams.filter((_,i)=>i!==G.cur).map(t=>t.name);var pool=type==='p1'?CP1:type==='p2'?CP2:type==='tr'?CPI:CPW;var idx=G.commentIdx%pool.length;G.commentIdx++;try{if(type==='tr'&&extra)return pool[idx](extra[0],team.name,extra[1]);return pool[idx](team.name,others);}catch(e){return pool[idx](team.name);}}
