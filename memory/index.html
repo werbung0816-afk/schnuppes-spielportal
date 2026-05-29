@@ -193,8 +193,10 @@ input[type=file]{display:none}
     <input type="text" id="nameInput" placeholder="Name eingeben…" maxlength="16" autocomplete="off" onkeydown="if(event.key==='Enter')startJoin()">
     <button class="btn-primary" onclick="startJoin()">Spielen →</button>
     <div id="setupBadge" class="room-badge">⏳ Verbinde mit Firebase…</div>
-    <div id="resetHint" style="display:none;margin-top:8px;text-align:center">
-      <button onclick="forceResetRoom()" style="background:none;border:none;color:rgba(239,68,68,.6);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-decoration:underline">⚠️ Raum ist besetzt — zurücksetzen?</button>
+    <div id="resetHint" style="display:none;margin-top:10px">
+      <button onclick="forceResetRoom()" class="btn-danger" style="width:100%;padding:13px 17px;font-size:clamp(13px,2.5vw,15px)">
+        ⚠️ Altes Spiel zurücksetzen &amp; neu starten
+      </button>
     </div>
   </div>
 </div>
@@ -610,9 +612,13 @@ function watchSetupBadge(){
     const r=snap?.val(), el=document.getElementById('setupBadge');
     if(!el) return;
     const hint=document.getElementById('resetHint');
-    if(!r||r.status==='idle'||r.status==='finished'){
+    if(!r||r.status==='idle'){
       el.textContent='⚪ Kein Raum aktiv — du startest ihn';
       el.style.color='';
+      if(hint) hint.style.display='none';
+    }else if(r.status==='finished'){
+      el.textContent='✅ Letztes Spiel beendet — du startest neu';
+      el.style.color='rgba(74,222,128,.8)';
       if(hint) hint.style.display='none';
     }else if(r.status==='waiting'){
       const pc=Object.keys(r.players||{}).length;
@@ -622,7 +628,13 @@ function watchSetupBadge(){
       /* resetHint nur wenn Raum voll — nicht für normale Beitreter */
       if(hint) hint.style.display=full?'block':'none';
     }else if(r.status==='playing'){
-      el.textContent='🟡 Spiel läuft — beitreten möglich';
+      el.textContent='🟡 Spiel läuft — Raum ist aktiv';
+      el.style.color='rgba(251,191,36,.8)';
+      if(hint) hint.style.display='block';
+    }else{
+      /* Unbekannter / feststeckender Status */
+      el.textContent='🔴 Raum in unbekanntem Zustand ('+r.status+')';
+      el.style.color='rgba(239,68,68,.8)';
       if(hint) hint.style.display='block';
     }
   });
@@ -678,11 +690,22 @@ async function startJoin(){
     }
   }else if(room.status==='playing'){
     isHost=(room.hostId===myId);
-    rRef().off();
-    loadImgs(room);
-    showScreen('gameScreen');
-    if(room.game) renderGame(room);
-    watchGame();
+    const players=fixArr(room.players);
+    const amInGame=players.find(p=>p.id===myId);
+    if(amInGame||isHost){
+      rRef().off();
+      loadImgs(room);
+      showScreen('gameScreen');
+      if(room.game) renderGame(room);
+      watchGame();
+    }else{
+      /* Fremdes laufendes Spiel — Reset-Button bereits sichtbar */
+      if(btn){ btn.textContent='Spielen →'; btn.disabled=false; }
+      const b=document.getElementById('setupBadge');
+      if(b){ b.textContent='🔴 Spiel läuft bereits — du kannst nicht beitreten'; b.style.color='rgba(239,68,68,.8)'; }
+      const hint=document.getElementById('resetHint');
+      if(hint) hint.style.display='block';
+    }
   }
 }
 
