@@ -683,7 +683,7 @@ function nextSlotTeam(){
 
 // ══ PLAY ════════════════════════════════
 function beginPlay(){
-  G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.readyToReveal=false;clearCd();
+  G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.readyToReveal=false;G.hitsterStarted=false;clearCd();
   if(G.deck.length===0)G.deck=shuffle(filteredSongs());
   G.currentCard=G.deck.pop();
   showScreen('game');buildOptFilter();renderPanels();updateGameUI();pushState();
@@ -784,15 +784,10 @@ function cardNext(){
     }
     document.getElementById('sp-comment').textContent=comment('p2',G.teams[G.cur]);
     renderTimeline();document.getElementById('year-tl').classList.add('show');
-    G.readyToReveal=false;
+    G.readyToReveal=false;G.hitsterStarted=false;
     var btn=document.getElementById('main-btn');
     btn.textContent='Aufdecken';btn.className='btn btn-secondary';btn.disabled=true;
-    // 5s before HITSTER window opens, then 10s countdown
-    setTimeout(function(){
-      renderHitsterPanel();
-      document.getElementById('hitster-panel').classList.add('show');
-      startCd();
-    },5000);
+    // Timer starts only when active team selects a checkbox position
   }else if(G.phase===2){
     if(G.selBox===null){showHint('Bitte erst eine Position im Zeitstrahl markieren!');return;}
     if(!G.readyToReveal){showHint('Noch kurz warten – Countdown läuft noch!');return;}
@@ -869,6 +864,13 @@ function mkBox(idx){
     if(G.betMode!==null){placeBet(i);return;}
     document.querySelectorAll('.tl-box').forEach(b=>b.classList.remove('sel'));
     el.classList.add('sel');G.selBox=i;
+    // First selection by active team triggers HITSTER window + countdown
+    if(!G.hitsterStarted){
+      G.hitsterStarted=true;
+      renderHitsterPanel();
+      document.getElementById('hitster-panel').classList.add('show');
+      startCd();
+    }
     if(G.readyToReveal)document.getElementById('main-btn').disabled=false;
   };})(idx);
   return el;
@@ -907,7 +909,7 @@ function showTransition(){
   showScreen('transition');
 }
 function continueGame(){
-  G.cur=(G.cur+1)%G.teams.length;G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;
+  G.cur=(G.cur+1)%G.teams.length;G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;
   clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();
 }
 
