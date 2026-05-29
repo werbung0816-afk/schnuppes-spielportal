@@ -504,8 +504,9 @@ function initFirebase(){
 function setHost(){
   IS_HOST=true;
   REF.set({host:Date.now(),screen:'lobby'});
+  document.getElementById('lobby-status').textContent='Host · lädt …';
   if(G.songs.length===0)loadSongs();
-  else{document.getElementById('start-btn').disabled=getActiveSeats().length<2;document.getElementById('lobby-status').textContent=`${G.songs.length} Songs · Host`;}
+  else{document.getElementById('lobby-status').textContent=`${G.songs.length} Songs · Host`;updateStartBtn();}
 }
 function setGuest(){
   IS_HOST=false;
@@ -524,7 +525,7 @@ function loadSongs(){
   fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{
     G.songs=data.filter(s=>s.l);
     document.getElementById('lobby-status').textContent=`${G.songs.length} Songs · Host`;
-    document.getElementById('start-btn').disabled=getActiveSeats().length<2;
+    updateStartBtn();
   }).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});
 }
 function filteredSongs(){
@@ -575,7 +576,7 @@ function reassignSeatColors(){
   });
 }
 function getActiveSeats(){return SEAT_ORDER.filter(p=>G.seatCfg[p]!==null);}
-function updateStartBtn(){document.getElementById('start-btn').disabled=!IS_HOST||getActiveSeats().length<2||G.songs.length===0;}
+function updateStartBtn(){document.getElementById('start-btn').disabled=!IS_HOST||getActiveSeats().length<2;}
 
 // ══ FILTER ══════════════════════════════
 function toggleFlt(btn,isOpt){
@@ -606,6 +607,7 @@ function buildOptFilter(){
 function startGame(){
   var active=getActiveSeats();
   if(active.length<2){showHint('Mindestens 2 Teams am Tisch platzieren!');return;}
+  if(G.songs.length===0){showHint('Songs werden noch geladen – kurz warten!');return;}
   G.teams=active.map(function(pos,i){
     var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);
     return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,years:[],tokens:2};
