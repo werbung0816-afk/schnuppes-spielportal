@@ -233,9 +233,22 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);
 </head>
 <body>
 <div id="confetti"></div>
-<div class="version">v3.1</div>
+<div class="version">v3.3</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
+
+<!-- Fixed options button – always accessible, outside game-center rotation -->
+<button id="opt-fab" onclick="openOpt()" style="
+  position:fixed;bottom:18px;right:18px;z-index:840;
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(15,5,30,.9);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.6);font-size:20px;
+  cursor:pointer;display:none;
+  align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+  transition:all .2s;
+">⚙</button>
 
 <!-- OPTIONS PANEL -->
 <div id="opt-panel">
@@ -259,7 +272,7 @@ html,body{font-family:'Outfit',sans-serif;background:var(--bg);
 <div id="screen-lobby" class="screen active">
 <div class="card" style="max-width:500px;margin-top:24px">
   <div class="game-title">Chartster</div>
-  <div style="font-size:10px;color:rgba(255,255,255,.25);margin-top:-10px">v3.2</div>
+  <div style="font-size:10px;color:rgba(255,255,255,.25);margin-top:-10px">v3.3</div>
   <div class="sep"></div>
 
   <div class="setup-section">
@@ -985,7 +998,14 @@ function doReset(){
 }
 
 // ══ UTILS ════════════════════════════════
-function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el){el.classList.add('active');G.screen=name;}}
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  var el=document.getElementById('screen-'+name);
+  if(el){el.classList.add('active');G.screen=name;}
+  // FAB only visible during game
+  var fab=document.getElementById('opt-fab');
+  if(fab)fab.style.display=(name==='game')?'flex':'none';
+}
 function showHint(msg){var el=document.getElementById('hint-toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
 function toggleCenter(){var gc=document.getElementById('game-center');gc.className=gc.className.includes('r180')?'r0':'r180';}
 function updateHole(){var o=document.getElementById('player-outer');var w=o.offsetWidth||412,mob=window.innerWidth<600;document.getElementById('play-hole').setAttribute('cx',mob?w-32:w-28);document.getElementById('play-hole').setAttribute('r',mob?18:22);document.getElementById('play-hole').setAttribute('cy',mob?128:124);}
