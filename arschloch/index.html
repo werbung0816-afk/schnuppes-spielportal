@@ -140,18 +140,18 @@ input.field::placeholder{color:rgba(255,255,255,.28)}
 
 /* ── TABLE CARDS ── */
 .tc{
-  width:52px;height:74px;border-radius:8px;
-  background:linear-gradient(145deg,#1a1232,#0c0a1c);
-  border:1px solid rgba(255,255,255,.1);
+  width:54px;height:78px;border-radius:8px;
+  background:#f5f2ff;
+  border:1px solid rgba(0,0,0,.15);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  position:relative;box-shadow:0 4px 12px rgba(0,0,0,.4);flex-shrink:0;
+  position:relative;box-shadow:0 4px 14px rgba(0,0,0,.55);flex-shrink:0;
 }
-.tc .sv{font-size:8.5px;font-weight:800;position:absolute;line-height:1.1}
-.tc .sv.tl{top:3px;left:4px}
-.tc .sv.br{bottom:3px;right:4px;transform:rotate(180deg)}
-.tc .cs{font-size:22px;line-height:1}
-.tc.red .sv,.tc.red .cs{color:#ff4fd8}
-.tc.blk .sv,.tc.blk .cs{color:#53f6ff}
+.tc .sv{font-size:9px;font-weight:900;position:absolute;line-height:1.1}
+.tc .sv.tl{top:4px;left:5px}
+.tc .sv.br{bottom:4px;right:5px;transform:rotate(180deg)}
+.tc .cs{font-size:24px;line-height:1}
+.tc.red .sv,.tc.red .cs{color:#cc1111}
+.tc.blk .sv,.tc.blk .cs{color:#111133}
 
 /* ── ACTION BUTTONS ── */
 .action-row{display:flex;gap:9px}
@@ -166,27 +166,27 @@ input.field::placeholder{color:rgba(255,255,255,.28)}
 
 /* ── PLAY CARDS ── */
 .card{
-  width:68px;height:97px;border-radius:10px;
-  background:linear-gradient(145deg,#1a1232,#0c0a1c);
-  border:1px solid rgba(255,255,255,.11);
-  box-shadow:0 7px 18px rgba(0,0,0,.5),0 0 9px rgba(180,80,255,.08),inset 0 1px 3px rgba(255,255,255,.05);
+  width:72px;height:104px;border-radius:10px;
+  background:#f5f2ff;
+  border:1px solid rgba(0,0,0,.15);
+  box-shadow:0 7px 20px rgba(0,0,0,.55),0 0 10px rgba(180,80,255,.15);
   cursor:pointer;position:relative;transition:.17s;
   display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;
 }
-.card:hover{transform:translateY(-7px);box-shadow:0 13px 26px rgba(0,0,0,.6),0 0 14px rgba(180,80,255,.18)}
+.card:hover{transform:translateY(-8px);box-shadow:0 14px 28px rgba(0,0,0,.65),0 0 16px rgba(180,80,255,.25)}
 .card.sel{
-  transform:translateY(-13px);
-  border-color:#53f6ff;
-  box-shadow:0 0 18px rgba(83,246,255,.5),0 13px 28px rgba(0,0,0,.6);
+  transform:translateY(-14px);
+  border:2px solid #53f6ff;
+  box-shadow:0 0 20px rgba(83,246,255,.6),0 14px 30px rgba(0,0,0,.65);
 }
 .card.drag-src{opacity:.4}
-.card.drag-over{border-color:#ff4fd8;border-style:dashed}
-.card .sv{font-size:10.5px;font-weight:800;position:absolute;line-height:1.1}
-.card .sv.tl{top:5px;left:6px}
-.card .sv.br{bottom:5px;right:6px;transform:rotate(180deg)}
-.card .cs{font-size:30px;line-height:1}
-.card.red .sv,.card.red .cs{color:#ff4fd8}
-.card.blk .sv,.card.blk .cs{color:#53f6ff}
+.card.drag-over{border:2px dashed #ff4fd8}
+.card .sv{font-size:11px;font-weight:900;position:absolute;line-height:1.1}
+.card .sv.tl{top:5px;left:7px}
+.card .sv.br{bottom:5px;right:7px;transform:rotate(180deg)}
+.card .cs{font-size:32px;line-height:1}
+.card.red .sv,.card.red .cs{color:#cc1111}
+.card.blk .sv,.card.blk .cs{color:#111133}
 
 /* ── LOG ── */
 .log-area{max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:5px}
@@ -746,7 +746,7 @@ function leaveRoom(){
 }
 
 function doReset(){
-  if(confirm('Raum wirklich zurücksetzen?')){ROOM.remove();showScreen('setupScreen');}
+  ROOM.remove();showScreen('setupScreen');
 }
 function doSync(){
   ROOM.once('value',snap=>{const s=snap.val();if(s){gs=s;renderGame(s);}});
