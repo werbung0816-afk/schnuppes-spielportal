@@ -257,11 +257,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <div id="screen-lobby" class="screen active">
 <div class="card" style="max-width:560px;margin-top:24px">
   <div class="game-title" style="font-size:52px;letter-spacing:2px">CHARTSTER</div>
-  <div style="font-size:11px;color:rgba(255,255,255,.25);margin-top:-12px">v3.5.9</div>
   <div class="sep"></div>
   <div class="setup-section">
-    <div class="label">Sitzplätze (max. 4 Teams)</div>
-    <div class="ts-hint">Klick auf einen Platz · max. 4 Teams möglich</div>
     <div id="table-selector">
       <div class="ts-top-row">
         <div class="seat" data-pos="top-l" onclick="toggleSeat('top-l')"><div class="seat-circle">+</div><input class="seat-inp" placeholder="Teamname" onclick="event.stopPropagation()"></div>
@@ -424,14 +421,14 @@ function initFirebase(){
     if(!d||d.screen==='lobby'||!d.host||wasHost)setHost();else setGuest();
   }).catch(()=>setHost());
 }
-function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='Host · lädt …';if(G.songs.length===0)loadSongs();else{document.getElementById('lobby-status').textContent=`${G.songs.length} Songs · Host`;updateStartBtn();}}
+function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{document.getElementById('lobby-status').textContent=`${G.songs.length} Songs`;updateStartBtn();}}
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){if(d.screen==='game'&&d.teams){G.teams=d.teams;G.cur=d.cur||0;G.currentCard=d.card||null;showScreen('game');renderPanels();updateGameUI();}}
 function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.teams,cur:G.cur,card:G.currentCard||null});}
 initFirebase();
 
 // ── SONGS ──
-function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);document.getElementById('lobby-status').textContent=`${G.songs.length} Songs · Host`;updateStartBtn();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
+function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);document.getElementById('lobby-status').textContent=`${G.songs.length} Songs`;updateStartBtn();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
 function filteredSongs(){var s=G.songs.filter(x=>x.l);if(G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20'))return s;var dec=DECADES.filter(d=>G.filters.has(d));if(dec.length)s=s.filter(x=>dec.some(d=>{if(d==='70')return x.y>=1970&&x.y<1980;if(d==='80')return x.y>=1980&&x.y<1990;if(d==='90')return x.y>=1990&&x.y<2000;if(d==='00')return x.y>=2000&&x.y<2010;if(d==='10')return x.y>=2010&&x.y<2020;if(d==='20')return x.y>=2020;return false;}));if(G.filters.has('top10'))s=s.filter(x=>x.p<=10);else if(G.filters.has('top20'))s=s.filter(x=>x.p<=20);return s;}
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 
@@ -642,7 +639,7 @@ function openOpt(){buildOptFilter();document.getElementById('opt-panel').classLi
 function closeOpt(){document.getElementById('opt-panel').classList.remove('show');document.getElementById('opt-confirm').classList.remove('show');}
 function optNewSong(){closeOpt();clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();showHint('Schiedsrichter: Neuer Song! ⚖️');}
 function optResetPrompt(){document.getElementById('opt-confirm').classList.add('show');}
-function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';seat.querySelector('.seat-circle').textContent='+';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');document.getElementById('lobby-status').textContent=G.songs.length?`${G.songs.length} Songs · Host`:'Host';document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
+function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';seat.querySelector('.seat-circle').textContent='+';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');document.getElementById('lobby-status').textContent=G.songs.length?`${G.songs.length} Songs`:'';document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
 
 // ── UTILS ──
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el){el.classList.add('active');G.screen=name;}document.getElementById('opt-fab').style.display=(name==='game')?'flex':'none';}
