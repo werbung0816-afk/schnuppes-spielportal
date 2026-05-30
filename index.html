@@ -293,6 +293,23 @@ body::before{
 .card.glow-pink .card-glow-dot{ background:var(--pink); }
 .card.glow-lila .card-glow-dot{ background:var(--lila); }
 .card.glow-green .card-glow-dot{ background:var(--green); }
+.card.glow-orange .card-glow-dot{ background:var(--orange); }
+
+.card.glow-orange:hover{
+  box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(255,155,84,.2);
+  border-color:rgba(255,155,84,.35);
+}
+
+.card.glow-orange .card-title{
+  background:linear-gradient(90deg,var(--orange),var(--pink));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.card.glow-orange .cta-arrow{
+  background:rgba(255,155,84,.15);
+  color:var(--orange);
+}
 
 .section-label{
   position:relative;
@@ -346,6 +363,30 @@ body::before{
 
     <div class="card-desc">
       Würfeln, kombinieren und Bonuspunkte sichern. Der beliebte Klassiker mit Risiko, Taktik und perfekten Glücksmomenten.
+    </div>
+
+    <div class="card-divider"></div>
+
+    <div class="card-cta">
+      <span class="cta-label">Jetzt spielen</span>
+      <span class="cta-arrow">→</span>
+    </div>
+  </a>
+
+  <a class="card glow-lila" href="./chartster/index.html">
+    <div class="card-glow-dot"></div>
+    <div class="card-icon">🎵</div>
+
+    <div class="card-badges">
+      <span class="badge badge-online">🌐 Online</span>
+      <span class="badge badge-players">2–8 Spieler</span>
+      <span class="badge badge-local">📲 Tablet empfohlen</span>
+    </div>
+
+    <div class="card-title">Chartster</div>
+
+    <div class="card-desc">
+      Songs erraten und in die richtige Reihenfolge auf der Timeline bringen. Musikquiz mit Spotify — wer die Jahrzehnte kennt, gewinnt.
     </div>
 
     <div class="card-divider"></div>
@@ -425,6 +466,30 @@ body::before{
 
     <div class="card-desc">
       Das klassische Würfelspiel rund um Risiko, Punkteserien und den perfekten Wurf bis 10.000 Punkte.
+    </div>
+
+    <div class="card-divider"></div>
+
+    <div class="card-cta">
+      <span class="cta-label">Jetzt spielen</span>
+      <span class="cta-arrow">→</span>
+    </div>
+  </a>
+
+  <a class="card glow-orange" href="./arschloch/index.html">
+    <div class="card-glow-dot"></div>
+    <div class="card-icon">🂡</div>
+
+    <div class="card-badges">
+      <span class="badge badge-online">🌐 Online</span>
+      <span class="badge badge-players">3–6 Spieler</span>
+      <span class="badge badge-local">📱 Smartphone gut möglich</span>
+    </div>
+
+    <div class="card-title">Arschloch</div>
+
+    <div class="card-desc">
+      Wer zuerst alle Karten loswird, steigt auf — wer zuletzt übrig bleibt, darf sich den Titel verdienen. Gesellschaftsklassiker mit Rangordnung und Tauschpflicht.
     </div>
 
     <div class="card-divider"></div>
