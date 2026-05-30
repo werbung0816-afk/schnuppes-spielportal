@@ -1,1 +1,959 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Arschloch</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🃏</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Outfit',sans-serif;
+  background:
+    radial-gradient(circle at top left,rgba(143,95,255,.35),transparent 30%),
+    radial-gradient(circle at top right,rgba(255,79,216,.25),transparent 35%),
+    linear-gradient(180deg,#050111,#120523);
+  color:#fff;min-height:100vh;
+  user-select:none;-webkit-user-select:none;
+  overflow-x:hidden;
+}
 
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;padding:24px;align-items:center;justify-content:center;flex-direction:column;gap:20px}
+.screen.active{display:flex}
+
+/* ── LOGO ── */
+.logo-big{
+  font-size:clamp(52px,10vw,108px);font-weight:900;line-height:.9;text-align:center;
+  background:linear-gradient(90deg,#ff4fd8,#53f6ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.logo-sub{
+  font-size:clamp(9px,1.3vw,12px);color:rgba(255,255,255,.38);
+  text-align:center;max-width:680px;margin-top:8px;font-weight:300;line-height:1.6;
+}
+
+/* ── PANEL ── */
+.panel{
+  background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);
+  border-radius:28px;padding:24px;backdrop-filter:blur(18px);
+}
+
+/* ── INPUT ── */
+input.field{
+  width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);
+  border-radius:16px;padding:15px 20px;
+  font-family:'Outfit',sans-serif;font-size:19px;font-weight:600;color:#fff;
+  outline:none;transition:.2s;
+}
+input.field:focus{border-color:#53f6ff;box-shadow:0 0 14px rgba(83,246,255,.2)}
+input.field::placeholder{color:rgba(255,255,255,.28)}
+
+/* ── BUTTONS ── */
+.btn{
+  display:block;width:100%;padding:17px 28px;border:none;border-radius:22px;
+  font-family:'Outfit',sans-serif;font-size:19px;font-weight:800;color:#fff;
+  cursor:pointer;transition:.18s;text-align:center;
+}
+.btn+.btn{margin-top:10px}
+.btn:hover:not(.disabled){transform:translateY(-2px);filter:brightness(1.1)}
+.btn:active:not(.disabled){transform:translateY(0)}
+.btn.primary{background:linear-gradient(90deg,#53f6ff,#5677ff)}
+.btn.success{background:linear-gradient(90deg,#5eff9b,#24bf61)}
+.btn.danger{background:linear-gradient(90deg,#ff9b54,#ff5f6d)}
+.btn.ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14)}
+.btn.small{font-size:14px;padding:10px 16px;border-radius:14px}
+.btn.disabled{opacity:.35;cursor:not-allowed}
+.sep{border:none;border-top:1px solid rgba(255,255,255,.1);margin:12px 0}
+
+/* ── SETUP ── */
+#setupScreen .card-panel{width:min(440px,90vw)}
+
+/* ── WAIT ── */
+.wait-title{font-size:20px;font-weight:700;color:#53f6ff;margin-bottom:14px;text-align:center}
+.player-row{
+  display:flex;align-items:center;gap:10px;padding:11px 15px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;margin-bottom:8px;font-weight:600;font-size:15px;
+}
+.dot{width:9px;height:9px;border-radius:50%;background:#53f6ff;box-shadow:0 0 7px #53f6ff;flex-shrink:0}
+.utility-row{display:flex;gap:8px;margin-top:10px}
+.utility-row .btn{flex:1;font-size:13px;padding:9px 12px;border-radius:14px}
+
+/* ── GAME LAYOUT ── */
+#gameScreen{
+  display:none;min-height:100vh;gap:14px;padding:14px;
+  grid-template-columns:250px 1fr 250px;align-items:start;
+}
+#gameScreen.active{display:grid}
+@media(max-width:699px){
+  #gameScreen.active{grid-template-columns:1fr 1fr;grid-template-areas:"center center" "left right"}
+  #gameScreen .side-l{grid-area:left}
+  #gameScreen .side-r{grid-area:right}
+  #gameScreen .center-col{grid-area:center}
+}
+@media(max-width:449px){
+  #gameScreen.active{grid-template-columns:1fr;grid-template-areas:"center" "left" "right"}
+}
+
+/* ── SIDE PANELS ── */
+.side-panel{
+  background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.09);
+  border-radius:22px;padding:14px;backdrop-filter:blur(18px);
+  max-height:calc(100vh - 28px);overflow-y:auto;
+}
+.sec-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+
+/* ── OPPONENT CARD ── */
+.opp{
+  padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.2s;
+}
+.opp.turn{border-color:#53f6ff;box-shadow:0 0 18px rgba(83,246,255,.22)}
+.opp.done{opacity:.4}
+.opp-name{font-weight:700;font-size:15px}
+.opp-role{font-size:12px;color:#ff4fd8;font-weight:700;margin-top:2px}
+.mini-cards{display:flex;flex-wrap:wrap;gap:3px;margin-top:8px}
+.mini{width:20px;height:28px;background:linear-gradient(145deg,#241a36,#0c0a18);border-radius:3px;border:1px solid rgba(255,255,255,.09)}
+
+/* ── CENTER ── */
+.center-col{display:flex;flex-direction:column;gap:10px}
+
+/* ── STATUS ── */
+.status-bar{
+  background:rgba(143,95,255,.15);border:1px solid rgba(143,95,255,.28);
+  border-radius:15px;padding:11px 18px;font-size:15px;font-weight:600;text-align:center;
+}
+.my-turn{color:#53f6ff}
+
+/* ── TABLE ── */
+.table-area{
+  background:rgba(120,40,255,.06);border:1px solid rgba(220,120,255,.2);
+  box-shadow:0 0 35px rgba(180,80,255,.12) inset;
+  border-radius:26px;padding:18px;min-height:160px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+}
+.pile-info{font-size:13px;color:rgba(255,255,255,.45)}
+.pile-cards{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
+.empty-pile{color:rgba(255,255,255,.2);font-size:17px;font-weight:600}
+
+/* ── TABLE CARDS ── */
+.tc{
+  width:52px;height:74px;border-radius:8px;
+  background:linear-gradient(145deg,#1a1232,#0c0a1c);
+  border:1px solid rgba(255,255,255,.1);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;box-shadow:0 4px 12px rgba(0,0,0,.4);flex-shrink:0;
+}
+.tc .sv{font-size:8.5px;font-weight:800;position:absolute;line-height:1.1}
+.tc .sv.tl{top:3px;left:4px}
+.tc .sv.br{bottom:3px;right:4px;transform:rotate(180deg)}
+.tc .cs{font-size:22px;line-height:1}
+.tc.red .sv,.tc.red .cs{color:#ff4fd8}
+.tc.blk .sv,.tc.blk .cs{color:#53f6ff}
+
+/* ── ACTION BUTTONS ── */
+.action-row{display:flex;gap:9px}
+.action-row .btn{flex:1;margin:0;font-size:18px;padding:15px}
+
+/* ── HAND ── */
+.hand-panel{
+  background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.09);
+  border-radius:22px;padding:14px;backdrop-filter:blur(18px);
+}
+.hand-cards{display:flex;flex-wrap:wrap;gap:8px;min-height:60px;position:relative}
+
+/* ── PLAY CARDS ── */
+.card{
+  width:68px;height:97px;border-radius:10px;
+  background:linear-gradient(145deg,#1a1232,#0c0a1c);
+  border:1px solid rgba(255,255,255,.11);
+  box-shadow:0 7px 18px rgba(0,0,0,.5),0 0 9px rgba(180,80,255,.08),inset 0 1px 3px rgba(255,255,255,.05);
+  cursor:pointer;position:relative;transition:.17s;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;
+}
+.card:hover{transform:translateY(-7px);box-shadow:0 13px 26px rgba(0,0,0,.6),0 0 14px rgba(180,80,255,.18)}
+.card.sel{
+  transform:translateY(-13px);
+  border-color:#53f6ff;
+  box-shadow:0 0 18px rgba(83,246,255,.5),0 13px 28px rgba(0,0,0,.6);
+}
+.card.drag-src{opacity:.4}
+.card.drag-over{border-color:#ff4fd8;border-style:dashed}
+.card .sv{font-size:10.5px;font-weight:800;position:absolute;line-height:1.1}
+.card .sv.tl{top:5px;left:6px}
+.card .sv.br{bottom:5px;right:6px;transform:rotate(180deg)}
+.card .cs{font-size:30px;line-height:1}
+.card.red .sv,.card.red .cs{color:#ff4fd8}
+.card.blk .sv,.card.blk .cs{color:#53f6ff}
+
+/* ── LOG ── */
+.log-area{max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:5px}
+.log-entry{padding:7px 11px;border-radius:11px;background:rgba(255,255,255,.03);font-size:12px;color:rgba(255,255,255,.6)}
+
+/* ── ROLE BADGES ── */
+.rbadge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;margin-top:3px}
+.rb-boss{background:linear-gradient(90deg,#ffd700,#ffaa00);color:#000}
+.rb-viceboss{background:rgba(255,215,0,.18);color:#ffd700;border:1px solid rgba(255,215,0,.5)}
+.rb-bauer{background:rgba(255,255,255,.1);color:#bbb;border:1px solid rgba(255,255,255,.2)}
+.rb-viceass{background:rgba(255,100,0,.18);color:#ff7722;border:1px solid rgba(255,100,0,.5)}
+.rb-ass{background:linear-gradient(90deg,#700,#a00);color:#ffcccc}
+
+/* ── EXCHANGE SCREEN ── */
+#exchangeScreen .exbox{width:min(480px,90vw);text-align:center}
+.ex-title{font-size:clamp(32px,7vw,64px);font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ex-cd{font-size:56px;font-weight:900;color:#53f6ff;margin:16px 0}
+.ex-info{color:rgba(255,255,255,.6);font-size:15px;line-height:1.6}
+
+/* ── WIN OVERLAY ── */
+#winOverlay{
+  position:fixed;inset:0;display:none;
+  align-items:center;justify-content:center;flex-direction:column;gap:18px;
+  background:rgba(5,5,20,.92);z-index:9999;backdrop-filter:blur(14px);
+  padding:20px;
+}
+#winOverlay.show{display:flex}
+.win-title{
+  font-size:clamp(30px,8vw,68px);font-weight:900;text-align:center;
+  background:linear-gradient(90deg,#53f6ff,#ff4fd8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.rankings{width:min(500px,90vw);display:flex;flex-direction:column;gap:9px}
+.rank-row{
+  display:flex;align-items:center;gap:13px;
+  padding:13px 16px;border-radius:17px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+}
+.rank-num{font-size:26px;font-weight:900;width:38px;text-align:center;flex-shrink:0}
+.rank-info{flex:1}
+.rank-name{font-size:17px;font-weight:700}
+.rank-comment{font-size:12px;color:rgba(255,255,255,.45);margin-top:2px}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setupScreen" class="screen active">
+  <div style="text-align:center">
+    <div class="logo-big">Arschloch</div>
+    <div class="logo-sub">oder <em>auch international bekannt unter: President, Scum, Asshole, Arsehole, Rich Man Poor Man, Bum, Landlord, Emperors and Scum, Root Beer, Butthead, Capitalism, Warlords and Scumbags, Trouduc or Trou du Cul, Einer ist immer der Arsch, Hűbéres, Sluitspieren or Klootzakken</em></div>
+  </div>
+  <div class="panel card-panel" style="width:min(430px,90vw)">
+    <input id="nameInput" class="field" placeholder="Dein Name…" maxlength="18" autocomplete="off" style="margin-bottom:14px">
+    <button class="btn primary" onclick="joinRoom()">Raum betreten →</button>
+  </div>
+</div>
+
+<!-- WAIT -->
+<div id="waitScreen" class="screen">
+  <div class="panel" style="width:min(480px,90vw)">
+    <div class="wait-title">Warte auf Mitspieler…</div>
+    <div id="waitList"></div>
+    <div class="sep"></div>
+    <button id="btnStartAI" class="btn success disabled" onclick="startWithAI()">Gegen KI starten ▶</button>
+    <button class="btn ghost" onclick="leaveRoom()">← Verlassen</button>
+    <div class="utility-row">
+      <button class="btn small danger" onclick="doReset()">Reset</button>
+      <button class="btn small ghost" onclick="doSync()">Sync</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXCHANGE -->
+<div id="exchangeScreen" class="screen">
+  <div class="panel exbox">
+    <div class="ex-title">Karten drücken!</div>
+    <div id="exInfo" class="ex-info" style="margin:12px 0">Boss bekommt die besten Karten vom Arschloch…</div>
+    <div id="exCd" class="ex-cd">3</div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="gameScreen">
+  <!-- LEFT OPPONENTS -->
+  <div class="side-panel side-l">
+    <div class="sec-title">Mitspieler</div>
+    <div id="leftPlayers"></div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center-col">
+    <div id="statusBar" class="status-bar">Spiel lädt…</div>
+
+    <!-- Table -->
+    <div class="table-area">
+      <div id="pileInfo" class="pile-info" style="display:none"></div>
+      <div id="pileCards" class="pile-cards">
+        <div class="empty-pile">Wer führt aus?</div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-row">
+      <button id="btnPlay" class="btn primary disabled" onclick="doPlay()">Spielen</button>
+      <button id="btnPass" class="btn ghost disabled" onclick="doPass()">Passen</button>
+    </div>
+
+    <!-- My hand -->
+    <div class="hand-panel">
+      <div class="sec-title" style="margin-bottom:8px">Deine Karten (<span id="myCount">0</span>)</div>
+      <div id="myHand" class="hand-cards"></div>
+    </div>
+
+    <!-- Log + Utility -->
+    <div class="side-panel" style="max-height:150px;padding:12px">
+      <div class="sec-title">Spielverlauf</div>
+      <div id="gameLog" class="log-area"></div>
+    </div>
+    <div class="utility-row">
+      <button class="btn small danger" onclick="doReset()">Reset</button>
+      <button class="btn small ghost" onclick="doSync()">Sync</button>
+    </div>
+  </div>
+
+  <!-- RIGHT OPPONENTS -->
+  <div class="side-panel side-r">
+    <div class="sec-title">Gegner</div>
+    <div id="rightPlayers"></div>
+  </div>
+</div>
+
+<!-- WIN OVERLAY -->
+<div id="winOverlay">
+  <div class="win-title">Spiel vorbei! 🃏</div>
+  <div id="rankList" class="rankings"></div>
+  <button class="btn primary" style="width:min(280px,80vw);margin-top:8px" onclick="startNewRound()">Neue Runde ↺</button>
+  <button class="btn ghost small" style="width:min(280px,80vw)" onclick="doReset()">Raum zurücksetzen</button>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG & CONSTANTS
+// ═══════════════════════════════════════════════════════════════
+const FB_CFG = {
+  apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",
+  authDomain:"schnuppes-spielportal.firebaseapp.com",
+  databaseURL:"https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"schnuppes-spielportal",
+  storageBucket:"schnuppes-spielportal.firebasestorage.app",
+  messagingSenderId:"1022973500272",
+  appId:"1:1022973500272:web:f9e39d0dfd3c61c3c88db5"
+};
+firebase.initializeApp(FB_CFG);
+const db = firebase.database();
+const ROOM = db.ref('/arschloch/room1');
+
+const SUITS = ['♣','♠','♥','♦'];
+const VALS  = [7,8,9,10,11,12,13,14];
+const VN    = {7:'7',8:'8',9:'9',10:'10',11:'B',12:'D',13:'K',14:'A'};
+const AI_NAMES = ['Nici','Marco','Leni','Mia','Nele','Dani','Finn','Jonas','Sascha'];
+const ROLE_LBL = {boss:'👑 BOSS',viceboss:'🥈 Vize-BOSS',bauer:'🌾 Bauer',viceass:'😬 Vize-Arschloch',ass:'💩 Arschloch'};
+const ROLE_CLS = {boss:'rb-boss',viceboss:'rb-viceboss',bauer:'rb-bauer',viceass:'rb-viceass',ass:'rb-ass'};
+const WIN_CMT  = {
+  boss:['Unangefochtener König! 👑','Alle huldigen dir! 🏆','Was für eine Dominanz! 🌟'],
+  viceboss:['Fast auf dem Thron! 🥈','Vizekönig – auch nicht schlecht! ✨','Nur knapp hinter dem Boss! 👏'],
+  bauer:['Der solide Bauer! 🌾','Goldenes Mittelfeld! ⚖️','Kein Fisch, kein Fleisch 😄'],
+  viceass:['Knapp über dem Abgrund! 😬','Fast das Arschloch! 😅','Nächstes Mal klappt\'s! 💪'],
+  ass:['DU BIST DAS ARSCHLOCH! 💩','König des Schlamms! 👑💩','Der Titel ist unvergesslich… 😂']
+};
+
+// ═══════════════════════════════════════════════════════════════
+// LOCAL STATE
+// ═══════════════════════════════════════════════════════════════
+let myId   = localStorage.getItem('arschlochId');
+let myName = '';
+let gs     = null;   // current game state snapshot
+let selCards = [];
+let aiTimer  = null;
+
+if (!myId) {
+  myId = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  localStorage.setItem('arschlochId', myId);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CARD UTILS
+// ═══════════════════════════════════════════════════════════════
+const isRed = s => s==='♥'||s==='♦';
+
+function mkCard(suit,val,copy=0){ return {suit,val,id:`${suit}${val}x${copy}`}; }
+
+function mkDeck(n){
+  const d=[];
+  const copies = n>=5 ? 2 : 1;
+  for(let c=0;c<copies;c++) for(const s of SUITS) for(const v of VALS) d.push(mkCard(s,v,c));
+  return d;
+}
+
+function shuffle(d){ const a=[...d]; for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function sortHand(h){ return [...h].sort((a,b)=>a.val!==b.val?a.val-b.val:SUITS.indexOf(a.suit)-SUITS.indexOf(b.suit)); }
+
+function deal(deck,ids){
+  const hands={};ids.forEach(id=>hands[id]=[]);
+  deck.forEach((c,i)=>hands[ids[i%ids.length]].push(c));
+  ids.forEach(id=>hands[id]=sortHand(hands[id]));
+  return hands;
+}
+
+function groupByVal(hand){
+  const g={};
+  for(const c of hand){(g[c.val]=g[c.val]||[]).push(c);}
+  return Object.values(g).sort((a,b)=>a[0].val-b[0].val);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GAME INIT
+// ═══════════════════════════════════════════════════════════════
+function buildGame(playerData, prevRoles){
+  // playerData: [{id,name,isAI}]
+  const ids = playerData.map(p=>p.id);
+  const n   = ids.length;
+  const deck= shuffle(mkDeck(n));
+  const hands= deal(deck,ids);
+
+  const players={};
+  playerData.forEach(p=>{
+    players[p.id]={
+      name:p.name, isAI:!!p.isAI, connected:true,
+      hand:hands[p.id], cardCount:hands[p.id].length,
+      role: prevRoles?.[p.id]||null, finishPos:null
+    };
+  });
+
+  // Apply card exchange if roles exist
+  const hasRoles = prevRoles && Object.values(prevRoles).some(r=>r);
+  if(hasRoles) applyExchange(players, prevRoles, ids);
+
+  const start = ids[Math.floor(Math.random()*ids.length)];
+
+  return {
+    phase:'playing', playerOrder:ids, players,
+    pile:null, pileCount:0, pileVal:0, pileOwner:null,
+    passed:[], finishOrder:[], currentTurn:start,
+    log:['Runde beginnt! Viel Glück! 🃏'], roundNum:1,
+    hostId:ids[0], needsExchange:hasRoles,
+    lastUpdate:firebase.database.ServerValue.TIMESTAMP
+  };
+}
+
+function applyExchange(players, prevRoles, order){
+  // Find roles
+  const byRole={};
+  for(const id of order){
+    const r=prevRoles[id];
+    if(r) byRole[r]=id;
+  }
+  // Boss ↔ Ass: 2 cards
+  exchangeCards(players, byRole.boss, byRole.ass, 2);
+  // Viceboss ↔ Viceass: 1 card
+  exchangeCards(players, byRole.viceboss, byRole.viceass, 1);
+  // Update counts
+  for(const p of Object.values(players)) p.cardCount=p.hand?.length||0;
+}
+
+function exchangeCards(players, highId, lowId, n){
+  if(!highId||!lowId) return;
+  const high=players[highId], low=players[lowId];
+  if(!high||!low) return;
+
+  const lowBest  =[...low.hand].sort((a,b)=>b.val-a.val).slice(0,n);
+  const highWorst=[...high.hand].sort((a,b)=>a.val-b.val).slice(0,n);
+
+  const lbIds=lowBest.map(c=>c.id);
+  const hwIds=highWorst.map(c=>c.id);
+
+  low.hand  = sortHand([...low.hand.filter(c=>!lbIds.includes(c.id)), ...highWorst]);
+  high.hand = sortHand([...high.hand.filter(c=>!hwIds.includes(c.id)), ...lowBest]);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ROLES
+// ═══════════════════════════════════════════════════════════════
+function assignRoles(state){
+  const fo=state.finishOrder||[];
+  const n=fo.length;
+  const map={2:['boss','ass'],3:['boss','bauer','ass'],
+    4:['boss','viceboss','viceass','ass'],
+    5:['boss','viceboss','bauer','viceass','ass'],
+    6:['boss','viceboss','bauer','bauer','viceass','ass']};
+  const roles=map[n]||[];
+  fo.forEach((id,i)=>{ if(state.players[id]) state.players[id].role=roles[i]||null; });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TURN HELPERS
+// ═══════════════════════════════════════════════════════════════
+function nextActive(state, fromId){
+  const o=state.playerOrder;
+  let i=(o.indexOf(fromId)+1)%o.length;
+  for(let t=0;t<o.length;t++){
+    const id=o[i];
+    if(state.players[id]?.hand?.length>0) return id;
+    i=(i+1)%o.length;
+  }
+  return null;
+}
+
+function activePlayers(state){
+  return (state.playerOrder||[]).filter(id=>state.players[id]?.hand?.length>0);
+}
+
+function checkEnd(state){
+  const active=activePlayers(state);
+  if(active.length<=1){
+    if(active.length===1){
+      const lastId=active[0];
+      state.finishOrder=[...(state.finishOrder||[]),lastId];
+      state.players[lastId].finishPos=state.finishOrder.length;
+      state.log=[...(state.log||[]).slice(-25),`${state.players[lastId].name} ist fertig! (Platz ${state.players[lastId].finishPos})`];
+    }
+    state.phase='ended';
+    assignRoles(state);
+    return true;
+  }
+  return false;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PLAY / PASS
+// ═══════════════════════════════════════════════════════════════
+function executePlay(state, playerId, cards){
+  if(!cards||cards.length===0) return false;
+  const p=state.players[playerId];
+  const val=cards[0].val;
+  if(!cards.every(c=>c.val===val)) return false;
+
+  if(state.pile){
+    if(cards.length!==state.pileCount) return false;
+    if(val<=state.pileVal) return false;
+  }
+
+  const cIds=cards.map(c=>c.id);
+  p.hand=p.hand.filter(c=>!cIds.includes(c.id));
+  p.cardCount=p.hand.length;
+
+  state.pile=cards;
+  state.pileCount=cards.length;
+  state.pileVal=val;
+  state.pileOwner=playerId;
+  state.passed=[];
+
+  const cs=cards.map(c=>VN[c.val]+c.suit).join(' ');
+  addLog(state,`${p.name} spielt: ${cs}`);
+
+  if(p.hand.length===0){
+    state.finishOrder=[...(state.finishOrder||[]),playerId];
+    p.finishPos=state.finishOrder.length;
+    addLog(state,`${p.name} ist fertig! 🎉 (Platz ${p.finishPos})`);
+    if(!checkEnd(state)) nextTurn(state, playerId);
+  } else {
+    nextTurn(state, playerId);
+  }
+  return true;
+}
+
+function executePass(state, playerId){
+  if(!state.pile) return false;
+  if(!(state.passed||[]).includes(playerId)) state.passed=[...(state.passed||[]),playerId];
+  addLog(state,`${state.players[playerId].name} passt.`);
+
+  const others=activePlayers(state).filter(id=>id!==state.pileOwner&&id!==playerId&&!(state.passed||[]).includes(id));
+  const prev=(state.passed||[]);
+  const nonOwnerActive=activePlayers(state).filter(id=>id!==state.pileOwner);
+  const allPassed=nonOwnerActive.every(id=>state.passed.includes(id));
+
+  if(allPassed){
+    const winner=state.pileOwner;
+    addLog(state,`${state.players[winner].name} gewinnt den Stich! ✦`);
+    state.pile=null; state.pileCount=0; state.pileVal=0; state.pileOwner=null; state.passed=[];
+    if(state.players[winner]?.hand?.length>0){
+      state.currentTurn=winner;
+    } else {
+      nextTurn(state, winner);
+    }
+  } else {
+    nextTurn(state, playerId);
+  }
+  return true;
+}
+
+function nextTurn(state, fromId){
+  const next=nextActive(state, fromId);
+  state.currentTurn=next;
+}
+
+function addLog(state, msg){
+  state.log=[...(state.log||[]).slice(-24), msg];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AI
+// ═══════════════════════════════════════════════════════════════
+function aiChoose(state, aiId){
+  const hand=state.players[aiId].hand;
+  if(!state.pile){
+    // Lead: lowest value, fewest count
+    const g=groupByVal(hand);
+    return g[0].slice(0,1);
+  }
+  const cnt=state.pileCount, mv=state.pileVal;
+  const g=groupByVal(hand).filter(gr=>gr[0].val>mv&&gr.length>=cnt);
+  if(!g.length) return null;
+  return g[0].slice(0,cnt);
+}
+
+async function triggerAI(state){
+  if(!state||state.phase!=='playing') return;
+  const cur=state.players?.[state.currentTurn];
+  if(!cur?.isAI) return;
+  if(aiTimer) return;
+  aiTimer=setTimeout(async()=>{
+    aiTimer=null;
+    const snap=await ROOM.once('value');
+    const s=snap.val();
+    if(!s||s.phase!=='playing'||!s.players?.[s.currentTurn]?.isAI) return;
+    const aid=s.currentTurn;
+    const ns=JSON.parse(JSON.stringify(s));
+    const cards=aiChoose(ns,aid);
+    if(cards) executePlay(ns,aid,cards);
+    else executePass(ns,aid);
+    ns.lastUpdate=firebase.database.ServerValue.TIMESTAMP;
+    await ROOM.set(ns);
+    setTimeout(()=>{ if(gs?.phase==='playing'&&gs.players?.[gs.currentTurn]?.isAI) triggerAI(gs); },700);
+  },900);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ROOM MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+function joinRoom(){
+  const n=document.getElementById('nameInput').value.trim();
+  if(!n){document.getElementById('nameInput').focus();return;}
+  myName=n;
+  showScreen('waitScreen');
+
+  ROOM.on('value', snap=>{
+    const s=snap.val();
+    gs=s;
+
+    if(!s||s.phase==='ended'){
+      // Just set presence if no game / game ended
+      if(!s||(s.phase==='ended'&&!s.players?.[myId])){
+        setPresence();
+        renderWait(s);
+        return;
+      }
+    }
+
+    if(s.phase==='playing'||s.phase==='ended'){
+      if(s.players?.[myId]){
+        const screenToShow = (s.phase==='ended') ? 'gameScreen' : 'gameScreen';
+        showScreen('gameScreen');
+        renderGame(s);
+        if(s.phase==='ended') showWinOverlay(s);
+        else{document.getElementById('winOverlay').classList.remove('show'); triggerAI(s);}
+      } else {
+        setPresence(); renderWait(s);
+      }
+    } else {
+      setPresence(); renderWait(s);
+    }
+  });
+  setPresence();
+}
+
+function setPresence(){
+  ROOM.child('presence/'+myId).set({name:myName,connected:true});
+  ROOM.child('presence/'+myId).onDisconnect().remove();
+}
+
+function startWithAI(){
+  ROOM.child('presence').once('value', snap=>{
+    const pres=snap.val()||{};
+    const humans=Object.entries(pres).map(([id,d])=>({id,name:d.name,isAI:false}));
+    const usedNames=humans.map(p=>p.name);
+    const aiPool=AI_NAMES.filter(n=>!usedNames.includes(n)&&!usedNames.includes(n+' (KI)'));
+    const allP=[...humans];
+    let ai=0;
+    while(allP.length<4&&ai<aiPool.length){
+      allP.push({id:'ai_'+aiPool[ai].toLowerCase(),name:aiPool[ai]+' (KI)',isAI:true});ai++;
+    }
+    // Preserve last roles for exchange
+    ROOM.once('value', s2=>{
+      const prev=s2.val();
+      const prevRoles={};
+      if(prev?.players) for(const [id,p] of Object.entries(prev.players)) if(p.role) prevRoles[id]=p.role;
+      const game=buildGame(allP, Object.keys(prevRoles).length?prevRoles:null);
+      if(game.needsExchange){
+        game.phase='exchange';
+        ROOM.set(game).then(()=>runExchange());
+      } else {
+        ROOM.set(game);
+      }
+    });
+  });
+}
+
+function startNewRound(){
+  document.getElementById('winOverlay').classList.remove('show');
+  if(!gs||!gs.players) return;
+  const prevRoles={};
+  for(const [id,p] of Object.entries(gs.players)) if(p.role) prevRoles[id]=p.role;
+  const playerData=(gs.playerOrder||[]).map(id=>({
+    id, name:gs.players[id].name, isAI:gs.players[id].isAI
+  }));
+  const game=buildGame(playerData, Object.keys(prevRoles).length?prevRoles:null);
+  if(game.needsExchange){
+    game.phase='exchange';
+    showScreen('exchangeScreen');
+    ROOM.set(game).then(()=>runExchange());
+  } else {
+    ROOM.set(game);
+  }
+}
+
+function runExchange(){
+  let cd=3;
+  document.getElementById('exCd').textContent=cd;
+  showScreen('exchangeScreen');
+  const t=setInterval(()=>{
+    cd--;
+    document.getElementById('exCd').textContent=cd>0?cd:'→';
+    if(cd<=0){
+      clearInterval(t);
+      ROOM.once('value',snap=>{
+        const s=snap.val();
+        if(s&&s.phase==='exchange'){
+          s.phase='playing';
+          s.needsExchange=false;
+          s.lastUpdate=firebase.database.ServerValue.TIMESTAMP;
+          ROOM.set(s);
+        }
+      });
+    }
+  },1000);
+}
+
+function leaveRoom(){
+  ROOM.child('presence/'+myId).remove();
+  ROOM.off('value');
+  showScreen('setupScreen');
+}
+
+function doReset(){
+  if(confirm('Raum wirklich zurücksetzen?')){ROOM.remove();showScreen('setupScreen');}
+}
+function doSync(){
+  ROOM.once('value',snap=>{const s=snap.val();if(s){gs=s;renderGame(s);}});
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PLAYER ACTIONS
+// ═══════════════════════════════════════════════════════════════
+function doPlay(){
+  if(!gs||gs.currentTurn!==myId||gs.phase!=='playing') return;
+  if(!selCards.length){alert('Wähle mindestens eine Karte!');return;}
+  const state=JSON.parse(JSON.stringify(gs));
+  if(!executePlay(state,myId,selCards)){alert('Ungültiger Zug!');return;}
+  selCards=[];
+  state.lastUpdate=firebase.database.ServerValue.TIMESTAMP;
+  ROOM.set(state);
+}
+
+function doPass(){
+  if(!gs||gs.currentTurn!==myId||gs.phase!=='playing'||!gs.pile) return;
+  const state=JSON.parse(JSON.stringify(gs));
+  executePass(state,myId);
+  selCards=[];
+  state.lastUpdate=firebase.database.ServerValue.TIMESTAMP;
+  ROOM.set(state);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDERING
+// ═══════════════════════════════════════════════════════════════
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(name);
+  if(el) el.classList.add('active');
+  const gEl=document.getElementById('gameScreen');
+  if(name==='gameScreen'){gEl.classList.add('active');gEl.style.display='grid';}
+  else{gEl.classList.remove('active');gEl.style.display='none';}
+}
+
+function renderWait(s){
+  const pres=s?.presence||{};
+  const list=document.getElementById('waitList');
+  list.innerHTML='';
+  const ids=Object.keys(pres);
+  if(!ids.length){
+    list.innerHTML='<div style="color:rgba(255,255,255,.25);text-align:center;padding:10px;font-size:14px">Niemand im Raum</div>';
+  } else {
+    ids.forEach(id=>{
+      const d=document.createElement('div');d.className='player-row';
+      d.innerHTML=`<div class="dot"></div><span>${esc(pres[id].name)}${id===myId?' (Du)':''}</span>`;
+      list.appendChild(d);
+    });
+  }
+  const btn=document.getElementById('btnStartAI');
+  const isHost = ids.length>0 && ids[0]===myId;
+  btn.classList.toggle('disabled',!isHost);
+}
+
+function renderGame(s){
+  if(!s||!s.players) return;
+  // Status
+  const me=s.players[myId];
+  const statusEl=document.getElementById('statusBar');
+  if(s.currentTurn===myId&&s.phase==='playing'){
+    statusEl.innerHTML='<span class="my-turn">— du bist dran ✦</span>';
+  } else if(s.currentTurn&&s.players[s.currentTurn]){
+    statusEl.textContent=`${s.players[s.currentTurn].name} ist am Zug…`;
+  } else {
+    statusEl.textContent='Spiel läuft…';
+  }
+
+  // Pile
+  renderPile(s);
+
+  // Buttons
+  const myTurn=s.currentTurn===myId&&s.phase==='playing';
+  const hasPile=!!s.pile;
+  document.getElementById('btnPlay').classList.toggle('disabled',!myTurn);
+  document.getElementById('btnPass').classList.toggle('disabled',!myTurn||!hasPile);
+
+  // My hand
+  const myHand=me?.hand||[];
+  document.getElementById('myCount').textContent=myHand.length;
+  selCards=selCards.filter(sel=>myHand.some(c=>c.id===sel.id));
+  renderMyHand(myHand);
+
+  // Opponents
+  const others=(s.playerOrder||[]).filter(id=>id!==myId);
+  const half=Math.ceil(others.length/2);
+  renderOppList('leftPlayers', others.slice(0,half), s);
+  renderOppList('rightPlayers', others.slice(half), s);
+
+  // Log
+  renderLog(s.log||[]);
+}
+
+function renderPile(s){
+  const pEl=document.getElementById('pileCards');
+  const iEl=document.getElementById('pileInfo');
+  if(!s.pile||!s.pile.length){
+    pEl.innerHTML='<div class="empty-pile">Kein Stich — wer führt aus?</div>';
+    iEl.style.display='none';
+    return;
+  }
+  iEl.style.display='block';
+  iEl.textContent=`${s.pile.length}× ${VN[s.pile[0].val]} gespielt`;
+  pEl.innerHTML=s.pile.map(c=>tcHtml(c)).join('');
+}
+
+function tcHtml(c){
+  const cls=isRed(c.suit)?'red':'blk';
+  return `<div class="tc ${cls}"><div class="sv tl">${VN[c.val]}<br>${c.suit}</div><div class="cs">${c.suit}</div><div class="sv br">${VN[c.val]}<br>${c.suit}</div></div>`;
+}
+
+function renderMyHand(hand){
+  const el=document.getElementById('myHand');
+  el.innerHTML='';
+  hand.forEach((c,i)=>{
+    const div=document.createElement('div');
+    div.className=`card ${isRed(c.suit)?'red':'blk'}${selCards.some(s=>s.id===c.id)?' sel':''}`;
+    div.draggable=true;
+    div.dataset.idx=i;
+    div.innerHTML=`<div class="sv tl">${VN[c.val]}<br>${c.suit}</div><div class="cs">${c.suit}</div><div class="sv br">${VN[c.val]}<br>${c.suit}</div>`;
+    div.onclick=()=>toggleCard(c);
+    // Drag-to-reorder
+    div.addEventListener('dragstart',e=>{e.dataTransfer.setData('idx',i);div.classList.add('drag-src');});
+    div.addEventListener('dragend',()=>div.classList.remove('drag-src'));
+    div.addEventListener('dragover',e=>{e.preventDefault();div.classList.add('drag-over');});
+    div.addEventListener('dragleave',()=>div.classList.remove('drag-over'));
+    div.addEventListener('drop',e=>{
+      e.preventDefault();div.classList.remove('drag-over');
+      const from=parseInt(e.dataTransfer.getData('idx'));
+      if(from!==i&&gs?.players?.[myId]){
+        const h=[...gs.players[myId].hand];
+        const [m]=h.splice(from,1);h.splice(i,0,m);
+        ROOM.child('players/'+myId+'/hand').set(h);
+      }
+    });
+    // Touch drag (basic)
+    let touchCard=null,touchEl=null;
+    div.addEventListener('touchstart',e=>{touchCard=c;touchEl=div;},{passive:true});
+    el.appendChild(div);
+  });
+}
+
+function renderOppList(containerId, ids, s){
+  const el=document.getElementById(containerId);
+  el.innerHTML='';
+  if(!ids.length){el.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:12px;text-align:center;padding:8px">—</div>';return;}
+  ids.forEach(id=>{
+    const p=s.players[id];if(!p)return;
+    const isActive=s.currentTurn===id;
+    const done=p.finishPos!=null;
+    const div=document.createElement('div');
+    div.className=`opp${isActive?' turn':''}${done?' done':''}`;
+    const cnt=p.hand?.length||0;
+    const mini=Array(Math.min(cnt,12)).fill('<div class="mini"></div>').join('');
+    const rb=p.role?`<div class="rbadge ${ROLE_CLS[p.role]}">${ROLE_LBL[p.role]}</div>`:'';
+    div.innerHTML=`<div class="opp-name">${esc(p.name)}</div>${rb}<div style="font-size:12px;color:rgba(255,255,255,.35);margin-top:3px">${cnt} Karte(n)${isActive?' ✦':''}</div><div class="mini-cards">${mini}</div>`;
+    el.appendChild(div);
+  });
+}
+
+function renderLog(log){
+  const el=document.getElementById('gameLog');
+  el.innerHTML=[...log].reverse().slice(0,15).map(e=>`<div class="log-entry">${esc(e)}</div>`).join('');
+}
+
+function showWinOverlay(s){
+  const ov=document.getElementById('winOverlay');
+  const rl=document.getElementById('rankList');
+  ov.classList.add('show');
+  rl.innerHTML='';
+  const medals=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣'];
+  (s.finishOrder||[]).forEach((id,i)=>{
+    const p=s.players[id];if(!p)return;
+    const cmt=(WIN_CMT[p.role]||WIN_CMT.bauer)[Math.floor(Math.random()*3)];
+    const rb=p.role?`<div class="rbadge ${ROLE_CLS[p.role]}" style="margin-top:4px">${ROLE_LBL[p.role]}</div>`:'';
+    const d=document.createElement('div');d.className='rank-row';
+    d.innerHTML=`<div class="rank-num">${medals[i]||'·'}</div><div class="rank-info"><div class="rank-name">${esc(p.name)}${id===myId?' (Du)':''}</div><div class="rank-comment">${cmt}</div>${rb}</div>`;
+    rl.appendChild(d);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CARD SELECTION
+// ═══════════════════════════════════════════════════════════════
+function toggleCard(c){
+  if(!gs||gs.currentTurn!==myId||gs.phase!=='playing') return;
+  const idx=selCards.findIndex(s=>s.id===c.id);
+  if(idx>=0){ selCards.splice(idx,1); }
+  else {
+    if(selCards.length&&selCards[0].val!==c.val) selCards=[c];
+    else selCards.push(c);
+  }
+  renderMyHand(gs.players[myId].hand);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ═══════════════════════════════════════════════════════════════
+// ENTER KEY
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')joinRoom();});
+</script>
+</body>
+</html>
