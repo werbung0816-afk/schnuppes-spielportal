@@ -1,5 +1,1223 @@
 [
   {
+    "y": 1960,
+    "p": 1,
+    "a": "Rocco Granata",
+    "t": "Marina",
+    "l": "3pFT1UfjSdKwjIS0tWg7ka"
+  },
+  {
+    "y": 1960,
+    "p": 2,
+    "a": "Jan und Kjeld",
+    "t": "Banjo Boy",
+    "l": "1kGROXihBToYLr0e8xluur"
+  },
+  {
+    "y": 1960,
+    "p": 3,
+    "a": "Freddy",
+    "t": "Unter fremden Sternen (fährt ein weißes Schiff nach Hongkong)",
+    "l": "2VyY5ccrHiVzfp5TmID0qA"
+  },
+  {
+    "y": 1960,
+    "p": 4,
+    "a": "Lale Andersen",
+    "t": "Ein Schiff wird kommen",
+    "l": "4jllSZTfLEJDqvwYv6Crrk"
+  },
+  {
+    "y": 1960,
+    "p": 5,
+    "a": "Lolita",
+    "t": "Seemann, deine Heimat ist das Meer",
+    "l": "1x8SNZOPOU4pe278VvkAAL"
+  },
+  {
+    "y": 1960,
+    "p": 6,
+    "a": "Elvis Presley",
+    "t": "It's Now Or Never",
+    "l": "1XunTmhOcj3xwh4b8P3isX"
+  },
+  {
+    "y": 1960,
+    "p": 7,
+    "a": "Heidi Brühl",
+    "t": "Wir wollen niemals auseinandergehn",
+    "l": "7I58rchFLrSOjSslgQTIKz"
+  },
+  {
+    "y": 1960,
+    "p": 8,
+    "a": "Freddy",
+    "t": "Melodie der Nacht",
+    "l": "5v6mF7EfcsiMgwMEKeUz4E"
+  },
+  {
+    "y": 1960,
+    "p": 9,
+    "a": "René Carol",
+    "t": "Kein Land kann schöner sein",
+    "l": "3PhA46f3wgdVFx5AMHWyyL"
+  },
+  {
+    "y": 1960,
+    "p": 10,
+    "a": "Vico Torriani",
+    "t": "Kalkutta liegt am Ganges",
+    "l": "14NNLxV0FOeKy6tiG32t4L"
+  },
+  {
+    "y": 1961,
+    "p": 1,
+    "a": "Ralf Bendix und die kleine Elisabeth",
+    "t": "Babysitter-Boogie",
+    "l": "2qSeSaDKDssEuHw5CnZjQB"
+  },
+  {
+    "y": 1961,
+    "p": 2,
+    "a": "Billy Vaughn",
+    "t": "Wheels",
+    "l": "2RVrL0fZ7O0mwdyWlwjyLW"
+  },
+  {
+    "y": 1961,
+    "p": 3,
+    "a": "Gus Backus",
+    "t": "Da sprach der alte Häuptling",
+    "l": "1C0tAkrpNoV86SO7M1KsDZ"
+  },
+  {
+    "y": 1961,
+    "p": 4,
+    "a": "Nana Mouskouri",
+    "t": "Weiße Rosen aus Athen",
+    "l": "1dhjer579Kbkv1WAb8kZP5"
+  },
+  {
+    "y": 1961,
+    "p": 5,
+    "a": "Die Blue Diamonds",
+    "t": "Ramona",
+    "l": "35Uzwsuco6VG2OB1M6wRyy"
+  },
+  {
+    "y": 1961,
+    "p": 7,
+    "a": "Freddy",
+    "t": "La Paloma",
+    "l": "4Rl9e7CD7Gj7cfTWRS2HIr"
+  },
+  {
+    "y": 1961,
+    "p": 8,
+    "a": "Jan und Kjeld",
+    "t": "Hello Mary Lou",
+    "l": "2WcGvzYTUJJwKixUVev6yP"
+  },
+  {
+    "y": 1961,
+    "p": 9,
+    "a": "Elvis Presley",
+    "t": "Wooden Heart (muss i denn...)",
+    "l": "5QWQ9ChSbNDTSx1iZp961C"
+  },
+  {
+    "y": 1961,
+    "p": 10,
+    "a": "Ivo Robić",
+    "t": "Mit 17 fängt das Leben erst an",
+    "l": "65tomV0eb9z1PYs44zvtLq"
+  },
+  {
+    "y": 1962,
+    "p": 1,
+    "a": "Bob Moore und sein Orchester",
+    "t": "Mexico",
+    "l": "7KkRdt5G4MsF1Dm0QobdRZ"
+  },
+  {
+    "y": 1962,
+    "p": 2,
+    "a": "Pat Boone",
+    "t": "Speedy Gonzales",
+    "l": "3TmnUIbelFiDzrhZqavHU0"
+  },
+  {
+    "y": 1962,
+    "p": 3,
+    "a": "Mina",
+    "t": "Heißer Sand",
+    "l": "0p2Qzeu7GrioJwpRgr2HfU"
+  },
+  {
+    "y": 1962,
+    "p": 4,
+    "a": "Conny Froboess",
+    "t": "Zwei kleine Italiener",
+    "l": "2v3TG35plidR486Cltpgxs"
+  },
+  {
+    "y": 1962,
+    "p": 5,
+    "a": "Nana Mouskouri",
+    "t": "Einmal weht der Südwind wieder",
+    "l": "3l6PEGhQ5JcJijJL2104Ix"
+  },
+  {
+    "y": 1962,
+    "p": 7,
+    "a": "Caterina & Silvio",
+    "t": "The Peppermint-Twist",
+    "l": "2yNBOZBNn1GGNLDwP6pdpN"
+  },
+  {
+    "y": 1962,
+    "p": 8,
+    "a": "Freddy",
+    "t": "Alo Ahe",
+    "l": "6VZZ8llz7ClbwEjk6rbODU"
+  },
+  {
+    "y": 1962,
+    "p": 9,
+    "a": "The Waikiki's",
+    "t": "Hawai Tattoo",
+    "l": "6hPqV5q5hBMT7SXMXQJXV8"
+  },
+  {
+    "y": 1962,
+    "p": 10,
+    "a": "Gus Backus",
+    "t": "Sauerkraut-Polka",
+    "l": "1Svkz5tr4nvWlKDCgjfS7e"
+  },
+  {
+    "y": 1963,
+    "p": 1,
+    "a": "Freddy",
+    "t": "Junge, komm bald wieder",
+    "l": "4agMrs0Xv2x24I6jme8x8d"
+  },
+  {
+    "y": 1963,
+    "p": 2,
+    "a": "Manuela",
+    "t": "Schuld war nur der Bossa Nova",
+    "l": "1CvxZLhcpg33Wk892MJRUC"
+  },
+  {
+    "y": 1963,
+    "p": 3,
+    "a": "Billy Mo",
+    "t": "Ich kauf' mir lieber einen Tirolerhut",
+    "l": "1v207ZF2NQmkp1bp6ehphg"
+  },
+  {
+    "y": 1963,
+    "p": 4,
+    "a": "Connie Francis",
+    "t": "Barcarole in der Nacht",
+    "l": "3q4x6vBWYXNTCPwd8bzliG"
+  },
+  {
+    "y": 1963,
+    "p": 5,
+    "a": "Gitte",
+    "t": "Ich will 'nen Cowboy als Mann",
+    "l": "1UGoPlmTSw058fvCMzdEC8"
+  },
+  {
+    "y": 1963,
+    "p": 6,
+    "a": "Renate und Werner Leismann",
+    "t": "Gaucho Mexicano",
+    "l": "56RTuYzRmpOaLlB6lNJxyc"
+  },
+  {
+    "y": 1963,
+    "p": 7,
+    "a": "Die Tahiti-Tamourés",
+    "t": "Wini-Wini",
+    "l": "2NLOe1cJU8sJvc6ys67WHO"
+  },
+  {
+    "y": 1963,
+    "p": 8,
+    "a": "Peter Alexander",
+    "t": "Wenn erst der Abend kommt",
+    "l": "6EPp4F9dQa33zXP0bUoPuI"
+  },
+  {
+    "y": 1963,
+    "p": 9,
+    "a": "Gitte & Rex Gildo",
+    "t": "Vom Stadtpark die Laternen",
+    "l": "2ZSuDeejvXecDxuQuUGCHI"
+  },
+  {
+    "y": 1963,
+    "p": 10,
+    "a": "Peter Hinnen",
+    "t": "Siebentausend Rinder",
+    "l": "4u5ESVCB3rZW4dkvFwl05B"
+  },
+  {
+    "y": 1964,
+    "p": 1,
+    "a": "Siw Malmkvist",
+    "t": "Liebeskummer lohnt sich nicht",
+    "l": "5wfSJoeeGeyovIOYHyqi2O"
+  },
+  {
+    "y": 1964,
+    "p": 2,
+    "a": "Bernd Spier",
+    "t": "Das kannst du mir nicht verbieten",
+    "l": "4clhnfXxJk4QBnxz5J5iqA"
+  },
+  {
+    "y": 1964,
+    "p": 3,
+    "a": "Ronny",
+    "t": "Oh My Darling Caroline",
+    "l": "7CbCLHNK5e2IVjLwtZFoik"
+  },
+  {
+    "y": 1964,
+    "p": 4,
+    "a": "The Beatles",
+    "t": "I Want To Hold Your Hand",
+    "l": "5Qe7NHxeLAn8KoLTNLSdwe"
+  },
+  {
+    "y": 1964,
+    "p": 5,
+    "a": "Freddy",
+    "t": "Gib mir dein Wort",
+    "l": "288j7xnAwXx5bJpPqnpnkv"
+  },
+  {
+    "y": 1964,
+    "p": 6,
+    "a": "Drafi Deutscher And His Magics",
+    "t": "Shake Hands",
+    "l": "79xqy8w6JtDhjd5QdQ7gFH"
+  },
+  {
+    "y": 1964,
+    "p": 7,
+    "a": "Marika Kilius",
+    "t": "Wenn die Cowboys träumen",
+    "l": "5KVjudfEC4rnaERCGvmAav"
+  },
+  {
+    "y": 1964,
+    "p": 8,
+    "a": "Cliff Richard",
+    "t": "Sag \"No\" zu ihm",
+    "l": "1fMRCGWx23CpjauG0Dh4Bx"
+  },
+  {
+    "y": 1964,
+    "p": 9,
+    "a": "Sœur Sourire",
+    "t": "Dominique",
+    "l": "76G41wBgGkynvmqiIhgCig"
+  },
+  {
+    "y": 1964,
+    "p": 10,
+    "a": "Trini Lopez",
+    "t": "A-me-ri-ca",
+    "l": "0PSPuZSZMk8efucxlF4Gq2"
+  },
+  {
+    "y": 1965,
+    "p": 1,
+    "a": "Nini Rosso",
+    "t": "Il silenzio - Abschiedsmelodie",
+    "l": "7IWLLvgCEy5jVnX4sy32OH"
+  },
+  {
+    "y": 1965,
+    "p": 2,
+    "a": "Petula Clark",
+    "t": "Downtown",
+    "l": "6S55C80YzjhSrCRRd1p80b"
+  },
+  {
+    "y": 1965,
+    "p": 3,
+    "a": "Bernd Spier",
+    "t": "Das war mein schönster Tanz",
+    "l": "2BHfvwa7gxhN7h0rxQMubR"
+  },
+  {
+    "y": 1965,
+    "p": 4,
+    "a": "Sam The Sham And The Pharaohs",
+    "t": "Wooly Bully",
+    "l": "4GNmvOYZW11lGzcZm0FKGY"
+  },
+  {
+    "y": 1965,
+    "p": 5,
+    "a": "Wanda Jackson",
+    "t": "Santo Domingo",
+    "l": "757G3fxURaYdvqGTRfycZC"
+  },
+  {
+    "y": 1965,
+    "p": 6,
+    "a": "Die Five Tops",
+    "t": "Rag Doll",
+    "l": "2BGh0lRjj7HouRLeoZqLFB"
+  },
+  {
+    "y": 1965,
+    "p": 7,
+    "a": "France Gall",
+    "t": "Poupée de cire, poupée de son",
+    "l": "5kLCC1MMxOACV632KrSAS3"
+  },
+  {
+    "y": 1965,
+    "p": 8,
+    "a": "Roy Black",
+    "t": "Du bist nicht allein",
+    "l": "2ukIzpSbG2dZorsz9rOu5p"
+  },
+  {
+    "y": 1965,
+    "p": 9,
+    "a": "Casey Jones & The Governors",
+    "t": "Don't Ha Ha",
+    "l": "20toycGlGhM6JT6ezhQTpH"
+  },
+  {
+    "y": 1965,
+    "p": 10,
+    "a": "Peggy March",
+    "t": "Mit 17 hat man noch Träume",
+    "l": "17V9Hldsed4MOv9uhPu2lz"
+  },
+  {
+    "y": 1966,
+    "p": 1,
+    "a": "Frank Sinatra",
+    "t": "Strangers In The Night",
+    "l": "74VR3AkGPhbYXnxcOYa16x"
+  },
+  {
+    "y": 1966,
+    "p": 2,
+    "a": "Freddy",
+    "t": "Hundert Mann und ein Befehl",
+    "l": "3EXmn5KC3ZVsNr5nCqzrmP"
+  },
+  {
+    "y": 1966,
+    "p": 3,
+    "a": "Nancy Sinatra",
+    "t": "These Boots Are Made For Walkin'",
+    "l": "2PneNdtypG6XcgmWmGd9FI"
+  },
+  {
+    "y": 1966,
+    "p": 4,
+    "a": "The Mamas & The Papas",
+    "t": "Monday Monday",
+    "l": "3EFb1qDgIqf9MegIryKtDj"
+  },
+  {
+    "y": 1966,
+    "p": 5,
+    "a": "Chris Andrews",
+    "t": "Yesterday Man",
+    "l": "4uCibZQ4lF8I9O4va2Jlma"
+  },
+  {
+    "y": 1966,
+    "p": 6,
+    "a": "The Beach Boys",
+    "t": "Barbara Ann",
+    "l": "2KOt2JrCB720UxIbyzweQo"
+  },
+  {
+    "y": 1966,
+    "p": 7,
+    "a": "The Beatles",
+    "t": "Michelle",
+    "l": "5By7Pzgl6TMuVJG168VWzS"
+  },
+  {
+    "y": 1966,
+    "p": 8,
+    "a": "Roy Black",
+    "t": "Leg dein Herz in meine Hände",
+    "l": "1wL1hoV323jmYwqHaOTkmP"
+  },
+  {
+    "y": 1966,
+    "p": 9,
+    "a": "The Beach Boys",
+    "t": "Sloop John B",
+    "l": "72fAewq2UVWSf3RjtqICdS"
+  },
+  {
+    "y": 1966,
+    "p": 10,
+    "a": "Roy Black",
+    "t": "Ganz in Weiss",
+    "l": "6EbtwJ2vOScM1SJgIx8xjy"
+  },
+  {
+    "y": 1967,
+    "p": 2,
+    "a": "Sandie Shaw",
+    "t": "Puppet On A String",
+    "l": "7f5w4aiYgVZrp9w4bNaBLu"
+  },
+  {
+    "y": 1967,
+    "p": 3,
+    "a": "Roy Black",
+    "t": "Frag nur dein Herz",
+    "l": "7GETAd5Aop3zLYlWcZ0kqj"
+  },
+  {
+    "y": 1967,
+    "p": 4,
+    "a": "Roy Black",
+    "t": "Meine Liebe zu dir",
+    "l": "7lMN9To1BkoMu555648Svn"
+  },
+  {
+    "y": 1967,
+    "p": 5,
+    "a": "David Garrick",
+    "t": "Dear Mrs. Applebee",
+    "l": "5A4aAipcocirfcRKWRwGL8"
+  },
+  {
+    "y": 1967,
+    "p": 6,
+    "a": "Ronny",
+    "t": "Laß die Sonne wieder scheinen",
+    "l": "3yqdSDt2LkjZApZP5Pv0Xh"
+  },
+  {
+    "y": 1967,
+    "p": 7,
+    "a": "Whistling Jack Smith",
+    "t": "I Was Kaiser Bill's Batman",
+    "l": "26fbE2unExzQVLFO73EgzV"
+  },
+  {
+    "y": 1967,
+    "p": 8,
+    "a": "The Monkees",
+    "t": "I'm A Believer",
+    "l": "3G7tRC24Uh09Hmp1KZ7LQ2"
+  },
+  {
+    "y": 1967,
+    "p": 9,
+    "a": "The Rolling Stones",
+    "t": "Let's Spend The Night Together",
+    "l": "1QLr0zOu6fv5hLEHOwdr21"
+  },
+  {
+    "y": 1967,
+    "p": 10,
+    "a": "Herman's Hermits",
+    "t": "No Milk Today",
+    "l": "02Y0CtzmhTLjTOg0cWvAhq"
+  },
+  {
+    "y": 1968,
+    "p": 1,
+    "a": "Heintje",
+    "t": "Mama",
+    "l": "1QTi1rZx1VOWcM4T2wD49V"
+  },
+  {
+    "y": 1968,
+    "p": 2,
+    "a": "Heintje",
+    "t": "Du sollst nicht weinen",
+    "l": "7ucyvAOZW5Gx0F74Qs5VA0"
+  },
+  {
+    "y": 1968,
+    "p": 3,
+    "a": "Tom Jones",
+    "t": "Delilah",
+    "l": "2v8B8d17Xxu9uLU5sNiHSL"
+  },
+  {
+    "y": 1968,
+    "p": 4,
+    "a": "Peter Alexander",
+    "t": "Der letzte Walzer",
+    "l": "74CGZLcorfbOjMi02pz6xm"
+  },
+  {
+    "y": 1968,
+    "p": 5,
+    "a": "Peter Alexander",
+    "t": "Delilah",
+    "l": "4lHT8DtjZqMMDUX96vUgTs"
+  },
+  {
+    "y": 1968,
+    "p": 6,
+    "a": "Tom Jones",
+    "t": "Help Yourself",
+    "l": "6L8CWcj8KIdz5SMhinN4CO"
+  },
+  {
+    "y": 1968,
+    "p": 7,
+    "a": "Udo Jürgens",
+    "t": "Cotton Fields",
+    "l": "0oMBx5MjA3Cjf6IuRFfxzR"
+  },
+  {
+    "y": 1968,
+    "p": 8,
+    "a": "Roy Black",
+    "t": "Bleib bei mir",
+    "l": "729sjfqaj9wchmnjwGWq9T"
+  },
+  {
+    "y": 1968,
+    "p": 9,
+    "a": "Dorthe",
+    "t": "Sind Sie der Graf von Luxemburg?",
+    "l": "2jvPETfvUp63D05WMRR5lV"
+  },
+  {
+    "y": 1968,
+    "p": 10,
+    "a": "Heintje",
+    "t": "Heidschi Bumbeidschi",
+    "l": "5UXOADvTAmLHYJVApg0UtV"
+  },
+  {
+    "y": 1969,
+    "p": 1,
+    "a": "Barry Ryan",
+    "t": "Eloise",
+    "l": "6z9XVXX8AXxVunhocuLTMe"
+  },
+  {
+    "y": 1969,
+    "p": 2,
+    "a": "The Edwin Hawkins Singers",
+    "t": "Oh, Happy Day",
+    "l": "34yIb7hw5SuR80au1BHTtt"
+  },
+  {
+    "y": 1969,
+    "p": 3,
+    "a": "Sir Douglas Quintet",
+    "t": "Mendocino",
+    "l": "229NClBYlLJlBhM6yGGwoi"
+  },
+  {
+    "y": 1969,
+    "p": 6,
+    "a": "Roy Black",
+    "t": "Das Mädchen Carina",
+    "l": "3lr9IYIhu90YYJKuqBC6f3"
+  },
+  {
+    "y": 1969,
+    "p": 7,
+    "a": "Roy Black",
+    "t": "Ich denk' an dich",
+    "l": "3N3KtyPsqe5g0mWnrvDb80"
+  },
+  {
+    "y": 1969,
+    "p": 8,
+    "a": "Chris Andrews",
+    "t": "Pretty Belinda",
+    "l": "1XMaCb2dtzJ79evyclfhaA"
+  },
+  {
+    "y": 1969,
+    "p": 9,
+    "a": "Elvis Presley",
+    "t": "In The Ghetto",
+    "l": "7KWoeBqSdZHEloYKVxssfG"
+  },
+  {
+    "y": 1969,
+    "p": 10,
+    "a": "Michael Holm",
+    "t": "Mendocino",
+    "l": "7lBO5RpWhr6yPUwWkXHsWf"
+  },
+  {
+    "y": 1970,
+    "p": 1,
+    "a": "Simon & Garfunkel",
+    "t": "El condor pasa",
+    "l": "1eN42Q7IWRzRBq8eW2Y2TE"
+  },
+  {
+    "y": 1970,
+    "p": 2,
+    "a": "Peter Maffay",
+    "t": "Du",
+    "l": "6fFshpRdAV1MHSpzXP3Yyk"
+  },
+  {
+    "y": 1970,
+    "p": 3,
+    "a": "The Soulful Dynamics",
+    "t": "Mademoiselle Ninette",
+    "l": "5nNT62MavTfaL4OJm3k1BK"
+  },
+  {
+    "y": 1970,
+    "p": 4,
+    "a": "Roy Black",
+    "t": "Dein schönstes Geschenk",
+    "l": "1fx8Zs277kU1bxTUFlHBWi"
+  },
+  {
+    "y": 1970,
+    "p": 5,
+    "a": "Mungo Jerry",
+    "t": "In The Summertime",
+    "l": "36xVTZU8HMpcgEdlJ4I3Kv"
+  },
+  {
+    "y": 1970,
+    "p": 6,
+    "a": "The Beatles",
+    "t": "Let It Be",
+    "l": "7iN1s7xHE4ifF5povM6A48"
+  },
+  {
+    "y": 1970,
+    "p": 7,
+    "a": "Simon & Garfunkel",
+    "t": "Cecilia",
+    "l": "6QhXQOpyYvbpdbyjgAqKdY"
+  },
+  {
+    "y": 1970,
+    "p": 8,
+    "a": "Miguel Rios",
+    "t": "A Song Of Joy",
+    "l": "35axcNSnlqi2Eh4S5fFYxi"
+  },
+  {
+    "y": 1970,
+    "p": 9,
+    "a": "Christie",
+    "t": "Yellow River",
+    "l": "4VnzKUBMB6cvog8Jvv1few"
+  },
+  {
+    "y": 1970,
+    "p": 10,
+    "a": "Frijid Pink",
+    "t": "House Of The Rising Sun",
+    "l": "4tRxP78WiW3f7ta95ZQH2O"
+  },
+  {
+    "y": 1971,
+    "p": 1,
+    "a": "Danyel Gérard",
+    "t": "Butterfly",
+    "l": "1uLzTx9UBgcw9xVQ7Zq3Fi"
+  },
+  {
+    "y": 1971,
+    "p": 2,
+    "a": "Middle Of The Road",
+    "t": "Chirpy Chirpy Cheep Cheep",
+    "l": "2ZAqFu7QLIoNXSkvpwrKMU"
+  },
+  {
+    "y": 1971,
+    "p": 3,
+    "a": "Creedence Clearwater Revival",
+    "t": "Hey Tonight",
+    "l": "3UrGEZVC2bbMfVcI0DGOlB"
+  },
+  {
+    "y": 1971,
+    "p": 4,
+    "a": "Roy Black",
+    "t": "Für dich allein (Du kannst nicht alles haben)",
+    "l": "7IOv9BQg9Dku1m61avupBH"
+  },
+  {
+    "y": 1971,
+    "p": 5,
+    "a": "Neil Diamond",
+    "t": "I Am... I Said",
+    "l": "4wOKTOwGVrie2GIbCMEe7U"
+  },
+  {
+    "y": 1971,
+    "p": 6,
+    "a": "Wolfgang",
+    "t": "Abraham (Das Lied vom Trödler)",
+    "l": "1ZyY0Xq0YHkGFMz5deAvkp"
+  },
+  {
+    "y": 1971,
+    "p": 7,
+    "a": "George Harrison",
+    "t": "My Sweet Lord",
+    "l": "0KZodeWxqxd88F9wY1cqgs"
+  },
+  {
+    "y": 1971,
+    "p": 8,
+    "a": "Lynn Anderson",
+    "t": "Rose Garden",
+    "l": "5YwgJ6lpZ3SiAQwBEpjqey"
+  },
+  {
+    "y": 1971,
+    "p": 9,
+    "a": "Tony Marshall",
+    "t": "Schöne Maid",
+    "l": "5udRth9qdISXgpmovT3Ysc"
+  },
+  {
+    "y": 1971,
+    "p": 10,
+    "a": "Peter Alexander",
+    "t": "Hier ist ein Mensch",
+    "l": "1WLo4pkRKaTIfFFioLIJKF"
+  },
+  {
+    "y": 1972,
+    "p": 1,
+    "a": "Tony Marshall",
+    "t": "Komm gib mir deine Hand",
+    "l": "1Sn4jjSazbNgpugXmKvchP"
+  },
+  {
+    "y": 1972,
+    "p": 2,
+    "a": "The Cats",
+    "t": "One Way Wind",
+    "l": "2TUGqSnkaIQylLanv1UWBr"
+  },
+  {
+    "y": 1972,
+    "p": 3,
+    "a": "Middle Of The Road",
+    "t": "Sacramento",
+    "l": "6hAUzkpIfh81JFJFq72iVN"
+  },
+  {
+    "y": 1972,
+    "p": 5,
+    "a": "Bata Illic",
+    "t": "Michaela",
+    "l": "0MQ6GxlXsKSV6uMVHSomqB"
+  },
+  {
+    "y": 1972,
+    "p": 6,
+    "a": "Christian Anders",
+    "t": "Es fährt ein Zug nach Nirgendwo",
+    "l": "385BL9eNjryVLEcc8YbkoE"
+  },
+  {
+    "y": 1972,
+    "p": 7,
+    "a": "Mouth & MacNeal",
+    "t": "Hello-A",
+    "l": "6pIUG8yHDSiE4I5aOWc9t3"
+  },
+  {
+    "y": 1972,
+    "p": 8,
+    "a": "The Cats",
+    "t": "Let's Dance",
+    "l": "0893PwKCj3JQUEn05oD8LC"
+  },
+  {
+    "y": 1972,
+    "p": 9,
+    "a": "Middle Of The Road",
+    "t": "Samson And Delilah",
+    "l": "4FUNMAuSJbxKI6vnpWtajt"
+  },
+  {
+    "y": 1972,
+    "p": 10,
+    "a": "Jürgen Marcus",
+    "t": "Eine neue Liebe ist wie ein neues Leben",
+    "l": "0oH9kW4faMsq9YgRYirgD0"
+  },
+  {
+    "y": 1973,
+    "p": 1,
+    "a": "Demis Roussos",
+    "t": "Goodbye, My Love, Goodbye",
+    "l": "4FKSegHm6kkhhMk56menfa"
+  },
+  {
+    "y": 1973,
+    "p": 2,
+    "a": "Gilbert O'Sullivan",
+    "t": "Get Down",
+    "l": "7HLZEgQ5ShGYrcKS8Iv3u5"
+  },
+  {
+    "y": 1973,
+    "p": 3,
+    "a": "Kincade",
+    "t": "Dreams Are Ten A Penny (Jenny Jenny)",
+    "l": "2bBg8Qvk61gfG2jCr87zOl"
+  },
+  {
+    "y": 1973,
+    "p": 4,
+    "a": "Guido & Maurizio De Angelis",
+    "t": "Flying Through The Air",
+    "l": "62NyDSLzYlZ6JeP5psk3Dt"
+  },
+  {
+    "y": 1973,
+    "p": 5,
+    "a": "Bernd Clüver",
+    "t": "Der Junge mit der Mundharmonika",
+    "l": "5OzgLgIKGntgxS5dk8GltU"
+  },
+  {
+    "y": 1973,
+    "p": 6,
+    "a": "The Les Humphries Singers",
+    "t": "Mama Loo",
+    "l": "70Pfc0euGFQXf5yvJPVOpt"
+  },
+  {
+    "y": 1973,
+    "p": 7,
+    "a": "Wum's Gesang",
+    "t": "Ich wünsch mir 'ne kleine Miezekatze",
+    "l": "3LE0oKAZ8PCHIHjrsZ5IRg"
+  },
+  {
+    "y": 1973,
+    "p": 8,
+    "a": "Freddy Breck",
+    "t": "Bianca",
+    "l": "7IO1odRUNwFrYGbWXic984"
+  },
+  {
+    "y": 1973,
+    "p": 9,
+    "a": "Suzi Quatro",
+    "t": "Can The Can",
+    "l": "1zaiZAuhPkQfhhY9X2mTnn"
+  },
+  {
+    "y": 1973,
+    "p": 10,
+    "a": "Albert Hammond",
+    "t": "The Free Electric Band",
+    "l": "2bbIswC2E2MMSSjcHFD17G"
+  },
+  {
+    "y": 1974,
+    "p": 1,
+    "a": "The Rubettes",
+    "t": "Sugar Baby Love",
+    "l": "3Yzy0EKK8gV7UcFya2MDoL"
+  },
+  {
+    "y": 1974,
+    "p": 2,
+    "a": "Dan The Banjo Man",
+    "t": "Dan The Banjo Man",
+    "l": "3tlOTpm8HCjijDX2WzDr26"
+  },
+  {
+    "y": 1974,
+    "p": 3,
+    "a": "Vicky Leandros",
+    "t": "Theo, wir fahr'n nach Lodz",
+    "l": "3n9ttIZIFuj1by0n9GFjMi"
+  },
+  {
+    "y": 1974,
+    "p": 4,
+    "a": "Terry Jacks",
+    "t": "Seasons In The Sun",
+    "l": "7pGMRy91RcQT9oHdPgYz3A"
+  },
+  {
+    "y": 1974,
+    "p": 5,
+    "a": "ABBA",
+    "t": "Waterloo",
+    "l": "3Dy4REq8O09IlgiwuHQ3sk"
+  },
+  {
+    "y": 1974,
+    "p": 6,
+    "a": "Nazareth",
+    "t": "This Flight Tonight",
+    "l": "4ZWO53uYj3OKciSjuwEZLX"
+  },
+  {
+    "y": 1974,
+    "p": 7,
+    "a": "Nick MacKenzie",
+    "t": "Juanita",
+    "l": "6Csej5gCsBDcz5QHGcDa4Z"
+  },
+  {
+    "y": 1974,
+    "p": 8,
+    "a": "ABBA",
+    "t": "Honey Honey",
+    "l": "2w6JXokk0F8i241Y8C0Mn6"
+  },
+  {
+    "y": 1974,
+    "p": 9,
+    "a": "MFSB feat. The Three Degrees",
+    "t": "TSOP (The Sound Of Philadelphia)",
+    "l": "7kllQQPam6HumbUCIPSvHJ"
+  },
+  {
+    "y": 1974,
+    "p": 10,
+    "a": "Santabarbara",
+    "t": "Charly",
+    "l": "3TioCwO4yt4LyfPiqhJesc"
+  },
+  {
+    "y": 1975,
+    "p": 1,
+    "a": "George Baker Selection",
+    "t": "Paloma Blanca",
+    "l": "37dPgiT3cY5XFbG3Ldq7zv"
+  },
+  {
+    "y": 1975,
+    "p": 2,
+    "a": "Udo Jürgens",
+    "t": "Griechischer Wein",
+    "l": "452WSSzuklpg0w4RKTlkvn"
+  },
+  {
+    "y": 1975,
+    "p": 3,
+    "a": "The Sweet",
+    "t": "Fox On The Run",
+    "l": "4yJZP61jBhVTesHBZ0gpQn"
+  },
+  {
+    "y": 1975,
+    "p": 4,
+    "a": "Fox",
+    "t": "Only You Can",
+    "l": "1sICzrKDn6RQZRnIIRB9PM"
+  },
+  {
+    "y": 1975,
+    "p": 5,
+    "a": "Billy Swan",
+    "t": "I Can Help",
+    "l": "4oW1lGOw5Q5OLvoJv92qoE"
+  },
+  {
+    "y": 1975,
+    "p": 6,
+    "a": "Howard Carpendale",
+    "t": "Deine Spuren im Sand",
+    "l": "5pEIbe2zl5wqbyjWUiXAdb"
+  },
+  {
+    "y": 1975,
+    "p": 7,
+    "a": "Bachman-Turner Overdrive",
+    "t": "You Ain't Seen Nothin' Yet",
+    "l": "0HOrDVS349XFcpCYsO2hAP"
+  },
+  {
+    "y": 1975,
+    "p": 8,
+    "a": "Neil Diamond",
+    "t": "Longfellow Serenade",
+    "l": "5MhMAWghLuvQMNRf7kPmVg"
+  },
+  {
+    "y": 1975,
+    "p": 9,
+    "a": "Katja Ebstein",
+    "t": "Es war einmal ein Jäger",
+    "l": "3hRbTNDP5a5GLBCYOLc72a"
+  },
+  {
+    "y": 1975,
+    "p": 10,
+    "a": "Demis Roussos",
+    "t": "Schön wie Mona Lisa (Wenn ich ein Maler wär')",
+    "l": "5pv8mtwMcWMhlL6Vk2hiQj"
+  },
+  {
+    "y": 1976,
+    "p": 1,
+    "a": "Peter Alexander",
+    "t": "Die kleine Kneipe",
+    "l": "7lkm69lMX7sGuxhrncPMTW"
+  },
+  {
+    "y": 1976,
+    "p": 2,
+    "a": "Pussycat",
+    "t": "Mississippi",
+    "l": "3tP0kdmWRSqmJAt4nR3ykw"
+  },
+  {
+    "y": 1976,
+    "p": 3,
+    "a": "Nico Haak",
+    "t": "Schmidtchen Schleicher",
+    "l": "1EaV2NKrunY5JHksK9Vt1d"
+  },
+  {
+    "y": 1976,
+    "p": 4,
+    "a": "ABBA",
+    "t": "Fernando",
+    "l": "4BM8yJ0PzBi2ZewpMTOxtx"
+  },
+  {
+    "y": 1976,
+    "p": 5,
+    "a": "Frank Farian",
+    "t": "Rocky",
+    "l": "1KvOQr08NPFBQF9THBCgE8"
+  },
+  {
+    "y": 1976,
+    "p": 6,
+    "a": "Sailor",
+    "t": "A Glass Of Champagne",
+    "l": "3lm0QsdpQrypDUbHexpVWK"
+  },
+  {
+    "y": 1976,
+    "p": 7,
+    "a": "Sailor",
+    "t": "Girls, Girls, Girls",
+    "l": "1rWwPGQnYP2VrdUViImQMf"
+  },
+  {
+    "y": 1976,
+    "p": 8,
+    "a": "Bellamy Brothers",
+    "t": "Let Your Love Flow",
+    "l": "064SVQsmWl5EF0zahmzkQk"
+  },
+  {
+    "y": 1976,
+    "p": 9,
+    "a": "Jürgen Drews",
+    "t": "Ein Bett im Kornfeld",
+    "l": "7DfHmCnSLftVHPvtFPFsmA"
+  },
+  {
+    "y": 1976,
+    "p": 10,
+    "a": "Pussycat",
+    "t": "Georgie",
+    "l": "1TGHuWWHnOlhcexGAJbc9I"
+  },
+  {
+    "y": 1977,
+    "p": 1,
+    "a": "Julie Covington",
+    "t": "Don't Cry For Me Argentina",
+    "l": "4FixaPTOnRWWEfA1BDk00n"
+  },
+  {
+    "y": 1977,
+    "p": 2,
+    "a": "Boney M.",
+    "t": "Ma Baker",
+    "l": "1BqnZOkYJbvYLOhN0qPJDm"
+  },
+  {
+    "y": 1977,
+    "p": 3,
+    "a": "Baccara",
+    "t": "Yes Sir, I Can Boogie",
+    "l": "2LScqpywMqGcnum6nNaxXX"
+  },
+  {
+    "y": 1977,
+    "p": 4,
+    "a": "Smokie",
+    "t": "Living Next Door To Alice",
+    "l": "57TaM8GozkJBz90xvQ1xME"
+  },
+  {
+    "y": 1977,
+    "p": 5,
+    "a": "Frank Zander",
+    "t": "Oh, Susi (Der zensierte Song)",
+    "l": "0hvpqnf73Jz3ikep5ElMPf"
+  },
+  {
+    "y": 1977,
+    "p": 6,
+    "a": "Oliver Onions",
+    "t": "Orzowei",
+    "l": "44ZJq2b144UAPJ2dAinKnH"
+  },
+  {
+    "y": 1977,
+    "p": 7,
+    "a": "Jeanette [ES]",
+    "t": "Porque te vas",
+    "l": "11rsK9GDZ9UdWsxtDqnMmN"
+  },
+  {
+    "y": 1977,
+    "p": 8,
+    "a": "Bonnie Tyler",
+    "t": "Lost In France",
+    "l": "2ZhdzJmAjMKgdt5caPAg70"
+  },
+  {
+    "y": 1977,
+    "p": 9,
+    "a": "ABBA",
+    "t": "Knowing Me, Knowing You",
+    "l": "798cuJeotvXP8UVa8GJPnD"
+  },
+  {
+    "y": 1977,
+    "p": 10,
+    "a": "Space",
+    "t": "Magic Fly",
+    "l": "3VkPfiwwaYme0mbNEciJXN"
+  },
+  {
     "y": 1978,
     "p": 1,
     "a": "Vader Abraham",
@@ -6237,6 +7455,2757 @@
     "l": "0rS5rO4GrFerM1PpvAUne5"
   },
   {
+    "y": 1996,
+    "p": 34,
+    "a": "Captain Jack",
+    "t": "Drill Instructor",
+    "l": "4ypMF4LbWGUbnamCqJc5RO"
+  },
+  {
+    "y": 1996,
+    "p": 35,
+    "a": "Peter Andre feat. Bubbler Ranx",
+    "t": "Mysterious Girl",
+    "l": "3GCpEbJzknVdpvx9WI03x3"
+  },
+  {
+    "y": 1996,
+    "p": 36,
+    "a": "Love Message",
+    "t": "Love Message",
+    "l": "1iyTXK1OXWZylkRiNZLZTa"
+  },
+  {
+    "y": 1996,
+    "p": 37,
+    "a": "Faithless",
+    "t": "Salva mea",
+    "l": "1JgENpetslBO78Q6eqKk8n"
+  },
+  {
+    "y": 1996,
+    "p": 38,
+    "a": "DJ BoBo",
+    "t": "Pray",
+    "l": "0UQhKr79tTjADwLHb77CwE"
+  },
+  {
+    "y": 1996,
+    "p": 39,
+    "a": "The Prodigy",
+    "t": "Firestarter",
+    "l": "79CUrU5o2KAVDTNm4x3eGU"
+  },
+  {
+    "y": 1996,
+    "p": 40,
+    "a": "Alanis Morissette",
+    "t": "Ironic",
+    "l": "1d6KS9GH06JAd19uiBy9IE"
+  },
+  {
+    "y": 1996,
+    "p": 41,
+    "a": "Fugees",
+    "t": "Fu-Gee-La",
+    "l": "1rJM37Dd4OcSJvzI84yCcP"
+  },
+  {
+    "y": 1996,
+    "p": 42,
+    "a": "Adam Clayton & Larry Mullen",
+    "t": "Theme From Mission: Impossible",
+    "l": "12A93HxCmY7Kks7OYaHwsy"
+  },
+  {
+    "y": 1996,
+    "p": 43,
+    "a": "Mr. President",
+    "t": "I Give You My Heart",
+    "l": "22Xe57HLJl4hDJ0fLz8Pj3"
+  },
+  {
+    "y": 1996,
+    "p": 44,
+    "a": "Dune",
+    "t": "Who Wants To Live Forever",
+    "l": "3KJZir0tim8auKcbJyAORA"
+  },
+  {
+    "y": 1996,
+    "p": 45,
+    "a": "Warren G feat. Adina Howard",
+    "t": "What's Love Got To Do With It",
+    "l": "3cIVHjSILZ04BMMF44QyEV"
+  },
+  {
+    "y": 1996,
+    "p": 46,
+    "a": "Eros Ramazzotti",
+    "t": "Più bella cosa",
+    "l": "14NveZNbN4weSaX2vM0F2W"
+  },
+  {
+    "y": 1996,
+    "p": 47,
+    "a": "Fettes Brot",
+    "t": "Jein",
+    "l": "0llxnKwB2eKrVEUxBWuHgR"
+  },
+  {
+    "y": 1996,
+    "p": 49,
+    "a": "Robert Miles",
+    "t": "Fable",
+    "l": "61IehOyTSfrmdA162KEKxo"
+  },
+  {
+    "y": 1996,
+    "p": 50,
+    "a": "2Pac feat. Dr. Dre",
+    "t": "California Love",
+    "l": "1Zk62Z905Z7R1bYCfoaKLB"
+  },
+  {
+    "y": 1996,
+    "p": 51,
+    "a": "3T",
+    "t": "Anything",
+    "l": "2AtBXRPCZhtIqSGF5ap33B"
+  },
+  {
+    "y": 1996,
+    "p": 52,
+    "a": "Luniz",
+    "t": "I Got 5 On It",
+    "l": "4IYKjN1DrYzxKXt0umJqsG"
+  },
+  {
+    "y": 1996,
+    "p": 53,
+    "a": "Garcia",
+    "t": "Vamonos (Hey Chico Are You Ready)",
+    "l": "4Fg9QdDKHGsz4FtcK4a0WK"
+  },
+  {
+    "y": 1996,
+    "p": 54,
+    "a": "Fugees",
+    "t": "Ready Or Not",
+    "l": "3vZO25GdYuqFrR1kzZADnp"
+  },
+  {
+    "y": 1996,
+    "p": 55,
+    "a": "T»MA a.k.a. Falco",
+    "t": "Mutter, der Mann mit dem Koks ist da",
+    "l": "1xIVMdpZ8D7kAYsfBdsXZY"
+  },
+  {
+    "y": 1996,
+    "p": 56,
+    "a": "Gary Barlow",
+    "t": "Forever Love",
+    "l": "5f7Fxt92gU2yl0NLIotiQZ"
+  },
+  {
+    "y": 1996,
+    "p": 57,
+    "a": "Mighty Dub Kats",
+    "t": "Magic Carpet Ride",
+    "l": "3RTV8UMSmiQDYhVYwN6mKr"
+  },
+  {
+    "y": 1996,
+    "p": 58,
+    "a": "Tic Tac Toe",
+    "t": "Verpiss' Dich",
+    "l": "0hWaBqfcddUlqOk33fpx3G"
+  },
+  {
+    "y": 1996,
+    "p": 59,
+    "a": "Scooter",
+    "t": "Back In The U.K.",
+    "l": "7sypRrtFfVTwEsfEZP4Qqi"
+  },
+  {
+    "y": 1996,
+    "p": 60,
+    "a": "Scooter",
+    "t": "I'm Raving",
+    "l": "2lT9RstFhsYyL1mzHKUV2r"
+  },
+  {
+    "y": 1996,
+    "p": 61,
+    "a": "Culture Beat",
+    "t": "Crying In The Rain",
+    "l": "5t5WbgyTLVAUaEhuKx1o4X"
+  },
+  {
+    "y": 1996,
+    "p": 62,
+    "a": "Mark Snow",
+    "t": "The X-Files",
+    "l": "4th0mPYPuZUs564oCu5I1U"
+  },
+  {
+    "y": 1996,
+    "p": 63,
+    "a": "Whigfield",
+    "t": "Sexy Eyes",
+    "l": "0eJle2gkR9YlGECb4QV4ZA"
+  },
+  {
+    "y": 1996,
+    "p": 64,
+    "a": "Fun Factory",
+    "t": "Doh Wah Diddy",
+    "l": "0l4bUXHOslu4Q7DistRPo0"
+  },
+  {
+    "y": 1996,
+    "p": 65,
+    "a": "Nick Cave & The Bad Seeds + Kylie Minogue",
+    "t": "Where The Wild Roses Grow",
+    "l": "4LK8kGGY0FGSGIAk2GwI30"
+  },
+  {
+    "y": 1996,
+    "p": 66,
+    "a": "Take That",
+    "t": "How Deep Is Your Love",
+    "l": "5HyJRG4o7BkKoLdfvnB2cw"
+  },
+  {
+    "y": 1996,
+    "p": 67,
+    "a": "Joan Osborne",
+    "t": "One Of Us",
+    "l": "1xNmF1Uep5OGutizZSbKvd"
+  },
+  {
+    "y": 1996,
+    "p": 68,
+    "a": "Heath Hunter & The Pleasure Company",
+    "t": "Revolution In Paradise",
+    "l": "6jSd80R5uy0dEXsYP4sMvk"
+  },
+  {
+    "y": 1996,
+    "p": 69,
+    "a": "Captain Jack",
+    "t": "Soldier Soldier",
+    "l": "2XDHvjCffnaaHAB41cnGIf"
+  },
+  {
+    "y": 1996,
+    "p": 70,
+    "a": "RMB",
+    "t": "Reality",
+    "l": "73X7Sx2s8wy43VnUdr2H3d"
+  },
+  {
+    "y": 1996,
+    "p": 71,
+    "a": "Bone Thugs-N-Harmony",
+    "t": "Tha Crossroads",
+    "l": "5KSJ9k1FYjFLnIRlJT2wF8"
+  },
+  {
+    "y": 1996,
+    "p": 72,
+    "a": "Heike Makatsch",
+    "t": "Stand By Your Man",
+    "l": "6jIdJyhyFrS6XXPqhrQBnb"
+  },
+  {
+    "y": 1996,
+    "p": 73,
+    "a": "Tina Turner",
+    "t": "GoldenEye",
+    "l": "528QhCT2v3HgD71RmrSUNW"
+  },
+  {
+    "y": 1996,
+    "p": 74,
+    "a": "Donna Lewis",
+    "t": "I Love You Always Forever",
+    "l": "1PEqh7awkpuepLBSq8ZwqD"
+  },
+  {
+    "y": 1996,
+    "p": 75,
+    "a": "Boyzone",
+    "t": "Father And Son",
+    "l": "0zyHakmAg2HQaFjCyMgiOZ"
+  },
+  {
+    "y": 1996,
+    "p": 76,
+    "a": "Culture Beat",
+    "t": "Inside Out",
+    "l": "2T1vICHeew9AOIT2RTOZFz"
+  },
+  {
+    "y": 1996,
+    "p": 77,
+    "a": "Soultans",
+    "t": "Can't Take My Hands Off You",
+    "l": "5WSXGVRj9Bf77EoHHDSoPD"
+  },
+  {
+    "y": 1996,
+    "p": 78,
+    "a": "Zucchero Sugar Fornaciari",
+    "t": "My Love",
+    "l": "3l7W31WU8ZwI1mWvWVTZQ6"
+  },
+  {
+    "y": 1996,
+    "p": 79,
+    "a": "Blümchen",
+    "t": "Kleiner Satellit (Piep, Piep)",
+    "l": "7Hi738fpVjrQ5bilTmemJC"
+  },
+  {
+    "y": 1996,
+    "p": 80,
+    "a": "Oasis",
+    "t": "Wonderwall",
+    "l": "7ygpwy2qP3NbrxVkHvUhXY"
+  },
+  {
+    "y": 1996,
+    "p": 81,
+    "a": "Underworld",
+    "t": "Born Slippy",
+    "l": "7xQYVjs4wZNdCwO0EeAWMC"
+  },
+  {
+    "y": 1996,
+    "p": 82,
+    "a": "Bürger Lars Dietr!ch",
+    "t": "Sexy Eis",
+    "l": "2C8ymluZHrPz34w5tfk5QD"
+  },
+  {
+    "y": 1996,
+    "p": 83,
+    "a": "Scooter",
+    "t": "Rebel Yell",
+    "l": "0sZ1lpLH6ISsgJNt66M1CP"
+  },
+  {
+    "y": 1996,
+    "p": 84,
+    "a": "Masterboy",
+    "t": "Land Of Dreaming",
+    "l": "1YfKXkN0iFofWBVq2i7dwd"
+  },
+  {
+    "y": 1996,
+    "p": 85,
+    "a": "Down Low",
+    "t": "Vision Of Life",
+    "l": "1CLA4rhy7xIvd2s1BIs35c"
+  },
+  {
+    "y": 1996,
+    "p": 86,
+    "a": "DJ BoBo",
+    "t": "Love Is The Price",
+    "l": "3B0EFC5ixSCg0DsEPvD1oQ"
+  },
+  {
+    "y": 1996,
+    "p": 87,
+    "a": "Blümchen",
+    "t": "Boomerang",
+    "l": "2YsSQIQjeMbqk7RLTQg7u9"
+  },
+  {
+    "y": 1996,
+    "p": 88,
+    "a": "Tic Tac Toe",
+    "t": "Funky",
+    "l": "2FbTxwqZdbOAKT3Asdo3oB"
+  },
+  {
+    "y": 1996,
+    "p": 89,
+    "a": "George Michael",
+    "t": "Jesus To A Child",
+    "l": "2SzCxX6M6vDwdEwnHDiTaY"
+  },
+  {
+    "y": 1996,
+    "p": 90,
+    "a": "Queen",
+    "t": "You Don't Fool Me",
+    "l": "1chxAv59LZcOE5FyrlUze2"
+  },
+  {
+    "y": 1996,
+    "p": 91,
+    "a": "Passengers",
+    "t": "Miss Sarajevo",
+    "l": "49RXTEKqQBOYO7SjX1Uxb5"
+  },
+  {
+    "y": 1996,
+    "p": 92,
+    "a": "Dune",
+    "t": "Hand In Hand",
+    "l": "7LaTIY8URaCOWlozJdHKRO"
+  },
+  {
+    "y": 1996,
+    "p": 93,
+    "a": "Pet Shop Boys",
+    "t": "Se a vida é (That's The Way Life Is)",
+    "l": "18fr7t1FKDUiOg8DXxiZwL"
+  },
+  {
+    "y": 1996,
+    "p": 94,
+    "a": "No Mercy",
+    "t": "Missing (I Miss You Like The Deserts Miss The Rain)",
+    "l": "663FuKWG48RrfsqYDeza4b"
+  },
+  {
+    "y": 1996,
+    "p": 95,
+    "a": "Caught In The Act",
+    "t": "Don't Walk Away",
+    "l": "7EE1GIPbxWkolZFqkr2xod"
+  },
+  {
+    "y": 1996,
+    "p": 96,
+    "a": "Sqeezer",
+    "t": "Blue Jeans",
+    "l": "06Czrv6O2xOgtG29nUuPyQ"
+  },
+  {
+    "y": 1996,
+    "p": 97,
+    "a": "Ghetto People feat. L-Viz",
+    "t": "In The Ghetto",
+    "l": "3B6WDceNe6lUQnczntRIuf"
+  },
+  {
+    "y": 1996,
+    "p": 98,
+    "a": "Skee-Lo",
+    "t": "I Wish",
+    "l": "0QMHVTnrFTQJoaqmkdsKhT"
+  },
+  {
+    "y": 1996,
+    "p": 99,
+    "a": "Boyzone",
+    "t": "Words",
+    "l": "2dNjHVd9urrtILcZBK70r1"
+  },
+  {
+    "y": 1996,
+    "p": 100,
+    "a": "Dune",
+    "t": "Rainbow To The Stars",
+    "l": "6I3p5rvRwCm4etiHHCuVTo"
+  },
+  {
+    "y": 1997,
+    "p": 1,
+    "a": "Sarah Brightman & Andrea Bocelli",
+    "t": "Time To Say Goodbye (Con te partirò)",
+    "l": "1YvM5PpE12X2YriWwIlKtW"
+  },
+  {
+    "y": 1997,
+    "p": 2,
+    "a": "Puff Daddy & Faith Evans feat. 112",
+    "t": "I'll Be Missing You",
+    "l": "0SPzxlnZD0mh6wcvE3jVQe"
+  },
+  {
+    "y": 1997,
+    "p": 3,
+    "a": "Elton John",
+    "t": "Candle In The Wind",
+    "l": "1L9fzw2pXprOqtemTwtxXF"
+  },
+  {
+    "y": 1997,
+    "p": 4,
+    "a": "Will Smith",
+    "t": "Men In Black",
+    "l": "2FK7fxjzQEXD7Z32HSF0Hl"
+  },
+  {
+    "y": 1997,
+    "p": 5,
+    "a": "Tic Tac Toe",
+    "t": "Warum?",
+    "l": "39Qd2qBDQdREL3aLTb9F0d"
+  },
+  {
+    "y": 1997,
+    "p": 6,
+    "a": "No Doubt",
+    "t": "Don't Speak",
+    "l": "6urCAbunOQI4bLhmGpX7iS"
+  },
+  {
+    "y": 1997,
+    "p": 7,
+    "a": "Nana",
+    "t": "Lonely",
+    "l": "5TxlsxGp0CYnntNNIBzSrq"
+  },
+  {
+    "y": 1997,
+    "p": 8,
+    "a": "Aqua",
+    "t": "Barbie Girl",
+    "l": "5ZrDlcxIDZyjOzHdYW1ydr"
+  },
+  {
+    "y": 1997,
+    "p": 9,
+    "a": "Members Of Mayday",
+    "t": "Sonic Empire",
+    "l": "7zgoOh1KhDnlFvFKpv8wlx"
+  },
+  {
+    "y": 1997,
+    "p": 10,
+    "a": "Bellini",
+    "t": "Samba de Janeiro",
+    "l": "5aIfLbdgkbH7NbQryd1poB"
+  },
+  {
+    "y": 1997,
+    "p": 11,
+    "a": "Rammstein",
+    "t": "Engel",
+    "l": "5Zuboc3Cj9Ldnc8HyUnNUK"
+  },
+  {
+    "y": 1997,
+    "p": 12,
+    "a": "Wolfgang Petry",
+    "t": "Die längste Single der Welt",
+    "l": "7uCfnCJtNRsYHAuDbjPOIB"
+  },
+  {
+    "y": 1997,
+    "p": 13,
+    "a": "Toni Braxton",
+    "t": "Un-Break My Heart",
+    "l": "5Ihd9HrPvOADyVoonH9ZjB"
+  },
+  {
+    "y": 1997,
+    "p": 14,
+    "a": "R. Kelly",
+    "t": "I Believe I Can Fly",
+    "l": "2RzJwBCXsS1VnjDm2jKKAa"
+  },
+  {
+    "y": 1997,
+    "p": 15,
+    "a": "Sabrina Setlur",
+    "t": "Du liebst mich nicht",
+    "l": "4OH0l5mfOTe7bPpfLvMsqk"
+  },
+  {
+    "y": 1997,
+    "p": 16,
+    "a": "Hanson",
+    "t": "MmmBop",
+    "l": "0lnxrQAd9ZxbhBBe7d8FO8"
+  },
+  {
+    "y": 1997,
+    "p": 17,
+    "a": "Ricky Martin",
+    "t": "Maria",
+    "l": "0QQHPRbgLJJ5XNzJV1l9BW"
+  },
+  {
+    "y": 1997,
+    "p": 18,
+    "a": "C-Block",
+    "t": "So Strung Out",
+    "l": "5NpmLMMwqwhY14cpCrcxJL"
+  },
+  {
+    "y": 1997,
+    "p": 19,
+    "a": "No Mercy",
+    "t": "When I Die",
+    "l": "4z1IYRhVpbLCBaqZXYIl66"
+  },
+  {
+    "y": 1997,
+    "p": 20,
+    "a": "Bell Book & Candle",
+    "t": "Rescue Me",
+    "l": "71mjSSBWGeb38yI9FVZGTN"
+  },
+  {
+    "y": 1997,
+    "p": 21,
+    "a": "Backstreet Boys",
+    "t": "Everybody (Backstreet's Back)",
+    "l": "1di1BEgJYzPvXUuinsYJGP"
+  },
+  {
+    "y": 1997,
+    "p": 22,
+    "a": "Madonna",
+    "t": "Don't Cry For Me Argentina",
+    "l": "0bLRXQaWzmSXRXPmP6JnEF"
+  },
+  {
+    "y": 1997,
+    "p": 23,
+    "a": "DJ Quicksilver",
+    "t": "I Have A Dream / Bellissima",
+    "l": "4W8njwKQsbLFj3dZx82DWT"
+  },
+  {
+    "y": 1997,
+    "p": 24,
+    "a": "Pappa Bear feat. Van der Toorn",
+    "t": "Cherish",
+    "l": "6fbXYUAjcWXahAakllpadh"
+  },
+  {
+    "y": 1997,
+    "p": 25,
+    "a": "Tic Tac Toe",
+    "t": "Verpiss' Dich",
+    "l": "0hWaBqfcddUlqOk33fpx3G"
+  },
+  {
+    "y": 1997,
+    "p": 26,
+    "a": "Coolio feat. 40 Thevz",
+    "t": "C U When U Get There",
+    "l": "4vuzjz2QvU58AWXVAhyIlr"
+  },
+  {
+    "y": 1997,
+    "p": 27,
+    "a": "Lutricia McNeal",
+    "t": "Ain't That Just The Way",
+    "l": "4uvX0lkoA842kD7HQQ2kzA"
+  },
+  {
+    "y": 1997,
+    "p": 28,
+    "a": "Bee Gees",
+    "t": "Alone",
+    "l": "7GsoUeI9DtaTSjJHenyCNP"
+  },
+  {
+    "y": 1997,
+    "p": 29,
+    "a": "En Vogue",
+    "t": "Don't Let Go (Love)",
+    "l": "06TuMCjDEYjTOJScCRzmjf"
+  },
+  {
+    "y": 1997,
+    "p": 30,
+    "a": "'N Sync",
+    "t": "Tearin' Up My Heart",
+    "l": "73q3FpQVXWk5eSUnyo83E4"
+  },
+  {
+    "y": 1997,
+    "p": 31,
+    "a": "Chilli feat. Carrapicho",
+    "t": "Tic, Tic Tac",
+    "l": "4zBFy3Wd5qd1Oxx6aQltUA"
+  },
+  {
+    "y": 1997,
+    "p": 32,
+    "a": "Cappuccino",
+    "t": "Du fehlst mir",
+    "l": "15djCYDyLQPLHf4yd9rKI4"
+  },
+  {
+    "y": 1997,
+    "p": 33,
+    "a": "The Cardigans",
+    "t": "Lovefool",
+    "l": "7aQjPecQdIuNd1sz3KCDhD"
+  },
+  {
+    "y": 1997,
+    "p": 34,
+    "a": "Backstreet Boys",
+    "t": "As Long As You Love Me",
+    "l": "3UpS7kBnkVQYG13pDDFTC4"
+  },
+  {
+    "y": 1997,
+    "p": 35,
+    "a": "Mr. President",
+    "t": "Jojo Action",
+    "l": "2piJJIs5yunMEt0iAx3ppz"
+  },
+  {
+    "y": 1997,
+    "p": 36,
+    "a": "Nana",
+    "t": "He's Comin'",
+    "l": "4jvHFvPnuvsQfMbyUPtjmD"
+  },
+  {
+    "y": 1997,
+    "p": 37,
+    "a": "Brooklyn Bounce",
+    "t": "The Theme (Of Progressive Attack)",
+    "l": "74QnPezz7FDDg1BYkGViRi"
+  },
+  {
+    "y": 1997,
+    "p": 38,
+    "a": "Whitney Houston",
+    "t": "Step By Step",
+    "l": "5dEBcymDDG9TUjJnAouOPp"
+  },
+  {
+    "y": 1997,
+    "p": 39,
+    "a": "R. Kelly",
+    "t": "Gotham City",
+    "l": "3HFWYNE9ln7SJxRwdfnTkS"
+  },
+  {
+    "y": 1997,
+    "p": 40,
+    "a": "Freundeskreis",
+    "t": "Anna",
+    "l": "6EWtkdeKmVtRjmydTfIR0S"
+  },
+  {
+    "y": 1997,
+    "p": 41,
+    "a": "C-Block",
+    "t": "Time Is Tickin' Away",
+    "l": "21GSP35QcbFluU8i77hdEj"
+  },
+  {
+    "y": 1997,
+    "p": 42,
+    "a": "Tic Tac Toe",
+    "t": "Mr. Wichtig",
+    "l": "4vHzRFV4hTIKQbFzw9aZtI"
+  },
+  {
+    "y": 1997,
+    "p": 43,
+    "a": "Gala",
+    "t": "Freed From Desire",
+    "l": "3u5N55tHf7hXATSQrjBh2q"
+  },
+  {
+    "y": 1997,
+    "p": 44,
+    "a": "Dario G",
+    "t": "Sunchyme",
+    "l": "2YOuBWIyHgyvHnLMpjzBf2"
+  },
+  {
+    "y": 1997,
+    "p": 45,
+    "a": "Scooter",
+    "t": "Fire",
+    "l": "5Upzysr6GhXUWz8CsL4Nst"
+  },
+  {
+    "y": 1997,
+    "p": 46,
+    "a": "Spice Girls",
+    "t": "Who Do You Think You Are / Mama",
+    "l": "1PwkP2h9Q3BqYgcnAdJMxl"
+  },
+  {
+    "y": 1997,
+    "p": 47,
+    "a": "Backstreet Boys",
+    "t": "Anywhere For You",
+    "l": "1mPJxlxSG7FzHUkHIBprUk"
+  },
+  {
+    "y": 1997,
+    "p": 48,
+    "a": "Dr. Motte & WestBam",
+    "t": "Sunshine",
+    "l": "5St26by8YkbblUS1uDkHX6"
+  },
+  {
+    "y": 1997,
+    "p": 49,
+    "a": "Dune",
+    "t": "Who Wants To Live Forever",
+    "l": "3KJZir0tim8auKcbJyAORA"
+  },
+  {
+    "y": 1997,
+    "p": 50,
+    "a": "Sash! feat. Rodriguez",
+    "t": "Ecuador",
+    "l": "1Jhy8xIzKGwRuDnsBz5TXO"
+  },
+  {
+    "y": 1997,
+    "p": 51,
+    "a": "Da Hool",
+    "t": "Meet Her At The Love Parade",
+    "l": "58bT1VNZ0Itc70Sz7mcueT"
+  },
+  {
+    "y": 1997,
+    "p": 52,
+    "a": "The Prodigy",
+    "t": "Breathe",
+    "l": "0Ja4hLKiUSw01E01pJ1yGr"
+  },
+  {
+    "y": 1997,
+    "p": 53,
+    "a": "Aaron Carter",
+    "t": "Crush On You",
+    "l": "38Y2hq5oOY2Eu89F4zU1Wj"
+  },
+  {
+    "y": 1997,
+    "p": 54,
+    "a": "DJ Quicksilver",
+    "t": "Free",
+    "l": "4iKRZr8katLQqWtYVtEjW5"
+  },
+  {
+    "y": 1997,
+    "p": 55,
+    "a": "Skunk Anansie",
+    "t": "Hedonism (Just Because You Feel Good)",
+    "l": "0KPWi8mDRagwxnwaA0di8a"
+  },
+  {
+    "y": 1997,
+    "p": 56,
+    "a": "Backstreet Boys",
+    "t": "Quit Playing Games (With My Heart)",
+    "l": "0Uqs7ilt5kGX9NzFDWTBrP"
+  },
+  {
+    "y": 1997,
+    "p": 57,
+    "a": "No Mercy",
+    "t": "Please Don't Go",
+    "l": "6TF2LthEA2BqImvYKToR0V"
+  },
+  {
+    "y": 1997,
+    "p": 58,
+    "a": "Michael Jackson",
+    "t": "History / Ghosts",
+    "l": "7s51HyYKRGWqkH1UWnApHh"
+  },
+  {
+    "y": 1997,
+    "p": 59,
+    "a": "Khaled",
+    "t": "Aïcha",
+    "l": "0cYX51Hneb8qIOx0tHm7ng"
+  },
+  {
+    "y": 1997,
+    "p": 60,
+    "a": "Apollo Four Forty",
+    "t": "Ain't Talkin' 'Bout Dub",
+    "l": "2SgWbfclzWv42aJDXnVGAX"
+  },
+  {
+    "y": 1997,
+    "p": 61,
+    "a": "Eternal feat. Bebe Winans",
+    "t": "I Wanna Be The Only One",
+    "l": "0XvOoNb9zZOwFIOM0mwbiq"
+  },
+  {
+    "y": 1997,
+    "p": 62,
+    "a": "Robert Miles feat. Maria Nayler",
+    "t": "One & One",
+    "l": "6KuhXgg60N3FAZ7dxe7aUD"
+  },
+  {
+    "y": 1997,
+    "p": 63,
+    "a": "Nana",
+    "t": "Darkman",
+    "l": "6C20oEEH5aPidFaFRch9mQ"
+  },
+  {
+    "y": 1997,
+    "p": 64,
+    "a": "The Notorious B.I.G. feat. Puff Daddy & Mase",
+    "t": "Mo Money Mo Problems",
+    "l": "4INDiWSKvqSKDEu7mh8HFz"
+  },
+  {
+    "y": 1997,
+    "p": 65,
+    "a": "Nalin & Kane",
+    "t": "Beachball",
+    "l": "6iyxF36JnQYzqMbpQD861R"
+  },
+  {
+    "y": 1997,
+    "p": 66,
+    "a": "Space Frog feat. The Grim Reaper",
+    "t": "(X-Ray) Follow Me",
+    "l": "1SRZGlXELF0rpaZ6rVURCp"
+  },
+  {
+    "y": 1997,
+    "p": 67,
+    "a": "Brooklyn Bounce",
+    "t": "Get Ready To Bounce",
+    "l": "6mPbOsUZXQGSVkisLJriJg"
+  },
+  {
+    "y": 1997,
+    "p": 68,
+    "a": "Depeche Mode",
+    "t": "It's No Good",
+    "l": "7HDWE2Ib7cjkhzULV4K8y3"
+  },
+  {
+    "y": 1997,
+    "p": 69,
+    "a": "Chumbawamba",
+    "t": "Tubthumping",
+    "l": "5YScXJKtefsgdskIy60N7A"
+  },
+  {
+    "y": 1997,
+    "p": 70,
+    "a": "Blümchen",
+    "t": "Nur geträumt",
+    "l": "5LLHCikzrlxc1STuEyal6p"
+  },
+  {
+    "y": 1997,
+    "p": 71,
+    "a": "Spektacoolär",
+    "t": "Meine kleine Schwester",
+    "l": "4HxFxBVONAyRJp6JXkTpnY"
+  },
+  {
+    "y": 1997,
+    "p": 72,
+    "a": "Spice Girls",
+    "t": "2 Become 1",
+    "l": "36AWdhZIGLUTkWpJDhe7va"
+  },
+  {
+    "y": 1997,
+    "p": 73,
+    "a": "Rammstein",
+    "t": "Du hast",
+    "l": "6XcoiOYiNbIxzpt8WRxq8Z"
+  },
+  {
+    "y": 1997,
+    "p": 74,
+    "a": "Meredith Brooks",
+    "t": "Bitch",
+    "l": "3i6qNxyVgIdUZTTi5m25EM"
+  },
+  {
+    "y": 1997,
+    "p": 75,
+    "a": "The Rapsody feat. Warren G & Sissel",
+    "t": "Prince Igor",
+    "l": "2LztWxB6LAJGcelKFhqJpu"
+  },
+  {
+    "y": 1997,
+    "p": 76,
+    "a": "'N Sync",
+    "t": "Here We Go",
+    "l": "0aYMFyDeGgOIUUMqfGYg00"
+  },
+  {
+    "y": 1997,
+    "p": 77,
+    "a": "The Blue Boy",
+    "t": "Remember Me",
+    "l": "6LsS2ybt5uLiXDW6mUV3Ls"
+  },
+  {
+    "y": 1997,
+    "p": 78,
+    "a": "Babyface feat. Stevie Wonder",
+    "t": "How Come, How Long",
+    "l": "6kTakcO9wwXh8tEqmJSV8h"
+  },
+  {
+    "y": 1997,
+    "p": 79,
+    "a": "B Real, Busta Rhymes, Coolio, LL Cool J & Method Man",
+    "t": "Hit 'Em High (The Monstars' Anthem)",
+    "l": "3YHmhge91nJf5yWG0ZLwpt"
+  },
+  {
+    "y": 1997,
+    "p": 80,
+    "a": "Ginuwine",
+    "t": "When Doves Cry",
+    "l": "0EX00YpFv3ivweoG7T3j2n"
+  },
+  {
+    "y": 1997,
+    "p": 81,
+    "a": "Red 5",
+    "t": "I Love You... Stop!",
+    "l": "5dTqvWXYB6TQaer4tkgQoz"
+  },
+  {
+    "y": 1997,
+    "p": 82,
+    "a": "Puff Daddy feat. Mase",
+    "t": "Can't Nobody Hold Me Down",
+    "l": "1EM23A621Z0QyTlWKu7T1l"
+  },
+  {
+    "y": 1998,
+    "p": 1,
+    "a": "Céline Dion",
+    "t": "My Heart Will Go On",
+    "l": "33LC84JgLvK2KuW43MfaNq"
+  },
+  {
+    "y": 1998,
+    "p": 2,
+    "a": "Oli. P",
+    "t": "Flugzeuge im Bauch",
+    "l": "5tYNY1VFSIl30D9TQWcUJ1"
+  },
+  {
+    "y": 1998,
+    "p": 3,
+    "a": "Die Ärzte",
+    "t": "Ein Schwein namens Männer",
+    "l": "629lcdqXv0V3JKmKOYRG8x"
+  },
+  {
+    "y": 1998,
+    "p": 4,
+    "a": "Falco",
+    "t": "Out Of The Dark",
+    "l": "6vgnumRgsZcc5fVFtpIRO1"
+  },
+  {
+    "y": 1998,
+    "p": 5,
+    "a": "Wes",
+    "t": "Alane",
+    "l": "2u6Jm2klS4yvAlbSHlxUwI"
+  },
+  {
+    "y": 1998,
+    "p": 6,
+    "a": "Run-D.M.C. vs. Jason Nevins",
+    "t": "It's Like That",
+    "l": "6nMeygKn0XfnF9G1h39Sdc"
+  },
+  {
+    "y": 1998,
+    "p": 7,
+    "a": "4 The Cause",
+    "t": "Stand By Me",
+    "l": "7oqvT7zwySTA2BjDVyXZFD"
+  },
+  {
+    "y": 1998,
+    "p": 8,
+    "a": "Witt / Heppner",
+    "t": "Die Flut",
+    "l": "0p5R08bRY9V8dYqFq6S0At"
+  },
+  {
+    "y": 1998,
+    "p": 9,
+    "a": "Loona",
+    "t": "Bailando",
+    "l": "0oxOXYVVZ7vDknU6kagLwO"
+  },
+  {
+    "y": 1998,
+    "p": 10,
+    "a": "Céline Dion with the Bee Gees",
+    "t": "Immortality",
+    "l": "1nBG56EvJ3tC64SDu8PQJR"
+  },
+  {
+    "y": 1999,
+    "p": 1,
+    "a": "Lou Bega",
+    "t": "Mambo No. 5 (A Little Bit Of...)",
+    "l": "6x4tKaOzfNJpEJHySoiJcs"
+  },
+  {
+    "y": 1999,
+    "p": 2,
+    "a": "Eiffel 65",
+    "t": "Blue (Da Ba Dee)",
+    "l": "4GewRLEiI4BDTQsoH8BRVV"
+  },
+  {
+    "y": 1999,
+    "p": 3,
+    "a": "Britney Spears",
+    "t": "...Baby One More Time",
+    "l": "3MjUtNVVq3C8Fn0MP3zhXa"
+  },
+  {
+    "y": 1999,
+    "p": 4,
+    "a": "Emilia",
+    "t": "Big Big World",
+    "l": "5I4xjdu4DeKUNMiufzQLoA"
+  },
+  {
+    "y": 1999,
+    "p": 5,
+    "a": "Whitney Houston",
+    "t": "My Love Is Your Love",
+    "l": "1ckU1EhAO0Nr73QYw24SWJ"
+  },
+  {
+    "y": 1999,
+    "p": 6,
+    "a": "Oli. P",
+    "t": "So bist du (und wenn Du gehst...)",
+    "l": "0O1aY7nPePS7BBPGEqQ31J"
+  },
+  {
+    "y": 1999,
+    "p": 7,
+    "a": "Christina Aguilera",
+    "t": "Genie In A Bottle",
+    "l": "11mwFrKvLXCbcVGNxffGyP"
+  },
+  {
+    "y": 1999,
+    "p": 8,
+    "a": "Mr. Oizo",
+    "t": "Flat Beat",
+    "l": "5jaVyz2GDdesyu01cBbOSc"
+  },
+  {
+    "y": 1999,
+    "p": 9,
+    "a": "Xavier Naidoo",
+    "t": "Sie sieht mich nicht",
+    "l": "3a3PdavN2xzZTe9TtmnNyE"
+  },
+  {
+    "y": 1999,
+    "p": 10,
+    "a": "Wamdue Project",
+    "t": "King Of My Castle",
+    "l": "5ov3LhsdEifKENMIlLCuJo"
+  },
+  {
+    "y": 2000,
+    "p": 1,
+    "a": "Anton feat. DJ Ötzi",
+    "t": "Anton aus Tirol",
+    "l": "2YuKyP77pidQlkxm8PuyJj"
+  },
+  {
+    "y": 2000,
+    "p": 2,
+    "a": "Rednex",
+    "t": "The Spirit Of The Hawk",
+    "l": "7xXSaVgEvUrV1GCc3oO8HC"
+  },
+  {
+    "y": 2000,
+    "p": 3,
+    "a": "ATC",
+    "t": "Around The World (La La La La La)",
+    "l": "7CvOnbFdnIoXMQ4eFCo5lB"
+  },
+  {
+    "y": 2000,
+    "p": 4,
+    "a": "Bomfunk MCs",
+    "t": "Freestyler",
+    "l": "2vlgOAH3M8Fmo19wOjeRyw"
+  },
+  {
+    "y": 2000,
+    "p": 5,
+    "a": "Bon Jovi",
+    "t": "It's My Life",
+    "l": "0v1XpBHnsbkCn7iJ9Ucr1l"
+  },
+  {
+    "y": 2000,
+    "p": 6,
+    "a": "Zlatko",
+    "t": "Ich vermiss' dich... (wie die Hölle)",
+    "l": "5qAtXePWHaJMSCjz2kMyeX"
+  },
+  {
+    "y": 2000,
+    "p": 7,
+    "a": "Santana feat. The Product G&B",
+    "t": "Maria Maria",
+    "l": "68R32667rUVTo8ldDkOXyR"
+  },
+  {
+    "y": 2000,
+    "p": 8,
+    "a": "Zlatko & Jürgen",
+    "t": "Großer Bruder",
+    "l": "4Rx40k8wqRzxTiJTWKrbge"
+  },
+  {
+    "y": 2000,
+    "p": 9,
+    "a": "Ayman",
+    "t": "Mein Stern",
+    "l": "22b3ZMRV7dtcuH1S6nc0VR"
+  },
+  {
+    "y": 2000,
+    "p": 10,
+    "a": "Britney Spears",
+    "t": "Lucky",
+    "l": "2TTYIwTM2iLC1YOyHuhRMt"
+  },
+  {
+    "y": 2001,
+    "p": 1,
+    "a": "No Angels",
+    "t": "Daylight In Your Eyes",
+    "l": "07PFC8QHsm3mql76jDucwH"
+  },
+  {
+    "y": 2001,
+    "p": 2,
+    "a": "Enya",
+    "t": "Only Time",
+    "l": "6FLwmdmW77N1Pxb1aWsZmO"
+  },
+  {
+    "y": 2001,
+    "p": 3,
+    "a": "Safri Duo",
+    "t": "Played-A-Live (The Bongo Song)",
+    "l": "7uuo02BIR76qZ6ZXQhz7Ys"
+  },
+  {
+    "y": 2001,
+    "p": 4,
+    "a": "Kylie Minogue",
+    "t": "Can't Get You Out Of My Head",
+    "l": "3E7ZwUMJFqpsDOJzEkBrQ7"
+  },
+  {
+    "y": 2001,
+    "p": 5,
+    "a": "Crazy Town",
+    "t": "Butterfly",
+    "l": "6GQ3WTaNHMFlVmN4burGat"
+  },
+  {
+    "y": 2001,
+    "p": 6,
+    "a": "Atomic Kitten",
+    "t": "Whole Again",
+    "l": "16MJqq0vEuW6GRX6faetTm"
+  },
+  {
+    "y": 2001,
+    "p": 7,
+    "a": "Wheatus",
+    "t": "Teenage Dirtbag",
+    "l": "25FTMokYEbEWHEdss5JLZS"
+  },
+  {
+    "y": 2001,
+    "p": 8,
+    "a": "Uncle Kracker",
+    "t": "Follow Me",
+    "l": "4KoecuyOpZaNFZ0UqVsllc"
+  },
+  {
+    "y": 2001,
+    "p": 9,
+    "a": "Shaggy feat. Rayvon",
+    "t": "Angel",
+    "l": "65JPof7EugT2MTxss338QU"
+  },
+  {
+    "y": 2001,
+    "p": 10,
+    "a": "Hermes House Band",
+    "t": "Country Roads",
+    "l": "52Y0F8dNBFeF9ZXHG25eUE"
+  },
+  {
+    "y": 2002,
+    "p": 1,
+    "a": "Las Ketchup",
+    "t": "The Ketchup Song (Aserejé)",
+    "l": "6UEfyhyfhYQsyipxOd95Ie"
+  },
+  {
+    "y": 2002,
+    "p": 2,
+    "a": "Shakira",
+    "t": "Whenever Wherever",
+    "l": "2lnzGkdtDj5mtlcOW2yRtG"
+  },
+  {
+    "y": 2002,
+    "p": 3,
+    "a": "Herbert Grönemeyer",
+    "t": "Mensch",
+    "l": "2urspvjqMlyq8JVAudN3DK"
+  },
+  {
+    "y": 2002,
+    "p": 4,
+    "a": "Eminem",
+    "t": "Without Me",
+    "l": "7lQ8MOhq6IN2w8EYcFNSUk"
+  },
+  {
+    "y": 2002,
+    "p": 5,
+    "a": "Die Gerd Show",
+    "t": "Der Steuersong (Las Kanzlern)",
+    "l": "3gci6ouEAa8pITspw9snoE"
+  },
+  {
+    "y": 2002,
+    "p": 6,
+    "a": "Ben feat. Gim",
+    "t": "Engel",
+    "l": "013lE9y5VluSNHAwwfje0R"
+  },
+  {
+    "y": 2002,
+    "p": 7,
+    "a": "Tiziano Ferro",
+    "t": "Perdono",
+    "l": "4T3o83F13gwUaF0xCtAfNl"
+  },
+  {
+    "y": 2002,
+    "p": 8,
+    "a": "Shakira",
+    "t": "Underneath Your Clothes",
+    "l": "15f8Cv8RXUlOOCIf2oaceN"
+  },
+  {
+    "y": 2002,
+    "p": 9,
+    "a": "B3",
+    "t": "I.O.I.O.",
+    "l": "3b2lYcUl4Scnm4CnltLMvY"
+  },
+  {
+    "y": 2002,
+    "p": 10,
+    "a": "Wonderwall",
+    "t": "Just More",
+    "l": "1AR0pzjw2WvAHlcst59nwT"
+  },
+  {
+    "y": 2003,
+    "p": 1,
+    "a": "Deutschland sucht den Superstar",
+    "t": "We Have A Dream",
+    "l": "0IVtIa8myW4sYgOscESzLt"
+  },
+  {
+    "y": 2003,
+    "p": 2,
+    "a": "Alexander",
+    "t": "Take Me Tonight",
+    "l": "2lWLGJ0C4vCi8EmNAvzzzm"
+  },
+  {
+    "y": 2003,
+    "p": 3,
+    "a": "Yvonne Catterfeld",
+    "t": "Für dich",
+    "l": "3QYi6nQ5sDi4eNh0DHZujh"
+  },
+  {
+    "y": 2003,
+    "p": 4,
+    "a": "RZA feat. Xavier Naidoo",
+    "t": "Ich kenne nichts (das so schön ist wie du)",
+    "l": "1E3HbBRkIbgmgPYNQANDQQ"
+  },
+  {
+    "y": 2003,
+    "p": 5,
+    "a": "t.A.T.u.",
+    "t": "All The Things She Said",
+    "l": "4bJygwUKrRgq1stlNXcgMg"
+  },
+  {
+    "y": 2003,
+    "p": 6,
+    "a": "Eminem",
+    "t": "Lose Yourself",
+    "l": "1v7L65Lzy0j0vdpRjJewt1"
+  },
+  {
+    "y": 2003,
+    "p": 7,
+    "a": "Outlandish",
+    "t": "Aicha",
+    "l": "7mze3mJmu79AJu8SnS37pS"
+  },
+  {
+    "y": 2003,
+    "p": 8,
+    "a": "The Black Eyed Peas",
+    "t": "Where Is The Love?",
+    "l": "0xmjwnQ3FNE6HuWCt2nHdZ"
+  },
+  {
+    "y": 2003,
+    "p": 9,
+    "a": "Lumidee",
+    "t": "Never Leave You (Uh-Oooh)",
+    "l": "1AjQE5MtP5jHQMyDepbvLI"
+  },
+  {
+    "y": 2003,
+    "p": 10,
+    "a": "The Rasmus",
+    "t": "In The Shadows",
+    "l": "1fr92Vupmcs2vgLMFVQ7rd"
+  },
+  {
+    "y": 2004,
+    "p": 1,
+    "a": "O-Zone",
+    "t": "Dragostea din teï",
+    "l": "52Zr0sinhWTCRrQhRRY4EP"
+  },
+  {
+    "y": 2004,
+    "p": 2,
+    "a": "De Randfichten",
+    "t": "Lebt denn dr alte Holzmichl noch...?",
+    "l": "2u4VbJQr1RK0X90qm0UwQ6"
+  },
+  {
+    "y": 2004,
+    "p": 3,
+    "a": "Usher feat. Lil' Jon & Ludacris",
+    "t": "Yeah",
+    "l": "5rb9QrpfcKFHM1EUbSIurX"
+  },
+  {
+    "y": 2004,
+    "p": 4,
+    "a": "Eamon",
+    "t": "F**k It (I Don't Want You Back)",
+    "l": "1p5kC161fWMA2QlwV3Vi4W"
+  },
+  {
+    "y": 2004,
+    "p": 5,
+    "a": "Max",
+    "t": "Can't Wait Until Tonight",
+    "l": "38BOqNwnYLMBZuJ5COw4n8"
+  },
+  {
+    "y": 2004,
+    "p": 6,
+    "a": "The Black Eyed Peas",
+    "t": "Shut Up",
+    "l": "0KxU9wjCedUxSGdjuFdBDu"
+  },
+  {
+    "y": 2004,
+    "p": 7,
+    "a": "Oomph!",
+    "t": "Augen auf!",
+    "l": "6gcFq5UOdNa8LzTRd4lldD"
+  },
+  {
+    "y": 2004,
+    "p": 8,
+    "a": "Aventura",
+    "t": "Obsesión",
+    "l": "65H6t1WQBim6q93yM8fEwn"
+  },
+  {
+    "y": 2004,
+    "p": 9,
+    "a": "Haiducii",
+    "t": "Dragostea din tei",
+    "l": "13UezPlkljbORrw57YizGO"
+  },
+  {
+    "y": 2004,
+    "p": 10,
+    "a": "Mario Winans feat. Enya & P. Diddy",
+    "t": "I Don't Wanna Know",
+    "l": "2yr2HnFYl7XvqJk4fXoQBt"
+  },
+  {
+    "y": 2005,
+    "p": 1,
+    "a": "Schnappi",
+    "t": "Schnappi, das kleine Krokodil",
+    "l": "2QnAg9u1MmoNpm4O7zrYA4"
+  },
+  {
+    "y": 2005,
+    "p": 2,
+    "a": "Tokio Hotel",
+    "t": "Durch den Monsun",
+    "l": "41YOS7VuxHEEwYHLfa7VWM"
+  },
+  {
+    "y": 2005,
+    "p": 3,
+    "a": "Akon",
+    "t": "Lonely",
+    "l": "4v7DCN09hgXkKazefkznDQ"
+  },
+  {
+    "y": 2005,
+    "p": 4,
+    "a": "K-Maro",
+    "t": "Femme Like U (Donne-moi ton corps)",
+    "l": "3Xwxs8bfakTnFbiBbwZznX"
+  },
+  {
+    "y": 2005,
+    "p": 5,
+    "a": "Söhne Mannheims",
+    "t": "Und wenn ein Lied",
+    "l": "7CFr7KuO7CWuqxJ3PtByXC"
+  },
+  {
+    "y": 2005,
+    "p": 6,
+    "a": "Juanes",
+    "t": "La camisa negra",
+    "l": "2ZmCYW6bxYtvkthFexIFXL"
+  },
+  {
+    "y": 2005,
+    "p": 7,
+    "a": "50 Cent feat. Olivia",
+    "t": "Candy Shop",
+    "l": "5D2mYZuzcgjpchVY1pmTPh"
+  },
+  {
+    "y": 2005,
+    "p": 8,
+    "a": "The Pussycat Dolls feat. Busta Rhymes",
+    "t": "Don't Cha",
+    "l": "0dFc6RXp4kw3MNMdMDGQ52"
+  },
+  {
+    "y": 2005,
+    "p": 9,
+    "a": "Die Firma",
+    "t": "Die Eine 2005",
+    "l": "3jd4ya9vCwExxTVOjPcqsf"
+  },
+  {
+    "y": 2005,
+    "p": 10,
+    "a": "Ch!pz",
+    "t": "Ch!pz In Black (Who You Gonna Call)",
+    "l": "1maRB5Epd77jduOZxRkZ3j"
+  },
+  {
+    "y": 2006,
+    "p": 1,
+    "a": "Bob Sinclar presents Goleo VI feat. Gary \"Nesta\" Pine",
+    "t": "Love Generation",
+    "l": "6O86moP0vr52dXsQQcPPnb"
+  },
+  {
+    "y": 2006,
+    "p": 2,
+    "a": "Texas Lightning",
+    "t": "No No Never",
+    "l": "5EEiZp74udn1TOG6ty9Pq6"
+  },
+  {
+    "y": 2006,
+    "p": 3,
+    "a": "Shakira feat. Wyclef Jean",
+    "t": "Hips Don't Lie",
+    "l": "3d0WouFnFmr0K3kjeza3fF"
+  },
+  {
+    "y": 2006,
+    "p": 4,
+    "a": "Gnarls Barkley",
+    "t": "Crazy",
+    "l": "1vxw6aYJls2oq3gW0DujAo"
+  },
+  {
+    "y": 2006,
+    "p": 5,
+    "a": "Sportfreunde Stiller",
+    "t": "'54, '74, '90, 2006",
+    "l": "5UVXLUq8m3CnehQ283wkrv"
+  },
+  {
+    "y": 2006,
+    "p": 6,
+    "a": "Herbert Grönemeyer feat. Amadou & Mariam",
+    "t": "Zeit, dass sich was dreht",
+    "l": "1MYDjA2c5qeMNl5xZoSuLd"
+  },
+  {
+    "y": 2006,
+    "p": 7,
+    "a": "Mattafix",
+    "t": "Big City Life",
+    "l": "0Stkh0VvjWMqQOWNkHVhJq"
+  },
+  {
+    "y": 2006,
+    "p": 8,
+    "a": "Silbermond",
+    "t": "Das Beste",
+    "l": "3FEhbAkm1Dy21UvhbYhFM3"
+  },
+  {
+    "y": 2006,
+    "p": 9,
+    "a": "Eros Ramazzotti & Anastacia",
+    "t": "I Belong To You (il ritmo della passione)",
+    "l": "5bO6Qb4pKmEUiokXBWIDsy"
+  },
+  {
+    "y": 2007,
+    "p": 1,
+    "a": "DJ Ötzi & Nik P.",
+    "t": "Ein Stern (... der deinen Namen trägt)",
+    "l": "1o5evgltJughVgrPinzAOV"
+  },
+  {
+    "y": 2007,
+    "p": 2,
+    "a": "Nelly Furtado",
+    "t": "All Good Things (Come To An End)",
+    "l": "6kEpjptnAwt11Atr4cEMe1"
+  },
+  {
+    "y": 2007,
+    "p": 3,
+    "a": "Nelly Furtado",
+    "t": "Say It Right",
+    "l": "2aI21FnmY7TJVKeMaoQZ0t"
+  },
+  {
+    "y": 2007,
+    "p": 4,
+    "a": "Ville Valo & Natalia Avelon",
+    "t": "Summer Wine",
+    "l": "0dQ8ei6Gf0DAfowFBNhkWI"
+  },
+  {
+    "y": 2007,
+    "p": 5,
+    "a": "Rihanna feat. Jay-Z",
+    "t": "Umbrella",
+    "l": "113v1MA9MTShy98uCz37nO"
+  },
+  {
+    "y": 2007,
+    "p": 6,
+    "a": "Ich + Ich",
+    "t": "Vom selben Stern",
+    "l": "4kCYJigsNQJqs6kpMSlsmL"
+  },
+  {
+    "y": 2007,
+    "p": 7,
+    "a": "Mark Medlock",
+    "t": "Now Or Never",
+    "l": "0FzLy0e2zRFzRdzzabAGkO"
+  },
+  {
+    "y": 2007,
+    "p": 8,
+    "a": "Mark Medlock / Dieter Bohlen",
+    "t": "You Can Get It",
+    "l": "264b3qoi07fjK6KxLuQ1NP"
+  },
+  {
+    "y": 2007,
+    "p": 9,
+    "a": "Monrose",
+    "t": "Shame",
+    "l": "2jB4BbZscDMdjlcm56zaaj"
+  },
+  {
+    "y": 2007,
+    "p": 10,
+    "a": "Culcha Candela",
+    "t": "Hamma!",
+    "l": "3vaBHxfz5WPBLLPt1hTUvI"
+  },
+  {
+    "y": 2008,
+    "p": 2,
+    "a": "Leona Lewis",
+    "t": "Bleeding Love",
+    "l": "7wZUrN8oemZfsEd1CGkbXE"
+  },
+  {
+    "y": 2008,
+    "p": 3,
+    "a": "Kid Rock",
+    "t": "All Summer Long",
+    "l": "5rX6C5QVvvZB7XckETNych"
+  },
+  {
+    "y": 2008,
+    "p": 4,
+    "a": "Schnuffel",
+    "t": "Kuschel Song",
+    "l": "5o1ApCb1vHRGVpcM9OxuUa"
+  },
+  {
+    "y": 2008,
+    "p": 5,
+    "a": "Katy Perry",
+    "t": "I Kissed A Girl",
+    "l": "14iN3o8ptQ8cFVZTEmyQRV"
+  },
+  {
+    "y": 2008,
+    "p": 6,
+    "a": "Duffy",
+    "t": "Mercy",
+    "l": "1zusIxNqJu8i4g6P6hJ2Qa"
+  },
+  {
+    "y": 2008,
+    "p": 7,
+    "a": "Ich + Ich",
+    "t": "So soll es bleiben",
+    "l": "6bm0ZnBMzYY92gKjz3ypRS"
+  },
+  {
+    "y": 2008,
+    "p": 8,
+    "a": "Amy Macdonald",
+    "t": "This Is The Life",
+    "l": "2T3jgoAMbBXiMMD8pSc6QL"
+  },
+  {
+    "y": 2008,
+    "p": 9,
+    "a": "Madonna & Justin",
+    "t": "4 Minutes",
+    "l": "3BLQrC76YB29r1Z5hNJbti"
+  },
+  {
+    "y": 2008,
+    "p": 10,
+    "a": "Gabriella Cilmi",
+    "t": "Sweet About Me",
+    "l": "3Ws8j16fKE1jj74XksiyV6"
+  },
+  {
+    "y": 2009,
+    "p": 1,
+    "a": "Lady Gaga",
+    "t": "Poker Face",
+    "l": "1QV6tiMFM6fSOKOGLMHYYg"
+  },
+  {
+    "y": 2009,
+    "p": 2,
+    "a": "Emilíana Torrini",
+    "t": "Jungle Drum",
+    "l": "49sGyqfSqURWHIKDbkTfdQ"
+  },
+  {
+    "y": 2009,
+    "p": 3,
+    "a": "Milow",
+    "t": "Ayo Technology",
+    "l": "6erXlsjsZE7Jvc2p7vpAno"
+  },
+  {
+    "y": 2009,
+    "p": 4,
+    "a": "Cassandra Steen feat. Adel Tawil",
+    "t": "Stadt",
+    "l": "3wqP766iB2MdnNKSetG7Pl"
+  },
+  {
+    "y": 2009,
+    "p": 5,
+    "a": "Mando Diao",
+    "t": "Dance With Somebody",
+    "l": "28qkNp9shSV8AQrBwxZf48"
+  },
+  {
+    "y": 2009,
+    "p": 6,
+    "a": "Razorlight",
+    "t": "Wire To Wire",
+    "l": "5YFEqFTmsbqyamFvFA7Wdc"
+  },
+  {
+    "y": 2009,
+    "p": 7,
+    "a": "Silbermond",
+    "t": "Irgendwas bleibt",
+    "l": "7dblY1Epg03mXh2bJ9F44Z"
+  },
+  {
+    "y": 2009,
+    "p": 8,
+    "a": "Gossip",
+    "t": "Heavy Cross",
+    "l": "2IxixfQUSQkwCCblJT3Eq1"
+  },
+  {
+    "y": 2009,
+    "p": 9,
+    "a": "The Black Eyed Peas",
+    "t": "I Gotta Feeling",
+    "l": "4kLLWz7srcuLKA7Et40PQR"
+  },
+  {
+    "y": 2009,
+    "p": 10,
+    "a": "David Guetta feat. Kelly Rowland",
+    "t": "When Love Takes Over",
+    "l": "5pwDME1hSmUZSYWHKwIfEC"
+  },
+  {
+    "y": 2010,
+    "p": 1,
+    "a": "Israel IZ Kamakawiwo'ole",
+    "t": "Over The Rainbow",
+    "l": "3oQomOPRNQ5NVFUmLJHbAV"
+  },
+  {
+    "y": 2010,
+    "p": 2,
+    "a": "Shakira feat. Freshlyground",
+    "t": "Waka Waka (This Time For Africa)",
+    "l": "6bNB5gxFX6Q87DbQWb8OWZ"
+  },
+  {
+    "y": 2010,
+    "p": 3,
+    "a": "Lena Meyer-Landrut",
+    "t": "Satellite",
+    "l": "2UjNsh4ipNrmog6wdS2JVv"
+  },
+  {
+    "y": 2010,
+    "p": 4,
+    "a": "Unheilig",
+    "t": "Geboren um zu leben",
+    "l": "1VU8t2MpJRLG5iFEIxqq7z"
+  },
+  {
+    "y": 2010,
+    "p": 5,
+    "a": "Yolanda Be Cool & DCup",
+    "t": "We No Speak Americano",
+    "l": "6FhUr64e2B7a1l592uuHwQ"
+  },
+  {
+    "y": 2010,
+    "p": 6,
+    "a": "K'naan",
+    "t": "Wavin' Flag",
+    "l": "4nOygULhEuDO5ZBRNPFaso"
+  },
+  {
+    "y": 2010,
+    "p": 7,
+    "a": "Stromae",
+    "t": "Alors on danse",
+    "l": "2GYHyAoLWpkxLVa4oYTVko"
+  },
+  {
+    "y": 2010,
+    "p": 8,
+    "a": "Hurts",
+    "t": "Wonderful Life",
+    "l": "5Tpojb1ynbO0MgfAwgDza5"
+  },
+  {
+    "y": 2010,
+    "p": 9,
+    "a": "Keri Hilson",
+    "t": "I Like",
+    "l": "6GbuXZg13NATZ9Qhsw3zPh"
+  },
+  {
+    "y": 2010,
+    "p": 10,
+    "a": "Ke$ha",
+    "t": "TiK ToK",
+    "l": "0HPD5WQqrq7wPWR7P7Dw1i"
+  },
+  {
+    "y": 2011,
+    "p": 1,
+    "a": "Jennifer Lopez feat. Pitbull",
+    "t": "On The Floor",
+    "l": "4htjXtjySdVDU6QRPOGgg9"
+  },
+  {
+    "y": 2011,
+    "p": 2,
+    "a": "Alexandra Stan",
+    "t": "Mr. Saxobeat",
+    "l": "3LWDPEXEaLBRGNLbdcbwBR"
+  },
+  {
+    "y": 2011,
+    "p": 3,
+    "a": "Bruno Mars",
+    "t": "Grenade",
+    "l": "4lLtanYk6tkMvooU0tWzG8"
+  },
+  {
+    "y": 2011,
+    "p": 4,
+    "a": "Adele",
+    "t": "Rolling In The Deep",
+    "l": "4OSBTYWVwsQhGLF9NHvIbR"
+  },
+  {
+    "y": 2011,
+    "p": 5,
+    "a": "Pietro Lombardi",
+    "t": "Call My Name",
+    "l": "3FOV2CWRrMsvvl359VCgOC"
+  },
+  {
+    "y": 2011,
+    "p": 6,
+    "a": "Marlon Roudette",
+    "t": "New Age",
+    "l": "0J2hke1PRNBqyWpnMTreJ5"
+  },
+  {
+    "y": 2011,
+    "p": 7,
+    "a": "Snoop Dogg vs. David Guetta",
+    "t": "Sweat",
+    "l": "0R7YVi7w41Dr9jU5vblAok"
+  },
+  {
+    "y": 2011,
+    "p": 8,
+    "a": "LMFAO feat. Lauren Bennett & GoonRock",
+    "t": "Party Rock Anthem",
+    "l": "1Q7cKKAzsWC4dliJhhWjX8"
+  },
+  {
+    "y": 2011,
+    "p": 9,
+    "a": "Pitbull feat. Ne-Yo, Afrojack & Nayer",
+    "t": "Give Me Everything",
+    "l": "4QNpBfC0zvjKqPJcyqBy9W"
+  },
+  {
+    "y": 2011,
+    "p": 10,
+    "a": "Tim Bendzko",
+    "t": "Nur noch kurz die Welt retten",
+    "l": "0Wq6whEjKeAAUi4nEim1DA"
+  },
+  {
+    "y": 2012,
+    "p": 1,
+    "a": "Michel Teló",
+    "t": "Ai se eu te pego!",
+    "l": "29vem0DsWK4224LQyxcmA5"
+  },
+  {
+    "y": 2012,
+    "p": 2,
+    "a": "Die Toten Hosen",
+    "t": "Tage wie diese",
+    "l": "2lYsCjTvXIHOqT8xSbK2jq"
+  },
+  {
+    "y": 2012,
+    "p": 3,
+    "a": "Lykke Li",
+    "t": "I Follow Rivers",
+    "l": "1PnmXdkqRktZT67tE8fv7d"
+  },
+  {
+    "y": 2012,
+    "p": 5,
+    "a": "Asaf Avidan",
+    "t": "One Day / Reckoning Song (Wankelmut Rmx)",
+    "l": "5bGG1abhVIUm6EAa36ipRX"
+  },
+  {
+    "y": 2012,
+    "p": 6,
+    "a": "Carly Rae Jepsen",
+    "t": "Call Me Maybe",
+    "l": "20I6sIOMTCkB6w7ryavxtO"
+  },
+  {
+    "y": 2012,
+    "p": 7,
+    "a": "Rihanna",
+    "t": "Diamonds",
+    "l": "6O20JhBJPePEkBdrB5sqRx"
+  },
+  {
+    "y": 2012,
+    "p": 8,
+    "a": "Psy",
+    "t": "Gangnam Style",
+    "l": "03UrZgTINDqvnUMbbIMhql"
+  },
+  {
+    "y": 2012,
+    "p": 9,
+    "a": "Loreen",
+    "t": "Euphoria",
+    "l": "2knr7ikPt4l7bk92qS4ZXW"
+  },
+  {
+    "y": 2012,
+    "p": 10,
+    "a": "Olly Murs feat. Rizzle Kicks",
+    "t": "Heart Skips A Beat",
+    "l": "1f8UCzB3RqIgNkW7QIiIeP"
+  },
+  {
+    "y": 2013,
+    "p": 1,
+    "a": "Avicii",
+    "t": "Wake Me Up!",
+    "l": "0nrRP2bk19rLc0orkWPQk2"
+  },
+  {
+    "y": 2013,
+    "p": 2,
+    "a": "Robin Thicke feat. T.I. + Pharrell",
+    "t": "Blurred Lines",
+    "l": "0n4bITAu0Y0nigrz3MFJMb"
+  },
+  {
+    "y": 2013,
+    "p": 3,
+    "a": "will.i.am & Britney Spears",
+    "t": "Scream & Shout",
+    "l": "2iJuuzV8P9Yz0VSurttIV5"
+  },
+  {
+    "y": 2013,
+    "p": 4,
+    "a": "Daft Punk feat. Pharrell Williams",
+    "t": "Get Lucky",
+    "l": "2Foc5Q5nqNiosCNqttzHof"
+  },
+  {
+    "y": 2013,
+    "p": 5,
+    "a": "Passenger",
+    "t": "Let Her Go",
+    "l": "4bzBPrGYD3fQfAadLgIiwT"
+  },
+  {
+    "y": 2013,
+    "p": 6,
+    "a": "Macklemore & Ryan Lewis feat. Ray Dalton",
+    "t": "Can't Hold Us",
+    "l": "22skzmqfdWrjJylampe0kt"
+  },
+  {
+    "y": 2013,
+    "p": 7,
+    "a": "Macklemore & Ryan Lewis feat. Wanz",
+    "t": "Thrift Shop",
+    "l": "3wMtW7OyslemHe5Ft5sNyA"
+  },
+  {
+    "y": 2013,
+    "p": 8,
+    "a": "Capital Cities",
+    "t": "Safe And Sound",
+    "l": "5JVbvCHX10U2pLa5DEqGav"
+  },
+  {
+    "y": 2013,
+    "p": 9,
+    "a": "Imagine Dragons",
+    "t": "Radioactive",
+    "l": "62yJjFtgkhUrXktIoSjgP2"
+  },
+  {
+    "y": 2013,
+    "p": 10,
+    "a": "Naughty Boy feat. Sam Smith",
+    "t": "La La La",
+    "l": "52gvlDnre9craz9dKGObp8"
+  },
+  {
+    "y": 2013,
+    "p": 11,
+    "a": "James Arthur",
+    "t": "Impossible",
+    "l": "5yVIlYEHZxQVLyInCdldoS"
+  },
+  {
+    "y": 2014,
+    "p": 1,
+    "a": "Helene Fischer",
+    "t": "Atemlos durch die Nacht",
+    "l": "1cSXzDZt8vzuUp2XREQEJN"
+  },
+  {
+    "y": 2014,
+    "p": 2,
+    "a": "Pharrell Williams",
+    "t": "Happy",
+    "l": "60nZcImufyMA1MKQY3dcCH"
+  },
+  {
+    "y": 2014,
+    "p": 3,
+    "a": "Mr Probz",
+    "t": "Waves (Robin Schulz Remix)",
+    "l": "2HDhsfCmbVjLHYXK32jaCC"
+  },
+  {
+    "y": 2014,
+    "p": 4,
+    "a": "Andreas Bourani",
+    "t": "Auf uns",
+    "l": "6dXt4t5jgySnVTeTpT4C0l"
+  },
+  {
+    "y": 2014,
+    "p": 5,
+    "a": "Mark Forster feat. Sido",
+    "t": "Au revoir",
+    "l": "1ZMODMeLK5x6W8r8jsmmgX"
+  },
+  {
+    "y": 2014,
+    "p": 6,
+    "a": "Lilly Wood & The Prick and Robin Schulz",
+    "t": "Prayer In C (Robin Schulz Remix)",
+    "l": "3k9FFXVPn3ua8dlpkxlCvZ"
+  },
+  {
+    "y": 2014,
+    "p": 7,
+    "a": "Clean Bandit feat. Jess Glynne",
+    "t": "Rather Be",
+    "l": "7KOlSRYkRfwrndUMEYrikx"
+  },
+  {
+    "y": 2014,
+    "p": 8,
+    "a": "Ed Sheeran",
+    "t": "I See Fire",
+    "l": "1fu5IQSRgPxJL2OTP7FVLW"
+  },
+  {
+    "y": 2014,
+    "p": 9,
+    "a": "Cro",
+    "t": "Traum",
+    "l": "6D579iDSk3u8fCokhBl8dQ"
+  },
+  {
+    "y": 2014,
+    "p": 10,
+    "a": "OneRepublic",
+    "t": "Love Runs Out",
+    "l": "3cOO5IQtOYs7huq4Z6lYfr"
+  },
+  {
+    "y": 2014,
+    "p": 11,
+    "a": "Katy Perry feat. Juicy J",
+    "t": "Dark Horse",
+    "l": "3Ulne25beUvPa66oGcSH9X"
+  },
+  {
+    "y": 2015,
+    "p": 1,
+    "a": "Omi",
+    "t": "Cheerleader (Felix Jaehn Remix)",
+    "l": "7vFoFDWqTX0mHzLfrF1Cfy"
+  },
+  {
+    "y": 2015,
+    "p": 2,
+    "a": "Lost Frequencies",
+    "t": "Are You With Me",
+    "l": "4255amV4enzl28KAn16rUO"
+  },
+  {
+    "y": 2015,
+    "p": 3,
+    "a": "Felix Jaehn feat. Jasmine Thompson",
+    "t": "Ain't Nobody (Loves Me Better)",
+    "l": "3c8iiZGfEammKJuWTErE5x"
+  },
+  {
+    "y": 2015,
+    "p": 4,
+    "a": "Ellie Goulding",
+    "t": "Love Me Like You Do",
+    "l": "1bIVDJC6imJNGSExMwlxy3"
+  },
+  {
+    "y": 2015,
+    "p": 5,
+    "a": "Major Lazer & DJ Snake feat. MØ",
+    "t": "Lean On",
+    "l": "3g6mVyrIjBzokHNy4JV37J"
+  },
+  {
+    "y": 2015,
+    "p": 6,
+    "a": "Sido feat. Andreas Bourani",
+    "t": "Astronaut",
+    "l": "0pQr5WsobmdZHnuObT0sc2"
+  },
+  {
+    "y": 2015,
+    "p": 7,
+    "a": "Adele",
+    "t": "Hello",
+    "l": "1Yk0cQdMLx5RzzFTYwmuld"
+  },
+  {
+    "y": 2015,
+    "p": 8,
+    "a": "Robin Schulz feat. Francesco Yates",
+    "t": "Sugar",
+    "l": "5tf1VVWniHgryyumXyJM7w"
+  },
+  {
+    "y": 2015,
+    "p": 9,
+    "a": "Wiz Khalifa feat. Charlie Puth",
+    "t": "See You Again",
+    "l": "2JzZzZUQj3Qff7wapcbKjc"
+  },
+  {
+    "y": 2015,
+    "p": 10,
+    "a": "Kygo feat. Conrad",
+    "t": "Firestone",
+    "l": "6qpQwIVdvFY4r6qzqukLiI"
+  },
+  {
+    "y": 2015,
+    "p": 11,
+    "a": "Philipp Dittberner & Marv",
+    "t": "Wolke 4",
+    "l": "5RfxjgQMne0dRNiORcLtMg"
+  },
+  {
+    "y": 2016,
+    "p": 1,
+    "a": "Alan Walker",
+    "t": "Faded",
+    "l": "698ItKASDavgwZ3WjaWjtz"
+  },
+  {
+    "y": 2016,
+    "p": 2,
+    "a": "Stereoact feat. Kerstin Ott",
+    "t": "Die immer lacht",
+    "l": "4Y1pJBR9xFGJ5Psf4efQbR"
+  },
+  {
+    "y": 2016,
+    "p": 3,
+    "a": "Sia feat. Sean Paul",
+    "t": "Cheap Thrills",
+    "l": "378iszndTZAR4dH8kwsLC6"
+  },
+  {
+    "y": 2016,
+    "p": 4,
+    "a": "Imany",
+    "t": "Don't Be So Shy (Filatov & Karas Remix)",
+    "l": "00vk0sEfb6mr2ehwSw0Uhn"
+  },
+  {
+    "y": 2016,
+    "p": 5,
+    "a": "Drake feat. Wizkid & Kyla",
+    "t": "One Dance",
+    "l": "6H05um4xGVQUaGwcEk6Siz"
+  },
+  {
+    "y": 2016,
+    "p": 6,
+    "a": "Kungs vs. Cookin' On 3 Burners",
+    "t": "This Girl",
+    "l": "57nuRdwp1Jy4xzvokWHQtu"
+  },
+  {
+    "y": 2016,
+    "p": 7,
+    "a": "The Chainsmokers feat. Daya",
+    "t": "Don't Let Me Down",
+    "l": "4s2rzq6ZpCfg5ODq0z79QG"
+  },
+  {
+    "y": 2016,
+    "p": 8,
+    "a": "Twenty One Pilots",
+    "t": "Stressed Out",
+    "l": "3CRDbSIZ4r5MsZ0YwxuEkn"
+  },
+  {
+    "y": 2016,
+    "p": 9,
+    "a": "Rag'n'Bone Man",
+    "t": "Human",
+    "l": "5LLRo6dCGxg4PZmtSqNzrZ"
+  },
+  {
+    "y": 2016,
+    "p": 10,
+    "a": "Justin Timberlake",
+    "t": "Can't Stop The Feeling!",
+    "l": "6JV2JOEocMgcZxYSZelKcc"
+  },
+  {
+    "y": 2016,
+    "p": 11,
+    "a": "Mike Posner",
+    "t": "I Took A Pill In Ibiza",
+    "l": "0vbtURX4qv1l7besfwmnD8"
+  },
+  {
+    "y": 2017,
+    "p": 1,
+    "a": "Ed Sheeran",
+    "t": "Shape Of You",
+    "l": "7qiZfU4dY1lWllzX7mPBI3"
+  },
+  {
+    "y": 2017,
+    "p": 2,
+    "a": "Luis Fonsi feat. Daddy Yankee",
+    "t": "Despacito",
+    "l": "6rPO02ozF3bM7NnOV4h6s2"
+  },
+  {
+    "y": 2017,
+    "p": 3,
+    "a": "The Chainsmokers & Coldplay",
+    "t": "Something Just Like This",
+    "l": "6RUKPb4LETWmmr3iAEQktW"
+  },
+  {
+    "y": 2017,
+    "p": 4,
+    "a": "Imagine Dragons",
+    "t": "Thunder",
+    "l": "1zB4vmk8tFRmM9UULNzbLB"
+  },
+  {
+    "y": 2017,
+    "p": 5,
+    "a": "Burak Yeter feat. Danelle Sandoval",
+    "t": "Tuesday",
+    "l": "7EVk9tRb6beJLTHrg6AkY9"
+  },
+  {
+    "y": 2017,
+    "p": 6,
+    "a": "Axwell Λ Ingrosso",
+    "t": "More Than You Know",
+    "l": "6h5PAsRni4IRlxWr6uDPTP"
+  },
+  {
+    "y": 2017,
+    "p": 7,
+    "a": "Robin Schulz feat. James Blunt",
+    "t": "OK",
+    "l": "3OnLVddwAfFPnRfU791ri2"
+  },
+  {
+    "y": 2017,
+    "p": 8,
+    "a": "Bausa",
+    "t": "Was du Liebe nennst",
+    "l": "2hIY4sjfMeKwXXh2LvhrMo"
+  },
+  {
+    "y": 2017,
+    "p": 9,
+    "a": "French Montana feat. Swae Lee",
+    "t": "Unforgettable",
+    "l": "6Uq65N2DJzKwBj8QBcJ5Xu"
+  },
+  {
+    "y": 2017,
+    "p": 10,
+    "a": "Ed Sheeran",
+    "t": "Galway Girl",
+    "l": "0afhq8XCExXpqazXczTSve"
+  },
+  {
+    "y": 2017,
+    "p": 11,
+    "a": "Jason Derulo feat. Nicki Minaj & Ty Dolla $ign",
+    "t": "Swalla",
+    "l": "5DswHXvXDUmgwP5zcRL5Hv"
+  },
+  {
+    "y": 2018,
+    "p": 1,
+    "a": "Dynoro & Gigi D'Agostino",
+    "t": "In My Mind",
+    "l": "0E9ZjEAyAwOXZ7wJC0PD33"
+  },
+  {
+    "y": 2018,
+    "p": 4,
+    "a": "Calvin Harris & Dua Lipa",
+    "t": "One Kiss",
+    "l": "7ef4DlsgrMEH11cDZd32M6"
+  },
+  {
+    "y": 2018,
+    "p": 5,
+    "a": "Dennis Lloyd",
+    "t": "Nevermind",
+    "l": "63SevszngYpZOwf63o61K4"
+  },
+  {
+    "y": 2018,
+    "p": 6,
+    "a": "El Profesor",
+    "t": "Bella ciao (Hugel Remix)",
+    "l": "2dQzfKRaMKUCQgMpOtpLTh"
+  },
+  {
+    "y": 2018,
+    "p": 7,
+    "a": "Namika feat. Black M",
+    "t": "Je ne parle pas français (Beatgees Remix)",
+    "l": "7pLG2f4GnHLYgRovYdgCPL"
+  },
+  {
+    "y": 2018,
+    "p": 8,
+    "a": "Clean Bandit feat. Demi Lovato",
+    "t": "Solo",
+    "l": "3NuK5xMlSlB6K2Qp16zf3h"
+  },
+  {
+    "y": 2018,
+    "p": 9,
+    "a": "Marshmello & Anne-Marie",
+    "t": "Friends",
+    "l": "1wIyr1y5wiWqo7nqbxHpWt"
+  },
+  {
+    "y": 2018,
+    "p": 10,
+    "a": "Luis Fonsi & Demi Lovato",
+    "t": "Échame la culpa",
+    "l": "0mlAOSILGRys2IbvyOT5VJ"
+  },
+  {
+    "y": 2018,
+    "p": 11,
+    "a": "Olexesh feat. Edin",
+    "t": "Magisch",
+    "l": "4gnuy9VBU2GGrN60UMB79t"
+  },
+  {
+    "y": 2019,
+    "p": 1,
+    "a": "Lil Nas X",
+    "t": "Old Town Road",
+    "l": "2YpeDb67231RjR0MgVLzsG"
+  },
+  {
+    "y": 2019,
+    "p": 2,
+    "a": "Tones And I",
+    "t": "Dance Monkey",
+    "l": "2N8m6CYs74qQO4mjVcXO30"
+  },
+  {
+    "y": 2019,
+    "p": 3,
+    "a": "Apache 207",
+    "t": "Roller",
+    "l": "6hw1Sy9wZ8UCxYGdpKrU6M"
+  },
+  {
+    "y": 2019,
+    "p": 4,
+    "a": "Juju feat. Henning May",
+    "t": "Vermissen",
+    "l": "07f2b3CTdgKKlhv0mqUksz"
+  },
+  {
+    "y": 2019,
+    "p": 5,
+    "a": "Ava Max",
+    "t": "Sweet But Psycho",
+    "l": "7DnAm9FOTWE3cUvso43HhI"
+  },
+  {
+    "y": 2019,
+    "p": 6,
+    "a": "Billie Eilish",
+    "t": "Bad Guy",
+    "l": "2Fxmhks0bxGSBdJ92vM42m"
+  },
+  {
+    "y": 2019,
+    "p": 7,
+    "a": "Shawn Mendes & Camila Cabello",
+    "t": "Señorita",
+    "l": "6v3KW9xbzN5yKLt9YKDYA2"
+  },
+  {
+    "y": 2019,
+    "p": 8,
+    "a": "Ed Sheeran & Justin Bieber",
+    "t": "I Don't Care",
+    "l": "6hvRoJ0BTZywxu8UCPBkzx"
+  },
+  {
+    "y": 2019,
+    "p": 9,
+    "a": "Capital Bra x Samra",
+    "t": "Tilidin",
+    "l": "2M39v73rNJmAXUXIW0oagP"
+  },
+  {
+    "y": 2019,
+    "p": 10,
+    "a": "Samra & Capital Bra",
+    "t": "Wieder Lila",
+    "l": "2kkcJ8tSDV42LdWcPjy6We"
+  },
+  {
+    "y": 2019,
+    "p": 11,
+    "a": "Daddy Yankee feat. Snow",
+    "t": "Con calma",
+    "l": "5eEQCfq7MXQr6aHLNRUZLs"
+  },
+  {
+    "y": 2020,
+    "p": 1,
+    "a": "The Weeknd",
+    "t": "Blinding Lights",
+    "l": "0VjIjW4GlUZAMYd2vXMi3b"
+  },
+  {
+    "y": 2020,
+    "p": 4,
+    "a": "SAINt JHN",
+    "t": "Roses (Imanbek Remix)",
+    "l": "24Yi9hE78yPEbZ4kxyoXAI"
+  },
+  {
+    "y": 2020,
+    "p": 5,
+    "a": "Topic feat. A7S",
+    "t": "Breaking Me",
+    "l": "5LIgw1x3umvASJA8NFPj3v"
+  },
+  {
+    "y": 2020,
+    "p": 6,
+    "a": "Ufo361",
+    "t": "Emotions",
+    "l": "1DT8DekueUSz9vVYpBbwsX"
+  },
+  {
+    "y": 2020,
+    "p": 7,
+    "a": "Jawsh 685 & Jason Derulo",
+    "t": "Savage Love (Laxed - Siren Beat)",
+    "l": "1xQ6trAsedVPCdbtDAmk0c"
+  },
+  {
+    "y": 2020,
+    "p": 8,
+    "a": "DaBaby feat. Roddy Ricch",
+    "t": "Rockstar",
+    "l": "7ytR5pFWmSjzHJIeQkgog4"
+  },
+  {
+    "y": 2020,
+    "p": 10,
+    "a": "Apache 207",
+    "t": "Fame",
+    "l": "0QjjaCaXE45mvhCnV3C0TA"
+  },
+  {
+    "y": 2020,
+    "p": 11,
+    "a": "Nea",
+    "t": "Some Say",
+    "l": "7C1trmcQQ5n5RNy4l6ziCv"
+  },
+  {
+    "y": 2021,
+    "p": 1,
+    "a": "Nathan Evans",
+    "t": "Wellerman",
+    "l": "54OBgO0Xwu20Jak9TMXbR7"
+  },
+  {
+    "y": 2021,
+    "p": 2,
+    "a": "Ed Sheeran",
+    "t": "Bad Habits",
+    "l": "3rmo8F54jFF8OgYsqTxm5d"
+  },
+  {
+    "y": 2021,
+    "p": 3,
+    "a": "Tiësto",
+    "t": "The Business",
+    "l": "6f3Slt0GbA2bPZlz0aIFXN"
+  },
+  {
+    "y": 2021,
+    "p": 5,
+    "a": "The Weeknd",
+    "t": "Save Your Tears",
+    "l": "5QO79kh1waicV47BqGRL3g"
+  },
+  {
+    "y": 2021,
+    "p": 6,
+    "a": "The Kid Laroi / Justin Bieber",
+    "t": "Stay",
+    "l": "567e29TDzLwZwfDuEpGTwo"
+  },
+  {
+    "y": 2021,
+    "p": 7,
+    "a": "Shouse",
+    "t": "Love Tonight",
+    "l": "2prnn41CblB8B4yWACDljP"
+  },
+  {
+    "y": 2021,
+    "p": 8,
+    "a": "atb x Topic x A7S",
+    "t": "Your Love (9PM)",
+    "l": "50Ckkjp5MKZUysCSpSTbQ3"
+  },
+  {
+    "y": 2021,
+    "p": 10,
+    "a": "Olivia Rodrigo",
+    "t": "Good 4 U",
+    "l": "4ZtFanR9U6ndgddUvNcjcG"
+  },
+  {
+    "y": 2021,
+    "p": 11,
+    "a": "Bausa feat. Apache 207",
+    "t": "Madonna",
+    "l": "4fOoQxlMdZtUyrU62JHpw1"
+  },
+  {
+    "y": 2022,
+    "p": 1,
+    "a": "DJ Robin & Schürze",
+    "t": "Layla",
+    "l": "5ucyKDPjLpYLGadsRO1wSB"
+  },
+  {
+    "y": 2022,
+    "p": 3,
+    "a": "Luciano",
+    "t": "Beautiful Girl",
+    "l": "5xX2LYdXyx0Boa61rZOjq5"
+  },
+  {
+    "y": 2022,
+    "p": 4,
+    "a": "Gayle",
+    "t": "abcdefu",
+    "l": "4fouWK6XVHhzl78KzQ1UjL"
+  },
+  {
+    "y": 2022,
+    "p": 6,
+    "a": "Harry Styles",
+    "t": "As It Was",
+    "l": "4Dvkj6JhhA12EX05fT7y2e"
+  },
+  {
+    "y": 2022,
+    "p": 8,
+    "a": "Miksu / MacLoud & T-Low",
+    "t": "Sehnsucht",
+    "l": "7xaqxUl08zOg0YNUHokQpq"
+  },
+  {
+    "y": 2022,
+    "p": 10,
+    "a": "Nina Chuba",
+    "t": "Wildberry Lillet",
+    "l": "6LBmaJYwbLHfQwIreMCLlw"
+  },
+  {
     "y": 2022,
     "p": 25,
     "a": "Harry Styles",
@@ -7803,5 +11772,75 @@
     "a": "Coldplay feat. Little Simz, Burna Boy, Elyanna & Tini",
     "t": "We Pray",
     "l": "06iLeiK13jubXRIID0x77t"
+  },
+  {
+    "y": 2026,
+    "p": 1,
+    "a": "Justin Bieber feat. Nicki Minaj",
+    "t": "Beauty And A Beat",
+    "l": "1ycIpa5fyJsEWzJno48gtb"
+  },
+  {
+    "y": 2026,
+    "p": 2,
+    "a": "Tame Impala",
+    "t": "Dracula",
+    "l": "5yvVYFDUpbnjcnRBgjwTzM"
+  },
+  {
+    "y": 2026,
+    "p": 4,
+    "a": "Dominic Fike",
+    "t": "Babydoll",
+    "l": "7yNf9YjeO5JXUE3JEBgnYc"
+  },
+  {
+    "y": 2026,
+    "p": 5,
+    "a": "AK Ausserkontrolle & Shirin David",
+    "t": "LDNB",
+    "l": "5O8HYf2CdbUJIQdd6PzAA7"
+  },
+  {
+    "y": 2026,
+    "p": 6,
+    "a": "Alex Warren",
+    "t": "Fever Dream",
+    "l": "7ogpGbKc4Io6NCU6ydxXwZ"
+  },
+  {
+    "y": 2026,
+    "p": 7,
+    "a": "Taylor Swift",
+    "t": "The Fate Of Ophelia",
+    "l": "53iuhJlwXhSER5J2IYYv1W"
+  },
+  {
+    "y": 2026,
+    "p": 8,
+    "a": "Raye",
+    "t": "Where Is My Husband!",
+    "l": "55lijDD6OAjLFFUHU9tcDm"
+  },
+  {
+    "y": 2026,
+    "p": 9,
+    "a": "Huntr/X / Ejae / Audrey Nuna / Rei Ami / KPop Demon Hunters Cast",
+    "t": "Golden",
+    "l": "1CPZ5BxNNd0n0nF4Orb9JS"
+  },
+  {
+    "y": 2026,
+    "p": 10,
+    "a": "Alex Warren",
+    "t": "Ordinary",
+    "l": "2RkZ5LkEzeHGRsmDqKwmaJ"
+  },
+  {
+    "y": 2026,
+    "p": 11,
+    "a": "Zxkai & Slxughter",
+    "t": "No batidão",
+    "l": "7vg9noSnFEyPfwLiaCW4vi"
   }
 ]
