@@ -601,7 +601,7 @@ function newGameState(whitePlayerName, blackPlayerName) {
 // =============== CANVAS SETUP ===============
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
-let W, H, MARGIN, POINT_W, POINT_H, BAR_W, MID_Y;
+let W, H, MARGIN, POINT_W, POINT_H, BAR_W, BAR_X;
 
 function resizeCanvas() {
   const wrapper = canvas.parentElement;
@@ -609,63 +609,70 @@ function resizeCanvas() {
   H = wrapper.clientHeight;
   canvas.width = W;
   canvas.height = H;
-  MARGIN = W * 0.03;
-  BAR_W = W * 0.07;
+  MARGIN = W * 0.025;
+  BAR_W = W * 0.065;
+  // 12 points fit in (W - 2*MARGIN - BAR_W)
   POINT_W = (W - 2 * MARGIN - BAR_W) / 12;
-  POINT_H = H * 0.42;
-  MID_Y = H / 2;
+  POINT_H = H * 0.43;
+  BAR_X = MARGIN + 6 * POINT_W; // left edge of bar
   if (G) drawBoard();
 }
 
 window.addEventListener('resize', resizeCanvas);
 
+// =============== COORDINATE SYSTEM ===============
+//
+// Board array: board[0..23]
+//   board[i] > 0  → that many WHITE stones
+//   board[i] < 0  → that many BLACK stones
+//   board[0]  = point 24 (white's furthest, black's home-entry)
+//   board[23] = point 1  (white's home, black's furthest)
+//
+// White moves: high index → low index (board[0]→board[23]) then bear off
+// Black moves: low index  → high index (board[23]→board[0]) then bear off
+//
+// Visual layout (standard orientation, white home = bottom-right):
+//   TOP    row L→R:  pts 13,14,15,16,17,18 | BAR | pts 19,20,21,22,23,24
+//   BOTTOM row L→R:  pts 12,11,10, 9, 8, 7 | BAR | pts  6, 5, 4, 3, 2, 1
+//
+// Visual slot 0..23 → pixel x:
+//   slot 0..5  : left  half, col = slot       → x = MARGIN + col*POINT_W
+//   slot 6..11 : right half, col = slot-6     → x = BAR_X + BAR_W + col*POINT_W
+//   slot 12..17: same as 0..5 (bottom left)
+//   slot 18..23: same as 6..11 (bottom right)
+//
+// board index → visual slot:
+//   top   row: board[11]=slot0 … board[6]=slot5 | board[5]=slot6 … board[0]=slot11
+//   bottom row: board[12]=slot12 … board[17]=slot17 | board[18]=slot18 … board[23]=slot23
+//
+// Mapping:
+//   boardToVis(i):  i<=11 → 11-i   ;  i>=12 → i
+//   visToBoard(v):  v<=11 → 11-v   ;  v>=12 → v
+
+function boardToVis(i) { return i <= 11 ? 11 - i : i; }
+function visToBoard(v) { return v <= 11 ? 11 - v : v; }
+
+// pixel x-center of visual slot v
+function slotX(v) {
+  const col = v % 6;
+  const rightHalf = (v >= 6 && v <= 11) || v >= 18;
+  return rightHalf
+    ? BAR_X + BAR_W + col * POINT_W + POINT_W / 2
+    : MARGIN + col * POINT_W + POINT_W / 2;
+}
+
+// pixel x-left of visual slot v
+function slotLeft(v) { return slotX(v) - POINT_W / 2; }
+
+function isTopSlot(v) { return v < 12; }
+
+// point number label (1-24) for a visual slot
+function slotPointNum(v) {
+  const b = visToBoard(v);
+  return 24 - b; // board[0]=pt24, board[23]=pt1
+}
+
 // =============== DRAWING ===============
-function getPointX(pointIdx) {
-  // pointIdx 0-11: top row right to left (points 13-24)
-  // pointIdx 12-23: bottom row left to right (points 12-1)
-  // Visual: top-left = points 13-18, top-right = 19-24, bottom-left = 12-7, bottom-right = 6-1
-  // White home = bottom-right (points 1-6)
-  // Points visually: top row from left col 0-5 = points 13-18, col 6-11 (after bar) = 19-24
-  //                  bottom row from left col 0-5 = 12-7, col 6-11 = 6-1
-  const col = pointIdx % 6;
-  const isRight = pointIdx >= 6;
-  const barOffset = isRight ? BAR_W : 0;
-  return MARGIN + barOffset + (pointIdx % 6) * POINT_W + POINT_W / 2;
-}
-
-function getBoardPointCoords(visIdx) {
-  // visIdx 0-23: visual position on board
-  // Top: 0-5 left side (points 13-18), 6-11 right side (points 19-24)
-  // Bottom: 12-17 left side (points 12-7), 18-23 right side (points 6-1)
-  const col = visIdx % 6;
-  const isRight = visIdx >= 6 && visIdx <= 11 || visIdx >= 18;
-  const x = MARGIN + (isRight ? BAR_W : 0) + col * POINT_W + POINT_W / 2;
-  const isTop = visIdx < 12;
-  return { x, isTop, col };
-}
-
-function pointIndexToVisual(boardIdx) {
-  // board indices 0-23 → visual position
-  // board[0] = point 24 (top-right corner) = vis 11
-  // board[23] = point 1 (bottom-right corner) = vis 23
-  // top: vis 0-5 = board[12-17] (points 13-18), vis 6-11 = board[18-23] (points 19-24)
-  // Wait—let me define consistently:
-  // White moves: bar → point 24 (board[0]) → point 1 (board[23]) → bear off
-  // So board[0]=pt24, board[23]=pt1
-  // Visual top row L→R: pts 13,14,15,16,17,18 | BAR | pts 19,20,21,22,23,24
-  //   board indices:     12,13,14,15,16,17     |     | 18,19,20,21,22,23 → hmm, board[0]=pt24
-  // Let me reclarify: board[i] = point (24-i) for white perspective
-  // pt24=board[0], pt23=board[1], ... pt1=board[23]
-  // Top row (from white's perspective, left to right): pt13,14,15,16,17,18 | pt19,20,21,22,23,24
-  // board: pt13=board[11], pt14=board[10]... no that's wrong direction
-  // FINAL: board[0]=pt24, top-right. board[23]=pt1, bottom-right.
-  // Visual top L-R: board[11],10,9,8,7,6 | BAR | board[5],4,3,2,1,0
-  //               = pts 13,14,15,16,17,18|     | pts 19,20,21,22,23,24
-  // Visual bot L-R: board[12],13,14,15,16,17 | BAR | board[18],19,20,21,22,23
-  //               = pts 12,11,10,9,8,7   |     | pts 6,5,4,3,2,1
-  return null; // handled inline below
-}
-
 function drawBoard() {
   if (!W) return;
   ctx.clearRect(0, 0, W, H);
@@ -678,148 +685,100 @@ function drawBoard() {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-  // Draw 24 points (triangles)
-  // Top row (pts 13-18 left, 19-24 right) - point from top
-  // Bottom row (pts 12-7 left, 6-1 right) - point from bottom
-  // Top left: vis col 0-5, board[11..6] (pts 13..18)
-  // Top right: vis col 6-11, board[5..0] (pts 19..24)
-  // Bot left: vis col 0-5, board[12..17] (pts 12..7)
-  // Bot right: vis col 6-11, board[18..23] (pts 6..1)
-
-  for (let i = 0; i < 24; i++) {
-    const { col, isTop, rightSide } = getVisualInfo(i);
-    const x = MARGIN + (rightSide ? BAR_W : 0) + col * POINT_W;
-    const isLight = i % 2 === 0;
-    const color = isLight ? '#7ab8d4' : '#c0392b';
-    const tipY = isTop ? POINT_H : H - POINT_H;
-    const baseY = isTop ? 0 : H;
-
+  // 24 triangles
+  for (let v = 0; v < 24; v++) {
+    const x = slotLeft(v);
+    const cx = slotX(v);
+    const top = isTopSlot(v);
+    const tipY = top ? POINT_H : H - POINT_H;
+    const baseY = top ? 0 : H;
+    const isLight = v % 2 === 0;
     ctx.beginPath();
     ctx.moveTo(x, baseY);
     ctx.lineTo(x + POINT_W, baseY);
-    ctx.lineTo(x + POINT_W / 2, tipY);
+    ctx.lineTo(cx, tipY);
     ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.globalAlpha = 0.7;
+    ctx.fillStyle = isLight ? '#6fa8c4' : '#b03030';
+    ctx.globalAlpha = 0.75;
     ctx.fill();
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
     ctx.lineWidth = 1;
     ctx.stroke();
 
     // Point number
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
     ctx.font = `bold ${Math.max(8, POINT_W * 0.22)}px Outfit`;
     ctx.textAlign = 'center';
-    const numY = isTop ? POINT_H + 14 : H - POINT_H - 4;
-    ctx.fillText(getPointNumber(i), x + POINT_W / 2, numY);
+    const numY = top ? POINT_H + 14 : H - POINT_H - 3;
+    ctx.fillText(slotPointNum(v), cx, numY);
   }
 
   // Bar
-  ctx.fillStyle = 'rgba(30,15,5,0.8)';
-  ctx.fillRect(MARGIN + POINT_W * 6, 0, BAR_W, H);
-  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillStyle = 'rgba(20,10,4,0.85)';
+  ctx.fillRect(BAR_X, 0, BAR_W, H);
+  ctx.strokeStyle = 'rgba(255,200,100,0.15)';
   ctx.lineWidth = 1;
-  ctx.strokeRect(MARGIN + POINT_W * 6, 0, BAR_W, H);
+  ctx.strokeRect(BAR_X, 0, BAR_W, H);
 
   // Mid separator
-  ctx.fillStyle = 'rgba(30,15,5,0.6)';
-  ctx.fillRect(0, H / 2 - 6, W, 12);
+  ctx.fillStyle = 'rgba(20,10,4,0.7)';
+  ctx.fillRect(0, H / 2 - 5, W, 10);
 
-  // Draw stones
-  if (G) {
-    for (let i = 0; i < 24; i++) {
-      const val = G.board[i];
-      if (val === 0) continue;
-      const vi = boardToVis(i);
-      const { rightSide, col, isTop } = getVisualInfo(vi);
-      const x = MARGIN + (rightSide ? BAR_W : 0) + col * POINT_W + POINT_W / 2;
-      const count = Math.abs(val);
-      const color = val > 0 ? 'white' : 'black';
-      drawStones(x, isTop, count, color, i);
-    }
+  if (!G) return;
 
-    // Bar stones
-    const barX = MARGIN + POINT_W * 6 + BAR_W / 2;
-    if (G.barWhite > 0) drawStones(barX, false, G.barWhite, 'white', 24);
-    if (G.barBlack > 0) drawStones(barX, true, G.barBlack, 'black', 25);
-
-    // Borne off indicators
-    drawBorneOff();
-
-    // Highlights
-    if (selectedPoint >= 0) drawHighlights();
+  // Board stones
+  for (let bi = 0; bi < 24; bi++) {
+    const val = G.board[bi];
+    if (val === 0) continue;
+    const v = boardToVis(bi);
+    const cx = slotX(v);
+    const top = isTopSlot(v);
+    drawStones(cx, top, Math.abs(val), val > 0 ? 'white' : 'black', bi);
   }
 
-  // Labels
-  drawLabels();
-}
+  // Bar stones — white bar at bottom-half of bar, black at top-half
+  const barCx = BAR_X + BAR_W / 2;
+  if (G.barWhite > 0) drawStones(barCx, false, G.barWhite, 'white', 24);
+  if (G.barBlack > 0) drawStones(barCx, true,  G.barBlack, 'black', 25);
 
-function getVisualInfo(visIdx) {
-  // visIdx 0-23
-  // Top: 0-5 left cols (pts 13-18), 6-11 right cols (pts 19-24)
-  // Bot: 12-17 left cols (pts 12-7), 18-23 right cols (pts 6-1)
-  const isTop = visIdx < 12;
-  const rightSide = (visIdx >= 6 && visIdx <= 11) || visIdx >= 18;
-  const col = visIdx % 6; // 0-5 within its group
-  return { isTop, rightSide, col };
-}
+  // Borne off
+  drawBorneOff();
 
-function boardToVis(boardIdx) {
-  // Top row is reversed: board[0..11] → vis[11..0]
-  // Bottom row is same:  board[12..23] → vis[12..23]
-  if (boardIdx <= 11) return 11 - boardIdx;
-  return boardIdx;
-}
-
-function visToBoard(visIdx) {
-  if (visIdx <= 11) return 11 - visIdx;
-  return visIdx;
-}
-
-function getPointNumber(visIdx) {
-  // White's point numbers: pt1 = bottom-right vis23, pt24 = top-right vis11
-  const b = visToBoard(visIdx);
-  return 24 - b; // board[0]=pt24, board[23]=pt1
+  // Highlights
+  if (selectedPoint >= 0) drawHighlights();
 }
 
 function drawStones(cx, fromTop, count, color, boardPoint) {
   const R = Math.min(POINT_W * 0.42, 18);
   const maxVisible = Math.min(count, 5);
-  const spacing = Math.min(R * 2.1, POINT_H / (maxVisible + 1));
+  const spacing = Math.min(R * 2.15, POINT_H / (maxVisible + 0.5));
+  const isSelected = boardPoint === selectedPoint;
+  const isMovable = validMoves.some(m => m.from === boardPoint);
 
   for (let i = 0; i < maxVisible; i++) {
-    const offset = (i + 0.5) * spacing;
+    const offset = R + i * spacing;
     const cy = fromTop ? offset : H - offset;
 
-    const isSelected = (boardPoint === selectedPoint);
-    const isValid = validMoves.some(m => m.from === boardPoint);
-
-    // Glow for selected
-    if (isSelected && isValid) {
+    if (isSelected && isMovable) {
       ctx.beginPath();
-      ctx.arc(cx, cy, R + 4, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(83,246,255,0.4)';
+      ctx.arc(cx, cy, R + 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(83,246,255,0.35)';
       ctx.fill();
     }
 
     ctx.beginPath();
     ctx.arc(cx, cy, R, 0, Math.PI * 2);
-
     if (color === 'white') {
-      const g = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.3, R * 0.1, cx, cy, R);
-      g.addColorStop(0, '#ffffff');
-      g.addColorStop(0.6, '#c8c8e0');
-      g.addColorStop(1, '#8888aa');
+      const g = ctx.createRadialGradient(cx - R*0.3, cy - R*0.3, R*0.05, cx, cy, R);
+      g.addColorStop(0, '#ffffff'); g.addColorStop(0.6, '#c8c8e8'); g.addColorStop(1, '#888899');
       ctx.fillStyle = g;
-      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
     } else {
-      const g = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.3, R * 0.1, cx, cy, R);
-      g.addColorStop(0, '#6060ff');
-      g.addColorStop(0.6, '#2020aa');
-      g.addColorStop(1, '#0a0a50');
+      const g = ctx.createRadialGradient(cx - R*0.3, cy - R*0.3, R*0.05, cx, cy, R);
+      g.addColorStop(0, '#7070ff'); g.addColorStop(0.6, '#2828bb'); g.addColorStop(1, '#080830');
       ctx.fillStyle = g;
-      ctx.strokeStyle = 'rgba(100,100,255,0.8)';
+      ctx.strokeStyle = 'rgba(120,120,255,0.9)';
     }
     ctx.lineWidth = 1.5;
     ctx.fill();
@@ -827,65 +786,62 @@ function drawStones(cx, fromTop, count, color, boardPoint) {
   }
 
   if (count > 5) {
-    const lastY = fromTop ? maxVisible * spacing * 0.5 : H - maxVisible * spacing * 0.5;
-    ctx.fillStyle = color === 'white' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)';
-    ctx.font = `bold ${Math.max(9, R * 0.8)}px Outfit`;
+    const topStoneY = fromTop ? R + (maxVisible-1)*spacing : H - R - (maxVisible-1)*spacing;
+    ctx.fillStyle = color === 'white' ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.95)';
+    ctx.font = `bold ${Math.max(9, R * 0.75)}px Outfit`;
     ctx.textAlign = 'center';
-    ctx.fillText(count, cx, lastY + R * 0.4);
+    ctx.fillText(count, cx, topStoneY + R * 0.35);
   }
 }
 
 function drawHighlights() {
-  // Highlight valid destination points
-  validMoves.filter(m => m.from === selectedPoint).forEach(m => {
+  const dests = validMoves.filter(m => m.from === selectedPoint);
+  dests.forEach(m => {
     if (m.to >= 0 && m.to <= 23) {
-      const vi = boardToVis(m.to);
-      const { rightSide, isTop } = getVisualInfo(vi);
-      const col = vi % 6;
-      const x = MARGIN + (rightSide ? BAR_W : 0) + col * POINT_W + POINT_W / 2;
-      const R = Math.min(POINT_W * 0.35, 15);
-      const cy = isTop ? POINT_H * 0.8 : H - POINT_H * 0.8;
+      const v = boardToVis(m.to);
+      const cx = slotX(v);
+      const top = isTopSlot(v);
+      const cy = top ? POINT_H * 0.75 : H - POINT_H * 0.75;
+      const R = Math.min(POINT_W * 0.32, 13);
       ctx.beginPath();
-      ctx.arc(x, cy, R, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(83,246,255,0.5)';
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(83,246,255,0.55)';
       ctx.fill();
-      ctx.strokeStyle = 'rgba(83,246,255,0.9)';
+      ctx.strokeStyle = '#53f6ff';
       ctx.lineWidth = 2;
       ctx.stroke();
     } else if (m.to === -1) {
-      // Bear off indicator
-      const bearX = myColor === 'white' ? W - 10 : 10;
+      // Bear-off target stripe
+      const bx = myColor === 'white' ? W - MARGIN * 0.6 : MARGIN * 0.6;
       ctx.beginPath();
-      ctx.arc(bearX, H / 2, 10, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(83,246,255,0.5)';
+      ctx.arc(bx, H / 2, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(83,246,255,0.6)';
       ctx.fill();
     }
   });
 }
 
 function drawBorneOff() {
-  // White borne: right side strip
-  const wR = Math.min(POINT_W * 0.35, 12);
+  const R = Math.min(POINT_W * 0.3, 11);
+  const gap = R * 2.3;
+  // White borne: right strip (outside board)
   for (let i = 0; i < G.borneWhite; i++) {
+    const cy = H - R - i * gap;
+    if (cy < 0) break;
     ctx.beginPath();
-    ctx.arc(W - wR - 2, H - wR * 2 - i * wR * 2.2, wR, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(240,240,255,0.7)';
+    ctx.arc(W - R - 2, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(220,220,255,0.75)';
     ctx.fill();
   }
-  // Black borne: left side strip
+  // Black borne: left strip
   for (let i = 0; i < G.borneBlack; i++) {
+    const cy = R + i * gap;
+    if (cy > H) break;
     ctx.beginPath();
-    ctx.arc(wR + 2, wR * 2 + i * wR * 2.2, wR, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(74,74,255,0.7)';
+    ctx.arc(R + 2, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(80,80,220,0.75)';
     ctx.fill();
   }
-}
-
-function drawLabels() {
-  // Home field labels
-  ctx.fillStyle = 'rgba(255,255,255,0.15)';
-  ctx.font = `${Math.max(8, W * 0.012)}px Outfit`;
-  ctx.textAlign = 'center';
 }
 
 // =============== CLICK HANDLING ===============
@@ -902,14 +858,12 @@ canvas.addEventListener('click', e => {
   if (clicked === null) { selectedPoint = -1; validMoves = []; drawBoard(); return; }
 
   if (selectedPoint < 0) {
-    // Select a piece
     if (canSelectPoint(clicked)) {
       selectedPoint = clicked;
       validMoves = getValidMoves(G, myColor);
       drawBoard();
     }
   } else {
-    // Try to move
     const mv = validMoves.find(m => m.from === selectedPoint && m.to === clicked);
     if (mv) {
       applyMove(mv);
@@ -926,25 +880,22 @@ canvas.addEventListener('click', e => {
 });
 
 function getClickedPoint(mx, my) {
-  // Check bar
-  const barLeft = MARGIN + POINT_W * 6;
-  const barRight = barLeft + BAR_W;
-  if (mx > barLeft && mx < barRight) {
-    return my < H / 2 ? 25 : 24; // bar-black top, bar-white bottom
+  // Bar zone
+  if (mx >= BAR_X && mx <= BAR_X + BAR_W) {
+    return my < H / 2 ? 25 : 24; // black bar top, white bar bottom
   }
-  // Check board points
-  for (let vi = 0; vi < 24; vi++) {
-    const { rightSide, isTop } = getVisualInfo(vi);
-    const col = vi % 6;
-    const x = MARGIN + (rightSide ? BAR_W : 0) + col * POINT_W;
+  // Board slots
+  for (let v = 0; v < 24; v++) {
+    const x = slotLeft(v);
     if (mx >= x && mx < x + POINT_W) {
-      if (isTop && my < POINT_H + 20) return visToBoard(vi);
-      if (!isTop && my > H - POINT_H - 20) return visToBoard(vi);
+      const top = isTopSlot(v);
+      if (top && my <= POINT_H + POINT_W) return visToBoard(v);
+      if (!top && my >= H - POINT_H - POINT_W) return visToBoard(v);
     }
   }
-  // Bear-off zone (far right/left edges)
-  if (mx > W - MARGIN * 2) return -1; // white bear-off
-  if (mx < MARGIN * 2) return -1; // black bear-off
+  // Bear-off zones
+  if (mx > W - MARGIN) return -1;
+  if (mx < MARGIN)      return -1;
   return null;
 }
 
