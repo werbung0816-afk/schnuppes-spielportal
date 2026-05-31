@@ -280,7 +280,7 @@ input.field::placeholder{color:rgba(255,255,255,.28)}
     <button class="btn ghost" onclick="leaveRoom()">← Verlassen</button>
     <div style="display:flex;justify-content:flex-end;margin-top:8px">
       <div class="gear-wrap">
-        <button class="gear-btn" onclick="toggleGear('gearWait')">⚙️</button>
+        <button class="gear-btn" onclick="toggleGear('gearWait',event)">⚙️</button>
         <div id="gearWait" class="gear-menu">
           <button class="gear-item danger" onclick="doReset();closeGears()">Reset</button>
           <button class="gear-item" onclick="doSync();closeGears()">Sync</button>
@@ -341,8 +341,8 @@ input.field::placeholder{color:rgba(255,255,255,.28)}
     </div>
     <div style="display:flex;justify-content:flex-end;margin-top:8px">
       <div class="gear-wrap">
-        <button class="gear-btn" onclick="toggleGear('gearWait')">⚙️</button>
-        <div id="gearWait" class="gear-menu">
+        <button class="gear-btn" onclick="toggleGear('gearGame',event)">⚙️</button>
+        <div id="gearGame" class="gear-menu">
           <button class="gear-item danger" onclick="doReset();closeGears()">Reset</button>
           <button class="gear-item" onclick="doSync();closeGears()">Sync</button>
         </div>
@@ -1007,7 +1007,8 @@ function toggleCard(c){
 // ═══════════════════════════════════════════════════════════════
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function toggleGear(id){
+function toggleGear(id,e){
+  if(e) e.stopPropagation();
   const el=document.getElementById(id);
   const wasOpen=el.classList.contains('open');
   closeGears();
