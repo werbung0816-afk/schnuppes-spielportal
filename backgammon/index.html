@@ -949,86 +949,67 @@ function isMyTurn() {
 function getValidMoves(state, color) {
   const moves = [];
   if (!state.dice || state.dice.length === 0) return moves;
-  const remaining = state.dice.filter((_, i) => !state.usedDice.includes(i));
-  if (remaining.length === 0) return moves;
 
-  // board[0]=pt24, board[23]=pt1
-  // White moves pt24→pt1: board index increases (dir=+1)
-  // Black moves pt1→pt24: board index decreases (dir=-1)
-  const dir = color === 'white' ? +1 : -1;
+  // Build list of available dice with their original indices
+  const avail = state.dice
+    .map((d, i) => ({ d, i }))
+    .filter(x => !state.usedDice.includes(x.i));
+  if (avail.length === 0) return moves;
+
+  // Deduplicate by value to avoid identical move duplicates
+  const seen = new Set();
+  const availUniq = avail.filter(x => {
+    if (seen.has(x.d)) return false;
+    seen.add(x.d); return true;
+  });
+
+  const dir    = color === 'white' ? +1 : -1;
   const barPt  = color === 'white' ? 24 : 25;
   const barCount = color === 'white' ? state.barWhite : state.barBlack;
 
-  // If stones on bar, must enter first
+  // ── Bar entry ──
   if (barCount > 0) {
-    const usedVals = new Set();
-    remaining.forEach(d => {
-      if (usedVals.has(d)) return; usedVals.add(d);
-      // White enters opponent's home (pts 24 down to 19):
-      //   die 1 → pt24 = board[0], die 6 → pt19 = board[5]  → enterIdx = d - 1
-      // Black enters opponent's home (pts 1 up to 6):
-      //   die 1 → pt1  = board[23], die 6 → pt6  = board[18] → enterIdx = 24 - d
-      const enterIdx = color === 'white' ? (d - 1) : (24 - d);
-      if (enterIdx < 0 || enterIdx > 23) return;
-      const val = state.board[enterIdx];
-      // blocked if opponent has 2+ stones there
-      const blocked = color === 'white' ? val <= -2 : val >= 2;
-      if (!blocked) {
-        const dieIdx = state.dice.findIndex((v, i) => v === d && !state.usedDice.includes(i));
-        moves.push({ from: barPt, to: enterIdx, die: d, dieIdx });
-      }
+    availUniq.forEach(({ d, i }) => {
+      // White: die d → pt(25-d) = board[d-1]   (1→pt24=board[0], 6→pt19=board[5])
+      // Black: die d → pt(d)    = board[24-d]  (1→pt1=board[23],  6→pt6=board[18])
+      const to = color === 'white' ? d - 1 : 24 - d;
+      if (to < 0 || to > 23) return;
+      const blocked = color === 'white' ? state.board[to] <= -2 : state.board[to] >= 2;
+      if (!blocked) moves.push({ from: barPt, to, die: d, dieIdx: i });
     });
     return moves;
   }
 
-  // Check if bearing off
   const canBearOff = checkBearingOff(state, color);
 
-  const usedPairs = new Set();
-  remaining.forEach(d => {
-    const dieIdx = state.dice.findIndex((v, i) => v === d && !state.usedDice.includes(i) && !usedPairs.has(i));
-    if (dieIdx < 0) return;
-    usedPairs.add(dieIdx);
-
+  availUniq.forEach(({ d, i }) => {
     for (let bi = 0; bi < 24; bi++) {
       const val = state.board[bi];
-      const myStones = color === 'white' ? val > 0 : val < 0;
-      if (!myStones) continue;
+      const mine = color === 'white' ? val > 0 : val < 0;
+      if (!mine) continue;
 
       const dest = bi + dir * d;
 
       if (canBearOff) {
-        // White home = board[18..23] (pts 6-1), bearing off = dest > 23
-        // Black home = board[0..5]   (pts 24-19), bearing off = dest < 0
-        if (color === 'white' && dest > 23) {
-          const pointNo = 24 - bi; // pt number at this board index (board[18]=pt6, board[23]=pt1)
-          if (d === pointNo || (d > pointNo && !hasHigherPoint(state, color, bi))) {
-            moves.push({ from: bi, to: -1, die: d, dieIdx });
-          }
-          continue;
-        }
-        if (color === 'black' && dest < 0) {
-          const pointNo = bi + 1; // board[0]=pt24 for black perspective... 
-          // Black home = board[0..5], pt24=board[0], pt19=board[5]
-          // die needed to bear off board[i]: pointNo = i+1 (board[0] needs d=1 minimum... wait)
-          // Black bears off toward pt24 side. board[0]=pt24.
-          // Black point number from black's home perspective: board[0]=black-pt6, board[5]=black-pt1
-          // (black counts 1-6 in their home, board[0..5] = their pts 6..1 reversed)
-          // Simpler: to bear off from board[bi], need die = bi+1 (board[0]→die1, board[5]→die6)
-          const bpointNo = bi + 1;
-          if (d === bpointNo || (d > bpointNo && !hasHigherPoint(state, color, bi))) {
-            moves.push({ from: bi, to: -1, die: d, dieIdx });
+        const atEdge = color === 'white' ? dest > 23 : dest < 0;
+        if (atEdge) {
+          // White home: board[18]=pt6, board[19]=pt5, ..., board[23]=pt1
+          //   → home position number = 24 - bi  (board[18]→6, board[23]→1)
+          // Black home: board[0]=pt24, board[1]=pt23, ..., board[5]=pt19
+          //   → home position number = bi + 1 is wrong; black bears off toward board[-1]
+          //   black home pts from black's bearing perspective: board[5]=nearest(1), board[0]=furthest(6)
+          //   → ptNo = 6 - bi  (board[0]→6, board[5]→1)
+          const ptNo = color === 'white' ? (24 - bi) : (6 - bi);
+          if (d === ptNo || (d > ptNo && !hasHigherPoint(state, color, bi))) {
+            moves.push({ from: bi, to: -1, die: d, dieIdx: i });
           }
           continue;
         }
       }
 
       if (dest < 0 || dest > 23) continue;
-      const destVal = state.board[dest];
-      const blocked = color === 'white' ? destVal <= -2 : destVal >= 2;
-      if (!blocked) {
-        moves.push({ from: bi, to: dest, die: d, dieIdx });
-      }
+      const blocked = color === 'white' ? state.board[dest] <= -2 : state.board[dest] >= 2;
+      if (!blocked) moves.push({ from: bi, to: dest, die: d, dieIdx: i });
     }
   });
   return moves;
