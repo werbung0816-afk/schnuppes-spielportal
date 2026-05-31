@@ -238,44 +238,53 @@ header h1 {
 .bar-count { font-size: clamp(0.7rem, 1.4vw, 0.8rem); color: var(--pink); font-weight: 700; }
 .borne-count { font-size: clamp(0.7rem, 1.4vw, 0.8rem); color: var(--cyan); font-weight: 700; }
 
-/* DICE AREA */
+/* DICE */
 .dice-container {
-  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-  margin-top: 4px;
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  margin-top: 6px;
 }
 .die {
-  width: clamp(32px, 6vw, 44px);
-  height: clamp(32px, 6vw, 44px);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: clamp(1rem, 2.5vw, 1.4rem);
-  font-weight: 900;
-  transition: all 0.3s ease;
+  width: clamp(36px, 6.5vw, 48px);
+  height: clamp(36px, 6.5vw, 48px);
+  border-radius: 9px;
   position: relative;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 .die.white-die {
-  background: rgba(240,240,255,0.15);
-  border: 2px solid rgba(240,240,255,0.4);
-  color: #fff;
+  background: linear-gradient(145deg, #f5f5ff, #d0d0ee);
+  border: 1.5px solid rgba(255,255,255,0.6);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.5), inset 1px 1px 2px rgba(255,255,255,0.8);
 }
 .die.black-die {
-  background: rgba(74,74,255,0.2);
-  border: 2px solid rgba(74,74,255,0.6);
-  color: var(--cyan);
+  background: linear-gradient(145deg, #2a2a6a, #0d0d40);
+  border: 1.5px solid rgba(100,100,255,0.5);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.6), inset 1px 1px 2px rgba(100,100,200,0.3);
 }
-.die.used {
-  opacity: 0.25;
-  border-style: dashed;
-}
-.die.rolling {
-  animation: roll 0.5s ease;
-}
+.die.used { opacity: 0.25; }
+.die.rolling { animation: roll 0.45s ease; }
 @keyframes roll {
-  0% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(180deg) scale(1.3); }
-  75% { transform: rotate(540deg) scale(0.8); }
+  0%   { transform: rotate(0deg)   scale(1); }
+  30%  { transform: rotate(200deg) scale(1.25); }
+  70%  { transform: rotate(520deg) scale(0.85); }
   100% { transform: rotate(720deg) scale(1); }
 }
+/* dot grid inside die */
+.die-dots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 100%; height: 100%;
+  padding: 18%;
+  gap: 0;
+}
+.dot {
+  border-radius: 50%;
+  width: 70%; height: 70%;
+  margin: auto;
+}
+.white-die .dot { background: #2a2060; box-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+.black-die .dot { background: var(--cyan); box-shadow: 0 0 4px rgba(83,246,255,0.7); }
 
 /* BOARD */
 .board-area { display: flex; flex-direction: column; }
@@ -533,7 +542,7 @@ const db = getDatabase(fireApp);
 const ROOM_PATH = 'backgammon/room';
 
 // =============== SOUNDS ===============
-const BASE_SOUND_URL = 'https://werbung0816-afk.github.io/schnuppes-spielportal/sounds/';
+const BASE_SOUND_URL = 'https://werbung0816-afk.github.io/schnuppes-spielportal/backgammon/';
 function playSound(name) {
   try {
     const a = new Audio(BASE_SOUND_URL + name);
@@ -677,13 +686,32 @@ function drawBoard() {
   if (!W) return;
   ctx.clearRect(0, 0, W, H);
 
-  // Board background
+  // Board background — rich walnut wood
   const grad = ctx.createLinearGradient(0, 0, W, H);
-  grad.addColorStop(0, '#2d1a0e');
-  grad.addColorStop(0.5, '#3d2210');
-  grad.addColorStop(1, '#1a0e05');
+  grad.addColorStop(0,   '#5c2d0a');
+  grad.addColorStop(0.3, '#7a3e10');
+  grad.addColorStop(0.7, '#6b3510');
+  grad.addColorStop(1,   '#4a2208');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
+
+  // Wood grain overlay
+  for (let y = 0; y < H; y += 6) {
+    ctx.beginPath();
+    ctx.moveTo(0, y); ctx.lineTo(W, y);
+    ctx.strokeStyle = `rgba(0,0,0,${0.03 + 0.02 * Math.sin(y * 0.3)})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Board border inlay
+  ctx.strokeStyle = 'rgba(255,200,80,0.25)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(3, 3, W - 6, H - 6);
+
+  // Triangle colors: ivory/cream vs deep burgundy
+  const triLight = '#e8c99a'; // ivory/cream
+  const triDark  = '#8b1a1a'; // deep burgundy
 
   // 24 triangles
   for (let v = 0; v < 24; v++) {
@@ -698,12 +726,12 @@ function drawBoard() {
     ctx.lineTo(x + POINT_W, baseY);
     ctx.lineTo(cx, tipY);
     ctx.closePath();
-    ctx.fillStyle = isLight ? '#6fa8c4' : '#b03030';
-    ctx.globalAlpha = 0.75;
+    ctx.fillStyle = isLight ? triLight : triDark;
+    ctx.globalAlpha = 0.82;
     ctx.fill();
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+    ctx.lineWidth = 0.5;
     ctx.stroke();
 
     // Point number
@@ -714,16 +742,23 @@ function drawBoard() {
     ctx.fillText(slotPointNum(v), cx, numY);
   }
 
-  // Bar
-  ctx.fillStyle = 'rgba(20,10,4,0.85)';
+  // Bar — dark ebony strip
+  const barGrad = ctx.createLinearGradient(BAR_X, 0, BAR_X + BAR_W, 0);
+  barGrad.addColorStop(0, '#1a0a02');
+  barGrad.addColorStop(0.5, '#2d1505');
+  barGrad.addColorStop(1, '#1a0a02');
+  ctx.fillStyle = barGrad;
   ctx.fillRect(BAR_X, 0, BAR_W, H);
-  ctx.strokeStyle = 'rgba(255,200,100,0.15)';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(255,180,60,0.2)';
+  ctx.lineWidth = 1.5;
   ctx.strokeRect(BAR_X, 0, BAR_W, H);
 
   // Mid separator
-  ctx.fillStyle = 'rgba(20,10,4,0.7)';
+  ctx.fillStyle = 'rgba(15,6,0,0.6)';
   ctx.fillRect(0, H / 2 - 5, W, 10);
+  ctx.strokeStyle = 'rgba(255,160,40,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
 
   if (!G) return;
 
@@ -919,8 +954,11 @@ function getValidMoves(state, color) {
   const remaining = state.dice.filter((_, i) => !state.usedDice.includes(i));
   if (remaining.length === 0) return moves;
 
-  const dir = color === 'white' ? -1 : 1; // white moves board[high→low], black board[low→high]
-  const barPt = color === 'white' ? 24 : 25;
+  // board[0]=pt24, board[23]=pt1
+  // White moves pt24→pt1: board index increases (dir=+1)
+  // Black moves pt1→pt24: board index decreases (dir=-1)
+  const dir = color === 'white' ? +1 : -1;
+  const barPt  = color === 'white' ? 24 : 25;
   const barCount = color === 'white' ? state.barWhite : state.barBlack;
 
   // If stones on bar, must enter first
@@ -928,13 +966,16 @@ function getValidMoves(state, color) {
     const usedVals = new Set();
     remaining.forEach(d => {
       if (usedVals.has(d)) return; usedVals.add(d);
-      // White enters at pts 19-24 (board 5..0), black enters at pts 1-6 (board 18..23)
-      const enterBoardIdx = color === 'white' ? (6 - d) : (18 + d - 1);
-      if (enterBoardIdx < 0 || enterBoardIdx > 23) return;
-      const val = state.board[enterBoardIdx];
-      const opCount = color === 'white' ? Math.min(val, 0) : Math.max(val, 0);
-      if (Math.abs(opCount) <= 1) {
-        moves.push({ from: barPt, to: enterBoardIdx, die: d, dieIdx: state.dice.indexOf(d) });
+      // White enters opponent's home (pts 19-24 = board[5..0]): die d → board idx = 6-d (pt19=d1→board5, pt24=d6→board0)
+      // Black enters opponent's home (pts 1-6   = board[23..18]): die d → board idx = 24-d (pt1=d1→board23, pt6=d6→board18)
+      const enterIdx = color === 'white' ? (6 - d) : (24 - d);
+      if (enterIdx < 0 || enterIdx > 23) return;
+      const val = state.board[enterIdx];
+      // blocked if opponent has 2+ stones there
+      const blocked = color === 'white' ? val <= -2 : val >= 2;
+      if (!blocked) {
+        const dieIdx = state.dice.findIndex((v, i) => v === d && !state.usedDice.includes(i));
+        moves.push({ from: barPt, to: enterIdx, die: d, dieIdx });
       }
     });
     return moves;
@@ -944,7 +985,7 @@ function getValidMoves(state, color) {
   const canBearOff = checkBearingOff(state, color);
 
   const usedPairs = new Set();
-  remaining.forEach((d, ri) => {
+  remaining.forEach(d => {
     const dieIdx = state.dice.findIndex((v, i) => v === d && !state.usedDice.includes(i) && !usedPairs.has(i));
     if (dieIdx < 0) return;
     usedPairs.add(dieIdx);
@@ -957,26 +998,25 @@ function getValidMoves(state, color) {
       const dest = bi + dir * d;
 
       if (canBearOff) {
-        // Bear off
-        if (color === 'white' && dest < 0) {
-          // Check: must use highest occupied if die > point
-          const pointNo = 24 - bi;
+        // White home = board[18..23] (pts 6-1), bearing off = dest > 23
+        // Black home = board[0..5]   (pts 24-19), bearing off = dest < 0
+        if (color === 'white' && dest > 23) {
+          const pointNo = 24 - bi; // pt number at this board index (board[18]=pt6, board[23]=pt1)
           if (d === pointNo || (d > pointNo && !hasHigherPoint(state, color, bi))) {
             moves.push({ from: bi, to: -1, die: d, dieIdx });
           }
           continue;
         }
-        if (color === 'black' && dest > 23) {
-          const pointNo = bi - 17; // pts 1-6 = board 18-23, so board[18]=pt1... wait
-          // black home = board 0..5 (pts 19-24)? No.
-          // Black moves low→high. Black home = pts 1-6 = board 18-23? No.
-          // Black starts: board[23]=-2 (pt1), board[12]=-5(pt13)...
-          // Black moves board low→high. Black home = highest points for black = pts 1-6 = board[18..23]
-          // Actually black home = pts 1-6. In board index: pt1=board[23], pt6=board[18]
-          const bPointNo = bi - 17; // board[18]=pt6→bptNo=1, board[23]=pt1→bptNo=6... reversed
-          // Simpler: black home points are board indices 18-23, pointNo = bi - 17
-          const bp = bi - 17; // 1..6
-          if (d === bp || (d > bp && !hasHigherPoint(state, color, bi))) {
+        if (color === 'black' && dest < 0) {
+          const pointNo = bi + 1; // board[0]=pt24 for black perspective... 
+          // Black home = board[0..5], pt24=board[0], pt19=board[5]
+          // die needed to bear off board[i]: pointNo = i+1 (board[0] needs d=1 minimum... wait)
+          // Black bears off toward pt24 side. board[0]=pt24.
+          // Black point number from black's home perspective: board[0]=black-pt6, board[5]=black-pt1
+          // (black counts 1-6 in their home, board[0..5] = their pts 6..1 reversed)
+          // Simpler: to bear off from board[bi], need die = bi+1 (board[0]→die1, board[5]→die6)
+          const bpointNo = bi + 1;
+          if (d === bpointNo || (d > bpointNo && !hasHigherPoint(state, color, bi))) {
             moves.push({ from: bi, to: -1, die: d, dieIdx });
           }
           continue;
@@ -995,9 +1035,12 @@ function getValidMoves(state, color) {
 }
 
 function hasHigherPoint(state, color, boardIdx) {
+  // "Higher point" = further from bearing off = further from home
+  // White home = board[18..23], so higher point = lower board index
   if (color === 'white') {
     for (let i = 0; i < boardIdx; i++) if (state.board[i] > 0) return true;
   } else {
+    // Black home = board[0..5], so higher point = higher board index
     for (let i = boardIdx + 1; i < 24; i++) if (state.board[i] < 0) return true;
   }
   return false;
@@ -1005,16 +1048,15 @@ function hasHigherPoint(state, color, boardIdx) {
 
 function checkBearingOff(state, color) {
   if (color === 'white') {
-    // All 15 white stones in board[18..23] (pts 6-1)
+    // All white stones must be in board[18..23] (pts 6-1, white home)
     if (state.barWhite > 0) return false;
-    let outside = 0;
-    for (let i = 0; i < 18; i++) if (state.board[i] > 0) outside += state.board[i];
-    return outside === 0;
+    for (let i = 0; i < 18; i++) if (state.board[i] > 0) return false;
+    return true;
   } else {
+    // All black stones must be in board[0..5] (pts 24-19, black home)
     if (state.barBlack > 0) return false;
-    let outside = 0;
-    for (let i = 6; i < 24; i++) if (state.board[i] < 0) outside += Math.abs(state.board[i]);
-    return outside === 0;
+    for (let i = 6; i < 24; i++) if (state.board[i] < 0) return false;
+    return true;
   }
 }
 
@@ -1281,9 +1323,9 @@ function moveScore(state, mv, color) {
   const destVal = mv.to >= 0 ? state.board[mv.to] : 0;
   if (color === 'white' && destVal === -1) score += 5; // hit
   if (color === 'black' && destVal === 1) score += 5;
-  // Advance score
+  // Advance score: white moves board index up, black moves down
   if (mv.to >= 0) {
-    const advance = color === 'white' ? mv.from - mv.to : mv.to - mv.from;
+    const advance = color === 'white' ? mv.to - mv.from : mv.from - mv.to;
     score += advance * 0.1;
   }
   return score;
@@ -1393,9 +1435,31 @@ function updateDiceDisplay(color, active) {
   (G.dice || []).forEach((d, i) => {
     const div = document.createElement('div');
     div.className = `die ${color}-die ${G.usedDice.includes(i) ? 'used' : ''}`;
-    div.textContent = ['⚀','⚁','⚂','⚃','⚄','⚅'][d-1];
+    if (G.phase === 'moving' && !G.usedDice.includes(i)) div.classList.add('rolling');
+    div.innerHTML = buildDiceDots(d);
     container.appendChild(div);
   });
+}
+
+// Dot layout per die value — grid positions 0-8 (3x3, row-major)
+// positions: 0=TL,1=TM,2=TR, 3=ML,4=MM,5=MR, 6=BL,7=BM,8=BR
+const DICE_DOTS = {
+  1: [4],
+  2: [2, 6],
+  3: [2, 4, 6],
+  4: [0, 2, 6, 8],
+  5: [0, 2, 4, 6, 8],
+  6: [0, 2, 3, 5, 6, 8]
+};
+
+function buildDiceDots(val) {
+  const active = new Set(DICE_DOTS[val] || []);
+  let html = '<div class="die-dots">';
+  for (let i = 0; i < 9; i++) {
+    html += `<div class="dot" style="${active.has(i) ? '' : 'visibility:hidden'}"></div>`;
+  }
+  html += '</div>';
+  return html;
 }
 
 // =============== WIN ===============
