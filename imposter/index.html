@@ -1,1 +1,1045 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Imposter – Schnuppes Spielportal</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕵️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Outfit',sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(143,95,255,.35), transparent 30%),
+    radial-gradient(circle at top right, rgba(255,79,216,.25), transparent 35%),
+    linear-gradient(180deg,#050111,#120523);
+  color:#fff;
+  min-height:100vh;
+  padding:20px;
+  user-select:none;
+  -webkit-user-select:none;
+}
 
+/* ===== LAYOUT ===== */
+.layout{
+  display:grid;
+  grid-template-columns:260px 1fr 260px;
+  gap:16px;
+  max-width:1200px;
+  margin:0 auto;
+}
+@media(max-width:700px){
+  .layout{
+    grid-template-columns:1fr;
+  }
+  .side-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+}
+@media(min-width:451px) and (max-width:700px){
+  .layout{grid-template-columns:1fr;}
+  .side-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+}
+@media(max-width:450px){
+  .layout{grid-template-columns:1fr;}
+  .side-panel{display:block;}
+}
+
+/* ===== PANEL ===== */
+.panel{
+  background:rgba(10,12,38,.85);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:28px;
+  padding:20px;
+  backdrop-filter:blur(18px);
+}
+.panel-title{
+  font-size:clamp(13px,2vw,16px);
+  font-weight:700;
+  color:#53f6ff;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+/* ===== LOGO ===== */
+.logo{margin-bottom:20px;text-align:center;}
+.logo h1{
+  font-size:clamp(42px,8vw,72px);
+  line-height:.9;
+  font-weight:900;
+  background:linear-gradient(90deg,#ff4fd8,#53f6ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.logo p{font-size:clamp(13px,2vw,17px);margin-top:8px;color:#ff9ef0;}
+.version{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px;}
+
+/* ===== PLAYERS ===== */
+.player-card{
+  padding:14px;
+  margin-bottom:10px;
+  border-radius:18px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  position:relative;
+}
+.player-card.active-turn{
+  border:1px solid #53f6ff;
+  box-shadow:0 0 20px rgba(83,246,255,.3);
+}
+.player-card.imposter-reveal{
+  border:1px solid #ff4fd8;
+  box-shadow:0 0 20px rgba(255,79,216,.3);
+}
+.player-name{font-size:clamp(14px,2vw,16px);font-weight:700;}
+.player-hint{font-size:clamp(12px,1.5vw,14px);color:rgba(255,255,255,.6);margin-top:4px;}
+.player-vote{font-size:clamp(11px,1.5vw,13px);color:#ff4fd8;margin-top:4px;}
+.player-badge{
+  position:absolute;top:10px;right:10px;
+  font-size:10px;padding:3px 8px;border-radius:20px;
+  background:rgba(83,246,255,.2);color:#53f6ff;font-weight:700;
+}
+.player-badge.ki{background:rgba(255,79,216,.2);color:#ff4fd8;}
+.score-badge{
+  display:inline-block;
+  font-size:clamp(18px,3vw,26px);font-weight:900;
+  margin-top:6px;
+}
+
+/* ===== STATUS ===== */
+.status-bar{
+  padding:12px 16px;
+  border-radius:16px;
+  background:rgba(143,95,255,.18);
+  margin-bottom:16px;
+  font-size:clamp(12px,1.8vw,15px);
+}
+.you-active{color:#53f6ff;font-weight:700;}
+
+/* ===== SPIELFELD ===== */
+.game-center{display:flex;flex-direction:column;gap:16px;}
+
+/* Wort-Box */
+.word-box{
+  text-align:center;
+  padding:30px 20px;
+  border-radius:28px;
+  background:rgba(120,40,255,.06);
+  border:1px solid rgba(220,120,255,.22);
+  box-shadow:0 0 35px rgba(180,80,255,.14) inset;
+}
+.word-label{font-size:clamp(12px,1.5vw,14px);color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
+.word-display{
+  font-size:clamp(32px,6vw,60px);
+  font-weight:900;
+  background:linear-gradient(90deg,#53f6ff,#ff4fd8);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  line-height:1.1;
+}
+.imposter-label{
+  font-size:clamp(16px,3vw,28px);
+  font-weight:900;
+  color:#ff4fd8;
+}
+.imposter-sub{font-size:clamp(12px,1.8vw,15px);color:rgba(255,255,255,.6);margin-top:8px;}
+
+/* Hinweis-Eingabe */
+.hint-section{padding:20px;border-radius:24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);}
+.hint-input{
+  width:100%;padding:14px 18px;
+  border-radius:16px;border:2px solid rgba(83,246,255,.3);
+  background:rgba(0,0,0,.3);
+  color:#fff;font-family:'Outfit',sans-serif;font-size:clamp(14px,2vw,17px);
+  outline:none;transition:.2s;
+}
+.hint-input:focus{border-color:#53f6ff;box-shadow:0 0 15px rgba(83,246,255,.2);}
+.hint-input::placeholder{color:rgba(255,255,255,.3);}
+
+/* Runden-Info */
+.round-info{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 18px;border-radius:16px;
+  background:rgba(255,255,255,.04);
+}
+.round-num{font-size:clamp(12px,1.5vw,14px);color:rgba(255,255,255,.6);}
+.round-val{font-size:clamp(16px,2.5vw,22px);font-weight:900;color:#ff4fd8;}
+
+/* ===== ABSTIMMUNG ===== */
+.vote-section{padding:20px;border-radius:24px;background:rgba(255,79,216,.06);border:1px solid rgba(255,79,216,.2);}
+.vote-title{font-size:clamp(14px,2vw,17px);font-weight:700;color:#ff4fd8;margin-bottom:14px;}
+.vote-btn{
+  display:block;width:100%;padding:12px 16px;
+  margin-bottom:8px;border-radius:14px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  color:#fff;font-family:'Outfit',sans-serif;font-size:clamp(13px,1.8vw,16px);
+  cursor:pointer;text-align:left;transition:.2s;
+}
+.vote-btn:hover{background:rgba(255,79,216,.15);border-color:#ff4fd8;}
+.vote-btn.selected{background:rgba(255,79,216,.25);border-color:#ff4fd8;box-shadow:0 0 12px rgba(255,79,216,.3);}
+
+/* ===== IMPOSTER GUESS ===== */
+.guess-section{padding:20px;border-radius:24px;background:rgba(143,95,255,.06);border:1px solid rgba(143,95,255,.2);}
+
+/* ===== BUTTONS ===== */
+button{
+  padding:14px 20px;border:none;border-radius:20px;
+  font-size:clamp(14px,2vw,17px);font-weight:800;
+  color:#fff;cursor:pointer;transition:.2s;
+  font-family:'Outfit',sans-serif;
+  width:100%;margin-top:10px;
+}
+.btn-primary{background:linear-gradient(90deg,#53f6ff,#5677ff);}
+.btn-primary:hover{opacity:.85;transform:translateY(-2px);}
+.btn-success{background:linear-gradient(90deg,#5eff9b,#24bf61);}
+.btn-danger{background:linear-gradient(90deg,#ff9b54,#ff5f6d);}
+.btn-secondary{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);}
+.btn-secondary:hover{background:rgba(255,255,255,.2);}
+.btn-small{padding:10px 16px;font-size:clamp(12px,1.5vw,14px);font-weight:700;border-radius:14px;}
+button:disabled{opacity:.4;cursor:not-allowed;transform:none!important;}
+
+/* ===== SCREEN MANAGEMENT ===== */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* Setup screen */
+.setup-card{
+  max-width:480px;margin:60px auto;
+  padding:40px;border-radius:34px;
+  background:rgba(10,12,38,.85);
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(18px);
+  text-align:center;
+}
+.setup-title{
+  font-size:clamp(40px,8vw,72px);font-weight:900;
+  background:linear-gradient(90deg,#ff4fd8,#53f6ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:8px;
+}
+.setup-sub{color:#ff9ef0;font-size:clamp(14px,2vw,18px);margin-bottom:30px;}
+.setup-input{
+  width:100%;padding:16px 20px;margin-bottom:16px;
+  border-radius:18px;border:2px solid rgba(83,246,255,.3);
+  background:rgba(0,0,0,.4);color:#fff;
+  font-family:'Outfit',sans-serif;font-size:18px;
+  outline:none;text-align:center;transition:.2s;
+}
+.setup-input:focus{border-color:#53f6ff;box-shadow:0 0 20px rgba(83,246,255,.2);}
+.setup-input::placeholder{color:rgba(255,255,255,.3);}
+
+/* Wait screen */
+.wait-card{max-width:440px;margin:60px auto;padding:40px;border-radius:34px;
+  background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(18px);text-align:center;}
+.wait-name{font-size:clamp(20px,4vw,30px);font-weight:900;color:#53f6ff;margin-bottom:8px;}
+.wait-dots{font-size:clamp(20px,4vw,28px);color:#ff4fd8;margin-bottom:24px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.divider{border:none;border-top:1px solid rgba(255,255,255,.1);margin:20px 0;}
+
+/* Overlay Win */
+#overlay{
+  position:fixed;inset:0;display:none;
+  align-items:center;justify-content:center;flex-direction:column;
+  background:rgba(5,5,20,.92);z-index:9999;backdrop-filter:blur(10px);
+  text-align:center;padding:20px;
+}
+#overlay.show{display:flex;}
+#overlayTitle{
+  font-size:clamp(40px,8vw,88px);font-weight:900;
+  background:linear-gradient(90deg,#53f6ff,#ff4fd8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+#overlayComment{margin-top:16px;font-size:clamp(16px,2.5vw,24px);color:rgba(255,255,255,.8);}
+#overlayWord{margin-top:12px;font-size:clamp(13px,2vw,18px);color:rgba(255,255,255,.5);}
+.overlay-emoji{font-size:clamp(40px,8vw,80px);margin-bottom:16px;}
+
+/* ===== GEAR MENU ===== */
+.gear-wrapper{position:fixed;bottom:20px;right:20px;z-index:100;}
+.gear-btn{
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:.2s;width:auto;padding:0 14px;font-size:13px;
+}
+.gear-btn:hover{background:rgba(255,255,255,.15);}
+.gear-panel{
+  display:none;position:absolute;bottom:54px;right:0;
+  background:rgba(10,12,38,.95);border:1px solid rgba(255,255,255,.1);
+  border-radius:18px;padding:14px;backdrop-filter:blur(18px);
+  min-width:180px;
+}
+.gear-panel.open{display:block;}
+.gear-item{
+  display:block;width:100%;padding:10px 14px;margin-bottom:6px;
+  border-radius:12px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  color:rgba(255,255,255,.7);font-size:13px;font-weight:600;
+  cursor:pointer;text-align:left;transition:.15s;
+}
+.gear-item:hover{background:rgba(255,79,216,.15);color:#ff4fd8;}
+.gear-item:last-child{margin-bottom:0;}
+
+/* ===== RESULT SCREEN ===== */
+.result-section{padding:20px;border-radius:24px;background:rgba(83,246,255,.06);border:1px solid rgba(83,246,255,.2);}
+.result-title{font-size:clamp(15px,2.2vw,20px);font-weight:900;color:#53f6ff;margin-bottom:10px;}
+
+/* ===== IMPOSTER-GUESS (Zusatzpunkt) ===== */
+.guess-input{
+  width:100%;padding:12px 16px;
+  border-radius:14px;border:2px solid rgba(143,95,255,.3);
+  background:rgba(0,0,0,.3);color:#fff;
+  font-family:'Outfit',sans-serif;font-size:clamp(13px,1.8vw,16px);
+  outline:none;transition:.2s;margin-top:10px;
+}
+.guess-input:focus{border-color:#8f5fff;box-shadow:0 0 12px rgba(143,95,255,.2);}
+.guess-input::placeholder{color:rgba(255,255,255,.3);}
+
+/* ===== SCORE TABLE ===== */
+.score-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.score-row:last-child{border-bottom:none;}
+.score-player{font-size:clamp(13px,1.8vw,16px);font-weight:700;}
+.score-val{font-size:clamp(18px,3vw,24px);font-weight:900;color:#53f6ff;}
+
+/* ===== LOG ===== */
+.log{max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.log-entry{padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.04);font-size:clamp(12px,1.6vw,14px);}
+.log-entry .le-name{color:#53f6ff;font-weight:700;}
+.log-entry .le-hint{color:rgba(255,255,255,.85);}
+</style>
+</head>
+<body>
+
+<!-- ===== SCREEN: SETUP ===== -->
+<div id="screenSetup" class="screen active">
+  <div class="setup-card">
+    <div class="setup-title">🕵️ Imposter</div>
+    <div class="setup-sub">Bluff-&amp; Ratespiel</div>
+    <input id="nameInput" class="setup-input" type="text" placeholder="Dein Name" maxlength="20" autocomplete="off">
+    <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
+    <div class="version" style="margin-top:16px;">v1.0 • Schnuppes Spielportal</div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: WARTEN ===== -->
+<div id="screenWait" class="screen">
+  <div class="wait-card">
+    <div class="wait-name" id="waitName"></div>
+    <div class="wait-dots">⏳ Warte auf Mitspieler<span id="waitDots">...</span></div>
+    <div id="waitPlayerList" style="text-align:left;margin-bottom:16px;"></div>
+    <button id="btnStartGame" class="btn-success" style="display:none;" onclick="hostStartGame()">🎮 Spiel starten</button>
+    <hr class="divider">
+    <button class="btn-primary" onclick="startVsKI()">🤖 Gegen KI starten</button>
+    <button class="btn-secondary" style="margin-top:8px;" onclick="leaveRoom()">← Verlassen</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN: SPIEL ===== -->
+<div id="screenGame" class="screen">
+  <div class="layout">
+
+    <!-- LINKES PANEL -->
+    <div class="panel side-panel" id="leftPanel">
+      <div class="panel-title">👥 Spieler</div>
+      <div id="playerListLeft"></div>
+      <div class="panel-title" style="margin-top:16px;">📜 Punkte</div>
+      <div id="scoreTable"></div>
+    </div>
+
+    <!-- MITTE -->
+    <div class="game-center">
+      <div class="logo">
+        <h1>🕵️ Imposter</h1>
+        <p>Bluff &amp; Rate</p>
+        <div class="version">v1.0</div>
+      </div>
+
+      <div class="status-bar" id="statusBar">Warte auf Spielstart…</div>
+
+      <!-- Wort-Anzeige -->
+      <div class="word-box" id="wordBox">
+        <div class="word-label">Deine Rolle</div>
+        <div id="wordDisplay">—</div>
+      </div>
+
+      <!-- Runden-Info -->
+      <div class="round-info">
+        <div><div class="round-num">Runde</div><div class="round-val" id="roundNum">—</div></div>
+        <div><div class="round-num">Phase</div><div class="round-val" id="phaseName">—</div></div>
+        <div><div class="round-num">Am Zug</div><div class="round-val" id="currentTurnName">—</div></div>
+      </div>
+
+      <!-- Hinweis geben -->
+      <div class="hint-section" id="hintSection" style="display:none;">
+        <div class="panel-title">💬 Dein Hinweis</div>
+        <input id="hintInput" class="hint-input" type="text" placeholder="Ein Wort als Hinweis…" maxlength="30" autocomplete="off">
+        <button class="btn-primary" onclick="submitHint()">Hinweis abgeben ✓</button>
+      </div>
+
+      <!-- Abstimmung -->
+      <div class="vote-section" id="voteSection" style="display:none;">
+        <div class="vote-title">🗳️ Wer ist der Imposter?</div>
+        <div id="voteButtons"></div>
+        <button id="btnConfirmVote" class="btn-danger" onclick="confirmVote()" disabled>Abstimmen</button>
+      </div>
+
+      <!-- Imposter: Wort raten -->
+      <div class="guess-section" id="guessSection" style="display:none;">
+        <div class="panel-title">🎯 Wort erraten (Zusatzpunkt)</div>
+        <input id="guessInput" class="guess-input" type="text" placeholder="Das geheime Wort…" maxlength="30" autocomplete="off">
+        <button class="btn-primary" onclick="submitGuess()">Raten ✓</button>
+      </div>
+
+      <!-- Ergebnis -->
+      <div class="result-section" id="resultSection" style="display:none;">
+        <div class="result-title" id="resultTitle">Ergebnis</div>
+        <div id="resultText" style="font-size:clamp(13px,1.8vw,15px);color:rgba(255,255,255,.7);margin-top:8px;"></div>
+        <button class="btn-primary" style="margin-top:16px;" onclick="nextRound()">Nächste Runde ▶</button>
+      </div>
+
+      <!-- Log -->
+      <div class="panel" style="margin-top:8px;">
+        <div class="panel-title">📋 Hinweis-Verlauf</div>
+        <div class="log" id="hintLog"></div>
+      </div>
+    </div>
+
+    <!-- RECHTES PANEL -->
+    <div class="panel side-panel" id="rightPanel">
+      <div class="panel-title">💬 Hinweise (Runde 1)</div>
+      <div id="hints1" class="log" style="max-height:200px;"></div>
+      <div class="panel-title" style="margin-top:16px;">💬 Hinweise (Runde 2)</div>
+      <div id="hints2" class="log" style="max-height:200px;"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== WIN OVERLAY ===== -->
+<div id="overlay">
+  <div class="overlay-emoji" id="overlayEmoji">🎉</div>
+  <div id="overlayTitle">Crew gewinnt!</div>
+  <div id="overlayComment"></div>
+  <div id="overlayWord"></div>
+  <button class="btn-primary" style="margin-top:24px;max-width:300px;" onclick="closeOverlay()">Weiter</button>
+</div>
+
+<!-- ===== GEAR MENU ===== -->
+<div class="gear-wrapper">
+  <button class="gear-btn" onclick="toggleGear()">⚙️ Optionen</button>
+  <div class="gear-panel" id="gearPanel">
+    <button class="gear-item" onclick="syncState()">🔄 Synchronisieren</button>
+    <button class="gear-item" onclick="resetRoom()">🗑️ Raum zurücksetzen</button>
+  </div>
+</div>
+
+<!-- ===== FIREBASE ===== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",
+  authDomain: "schnuppes-spielportal.firebaseapp.com",
+  databaseURL: "https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "schnuppes-spielportal",
+  storageBucket: "schnuppes-spielportal.firebasestorage.app",
+  messagingSenderId: "1022973500272",
+  appId: "1:1022973500272:web:f9e39d0dfd3c61c3c88db5"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const ROOM = "imposter/room1";
+
+// ===== SOUNDS =====
+function playSound(name){
+  try{
+    const a=new Audio(`https://werbung0816-afk.github.io/schnuppes-spielportal/${name}`);
+    a.volume=0.5;a.play().catch(()=>{});
+  }catch(e){}
+}
+
+// ===== GLOBALS =====
+const KI_NAMES=["Nici","Marco","Leni","Mia","Nele","Dani","Finn","Sascha"];
+let myId=null, myName=null, isHost=false;
+let localState=null; // last known state
+let words=[];
+let myVote=null;
+let myGuess=null;
+
+// ===== WORD LOADING =====
+async function loadWords(){
+  try{
+    const r=await fetch("words.json");
+    const d=await r.json();
+    words=d.words;
+  }catch(e){
+    // fallback
+    words=["Elefant","Pizza","Strand","Gitarre","Vulkan","Delfin","Kaktus","Rakete","Pinguin","Wasserfall"];
+  }
+}
+loadWords();
+
+function pickWord(){return words[Math.floor(Math.random()*words.length)]||"Geheimnis";}
+
+// ===== ID =====
+function getId(){
+  let id=sessionStorage.getItem("imposter_id");
+  if(!id){id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);sessionStorage.setItem("imposter_id",id);}
+  return id;
+}
+
+// ===== JOIN =====
+window.joinRoom=async function(){
+  const n=document.getElementById("nameInput").value.trim();
+  if(!n)return;
+  myId=getId(); myName=n;
+  sessionStorage.setItem("imposter_name",n);
+  showScreen("screenWait");
+  document.getElementById("waitName").textContent="👋 "+n;
+
+  const snap=await get(ref(db,ROOM));
+  const state=snap.val();
+
+  if(!state||!state.players||Object.keys(state.players).length===0){
+    // erster Spieler = Host
+    isHost=true;
+    await set(ref(db,ROOM),{
+      host:myId,
+      phase:"wait",
+      round:0,
+      turnIndex:0,
+      word:"",
+      imposterId:"",
+      players:{[myId]:{name:n,score:0,hint1:"",hint2:"",vote:"",online:true}},
+      hints1:{},hints2:{},
+      voteResults:{},
+      hintPhase:1,
+      timestamp:Date.now()
+    });
+    document.getElementById("btnStartGame").style.display="block";
+  } else {
+    isHost=(state.host===myId);
+    // join existing
+    await update(ref(db,ROOM+"/players/"+myId),{name:n,score:state.players?.[myId]?.score||0,hint1:"",hint2:"",vote:"",online:true});
+    if(state.phase==="play"||state.phase==="vote"||state.phase==="result"){
+      // re-join mid game – go to game screen
+    }
+  }
+
+  listenRoom();
+};
+
+// ===== LISTEN =====
+function listenRoom(){
+  onValue(ref(db,ROOM),(snap)=>{
+    const st=snap.val();
+    if(!st)return;
+    localState=st;
+    renderState(st);
+    // detect disconnect: if host gone, replace with KI
+    if(st.phase==="play"||st.phase==="vote"){
+      Object.entries(st.players||{}).forEach(([pid,p])=>{
+        if(!p.online&&!p.isKI&&st.host!==pid){
+          if(isHost) replaceWithKI(pid,p.name,st);
+        }
+      });
+    }
+  });
+}
+
+// ===== RENDER =====
+function renderState(st){
+  const players=st.players||{};
+  const phase=st.phase||"wait";
+
+  if(phase==="wait"){
+    showScreen("screenWait");
+    renderWaitList(players,st.host);
+    if(st.host===myId) document.getElementById("btnStartGame").style.display="block";
+    else document.getElementById("btnStartGame").style.display="none";
+    return;
+  }
+
+  showScreen("screenGame");
+
+  renderPlayers(players,st);
+  renderScores(players);
+  renderHintLog(st);
+
+  // status bar
+  const turnPid=getTurnPlayer(st);
+  const turnName=players[turnPid]?.name||"?";
+  const isMyTurn=(turnPid===myId);
+  let statusTxt="";
+  if(phase==="play"){
+    const r=st.hintPhase||1;
+    statusTxt=`Runde ${st.round||1} | Hinweisphase ${r}/2 | Am Zug: <span class='you-active'>${turnName}${isMyTurn?" – du bist dran ✦":""}</span>`;
+  } else if(phase==="vote"){
+    statusTxt="🗳️ Abstimmungsphase – Wer ist der Imposter?";
+  } else if(phase==="result"){
+    statusTxt="📊 Ergebnis der Runde";
+  }
+  document.getElementById("statusBar").innerHTML=statusTxt;
+  document.getElementById("roundNum").textContent=st.round||1;
+  document.getElementById("phaseName").textContent=phase==="play"?`Hinweise ${st.hintPhase||1}/2`:phase==="vote"?"Abstimmung":"Ergebnis";
+  document.getElementById("currentTurnName").textContent=phase==="play"?turnName:"—";
+
+  // word box
+  const wbox=document.getElementById("wordDisplay");
+  if(st.imposterId===myId){
+    wbox.innerHTML=`<div class='imposter-label'>🕵️ Du bist der Imposter!</div><div class='imposter-sub'>Erraten, worum es geht, und bluff!</div>`;
+  } else {
+    wbox.innerHTML=`<div class='word-display'>${st.word||"—"}</div>`;
+  }
+
+  // sections visibility
+  const hs=document.getElementById("hintSection");
+  const vs=document.getElementById("voteSection");
+  const gs=document.getElementById("guessSection");
+  const rs=document.getElementById("resultSection");
+  hs.style.display="none"; vs.style.display="none"; gs.style.display="none"; rs.style.display="none";
+
+  if(phase==="play"&&isMyTurn){
+    const hp=st.hintPhase||1;
+    const myHintKey=hp===1?"hint1":"hint2";
+    const myHintDone=players[myId]?.[myHintKey]||"";
+    if(!myHintDone){hs.style.display="block";}
+  }
+  if(phase==="vote"){
+    vs.style.display="block";
+    renderVoteButtons(players,st);
+  }
+  if(phase==="result"){
+    rs.style.display="block";
+    renderResult(st,players);
+    // imposter guess
+    if(st.imposterId===myId&&!st.imposterGuess){
+      gs.style.display="block";
+    }
+  }
+}
+
+// ===== PLAYERS LIST =====
+function renderPlayers(players,st){
+  const cont=document.getElementById("playerListLeft");
+  cont.innerHTML="";
+  const pids=Object.keys(players);
+  const turnPid=getTurnPlayer(st);
+  pids.forEach(pid=>{
+    const p=players[pid];
+    const div=document.createElement("div");
+    div.className="player-card"+(turnPid===pid&&st.phase==="play"?" active-turn":"")+(st.phase==="result"&&st.imposterId===pid?" imposter-reveal":"");
+    const hp=st.hintPhase||1;
+    const hint=hp===1?(p.hint1||""):(p.hint1&&p.hint2?p.hint2:p.hint1)||"";
+    const me=pid===myId?" (Du)":"";
+    div.innerHTML=`
+      <div class='player-name'>${esc(p.name)}${me}</div>
+      ${hint?`<div class='player-hint'>💬 ${esc(hint)}</div>`:""}
+      ${p.vote&&st.phase==="result"?`<div class='player-vote'>🗳️ ${esc(players[p.vote]?.name||"—")}</div>`:""}
+      <div class='score-badge'>${p.score||0}pt</div>
+      ${p.isKI?`<div class='player-badge ki'>KI</div>`:""}
+    `;
+    cont.appendChild(div);
+  });
+}
+
+function renderScores(players){
+  const t=document.getElementById("scoreTable");
+  t.innerHTML="";
+  Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
+    t.innerHTML+=`<div class='score-row'><span class='score-player'>${esc(p.name)}</span><span class='score-val'>${p.score||0}</span></div>`;
+  });
+}
+
+function renderWaitList(players,hostId){
+  const c=document.getElementById("waitPlayerList");
+  c.innerHTML="";
+  Object.entries(players).forEach(([pid,p])=>{
+    c.innerHTML+=`<div style='padding:8px 12px;margin-bottom:6px;border-radius:12px;background:rgba(255,255,255,.05);font-size:14px;'>
+      ${pid===hostId?"👑 ":"👤 "} ${esc(p.name)}${pid===myId?" (Du)":""}
+    </div>`;
+  });
+}
+
+function renderHintLog(st){
+  const log=document.getElementById("hintLog");
+  const h1=document.getElementById("hints1");
+  const h2=document.getElementById("hints2");
+  log.innerHTML=""; h1.innerHTML=""; h2.innerHTML="";
+  const players=st.players||{};
+
+  Object.entries(players).forEach(([pid,p])=>{
+    const n=esc(p.name);
+    if(p.hint1){
+      const e=`<div class='log-entry'><span class='le-name'>${n}:</span> <span class='le-hint'>${esc(p.hint1)}</span></div>`;
+      h1.innerHTML+=e; log.innerHTML+=e;
+    }
+    if(p.hint2){
+      const e=`<div class='log-entry'><span class='le-name'>${n}:</span> <span class='le-hint'>${esc(p.hint2)}</span></div>`;
+      h2.innerHTML+=e; log.innerHTML+=e;
+    }
+  });
+}
+
+function renderVoteButtons(players,st){
+  const c=document.getElementById("voteButtons");
+  c.innerHTML="";
+  Object.entries(players).forEach(([pid,p])=>{
+    if(pid===myId)return; // cant vote for self
+    const btn=document.createElement("button");
+    btn.className="vote-btn"+(myVote===pid?" selected":"");
+    btn.textContent="👤 "+p.name+(p.isKI?" (KI)":"");
+    btn.onclick=()=>{myVote=pid;renderVoteButtons(players,st);document.getElementById("btnConfirmVote").disabled=false;};
+    c.appendChild(btn);
+  });
+}
+
+function renderResult(st,players){
+  const rt=document.getElementById("resultTitle");
+  const rtxt=document.getElementById("resultText");
+  // tally votes
+  const tally={};
+  Object.values(players).forEach(p=>{if(p.vote)tally[p.vote]=(tally[p.vote]||0)+1;});
+  const sorted=Object.entries(tally).sort((a,b)=>b[1]-a[1]);
+  const mostVotedId=sorted[0]?.[0];
+  const impId=st.imposterId;
+  const impName=players[impId]?.name||"?";
+  const word=st.word||"?";
+
+  if(mostVotedId===impId){
+    rt.textContent="🎉 Crew hat gewonnen!";
+    rtxt.innerHTML=`Der Imposter war <b>${esc(impName)}</b>.<br>Das Wort war: <b>${esc(word)}</b><br>${st.imposterGuess===word?"🎯 Imposter hat das Wort erraten (+1 für Imposter)":""}`;
+  } else {
+    rt.textContent="🕵️ Imposter hat gewonnen!";
+    rtxt.innerHTML=`Der Imposter war <b>${esc(impName)}</b> und blieb unentdeckt!<br>Das Wort war: <b>${esc(word)}</b><br>${st.imposterGuess===word?"🎯 Imposter hat das Wort erraten (+1 für Imposter)":""}`;
+  }
+}
+
+// ===== TURN LOGIC =====
+function getTurnPlayer(st){
+  const players=st.players||{};
+  const pids=Object.keys(players);
+  if(!pids.length)return null;
+  const idx=(st.turnIndex||0)%pids.length;
+  return pids[idx];
+}
+
+function allHintsDone(st,phase){
+  const players=st.players||{};
+  const key=phase===1?"hint1":"hint2";
+  return Object.values(players).every(p=>p[key]&&p[key].length>0);
+}
+
+// ===== SUBMIT HINT =====
+window.submitHint=async function(){
+  const val=document.getElementById("hintInput").value.trim();
+  if(!val)return;
+  const st=localState;
+  if(!st)return;
+  const hp=st.hintPhase||1;
+  const key=hp===1?"hint1":"hint2";
+  await update(ref(db,ROOM+"/players/"+myId),{[key]:val});
+  document.getElementById("hintInput").value="";
+  playSound("dice.mp3");
+
+  // advance turn
+  const pids=Object.keys(st.players||{});
+  const nextIdx=((st.turnIndex||0)+1)%pids.length;
+  const newState={turnIndex:nextIdx};
+
+  // check if phase complete
+  const updatedPlayers={...st.players,[myId]:{...st.players[myId],[key]:val}};
+  if(Object.values(updatedPlayers).every(p=>p[key]&&p[key].length>0)){
+    if(hp===1){
+      newState.hintPhase=2;
+      newState.turnIndex=0;
+    } else {
+      newState.phase="vote";
+    }
+  }
+  await update(ref(db,ROOM),newState);
+  // KI takes turn if needed
+  setTimeout(()=>kiAutoPlay(),800);
+};
+
+// ===== CONFIRM VOTE =====
+window.confirmVote=async function(){
+  if(!myVote)return;
+  await update(ref(db,ROOM+"/players/"+myId),{vote:myVote});
+  document.getElementById("btnConfirmVote").disabled=true;
+
+  // check if all voted
+  const st=localState;
+  const players=st?.players||{};
+  const updPlayers={...players,[myId]:{...players[myId],vote:myVote}};
+  if(Object.values(updPlayers).every(p=>p.vote)){
+    // tally & award points, then result
+    await tallyVotesAndAdvance(updPlayers,st);
+  }
+};
+
+async function tallyVotesAndAdvance(players,st){
+  const tally={};
+  Object.values(players).forEach(p=>{if(p.vote)tally[p.vote]=(tally[p.vote]||0)+1;});
+  const sorted=Object.entries(tally).sort((a,b)=>b[1]-a[1]);
+  const mostVotedId=sorted[0]?.[0];
+  const impId=st.imposterId;
+
+  const updates={};
+  if(mostVotedId===impId){
+    // crew wins: everyone who voted correctly gets +1, bonus +1
+    Object.entries(players).forEach(([pid,p])=>{
+      if(pid!==impId){
+        const bonus=p.vote===impId?1:0;
+        updates[`players/${pid}/score`]=(p.score||0)+1+bonus;
+      }
+    });
+  } else {
+    // imposter wins
+    updates[`players/${impId}/score`]=(players[impId]?.score||0)+1;
+  }
+  updates["phase"]="result";
+  updates["voteResults"]=tally;
+  await update(ref(db,ROOM),updates);
+
+  playSound("applause.mp3");
+  showOverlay(mostVotedId===impId,players[impId]?.name||"?",st.word||"?");
+}
+
+// ===== IMPOSTER GUESS =====
+window.submitGuess=async function(){
+  const val=document.getElementById("guessInput").value.trim();
+  if(!val)return;
+  await update(ref(db,ROOM),{imposterGuess:val});
+  const st=localState;
+  if(val.toLowerCase()===(st?.word||"").toLowerCase()){
+    // bonus point
+    await update(ref(db,ROOM+"/players/"+myId),{score:(st?.players?.[myId]?.score||0)+1});
+  }
+  document.getElementById("guessSection").style.display="none";
+};
+
+// ===== NEXT ROUND =====
+window.nextRound=async function(){
+  if(!isHost)return;
+  const st=localState;
+  const players={...st.players};
+  // reset hints & votes
+  Object.keys(players).forEach(pid=>{
+    players[pid]={...players[pid],hint1:"",hint2:"",vote:""};
+  });
+  // pick new word & imposter
+  const word=pickWord();
+  const pids=Object.keys(players);
+  const impIdx=Math.floor(Math.random()*pids.length);
+  const impId=pids[impIdx];
+
+  await set(ref(db,ROOM),{
+    ...st,
+    phase:"play",
+    round:(st.round||1)+1,
+    turnIndex:0,
+    word,
+    imposterId:impId,
+    hintPhase:1,
+    hints1:{},hints2:{},
+    voteResults:{},
+    imposterGuess:"",
+    players,
+    timestamp:Date.now()
+  });
+  document.getElementById("overlay").classList.remove("show");
+  myVote=null;
+};
+
+// ===== HOST START =====
+window.hostStartGame=async function(){
+  const st=localState;
+  if(!st)return;
+  const players={...st.players};
+  const word=pickWord();
+  const pids=Object.keys(players);
+  const impIdx=Math.floor(Math.random()*pids.length);
+  const impId=pids[impIdx];
+  Object.keys(players).forEach(pid=>{players[pid]={...players[pid],hint1:"",hint2:"",vote:""};});
+  await update(ref(db,ROOM),{phase:"play",round:1,turnIndex:0,word,imposterId:impId,hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players});
+};
+
+// ===== VS KI =====
+window.startVsKI=async function(){
+  const st=localState;
+  if(!st)return;
+  const players={...st.players};
+  // add 2 KI players
+  const taken=Object.values(players).map(p=>p.name.replace(/\s*\(KI\)/,""));
+  const available=KI_NAMES.filter(n=>!taken.includes(n));
+  shuffle(available);
+  const kiCount=Math.max(0,3-Object.keys(players).length);
+  for(let i=0;i<kiCount&&i<available.length;i++){
+    const kid="ki_"+Date.now()+"_"+i;
+    players[kid]={name:available[i]+" (KI)",score:0,hint1:"",hint2:"",vote:"",online:true,isKI:true};
+  }
+  const word=pickWord();
+  const pids=Object.keys(players);
+  const impIdx=Math.floor(Math.random()*pids.length);
+  const impId=pids[impIdx];
+  await set(ref(db,ROOM),{
+    ...st,
+    phase:"play",round:1,turnIndex:0,word,imposterId:impId,hintPhase:1,
+    hints1:{},hints2:{},voteResults:{},imposterGuess:"",
+    players,host:myId,timestamp:Date.now()
+  });
+  isHost=true;
+  setTimeout(()=>kiAutoPlay(),1000);
+};
+
+// ===== KI AUTO PLAY =====
+async function kiAutoPlay(){
+  const st=localState;
+  if(!st||!isHost)return;
+  if(st.phase!=="play")return;
+  const turnPid=getTurnPlayer(st);
+  if(!turnPid)return;
+  const p=st.players?.[turnPid];
+  if(!p||!p.isKI)return;
+  const hp=st.hintPhase||1;
+  const key=hp===1?"hint1":"hint2";
+  if(p[key])return; // already has hint
+
+  const hint=generateKIHint(st,turnPid);
+  await update(ref(db,ROOM+"/players/"+turnPid),{[key]:hint});
+
+  const pids=Object.keys(st.players||{});
+  const nextIdx=((st.turnIndex||0)+1)%pids.length;
+  const newState={turnIndex:nextIdx};
+  const updPlayers={...st.players,[turnPid]:{...p,[key]:hint}};
+  if(Object.values(updPlayers).every(pl=>pl[key]&&pl[key].length>0)){
+    if(hp===1){newState.hintPhase=2;newState.turnIndex=0;}
+    else{newState.phase="vote";}
+  }
+  await update(ref(db,ROOM),newState);
+  // check if next also KI
+  setTimeout(()=>kiAutoPlay(),800);
+}
+
+const KI_GENERIC_HINTS=["interessant","besonders","schön","nützlich","bekannt","groß","typisch","beliebt","wichtig","natürlich"];
+const KI_CREW_PREFIXES=["Man kann","Es gibt","Jeder kennt","Sehr","Ziemlich","Wirklich","Oft","Fast immer","Meistens"];
+
+function generateKIHint(st,kidId){
+  const isImp=st.imposterId===kidId;
+  if(isImp){
+    // bluff: generic hint
+    return KI_GENERIC_HINTS[Math.floor(Math.random()*KI_GENERIC_HINTS.length)];
+  } else {
+    // crew hint: related to word (simplified)
+    const word=st.word||"";
+    const prefix=KI_CREW_PREFIXES[Math.floor(Math.random()*KI_CREW_PREFIXES.length)];
+    const adj=["toll","groß","bunt","warm","kalt","laut","leise","schnell","langsam","rund"][Math.floor(Math.random()*10)];
+    if(word.length>3) return word.slice(0,2)+"…-artig";
+    return adj;
+  }
+}
+
+// ===== KI VOTE =====
+async function kiAutoVote(){
+  const st=localState;
+  if(!st||st.phase!=="vote")return;
+  const players=st.players||{};
+  const kipids=Object.keys(players).filter(pid=>players[pid].isKI&&!players[pid].vote);
+  if(!kipids.length)return;
+  for(const kid of kipids){
+    const others=Object.keys(players).filter(p=>p!==kid);
+    const target=others[Math.floor(Math.random()*others.length)];
+    await update(ref(db,ROOM+"/players/"+kid),{vote:target});
+  }
+  // check complete
+  const updated=await get(ref(db,ROOM+"/players"));
+  const pls=updated.val()||{};
+  if(Object.values(pls).every(p=>p.vote)){
+    await tallyVotesAndAdvance(pls,st);
+  }
+}
+
+// ===== REPLACE WITH KI =====
+async function replaceWithKI(pid,oldName,st){
+  const taken=Object.values(st.players||{}).map(p=>p.name.replace(/\s*\(KI\)/,""));
+  const available=KI_NAMES.filter(n=>!taken.includes(n));
+  if(!available.length)return;
+  const newName=available[Math.floor(Math.random()*available.length)]+" (KI)";
+  await update(ref(db,ROOM+"/players/"+pid),{name:newName,isKI:true,online:true});
+}
+
+// ===== OVERLAY =====
+function showOverlay(crewWon,impName,word){
+  const ov=document.getElementById("overlay");
+  document.getElementById("overlayEmoji").textContent=crewWon?"🎉":"🕵️";
+  document.getElementById("overlayTitle").textContent=crewWon?"Crew gewinnt!":"Imposter gewinnt!";
+  document.getElementById("overlayComment").textContent=crewWon?`${impName} war der Imposter und wurde entlarvt!`:`${impName} blieb unentdeckt!`;
+  document.getElementById("overlayWord").textContent="Das geheime Wort war: "+word;
+  playSound("applause.mp3");
+  ov.classList.add("show");
+}
+window.closeOverlay=function(){
+  document.getElementById("overlay").classList.remove("show");
+};
+
+// ===== GEAR =====
+window.toggleGear=function(){document.getElementById("gearPanel").classList.toggle("open");};
+window.syncState=function(){if(localState)renderState(localState);document.getElementById("gearPanel").classList.remove("open");};
+window.resetRoom=async function(){
+  await remove(ref(db,ROOM));
+  document.getElementById("gearPanel").classList.remove("open");
+  sessionStorage.removeItem("imposter_id");
+  location.reload();
+};
+
+// ===== LEAVE =====
+window.leaveRoom=async function(){
+  if(myId) await update(ref(db,ROOM+"/players/"+myId),{online:false});
+  location.reload();
+};
+
+// ===== UTILS =====
+function showScreen(id){
+  ["screenSetup","screenWait","screenGame"].forEach(s=>{
+    document.getElementById(s).className="screen"+(s===id?" active":"");
+  });
+}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+
+// ===== RECONNECT from session =====
+window.addEventListener("DOMContentLoaded",()=>{
+  const savedName=sessionStorage.getItem("imposter_name");
+  if(savedName) document.getElementById("nameInput").value=savedName;
+  // auto-reconnect if id exists
+  const savedId=sessionStorage.getItem("imposter_id");
+  if(savedId&&savedName){
+    myId=savedId; myName=savedName;
+    get(ref(db,ROOM)).then(snap=>{
+      const st=snap.val();
+      if(st&&st.players&&st.players[myId]){
+        isHost=(st.host===myId);
+        update(ref(db,ROOM+"/players/"+myId),{online:true});
+        showScreen(st.phase==="wait"?"screenWait":"screenGame");
+        document.getElementById("waitName").textContent="👋 "+myName;
+        listenRoom();
+      }
+    });
+  }
+  // watch for vote-phase KI
+  setInterval(()=>{
+    if(localState?.phase==="vote"&&isHost) kiAutoVote();
+    if(localState?.phase==="play"&&isHost) kiAutoPlay();
+  },1500);
+});
+
+// mark offline on unload
+window.addEventListener("beforeunload",()=>{
+  if(myId) update(ref(db,ROOM+"/players/"+myId),{online:false});
+});
+</script>
+</body>
+</html>
