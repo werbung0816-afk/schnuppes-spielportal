@@ -567,22 +567,20 @@ let roundScores = { white: 0, black: 0 };
 let rounds = 1;
 
 function initBoard() {
-  // Standard backgammon starting position
-  // Points 0-23: index 0 = point 24 of white, index 23 = point 1 of white
-  // white moves from high index to low (24→1)
-  // black moves from low index to high (1→24)
-  // Point array: positive = white stones, negative = black stones
+  // board[i] = point (24-i) from white's perspective
+  // board[0]=pt24, board[23]=pt1
+  // White: 2@pt24(board[0]), 5@pt13(board[11]), 3@pt8(board[16]), 5@pt6(board[18])
+  // Black mirrors: 2@pt1(board[23]), 5@pt12(board[12]), 3@pt17(board[7]), 5@pt19(board[5])
+  // Standard Backgammon starting position:
   const board = new Array(24).fill(0);
-  // White: 2 on point 24(idx 0), 5 on point 13(idx 11), 3 on point 8(idx 16), 5 on point 6(idx 18)
-  board[0] = 2;    // point 24 white = 2 white
-  board[11] = 5;   // point 13 white = 5 white
-  board[16] = 3;   // point 8 white = 3 white
-  board[18] = 5;   // point 6 white = 5 white
-  // Black: 2 on point 24(idx 23), 5 on point 13(idx 12), 3 on point 8(idx 7), 5 on point 6(idx 5)
-  board[23] = -2;
-  board[12] = -5;
-  board[7] = -3;
-  board[5] = -5;
+  board[0]  =  2;  // White: 2 on pt24
+  board[11] =  5;  // White: 5 on pt13
+  board[16] =  3;  // White: 3 on pt8
+  board[18] =  5;  // White: 5 on pt6
+  board[23] = -2;  // Black: 2 on pt1  (mirrors white's pt24)
+  board[12] = -5;  // Black: 5 on pt12 (mirrors white's pt13)
+  board[7]  = -3;  // Black: 3 on pt17 (mirrors white's pt8)
+  board[5]  = -5;  // Black: 5 on pt19 (mirrors white's pt6)
   return board;
 }
 
@@ -966,9 +964,11 @@ function getValidMoves(state, color) {
     const usedVals = new Set();
     remaining.forEach(d => {
       if (usedVals.has(d)) return; usedVals.add(d);
-      // White enters opponent's home (pts 19-24 = board[5..0]): die d → board idx = 6-d (pt19=d1→board5, pt24=d6→board0)
-      // Black enters opponent's home (pts 1-6   = board[23..18]): die d → board idx = 24-d (pt1=d1→board23, pt6=d6→board18)
-      const enterIdx = color === 'white' ? (6 - d) : (24 - d);
+      // White enters opponent's home (pts 24 down to 19):
+      //   die 1 → pt24 = board[0], die 6 → pt19 = board[5]  → enterIdx = d - 1
+      // Black enters opponent's home (pts 1 up to 6):
+      //   die 1 → pt1  = board[23], die 6 → pt6  = board[18] → enterIdx = 24 - d
+      const enterIdx = color === 'white' ? (d - 1) : (24 - d);
       if (enterIdx < 0 || enterIdx > 23) return;
       const val = state.board[enterIdx];
       // blocked if opponent has 2+ stones there
