@@ -297,7 +297,10 @@ input.field::placeholder{color:rgba(255,255,255,.28)}
 
     <!-- My hand -->
     <div class="hand-panel">
-      <div class="sec-title" style="margin-bottom:8px">Deine Karten (<span id="myCount">0</span>)</div>
+      <div class="sec-title" style="margin-bottom:8px;display:flex;justify-content:space-between">
+        <span>Deine Karten (<span id="myCount">0</span>)</span>
+        <span id="myScore" style="color:#53f6ff;font-weight:700;font-size:12px;text-transform:none;letter-spacing:0"></span>
+      </div>
       <div id="myHand" class="hand-cards"></div>
     </div>
 
@@ -409,23 +412,23 @@ function groupByVal(hand){
 // ═══════════════════════════════════════════════════════════════
 // GAME INIT
 // ═══════════════════════════════════════════════════════════════
-function buildGame(playerData, prevRoles){
-  // playerData: [{id,name,isAI}]
+function buildGame(playerData, prevRoles, prevScores, prevRoundNum){
   const ids = playerData.map(p=>p.id);
   const n   = ids.length;
   const deck= shuffle(mkDeck(n));
   const hands= deal(deck,ids);
+  const roundNum = (prevRoundNum||0) + 1;
 
   const players={};
   playerData.forEach(p=>{
     players[p.id]={
       name:p.name, isAI:!!p.isAI, connected:true,
       hand:hands[p.id], cardCount:hands[p.id].length,
-      role: prevRoles?.[p.id]||null, finishPos:null
+      role: prevRoles?.[p.id]||null, finishPos:null,
+      score: prevScores?.[p.id]||0
     };
   });
 
-  // Apply card exchange if roles exist
   const hasRoles = prevRoles && Object.values(prevRoles).some(r=>r);
   if(hasRoles) applyExchange(players, prevRoles, ids);
 
@@ -435,7 +438,7 @@ function buildGame(playerData, prevRoles){
     phase:'playing', playerOrder:ids, players,
     pile:null, pileCount:0, pileVal:0, pileOwner:null,
     passed:[], finishOrder:[], currentTurn:start,
-    log:['Runde beginnt! Viel Glück! 🃏'], roundNum:1,
+    log:[`Runde ${roundNum} beginnt! Viel Glück! 🃏`], roundNum,
     hostId:ids[0], needsExchange:hasRoles,
     lastUpdate:firebase.database.ServerValue.TIMESTAMP
   };
@@ -482,7 +485,13 @@ function assignRoles(state){
     5:['boss','viceboss','bauer','viceass','ass'],
     6:['boss','viceboss','bauer','bauer','viceass','ass']};
   const roles=map[n]||[];
-  fo.forEach((id,i)=>{ if(state.players[id]) state.players[id].role=roles[i]||null; });
+  fo.forEach((id,i)=>{
+    if(!state.players[id]) return;
+    state.players[id].role=roles[i]||null;
+    // Points: 1st gets n-1, last gets 0
+    const pts = Math.max(0, n-1-i);
+    state.players[id].score = (state.players[id].score||0) + pts;
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -688,7 +697,9 @@ function startWithAI(){
       const prev=s2.val();
       const prevRoles={};
       if(prev?.players) for(const [id,p] of Object.entries(prev.players)) if(p.role) prevRoles[id]=p.role;
-      const game=buildGame(allP, Object.keys(prevRoles).length?prevRoles:null);
+      const prevScores2={};
+      if(prev?.players) for(const [id,p] of Object.entries(prev.players)) prevScores2[id]=p.score||0;
+      const game=buildGame(allP, Object.keys(prevRoles).length?prevRoles:null, prevScores2, prev?.roundNum||0);
       if(game.needsExchange){
         game.phase='exchange';
         ROOM.set(game).then(()=>runExchange());
@@ -703,11 +714,17 @@ function startNewRound(){
   document.getElementById('winOverlay').classList.remove('show');
   if(!gs||!gs.players) return;
   const prevRoles={};
-  for(const [id,p] of Object.entries(gs.players)) if(p.role) prevRoles[id]=p.role;
+  const prevScores={};
+  for(const [id,p] of Object.entries(gs.players)){
+    if(p.role) prevRoles[id]=p.role;
+    prevScores[id]=p.score||0;
+  }
   const playerData=(gs.playerOrder||[]).map(id=>({
     id, name:gs.players[id].name, isAI:gs.players[id].isAI
   }));
-  const game=buildGame(playerData, Object.keys(prevRoles).length?prevRoles:null);
+  const game=buildGame(playerData,
+    Object.keys(prevRoles).length?prevRoles:null,
+    prevScores, gs.roundNum||1);
   if(game.needsExchange){
     game.phase='exchange';
     showScreen('exchangeScreen');
@@ -810,12 +827,13 @@ function renderGame(s){
   // Status
   const me=s.players[myId];
   const statusEl=document.getElementById('statusBar');
+  const rn = s.roundNum ? `Runde ${s.roundNum}` : '';
   if(s.currentTurn===myId&&s.phase==='playing'){
-    statusEl.innerHTML='<span class="my-turn">— du bist dran ✦</span>';
+    statusEl.innerHTML=`<span style="color:rgba(255,255,255,.4);font-size:12px;font-weight:400">${rn} &nbsp;|&nbsp; </span><span class="my-turn">— du bist dran ✦</span>`;
   } else if(s.currentTurn&&s.players[s.currentTurn]){
-    statusEl.textContent=`${s.players[s.currentTurn].name} ist am Zug…`;
+    statusEl.innerHTML=`<span style="color:rgba(255,255,255,.4);font-size:12px;font-weight:400">${rn} &nbsp;|&nbsp; </span>${esc(s.players[s.currentTurn].name)} ist am Zug…`;
   } else {
-    statusEl.textContent='Spiel läuft…';
+    statusEl.textContent = rn || 'Spiel läuft…';
   }
 
   // Pile
@@ -830,6 +848,8 @@ function renderGame(s){
   // My hand
   const myHand=me?.hand||[];
   document.getElementById('myCount').textContent=myHand.length;
+  const scEl=document.getElementById('myScore');
+  if(scEl) scEl.textContent=me?.score!=null?`${me.score} Pkt`:'';
   selCards=selCards.filter(sel=>myHand.some(c=>c.id===sel.id));
   renderMyHand(myHand);
 
@@ -905,7 +925,8 @@ function renderOppList(containerId, ids, s){
     const cnt=p.hand?.length||0;
     const mini=Array(Math.min(cnt,12)).fill('<div class="mini"></div>').join('');
     const rb=p.role?`<div class="rbadge ${ROLE_CLS[p.role]}">${ROLE_LBL[p.role]}</div>`:'';
-    div.innerHTML=`<div class="opp-name">${esc(p.name)}</div>${rb}<div style="font-size:12px;color:rgba(255,255,255,.35);margin-top:3px">${cnt} Karte(n)${isActive?' ✦':''}</div><div class="mini-cards">${mini}</div>`;
+    const sc=p.score!=null?`<span style="color:#53f6ff;font-weight:700">${p.score} Pkt</span>`:'';
+    div.innerHTML=`<div class="opp-name" style="display:flex;justify-content:space-between;align-items:center">${esc(p.name)}${sc}</div>${rb}<div style="font-size:12px;color:rgba(255,255,255,.35);margin-top:3px">${cnt} Karte(n)${isActive?' ✦':''}</div><div class="mini-cards">${mini}</div>`;
     el.appendChild(div);
   });
 }
@@ -926,7 +947,8 @@ function showWinOverlay(s){
     const cmt=(WIN_CMT[p.role]||WIN_CMT.bauer)[Math.floor(Math.random()*3)];
     const rb=p.role?`<div class="rbadge ${ROLE_CLS[p.role]}" style="margin-top:4px">${ROLE_LBL[p.role]}</div>`:'';
     const d=document.createElement('div');d.className='rank-row';
-    d.innerHTML=`<div class="rank-num">${medals[i]||'·'}</div><div class="rank-info"><div class="rank-name">${esc(p.name)}${id===myId?' (Du)':''}</div><div class="rank-comment">${cmt}</div>${rb}</div>`;
+    const sc2=p.score!=null?`<div style="font-size:13px;color:#53f6ff;font-weight:700;margin-top:3px">Gesamt: ${p.score} Punkte</div>`:'';
+    d.innerHTML=`<div class="rank-num">${medals[i]||'·'}</div><div class="rank-info"><div class="rank-name">${esc(p.name)}${id===myId?' (Du)':''}</div><div class="rank-comment">${cmt}</div>${rb}${sc2}</div>`;
     rl.appendChild(d);
   });
 }
