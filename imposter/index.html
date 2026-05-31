@@ -11,323 +11,161 @@
 body{
   font-family:'Outfit',sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(143,95,255,.35), transparent 30%),
-    radial-gradient(circle at top right, rgba(255,79,216,.25), transparent 35%),
+    radial-gradient(circle at top left,rgba(143,95,255,.35),transparent 30%),
+    radial-gradient(circle at top right,rgba(255,79,216,.25),transparent 35%),
     linear-gradient(180deg,#050111,#120523);
-  color:#fff;
-  min-height:100vh;
-  padding:20px;
-  user-select:none;
-  -webkit-user-select:none;
+  color:#fff;min-height:100vh;padding:20px;
+  user-select:none;-webkit-user-select:none;
 }
-
-/* ===== LAYOUT ===== */
-.layout{
-  display:grid;
-  grid-template-columns:260px 1fr 260px;
-  gap:16px;
-  max-width:1200px;
-  margin:0 auto;
-}
-@media(max-width:700px){
-  .layout{
-    grid-template-columns:1fr;
-  }
-  .side-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-}
-@media(min-width:451px) and (max-width:700px){
-  .layout{grid-template-columns:1fr;}
-  .side-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-}
-@media(max-width:450px){
-  .layout{grid-template-columns:1fr;}
-  .side-panel{display:block;}
-}
-
-/* ===== PANEL ===== */
-.panel{
-  background:rgba(10,12,38,.85);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:28px;
-  padding:20px;
-  backdrop-filter:blur(18px);
-}
-.panel-title{
-  font-size:clamp(13px,2vw,16px);
-  font-weight:700;
-  color:#53f6ff;
-  letter-spacing:.05em;
-  text-transform:uppercase;
-  margin-bottom:14px;
-}
-
-/* ===== LOGO ===== */
-.logo{margin-bottom:20px;text-align:center;}
-.logo h1{
-  font-size:clamp(42px,8vw,72px);
-  line-height:.9;
-  font-weight:900;
-  background:linear-gradient(90deg,#ff4fd8,#53f6ff);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.logo p{font-size:clamp(13px,2vw,17px);margin-top:8px;color:#ff9ef0;}
+.layout{display:grid;grid-template-columns:240px 1fr 240px;gap:16px;max-width:1100px;margin:0 auto;}
+@media(max-width:700px){.layout{grid-template-columns:1fr;}}
+@media(max-width:450px){.layout{grid-template-columns:1fr;}}
+.panel{background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);border-radius:28px;padding:20px;backdrop-filter:blur(18px);}
+.panel-title{font-size:clamp(12px,1.8vw,15px);font-weight:700;color:#53f6ff;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px;}
+.logo{text-align:center;margin-bottom:16px;}
+.logo h1{font-size:clamp(36px,7vw,64px);line-height:.9;font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo p{font-size:clamp(12px,1.8vw,16px);margin-top:6px;color:#ff9ef0;}
 .version{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px;}
-
-/* ===== PLAYERS ===== */
-.player-card{
-  padding:14px;
-  margin-bottom:10px;
-  border-radius:18px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);
-  position:relative;
-}
-.player-card.active-turn{
-  border:1px solid #53f6ff;
-  box-shadow:0 0 20px rgba(83,246,255,.3);
-}
-.player-card.imposter-reveal{
-  border:1px solid #ff4fd8;
-  box-shadow:0 0 20px rgba(255,79,216,.3);
-}
-.player-name{font-size:clamp(14px,2vw,16px);font-weight:700;}
-.player-hint{font-size:clamp(12px,1.5vw,14px);color:rgba(255,255,255,.6);margin-top:4px;}
-.player-vote{font-size:clamp(11px,1.5vw,13px);color:#ff4fd8;margin-top:4px;}
-.player-badge{
-  position:absolute;top:10px;right:10px;
-  font-size:10px;padding:3px 8px;border-radius:20px;
-  background:rgba(83,246,255,.2);color:#53f6ff;font-weight:700;
-}
+.player-card{padding:12px 14px;margin-bottom:8px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);position:relative;}
+.player-card.active-turn{border-color:#53f6ff;box-shadow:0 0 16px rgba(83,246,255,.3);}
+.player-card.imposter-reveal{border-color:#ff4fd8;box-shadow:0 0 16px rgba(255,79,216,.3);}
+.player-name{font-size:clamp(13px,1.8vw,15px);font-weight:700;}
+.player-hint{font-size:clamp(11px,1.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;}
+.player-badge{position:absolute;top:8px;right:8px;font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(83,246,255,.2);color:#53f6ff;font-weight:700;}
 .player-badge.ki{background:rgba(255,79,216,.2);color:#ff4fd8;}
-.score-badge{
-  display:inline-block;
-  font-size:clamp(18px,3vw,26px);font-weight:900;
-  margin-top:6px;
-}
-
-/* ===== STATUS ===== */
-.status-bar{
-  padding:12px 16px;
-  border-radius:16px;
-  background:rgba(143,95,255,.18);
-  margin-bottom:16px;
-  font-size:clamp(12px,1.8vw,15px);
-}
+.score-badge{font-size:clamp(16px,2.5vw,22px);font-weight:900;margin-top:4px;display:inline-block;}
+.status-bar{padding:10px 14px;border-radius:14px;background:rgba(143,95,255,.18);margin-bottom:14px;font-size:clamp(12px,1.6vw,14px);}
 .you-active{color:#53f6ff;font-weight:700;}
-
-/* ===== SPIELFELD ===== */
-.game-center{display:flex;flex-direction:column;gap:16px;}
-
-/* Wort-Box */
-.word-box{
-  text-align:center;
-  padding:30px 20px;
-  border-radius:28px;
-  background:rgba(120,40,255,.06);
-  border:1px solid rgba(220,120,255,.22);
-  box-shadow:0 0 35px rgba(180,80,255,.14) inset;
-}
-.word-label{font-size:clamp(12px,1.5vw,14px);color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
-.word-display{
-  font-size:clamp(32px,6vw,60px);
-  font-weight:900;
-  background:linear-gradient(90deg,#53f6ff,#ff4fd8);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  line-height:1.1;
-}
-.imposter-label{
-  font-size:clamp(16px,3vw,28px);
-  font-weight:900;
-  color:#ff4fd8;
-}
-.imposter-sub{font-size:clamp(12px,1.8vw,15px);color:rgba(255,255,255,.6);margin-top:8px;}
-
-/* Hinweis-Eingabe */
-.hint-section{padding:20px;border-radius:24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);}
-.hint-input{
-  width:100%;padding:14px 18px;
-  border-radius:16px;border:2px solid rgba(83,246,255,.3);
-  background:rgba(0,0,0,.3);
-  color:#fff;font-family:'Outfit',sans-serif;font-size:clamp(14px,2vw,17px);
-  outline:none;transition:.2s;
-}
-.hint-input:focus{border-color:#53f6ff;box-shadow:0 0 15px rgba(83,246,255,.2);}
-.hint-input::placeholder{color:rgba(255,255,255,.3);}
-
-/* Runden-Info */
-.round-info{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:12px 18px;border-radius:16px;
-  background:rgba(255,255,255,.04);
-}
-.round-num{font-size:clamp(12px,1.5vw,14px);color:rgba(255,255,255,.6);}
-.round-val{font-size:clamp(16px,2.5vw,22px);font-weight:900;color:#ff4fd8;}
-
-/* ===== ABSTIMMUNG ===== */
-.vote-section{padding:20px;border-radius:24px;background:rgba(255,79,216,.06);border:1px solid rgba(255,79,216,.2);}
-.vote-title{font-size:clamp(14px,2vw,17px);font-weight:700;color:#ff4fd8;margin-bottom:14px;}
-.vote-btn{
-  display:block;width:100%;padding:12px 16px;
-  margin-bottom:8px;border-radius:14px;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
-  color:#fff;font-family:'Outfit',sans-serif;font-size:clamp(13px,1.8vw,16px);
-  cursor:pointer;text-align:left;transition:.2s;
-}
-.vote-btn:hover{background:rgba(255,79,216,.15);border-color:#ff4fd8;}
-.vote-btn.selected{background:rgba(255,79,216,.25);border-color:#ff4fd8;box-shadow:0 0 12px rgba(255,79,216,.3);}
-
-/* ===== IMPOSTER GUESS ===== */
-.guess-section{padding:20px;border-radius:24px;background:rgba(143,95,255,.06);border:1px solid rgba(143,95,255,.2);}
-
-/* ===== BUTTONS ===== */
-button{
-  padding:14px 20px;border:none;border-radius:20px;
-  font-size:clamp(14px,2vw,17px);font-weight:800;
-  color:#fff;cursor:pointer;transition:.2s;
-  font-family:'Outfit',sans-serif;
-  width:100%;margin-top:10px;
-}
+.game-center{display:flex;flex-direction:column;gap:14px;}
+.word-box{text-align:center;padding:26px 18px;border-radius:26px;background:rgba(120,40,255,.06);border:1px solid rgba(220,120,255,.22);box-shadow:0 0 30px rgba(180,80,255,.14) inset;}
+.word-label{font-size:clamp(11px,1.4vw,13px);color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.word-display{font-size:clamp(28px,5.5vw,54px);font-weight:900;background:linear-gradient(90deg,#53f6ff,#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;}
+.imposter-label{font-size:clamp(18px,3.5vw,32px);font-weight:900;color:#ff4fd8;}
+.imposter-sub{font-size:clamp(12px,1.6vw,14px);color:rgba(255,255,255,.55);margin-top:6px;}
+.round-info{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-radius:14px;background:rgba(255,255,255,.04);}
+.round-num{font-size:clamp(11px,1.4vw,13px);color:rgba(255,255,255,.5);}
+.round-val{font-size:clamp(14px,2.2vw,20px);font-weight:900;color:#ff4fd8;}
+.section-box{padding:18px;border-radius:22px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);}
+.section-box.vote-box{background:rgba(255,79,216,.06);border-color:rgba(255,79,216,.2);}
+.section-box.result-box{background:rgba(83,246,255,.06);border-color:rgba(83,246,255,.2);}
+.section-box.guess-box{background:rgba(143,95,255,.06);border-color:rgba(143,95,255,.2);}
+.section-box.live-box{background:rgba(255,159,40,.06);border-color:rgba(255,159,40,.2);}
+.game-input{width:100%;padding:13px 16px;border-radius:14px;border:2px solid rgba(83,246,255,.3);background:rgba(0,0,0,.3);color:#fff;font-family:'Outfit',sans-serif;font-size:clamp(13px,1.8vw,16px);outline:none;transition:.2s;margin-top:8px;}
+.game-input:focus{border-color:#53f6ff;box-shadow:0 0 12px rgba(83,246,255,.2);}
+.game-input::placeholder{color:rgba(255,255,255,.3);}
+.guess-input{border-color:rgba(143,95,255,.3);}
+.guess-input:focus{border-color:#8f5fff;}
+button{padding:13px 18px;border:none;border-radius:18px;font-size:clamp(13px,1.8vw,16px);font-weight:800;color:#fff;cursor:pointer;transition:.2s;font-family:'Outfit',sans-serif;width:100%;margin-top:10px;}
 .btn-primary{background:linear-gradient(90deg,#53f6ff,#5677ff);}
 .btn-primary:hover{opacity:.85;transform:translateY(-2px);}
 .btn-success{background:linear-gradient(90deg,#5eff9b,#24bf61);}
 .btn-danger{background:linear-gradient(90deg,#ff9b54,#ff5f6d);}
-.btn-secondary{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);}
-.btn-secondary:hover{background:rgba(255,255,255,.2);}
-.btn-small{padding:10px 16px;font-size:clamp(12px,1.5vw,14px);font-weight:700;border-radius:14px;}
-button:disabled{opacity:.4;cursor:not-allowed;transform:none!important;}
-
-/* ===== SCREEN MANAGEMENT ===== */
+.btn-secondary{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);}
+.btn-secondary:hover{background:rgba(255,255,255,.18);}
+button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
+.vote-btn{display:block;width:100%;padding:11px 14px;margin-bottom:7px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Outfit',sans-serif;font-size:clamp(12px,1.6vw,15px);cursor:pointer;text-align:left;transition:.2s;margin-top:0;}
+.vote-btn:hover{background:rgba(255,79,216,.15);border-color:#ff4fd8;}
+.vote-btn.selected{background:rgba(255,79,216,.25);border-color:#ff4fd8;}
+.score-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.score-row:last-child{border-bottom:none;}
+.score-player{font-size:clamp(12px,1.6vw,15px);font-weight:700;}
+.score-val{font-size:clamp(16px,2.5vw,22px);font-weight:900;color:#53f6ff;}
+.log{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.log-entry{padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.04);font-size:clamp(11px,1.5vw,13px);}
+.log-entry .le-name{color:#53f6ff;font-weight:700;}
 .screen{display:none;}
 .screen.active{display:block;}
 
-/* Setup screen */
-.setup-card{
-  max-width:480px;margin:60px auto;
-  padding:40px;border-radius:34px;
-  background:rgba(10,12,38,.85);
-  border:1px solid rgba(255,255,255,.1);
-  backdrop-filter:blur(18px);
-  text-align:center;
-}
-.setup-title{
-  font-size:clamp(40px,8vw,72px);font-weight:900;
-  background:linear-gradient(90deg,#ff4fd8,#53f6ff);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  margin-bottom:8px;
-}
-.setup-sub{color:#ff9ef0;font-size:clamp(14px,2vw,18px);margin-bottom:30px;}
-.setup-input{
-  width:100%;padding:16px 20px;margin-bottom:16px;
-  border-radius:18px;border:2px solid rgba(83,246,255,.3);
-  background:rgba(0,0,0,.4);color:#fff;
-  font-family:'Outfit',sans-serif;font-size:18px;
-  outline:none;text-align:center;transition:.2s;
-}
-.setup-input:focus{border-color:#53f6ff;box-shadow:0 0 20px rgba(83,246,255,.2);}
+/* SETUP */
+.setup-card{max-width:520px;margin:40px auto;padding:36px;border-radius:32px;background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px);text-align:center;}
+.setup-title{font-size:clamp(36px,7vw,68px);font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;}
+.setup-sub{color:#ff9ef0;font-size:clamp(13px,1.8vw,17px);margin-bottom:16px;}
+.setup-input{width:100%;padding:14px 18px;margin-bottom:14px;border-radius:16px;border:2px solid rgba(83,246,255,.3);background:rgba(0,0,0,.4);color:#fff;font-family:'Outfit',sans-serif;font-size:17px;outline:none;text-align:center;transition:.2s;}
+.setup-input:focus{border-color:#53f6ff;box-shadow:0 0 18px rgba(83,246,255,.2);}
 .setup-input::placeholder{color:rgba(255,255,255,.3);}
+.mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+@media(max-width:480px){.mode-cards{grid-template-columns:1fr;}}
+.mode-card{padding:20px 16px;border-radius:22px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);cursor:pointer;transition:.2s;text-align:center;}
+.mode-card:hover{border-color:rgba(83,246,255,.4);}
+.mode-card.selected-online{border-color:#53f6ff;background:rgba(83,246,255,.1);box-shadow:0 0 16px rgba(83,246,255,.15);}
+.mode-card.selected-live{border-color:#ffb347;background:rgba(255,159,40,.1);box-shadow:0 0 16px rgba(255,159,40,.15);}
+.mode-emoji{font-size:32px;margin-bottom:8px;}
+.mode-name{font-size:clamp(14px,2vw,17px);font-weight:900;margin-bottom:6px;}
+.mode-desc{font-size:clamp(11px,1.5vw,13px);color:rgba(255,255,255,.6);line-height:1.4;}
 
-/* Wait screen */
-.wait-card{max-width:440px;margin:60px auto;padding:40px;border-radius:34px;
-  background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);
-  backdrop-filter:blur(18px);text-align:center;}
-.wait-name{font-size:clamp(20px,4vw,30px);font-weight:900;color:#53f6ff;margin-bottom:8px;}
-.wait-dots{font-size:clamp(20px,4vw,28px);color:#ff4fd8;margin-bottom:24px;animation:pulse 1.5s infinite;}
+/* WAIT */
+.wait-card{max-width:440px;margin:40px auto;padding:36px;border-radius:32px;background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px);text-align:center;}
+.wait-name{font-size:clamp(18px,3.5vw,28px);font-weight:900;color:#53f6ff;margin-bottom:6px;}
+.wait-dots{font-size:clamp(14px,2.2vw,20px);color:#ff4fd8;margin-bottom:20px;animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-.divider{border:none;border-top:1px solid rgba(255,255,255,.1);margin:20px 0;}
+.divider{border:none;border-top:1px solid rgba(255,255,255,.1);margin:16px 0;}
+.mode-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:14px;}
+.mode-badge.online{background:rgba(83,246,255,.2);color:#53f6ff;}
+.mode-badge.live{background:rgba(255,159,40,.2);color:#ffb347;}
 
-/* Overlay Win */
-#overlay{
-  position:fixed;inset:0;display:none;
-  align-items:center;justify-content:center;flex-direction:column;
-  background:rgba(5,5,20,.92);z-index:9999;backdrop-filter:blur(10px);
-  text-align:center;padding:20px;
-}
+/* ROLE REVEAL */
+.role-card{max-width:440px;margin:30px auto;padding:32px;border-radius:28px;background:rgba(10,12,38,.9);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);text-align:center;}
+.role-tap{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:14px;}
+.role-hidden{font-size:clamp(18px,3.5vw,26px);font-weight:900;color:rgba(255,255,255,.15);letter-spacing:.3em;cursor:pointer;padding:22px;border-radius:18px;background:rgba(255,255,255,.04);border:2px dashed rgba(255,255,255,.15);transition:.3s;}
+.role-hidden:hover{border-color:rgba(83,246,255,.4);}
+
+/* LIVE GAME */
+.live-wrap{max-width:680px;margin:0 auto;}
+.result-toggle{display:flex;gap:10px;margin-bottom:12px;}
+.result-toggle button{flex:1;padding:12px;border-radius:14px;font-size:14px;margin-top:0;}
+.result-toggle button.tog-active{box-shadow:0 0 14px rgba(83,246,255,.3);opacity:1;}
+
+/* OVERLAY */
+#overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(5,5,20,.92);z-index:9999;backdrop-filter:blur(12px);text-align:center;padding:20px;}
 #overlay.show{display:flex;}
-#overlayTitle{
-  font-size:clamp(40px,8vw,88px);font-weight:900;
-  background:linear-gradient(90deg,#53f6ff,#ff4fd8);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-#overlayComment{margin-top:16px;font-size:clamp(16px,2.5vw,24px);color:rgba(255,255,255,.8);}
-#overlayWord{margin-top:12px;font-size:clamp(13px,2vw,18px);color:rgba(255,255,255,.5);}
-.overlay-emoji{font-size:clamp(40px,8vw,80px);margin-bottom:16px;}
+#overlayEmoji{font-size:clamp(40px,8vw,80px);margin-bottom:12px;}
+#overlayTitle{font-size:clamp(36px,7vw,80px);font-weight:900;background:linear-gradient(90deg,#53f6ff,#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+#overlayComment{margin-top:14px;font-size:clamp(14px,2.2vw,22px);color:rgba(255,255,255,.8);}
+#overlayWord{margin-top:10px;font-size:clamp(12px,1.8vw,17px);color:rgba(255,255,255,.5);}
 
-/* ===== GEAR MENU ===== */
-.gear-wrapper{position:fixed;bottom:20px;right:20px;z-index:100;}
-.gear-btn{
-  width:44px;height:44px;border-radius:50%;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
-  color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:.2s;width:auto;padding:0 14px;font-size:13px;
-}
+/* GEAR */
+.gear-wrapper{position:fixed;bottom:18px;right:18px;z-index:100;}
+.gear-btn{width:auto;padding:0 14px;height:40px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Outfit',sans-serif;font-weight:600;transition:.2s;margin-top:0;}
 .gear-btn:hover{background:rgba(255,255,255,.15);}
-.gear-panel{
-  display:none;position:absolute;bottom:54px;right:0;
-  background:rgba(10,12,38,.95);border:1px solid rgba(255,255,255,.1);
-  border-radius:18px;padding:14px;backdrop-filter:blur(18px);
-  min-width:180px;
-}
+.gear-panel{display:none;position:absolute;bottom:50px;right:0;background:rgba(10,12,38,.96);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:12px;backdrop-filter:blur(18px);min-width:190px;}
 .gear-panel.open{display:block;}
-.gear-item{
-  display:block;width:100%;padding:10px 14px;margin-bottom:6px;
-  border-radius:12px;background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.08);
-  color:rgba(255,255,255,.7);font-size:13px;font-weight:600;
-  cursor:pointer;text-align:left;transition:.15s;
-}
+.gear-item{display:block;width:100%;padding:9px 12px;margin-bottom:5px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.7);font-size:13px;font-weight:600;cursor:pointer;text-align:left;transition:.15s;font-family:'Outfit',sans-serif;}
 .gear-item:hover{background:rgba(255,79,216,.15);color:#ff4fd8;}
 .gear-item:last-child{margin-bottom:0;}
-
-/* ===== RESULT SCREEN ===== */
-.result-section{padding:20px;border-radius:24px;background:rgba(83,246,255,.06);border:1px solid rgba(83,246,255,.2);}
-.result-title{font-size:clamp(15px,2.2vw,20px);font-weight:900;color:#53f6ff;margin-bottom:10px;}
-
-/* ===== IMPOSTER-GUESS (Zusatzpunkt) ===== */
-.guess-input{
-  width:100%;padding:12px 16px;
-  border-radius:14px;border:2px solid rgba(143,95,255,.3);
-  background:rgba(0,0,0,.3);color:#fff;
-  font-family:'Outfit',sans-serif;font-size:clamp(13px,1.8vw,16px);
-  outline:none;transition:.2s;margin-top:10px;
-}
-.guess-input:focus{border-color:#8f5fff;box-shadow:0 0 12px rgba(143,95,255,.2);}
-.guess-input::placeholder{color:rgba(255,255,255,.3);}
-
-/* ===== SCORE TABLE ===== */
-.score-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);}
-.score-row:last-child{border-bottom:none;}
-.score-player{font-size:clamp(13px,1.8vw,16px);font-weight:700;}
-.score-val{font-size:clamp(18px,3vw,24px);font-weight:900;color:#53f6ff;}
-
-/* ===== LOG ===== */
-.log{max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-top:10px;}
-.log-entry{padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.04);font-size:clamp(12px,1.6vw,14px);}
-.log-entry .le-name{color:#53f6ff;font-weight:700;}
-.log-entry .le-hint{color:rgba(255,255,255,.85);}
 </style>
 </head>
 <body>
 
-<!-- ===== SCREEN: SETUP ===== -->
+<!-- SETUP -->
 <div id="screenSetup" class="screen active">
   <div class="setup-card">
     <div class="setup-title">🕵️ Imposter</div>
-    <div class="setup-sub">Bluff-&amp; Ratespiel</div>
+    <div class="setup-sub">Bluff &amp; Ratespiel</div>
     <input id="nameInput" class="setup-input" type="text" placeholder="Dein Name" maxlength="20" autocomplete="off">
+    <div class="mode-cards">
+      <div class="mode-card selected-live" id="cardLive" onclick="selectMode('live')">
+        <div class="mode-emoji">🏠</div>
+        <div class="mode-name">Live</div>
+        <div class="mode-desc">Alle zusammen im Raum – App zeigt nur Rolle &amp; Wort, Rest mündlich</div>
+      </div>
+      <div class="mode-card" id="cardOnline" onclick="selectMode('online')">
+        <div class="mode-emoji">💻</div>
+        <div class="mode-name">Online</div>
+        <div class="mode-desc">Getrennt spielen – Hinweise tippen, Abstimmung per App</div>
+      </div>
+    </div>
     <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
-    <div class="version" style="margin-top:16px;">v1.0 • Schnuppes Spielportal</div>
+    <div class="version" style="margin-top:14px;">v2.0 • Schnuppes Spielportal</div>
   </div>
 </div>
 
-<!-- ===== SCREEN: WARTEN ===== -->
+<!-- WARTEN -->
 <div id="screenWait" class="screen">
   <div class="wait-card">
     <div class="wait-name" id="waitName"></div>
-    <div class="wait-dots">⏳ Warte auf Mitspieler<span id="waitDots">...</span></div>
-    <div id="waitPlayerList" style="text-align:left;margin-bottom:16px;"></div>
+    <div id="waitBadge" class="mode-badge live">🏠 Live-Modus</div>
+    <div class="wait-dots" id="waitMsg">⏳ Warte auf Mitspieler…</div>
+    <div id="waitPlayerList" style="text-align:left;margin-bottom:14px;"></div>
     <button id="btnStartGame" class="btn-success" style="display:none;" onclick="hostStartGame()">🎮 Spiel starten</button>
     <hr class="divider">
     <button class="btn-primary" onclick="startVsKI()">🤖 Gegen KI starten</button>
@@ -335,710 +173,815 @@ button:disabled{opacity:.4;cursor:not-allowed;transform:none!important;}
   </div>
 </div>
 
-<!-- ===== SCREEN: SPIEL ===== -->
-<div id="screenGame" class="screen">
-  <div class="layout">
+<!-- LIVE: ROLLEN-ANZEIGE -->
+<div id="screenRole" class="screen">
+  <div class="role-card">
+    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.0 • Live</div></div>
+    <div style="font-size:clamp(15px,2.5vw,20px);font-weight:700;color:#ff9ef0;margin-bottom:6px;" id="rolePlayerName"></div>
+    <div class="role-tap">Tippe auf das Feld – halte das Gerät zu dir!</div>
+    <div class="role-hidden" id="roleHidden" onclick="revealRole()">👁️ Tippen zum Anzeigen</div>
+    <div id="roleContent" style="display:none;padding:18px 0;"></div>
+    <button id="btnRoleNext" class="btn-secondary" style="display:none;" onclick="roleNext()">Weiter → <span id="btnRoleNextName"></span></button>
+    <button id="btnRoleStart" class="btn-success" style="display:none;" onclick="liveBegin()">▶ Los geht's!</button>
+  </div>
+</div>
 
-    <!-- LINKES PANEL -->
-    <div class="panel side-panel" id="leftPanel">
-      <div class="panel-title">👥 Spieler</div>
-      <div id="playerListLeft"></div>
-      <div class="panel-title" style="margin-top:16px;">📜 Punkte</div>
-      <div id="scoreTable"></div>
+<!-- LIVE: SPIELFELD -->
+<div id="screenLive" class="screen">
+  <div class="live-wrap">
+    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.0</div></div>
+    <div class="status-bar" id="liveStatus">Runde läuft…</div>
+
+    <div class="panel" style="margin-bottom:14px;">
+      <div class="panel-title">🏆 Punkte</div>
+      <div id="liveScores"></div>
     </div>
 
-    <!-- MITTE -->
-    <div class="game-center">
-      <div class="logo">
-        <h1>🕵️ Imposter</h1>
-        <p>Bluff &amp; Rate</p>
-        <div class="version">v1.0</div>
+    <!-- Ergebnis eingeben (nur Host) -->
+    <div class="section-box live-box" id="liveResultBox" style="display:none;">
+      <div class="panel-title" style="color:#ffb347;">📋 Ergebnis eingeben</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:12px;">Wer hat gewonnen?</div>
+      <div class="result-toggle">
+        <button id="btnCrew" class="btn-success" onclick="pickWinner('crew')">🎉 Crew</button>
+        <button id="btnImp" class="btn-danger" onclick="pickWinner('imposter')">🕵️ Imposter</button>
       </div>
+      <div id="guessRow" style="display:none;margin-top:12px;">
+        <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:8px;">Hat Imposter das Wort erraten?</div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-success" style="padding:10px;margin-top:0;" onclick="pickGuess(true)">✓ Ja</button>
+          <button class="btn-danger" style="padding:10px;margin-top:0;" onclick="pickGuess(false)">✗ Nein</button>
+        </div>
+        <div id="guessAnswer" style="font-size:13px;color:#53f6ff;margin-top:6px;"></div>
+      </div>
+      <button id="btnLiveConfirm" class="btn-primary" onclick="confirmLive()" disabled>Bestätigen</button>
+    </div>
 
-      <div class="status-bar" id="statusBar">Warte auf Spielstart…</div>
+    <div class="panel" style="margin-top:14px;">
+      <div class="panel-title">📜 Rundenhistorie</div>
+      <div id="liveHistory" class="log"></div>
+    </div>
+    <button class="btn-secondary" style="margin-top:14px;" onclick="leaveRoom()">← Verlassen</button>
+  </div>
+</div>
 
-      <!-- Wort-Anzeige -->
-      <div class="word-box" id="wordBox">
+<!-- ONLINE: SPIELFELD -->
+<div id="screenGame" class="screen">
+  <div class="layout">
+    <div class="panel">
+      <div class="panel-title">👥 Spieler</div>
+      <div id="playerList"></div>
+      <div class="panel-title" style="margin-top:14px;">🏆 Punkte</div>
+      <div id="scoreTable"></div>
+    </div>
+    <div class="game-center">
+      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.0</div></div>
+      <div class="status-bar" id="statusBar">Warte…</div>
+      <div class="word-box">
         <div class="word-label">Deine Rolle</div>
         <div id="wordDisplay">—</div>
       </div>
-
-      <!-- Runden-Info -->
       <div class="round-info">
         <div><div class="round-num">Runde</div><div class="round-val" id="roundNum">—</div></div>
         <div><div class="round-num">Phase</div><div class="round-val" id="phaseName">—</div></div>
-        <div><div class="round-num">Am Zug</div><div class="round-val" id="currentTurnName">—</div></div>
+        <div><div class="round-num">Am Zug</div><div class="round-val" id="turnName">—</div></div>
       </div>
-
-      <!-- Hinweis geben -->
-      <div class="hint-section" id="hintSection" style="display:none;">
-        <div class="panel-title">💬 Dein Hinweis</div>
-        <input id="hintInput" class="hint-input" type="text" placeholder="Ein Wort als Hinweis…" maxlength="30" autocomplete="off">
-        <button class="btn-primary" onclick="submitHint()">Hinweis abgeben ✓</button>
+      <div class="section-box" id="hintSection" style="display:none;">
+        <div class="panel-title">💬 Dein Hinweis (1 Wort)</div>
+        <input id="hintInput" class="game-input" type="text" placeholder="Ein Wort…" maxlength="30" autocomplete="off">
+        <button class="btn-primary" onclick="submitHint()">Abgeben ✓</button>
       </div>
-
-      <!-- Abstimmung -->
-      <div class="vote-section" id="voteSection" style="display:none;">
-        <div class="vote-title">🗳️ Wer ist der Imposter?</div>
+      <div class="section-box vote-box" id="voteSection" style="display:none;">
+        <div class="panel-title" style="color:#ff4fd8;">🗳️ Wer ist der Imposter?</div>
         <div id="voteButtons"></div>
-        <button id="btnConfirmVote" class="btn-danger" onclick="confirmVote()" disabled>Abstimmen</button>
+        <button id="btnVote" class="btn-danger" onclick="confirmVote()" disabled>Abstimmen</button>
       </div>
-
-      <!-- Imposter: Wort raten -->
-      <div class="guess-section" id="guessSection" style="display:none;">
-        <div class="panel-title">🎯 Wort erraten (Zusatzpunkt)</div>
-        <input id="guessInput" class="guess-input" type="text" placeholder="Das geheime Wort…" maxlength="30" autocomplete="off">
+      <div class="section-box guess-box" id="guessSection" style="display:none;">
+        <div class="panel-title" style="color:#8f5fff;">🎯 Wort erraten (+1 Punkt)</div>
+        <input id="guessInput" class="game-input guess-input" type="text" placeholder="Das geheime Wort…" maxlength="30" autocomplete="off">
         <button class="btn-primary" onclick="submitGuess()">Raten ✓</button>
       </div>
-
-      <!-- Ergebnis -->
-      <div class="result-section" id="resultSection" style="display:none;">
-        <div class="result-title" id="resultTitle">Ergebnis</div>
-        <div id="resultText" style="font-size:clamp(13px,1.8vw,15px);color:rgba(255,255,255,.7);margin-top:8px;"></div>
-        <button class="btn-primary" style="margin-top:16px;" onclick="nextRound()">Nächste Runde ▶</button>
+      <div class="section-box result-box" id="resultSection" style="display:none;">
+        <div class="panel-title" id="resultTitle" style="color:#53f6ff;">Ergebnis</div>
+        <div id="resultText" style="font-size:clamp(12px,1.6vw,14px);color:rgba(255,255,255,.7);margin-top:8px;line-height:1.6;"></div>
+        <button id="btnNext" class="btn-primary" style="margin-top:14px;display:none;" onclick="nextRound()">Nächste Runde ▶</button>
       </div>
-
-      <!-- Log -->
-      <div class="panel" style="margin-top:8px;">
+      <div class="panel">
         <div class="panel-title">📋 Hinweis-Verlauf</div>
         <div class="log" id="hintLog"></div>
       </div>
     </div>
-
-    <!-- RECHTES PANEL -->
-    <div class="panel side-panel" id="rightPanel">
-      <div class="panel-title">💬 Hinweise (Runde 1)</div>
-      <div id="hints1" class="log" style="max-height:200px;"></div>
-      <div class="panel-title" style="margin-top:16px;">💬 Hinweise (Runde 2)</div>
-      <div id="hints2" class="log" style="max-height:200px;"></div>
+    <div class="panel">
+      <div class="panel-title">💬 Hinweise Runde 1</div>
+      <div id="hints1" class="log" style="max-height:190px;"></div>
+      <div class="panel-title" style="margin-top:14px;">💬 Hinweise Runde 2</div>
+      <div id="hints2" class="log" style="max-height:190px;"></div>
     </div>
-
   </div>
 </div>
 
-<!-- ===== WIN OVERLAY ===== -->
+<!-- OVERLAY -->
 <div id="overlay">
-  <div class="overlay-emoji" id="overlayEmoji">🎉</div>
-  <div id="overlayTitle">Crew gewinnt!</div>
+  <div id="overlayEmoji">🎉</div>
+  <div id="overlayTitle"></div>
   <div id="overlayComment"></div>
   <div id="overlayWord"></div>
-  <button class="btn-primary" style="margin-top:24px;max-width:300px;" onclick="closeOverlay()">Weiter</button>
+  <button class="btn-primary" style="margin-top:22px;max-width:280px;" onclick="closeOverlay()">Weiter</button>
 </div>
 
-<!-- ===== GEAR MENU ===== -->
+<!-- GEAR -->
 <div class="gear-wrapper">
   <button class="gear-btn" onclick="toggleGear()">⚙️ Optionen</button>
   <div class="gear-panel" id="gearPanel">
-    <button class="gear-item" onclick="syncState()">🔄 Synchronisieren</button>
+    <button class="gear-item" onclick="syncNow()">🔄 Synchronisieren</button>
     <button class="gear-item" onclick="resetRoom()">🗑️ Raum zurücksetzen</button>
   </div>
 </div>
 
-<!-- ===== FIREBASE ===== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, set, get, onValue, update, remove }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",
-  authDomain: "schnuppes-spielportal.firebaseapp.com",
-  databaseURL: "https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "schnuppes-spielportal",
-  storageBucket: "schnuppes-spielportal.firebasestorage.app",
-  messagingSenderId: "1022973500272",
-  appId: "1:1022973500272:web:f9e39d0dfd3c61c3c88db5"
+  apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",
+  authDomain:"schnuppes-spielportal.firebaseapp.com",
+  databaseURL:"https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"schnuppes-spielportal",
+  storageBucket:"schnuppes-spielportal.firebasestorage.app",
+  messagingSenderId:"1022973500272",
+  appId:"1:1022973500272:web:f9e39d0dfd3c61c3c88db5"
 };
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const db  = getDatabase(app);
 const ROOM = "imposter/room1";
+const HB_INTERVAL  = 8000;   // Heartbeat alle 8s schreiben
+const OFFLINE_MS   = 20000;  // nach 20s ohne HB = offline
 
-// ===== SOUNDS =====
-function playSound(name){
-  try{
-    const a=new Audio(`https://werbung0816-afk.github.io/schnuppes-spielportal/${name}`);
-    a.volume=0.5;a.play().catch(()=>{});
-  }catch(e){}
+// ── Sounds ─────────────────────────────────────────────────────────────────
+function snd(name){
+  try{const a=new Audio(`https://werbung0816-afk.github.io/schnuppes-spielportal/${name}`);a.volume=.5;a.play().catch(()=>{});}catch(_){}
 }
 
-// ===== GLOBALS =====
-const KI_NAMES=["Nici","Marco","Leni","Mia","Nele","Dani","Finn","Sascha"];
-let myId=null, myName=null, isHost=false;
-let localState=null; // last known state
-let words=[];
-let myVote=null;
-let myGuess=null;
-
-// ===== WORD LOADING =====
-async function loadWords(){
-  try{
-    const r=await fetch("words.json");
-    const d=await r.json();
-    words=d.words;
-  }catch(e){
-    // fallback
-    words=["Elefant","Pizza","Strand","Gitarre","Vulkan","Delfin","Kaktus","Rakete","Pinguin","Wasserfall"];
+// ── Spielerfarben ────────────────────────────────────────────────────────────
+const PLAYER_COLORS = [
+  { main:"#53f6ff", bg:"rgba(83,246,255,.12)",  border:"rgba(83,246,255,.35)"  }, // Cyan
+  { main:"#ff4fd8", bg:"rgba(255,79,216,.12)",  border:"rgba(255,79,216,.35)"  }, // Pink
+  { main:"#5eff9b", bg:"rgba(94,255,155,.12)",  border:"rgba(94,255,155,.35)"  }, // Grün
+  { main:"#ffb347", bg:"rgba(255,179,71,.12)",  border:"rgba(255,179,71,.35)"  }, // Orange
+  { main:"#a78bfa", bg:"rgba(167,139,250,.12)", border:"rgba(167,139,250,.35)" }, // Lila
+  { main:"#f87171", bg:"rgba(248,113,113,.12)", border:"rgba(248,113,113,.35)" }, // Rot
+  { main:"#34d399", bg:"rgba(52,211,153,.12)",  border:"rgba(52,211,153,.35)"  }, // Mint
+  { main:"#fbbf24", bg:"rgba(251,191,36,.12)",  border:"rgba(251,191,36,.35)"  }, // Gelb
+];
+// pid → Farb-Index (stabil für eine Session)
+const colorMap = {};
+function getColor(pid) {
+  if(colorMap[pid] === undefined) {
+    colorMap[pid] = Object.keys(colorMap).length % PLAYER_COLORS.length;
   }
+  return PLAYER_COLORS[colorMap[pid]];
 }
-loadWords();
+function assignColors(players) {
+  // Reihenfolge aus Firebase-Keys → reproduzierbar
+  Object.keys(players).forEach((pid, i) => {
+    if(colorMap[pid] === undefined) colorMap[pid] = i % PLAYER_COLORS.length;
+  });
+}
 
-function pickWord(){return words[Math.floor(Math.random()*words.length)]||"Geheimnis";}
+// ── Globals ─────────────────────────────────────────────────────────────────
+const KI_NAMES = ["Nici","Marco","Leni","Mia","Nele","Dani","Finn","Sascha"];
+const KI_GENERIC = ["interessant","besonders","schön","nützlich","bekannt","groß","typisch","beliebt","wichtig","natürlich"];
+const KI_ADJ     = ["toll","bunt","warm","kalt","laut","leise","schnell","langsam","rund","weich"];
 
-// ===== ID =====
+let myId=null, myName=null, isHost=false, gameMode="live";
+let state=null, myVote=null, hbTimer=null;
+// Live-Modus lokaler Zustand
+let liveWinner=null, liveGuess=null;
+
+// ── Wörter ──────────────────────────────────────────────────────────────────
+let words=[];
+(async()=>{
+  try{const r=await fetch("words.json");words=(await r.json()).words;}
+  catch(_){words=["Elefant","Pizza","Strand","Gitarre","Vulkan","Delfin","Kaktus","Rakete","Pinguin","Wasserfall"];}
+})();
+const pickWord = () => words[Math.floor(Math.random()*words.length)]||"Geheimnis";
+
+// ── Utils ───────────────────────────────────────────────────────────────────
 function getId(){
-  let id=sessionStorage.getItem("imposter_id");
-  if(!id){id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);sessionStorage.setItem("imposter_id",id);}
+  let id=sessionStorage.getItem("imp_id");
+  if(!id){id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);sessionStorage.setItem("imp_id",id);}
   return id;
 }
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+function isOnline(p){return p.isKI||!p.lastSeen||(Date.now()-p.lastSeen)<OFFLINE_MS;}
+function showScreen(id){
+  ["screenSetup","screenWait","screenRole","screenLive","screenGame"]
+    .forEach(s=>{ document.getElementById(s).className="screen"+(s===id?" active":""); });
+}
+function pids(st){return Object.keys(st.players||{});}
+function getTurn(st){const k=pids(st);return k[(st.turnIndex||0)%k.length]||null;}
 
-// ===== JOIN =====
-window.joinRoom=async function(){
+// ── Mode selection ──────────────────────────────────────────────────────────
+window.selectMode = function(m){
+  gameMode=m;
+  document.getElementById("cardLive").className  ="mode-card"+(m==="live"?" selected-live":"");
+  document.getElementById("cardOnline").className="mode-card"+(m==="online"?" selected-online":"");
+};
+selectMode("live"); // default
+
+// ── Join ────────────────────────────────────────────────────────────────────
+window.joinRoom = async function(){
   const n=document.getElementById("nameInput").value.trim();
   if(!n)return;
   myId=getId(); myName=n;
-  sessionStorage.setItem("imposter_name",n);
+  sessionStorage.setItem("imp_name",n);
+  sessionStorage.setItem("imp_mode",gameMode);
+
   showScreen("screenWait");
   document.getElementById("waitName").textContent="👋 "+n;
+  document.getElementById("waitBadge").textContent = gameMode==="live"?"🏠 Live-Modus":"💻 Online-Modus";
+  document.getElementById("waitBadge").className   = "mode-badge "+(gameMode==="live"?"live":"online");
 
   const snap=await get(ref(db,ROOM));
-  const state=snap.val();
-
-  if(!state||!state.players||Object.keys(state.players).length===0){
-    // erster Spieler = Host
+  const st=snap.val();
+  if(!st||!st.players||!Object.keys(st.players).length){
     isHost=true;
     await set(ref(db,ROOM),{
-      host:myId,
-      phase:"wait",
-      round:0,
-      turnIndex:0,
-      word:"",
-      imposterId:"",
-      players:{[myId]:{name:n,score:0,hint1:"",hint2:"",vote:"",online:true}},
-      hints1:{},hints2:{},
-      voteResults:{},
-      hintPhase:1,
-      timestamp:Date.now()
+      host:myId, phase:"wait", round:0, turnIndex:0,
+      word:"", imposterId:"", gameMode,
+      players:{[myId]:{name:n,score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now()}},
+      hints1:{},hints2:{},voteResults:{},hintPhase:1,imposterGuess:"",history:[],timestamp:Date.now()
     });
     document.getElementById("btnStartGame").style.display="block";
   } else {
-    isHost=(state.host===myId);
-    // join existing
-    await update(ref(db,ROOM+"/players/"+myId),{name:n,score:state.players?.[myId]?.score||0,hint1:"",hint2:"",vote:"",online:true});
-    if(state.phase==="play"||state.phase==="vote"||state.phase==="result"){
-      // re-join mid game – go to game screen
-    }
+    isHost=(st.host===myId);
+    gameMode=st.gameMode||gameMode;
+    await update(ref(db,ROOM+"/players/"+myId),{
+      name:n, score:st.players?.[myId]?.score||0,
+      hint1:"",hint2:"",vote:"", lastSeen:Date.now()
+    });
   }
-
-  listenRoom();
+  startHB();
+  startListen();
 };
 
-// ===== LISTEN =====
-function listenRoom(){
-  onValue(ref(db,ROOM),(snap)=>{
+// ── Heartbeat ───────────────────────────────────────────────────────────────
+function startHB(){
+  if(hbTimer)clearInterval(hbTimer);
+  hbTimer=setInterval(()=>{ if(myId)update(ref(db,ROOM+"/players/"+myId),{lastSeen:Date.now()}); },HB_INTERVAL);
+}
+
+// ── Central listener ────────────────────────────────────────────────────────
+function startListen(){
+  onValue(ref(db,ROOM), snap=>{
     const st=snap.val();
     if(!st)return;
-    localState=st;
-    renderState(st);
-    // detect disconnect: if host gone, replace with KI
-    if(st.phase==="play"||st.phase==="vote"){
-      Object.entries(st.players||{}).forEach(([pid,p])=>{
-        if(!p.online&&!p.isKI&&st.host!==pid){
-          if(isHost) replaceWithKI(pid,p.name,st);
-        }
-      });
-    }
+    state=st;
+    dispatch(st);
   });
 }
 
-// ===== RENDER =====
-function renderState(st){
-  const players=st.players||{};
+function dispatch(st){
   const phase=st.phase||"wait";
+  const mode =st.gameMode||"online";
+  if(st.players) assignColors(st.players);
 
   if(phase==="wait"){
     showScreen("screenWait");
-    renderWaitList(players,st.host);
-    if(st.host===myId) document.getElementById("btnStartGame").style.display="block";
-    else document.getElementById("btnStartGame").style.display="none";
+    renderWaitList(st);
+    document.getElementById("btnStartGame").style.display=isHost?"block":"none";
     return;
   }
 
-  showScreen("screenGame");
-
-  renderPlayers(players,st);
-  renderScores(players);
-  renderHintLog(st);
-
-  // status bar
-  const turnPid=getTurnPlayer(st);
-  const turnName=players[turnPid]?.name||"?";
-  const isMyTurn=(turnPid===myId);
-  let statusTxt="";
-  if(phase==="play"){
-    const r=st.hintPhase||1;
-    statusTxt=`Runde ${st.round||1} | Hinweisphase ${r}/2 | Am Zug: <span class='you-active'>${turnName}${isMyTurn?" – du bist dran ✦":""}</span>`;
-  } else if(phase==="vote"){
-    statusTxt="🗳️ Abstimmungsphase – Wer ist der Imposter?";
-  } else if(phase==="result"){
-    statusTxt="📊 Ergebnis der Runde";
-  }
-  document.getElementById("statusBar").innerHTML=statusTxt;
-  document.getElementById("roundNum").textContent=st.round||1;
-  document.getElementById("phaseName").textContent=phase==="play"?`Hinweise ${st.hintPhase||1}/2`:phase==="vote"?"Abstimmung":"Ergebnis";
-  document.getElementById("currentTurnName").textContent=phase==="play"?turnName:"—";
-
-  // word box
-  const wbox=document.getElementById("wordDisplay");
-  if(st.imposterId===myId){
-    wbox.innerHTML=`<div class='imposter-label'>🕵️ Du bist der Imposter!</div><div class='imposter-sub'>Erraten, worum es geht, und bluff!</div>`;
+  if(mode==="live"){
+    if(phase==="roleReveal") handleRoleReveal(st);
+    else                     handleLivePlay(st);
   } else {
-    wbox.innerHTML=`<div class='word-display'>${st.word||"—"}</div>`;
-  }
-
-  // sections visibility
-  const hs=document.getElementById("hintSection");
-  const vs=document.getElementById("voteSection");
-  const gs=document.getElementById("guessSection");
-  const rs=document.getElementById("resultSection");
-  hs.style.display="none"; vs.style.display="none"; gs.style.display="none"; rs.style.display="none";
-
-  if(phase==="play"&&isMyTurn){
-    const hp=st.hintPhase||1;
-    const myHintKey=hp===1?"hint1":"hint2";
-    const myHintDone=players[myId]?.[myHintKey]||"";
-    if(!myHintDone){hs.style.display="block";}
-  }
-  if(phase==="vote"){
-    vs.style.display="block";
-    renderVoteButtons(players,st);
-  }
-  if(phase==="result"){
-    rs.style.display="block";
-    renderResult(st,players);
-    // imposter guess
-    if(st.imposterId===myId&&!st.imposterGuess){
-      gs.style.display="block";
-    }
+    handleOnlinePlay(st);
   }
 }
 
-// ===== PLAYERS LIST =====
-function renderPlayers(players,st){
-  const cont=document.getElementById("playerListLeft");
-  cont.innerHTML="";
-  const pids=Object.keys(players);
-  const turnPid=getTurnPlayer(st);
-  pids.forEach(pid=>{
-    const p=players[pid];
-    const div=document.createElement("div");
-    div.className="player-card"+(turnPid===pid&&st.phase==="play"?" active-turn":"")+(st.phase==="result"&&st.imposterId===pid?" imposter-reveal":"");
-    const hp=st.hintPhase||1;
-    const hint=hp===1?(p.hint1||""):(p.hint1&&p.hint2?p.hint2:p.hint1)||"";
-    const me=pid===myId?" (Du)":"";
-    div.innerHTML=`
-      <div class='player-name'>${esc(p.name)}${me}</div>
-      ${hint?`<div class='player-hint'>💬 ${esc(hint)}</div>`:""}
-      ${p.vote&&st.phase==="result"?`<div class='player-vote'>🗳️ ${esc(players[p.vote]?.name||"—")}</div>`:""}
-      <div class='score-badge'>${p.score||0}pt</div>
-      ${p.isKI?`<div class='player-badge ki'>KI</div>`:""}
-    `;
-    cont.appendChild(div);
-  });
-}
-
-function renderScores(players){
-  const t=document.getElementById("scoreTable");
-  t.innerHTML="";
-  Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
-    t.innerHTML+=`<div class='score-row'><span class='score-player'>${esc(p.name)}</span><span class='score-val'>${p.score||0}</span></div>`;
-  });
-}
-
-function renderWaitList(players,hostId){
-  const c=document.getElementById("waitPlayerList");
-  c.innerHTML="";
-  Object.entries(players).forEach(([pid,p])=>{
-    c.innerHTML+=`<div style='padding:8px 12px;margin-bottom:6px;border-radius:12px;background:rgba(255,255,255,.05);font-size:14px;'>
-      ${pid===hostId?"👑 ":"👤 "} ${esc(p.name)}${pid===myId?" (Du)":""}
+// ── Wait screen ─────────────────────────────────────────────────────────────
+function renderWaitList(st){
+  const c=document.getElementById("waitPlayerList"); c.innerHTML="";
+  Object.entries(st.players||{}).forEach(([pid,p])=>{
+    const col=getColor(pid);
+    c.innerHTML+=`<div style="padding:7px 11px;margin-bottom:5px;border-radius:10px;background:${col.bg};border:1px solid ${col.border};font-size:13px;">
+      <span style="color:${col.main};font-weight:700;">${pid===st.host?"👑 ":"👤 "}${esc(p.name)}</span>${pid===myId?" (Du)":""}
     </div>`;
   });
 }
 
-function renderHintLog(st){
+// ── Host start ───────────────────────────────────────────────────────────────
+window.hostStartGame = async function(){
+  const st=state; if(!st)return;
+  const mode=st.gameMode||gameMode;
+  const players={};
+  Object.entries(st.players||{}).forEach(([pid,p])=>{ players[pid]={...p,hint1:"",hint2:"",vote:""}; });
+  const word=pickWord();
+  const ids=Object.keys(players);
+  const impId=ids[Math.floor(Math.random()*ids.length)];
+
+  if(mode==="live"){
+    await update(ref(db,ROOM),{
+      phase:"roleReveal", round:(st.round||0)+1, word, imposterId:impId,
+      hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
+      liveStep:0, players, history:st.history||[]
+    });
+  } else {
+    await update(ref(db,ROOM),{
+      phase:"play", round:1, turnIndex:0, word, imposterId:impId,
+      hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"", players
+    });
+  }
+};
+
+// ── vs KI ────────────────────────────────────────────────────────────────────
+window.startVsKI = async function(){
+  const st=state; if(!st)return;
+  const players={...st.players};
+  const taken=Object.values(players).map(p=>p.name.toLowerCase().replace(/\s*\(ki\)/,""));
+  const avail=KI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));
+  shuffle(avail);
+  const need=Math.max(0,3-Object.keys(players).length);
+  for(let i=0;i<need&&i<avail.length;i++){
+    const kid="ki_"+Date.now()+"_"+i;
+    players[kid]={name:avail[i]+" (KI)",score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now(),isKI:true};
+  }
+  Object.keys(players).forEach(pid=>{ players[pid]={...players[pid],hint1:"",hint2:"",vote:""}; });
+  const word=pickWord();
+  const ids=Object.keys(players);
+  const impId=ids[Math.floor(Math.random()*ids.length)];
+  isHost=true;
+  const mode=st.gameMode||gameMode;
+  await set(ref(db,ROOM),{
+    ...st, phase: mode==="live"?"roleReveal":"play",
+    round:1, turnIndex:0, word, imposterId:impId,
+    hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
+    liveStep:0, players, host:myId, gameMode:mode, history:[], timestamp:Date.now()
+  });
+};
+
+// ════════════════════════════════════════════════════════════════════════════
+// LIVE MODUS
+// ════════════════════════════════════════════════════════════════════════════
+
+function handleRoleReveal(st){
+  const ids=pids(st);
+  const step=st.liveStep||0;
+  if(step>=ids.length){
+    // alle fertig
+    if(isHost) update(ref(db,ROOM),{phase:"livePlay"});
+    return;
+  }
+  const curPid=ids[step];
+  if(curPid===myId){
+    // mein Turn → Rolle zeigen
+    showScreen("screenRole");
+    document.getElementById("rolePlayerName").textContent="👤 "+myName;
+    document.getElementById("roleHidden").style.display="block";
+    document.getElementById("roleContent").style.display="none";
+    document.getElementById("roleContent").innerHTML="";
+    document.getElementById("btnRoleNext").style.display="none";
+    document.getElementById("btnRoleStart").style.display="none";
+  } else {
+    // warten
+    showScreen("screenWait");
+    const curName=st.players[curPid]?.name||"?";
+    document.getElementById("waitMsg").textContent=`⏳ ${esc(curName)} schaut gerade…`;
+    document.getElementById("waitPlayerList").innerHTML="";
+    document.getElementById("btnStartGame").style.display="none";
+  }
+}
+
+window.revealRole = function(){
+  const st=state; if(!st)return;
+  document.getElementById("roleHidden").style.display="none";
+  const c=document.getElementById("roleContent"); c.style.display="block";
+  const isImp=st.imposterId===myId;
+  if(isImp){
+    c.innerHTML=`<div class="imposter-label">🕵️ Du bist der<br>IMPOSTER!</div>
+      <div class="imposter-sub" style="margin-top:10px;">Bluff überzeugend!</div>`;
+  } else {
+    c.innerHTML=`<div class="word-label">Das geheime Wort ist</div>
+      <div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
+  }
+  const ids=pids(st);
+  const step=st.liveStep||0;
+  const nextBtn=document.getElementById("btnRoleNext");
+  const startBtn=document.getElementById("btnRoleStart");
+  if(step<ids.length-1){
+    const nextName=st.players[ids[step+1]]?.name||"?";
+    document.getElementById("btnRoleNextName").textContent=esc(nextName);
+    nextBtn.style.display="block"; startBtn.style.display="none";
+  } else {
+    nextBtn.style.display="none"; startBtn.style.display="block";
+  }
+};
+
+window.roleNext = async function(){
+  const st=state; if(!st)return;
+  await update(ref(db,ROOM),{liveStep:(st.liveStep||0)+1});
+};
+
+window.liveBegin = async function(){
+  await update(ref(db,ROOM),{phase:"livePlay"});
+};
+
+function handleLivePlay(st){
+  showScreen("screenLive");
+  // Status
+  document.getElementById("liveStatus").textContent=`Runde ${st.round||1} – Spielt mündlich!`;
+  // Punkte
+  const t=document.getElementById("liveScores"); t.innerHTML="";
+  Object.entries(st.players||{}).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
+    const col=getColor(pid);
+    t.innerHTML+=`<div class="score-row">
+      <span class="score-player" style="color:${col.main};">${esc(p.name)}</span>
+      <span class="score-val" style="color:${col.main};">${p.score||0}</span>
+    </div>`;
+  });
+  // History
+  const h=document.getElementById("liveHistory"); h.innerHTML="";
+  (st.history||[]).slice(-10).reverse().forEach(e=>{ h.innerHTML+=`<div class="log-entry">${esc(e)}</div>`; });
+  // Result-Box nur für Host und nur in livePlay
+  const rb=document.getElementById("liveResultBox");
+  rb.style.display=(isHost&&st.phase==="livePlay")?"block":"none";
+  if(isHost&&st.phase==="livePlay"){
+    liveWinner=null; liveGuess=null;
+    ["btnCrew","btnImp"].forEach(id=>document.getElementById(id).classList.remove("tog-active"));
+    document.getElementById("guessRow").style.display="none";
+    document.getElementById("guessAnswer").textContent="";
+    document.getElementById("btnLiveConfirm").disabled=true;
+  }
+}
+
+window.pickWinner = function(w){
+  liveWinner=w;
+  document.getElementById("btnCrew").classList.toggle("tog-active",w==="crew");
+  document.getElementById("btnImp").classList.toggle("tog-active",w==="imposter");
+  document.getElementById("guessRow").style.display="block";
+  liveGuess=null;
+  document.getElementById("guessAnswer").textContent="";
+  document.getElementById("btnLiveConfirm").disabled=true;
+};
+
+window.pickGuess = function(yes){
+  liveGuess=yes;
+  document.getElementById("guessAnswer").textContent=yes?"✓ Ja, erraten!":"✗ Nicht erraten";
+  document.getElementById("btnLiveConfirm").disabled=false;
+};
+
+window.confirmLive = async function(){
+  if(liveWinner===null||liveGuess===null)return;
+  const st=state; if(!st)return;
+  const players={...st.players};
+  const impId=st.imposterId;
+  const updates={};
+
+  if(liveWinner==="crew"){
+    Object.entries(players).forEach(([pid,p])=>{
+      if(pid!==impId) updates[`players/${pid}/score`]=(p.score||0)+1;
+    });
+  } else {
+    updates[`players/${impId}/score`]=(players[impId]?.score||0)+1;
+  }
+  if(liveGuess){
+    const base=updates[`players/${impId}/score`]??players[impId]?.score??0;
+    updates[`players/${impId}/score`]=base+1;
+  }
+  const impName=players[impId]?.name||"?";
+  const entry=`Runde ${st.round}: ${liveWinner==="crew"?"🎉 Crew gewann":"🕵️ Imposter gewann"} | Imposter: ${impName} | Wort: ${st.word||"?"}${liveGuess?" | 🎯 Wort erraten":""}`;
+  updates["history"]=[...(st.history||[]),entry];
+  updates["phase"]="liveResult";
+  await update(ref(db,ROOM),updates);
+  snd("applause.mp3");
+  showOverlay(liveWinner==="crew",impName,st.word||"?");
+};
+
+// ════════════════════════════════════════════════════════════════════════════
+// ONLINE MODUS
+// ════════════════════════════════════════════════════════════════════════════
+
+function handleOnlinePlay(st){
+  showScreen("screenGame");
+  renderOnline(st);
+  if(isHost){
+    replaceOfflineWithKI(st);
+    if(st.phase==="play") setTimeout(()=>kiTurn(),600);
+    if(st.phase==="vote") setTimeout(()=>kiVote(),600);
+  }
+}
+
+function renderOnline(st){
+  const players=st.players||{};
+  const phase=st.phase||"play";
+  renderPlayerList(players,st);
+  renderScoreTable(players,"scoreTable");
+  renderHintPanels(st);
+
+  const turnPid=getTurn(st);
+  const turnName=players[turnPid]?.name||"?";
+  const isMy=(turnPid===myId);
+  let sb="";
+  if(phase==="play")
+    sb=`Runde ${st.round||1} | Hinweisphase ${st.hintPhase||1}/2 | Am Zug: <span class="you-active">${esc(turnName)}${isMy?" – du bist dran ✦":""}</span>`;
+  else if(phase==="vote") sb="🗳️ Abstimmungsphase";
+  else if(phase==="result") sb="📊 Ergebnis";
+  document.getElementById("statusBar").innerHTML=sb;
+  document.getElementById("roundNum").textContent=st.round||1;
+  document.getElementById("phaseName").textContent=phase==="play"?`Hinweise ${st.hintPhase||1}/2`:phase==="vote"?"Abstimmung":"Ergebnis";
+  document.getElementById("turnName").textContent=phase==="play"?esc(turnName):"—";
+
+  // word/role box
+  const wd=document.getElementById("wordDisplay");
+  if(st.imposterId===myId)
+    wd.innerHTML=`<div class="imposter-label">🕵️ Du bist der Imposter!</div><div class="imposter-sub">Bluff überzeugend!</div>`;
+  else
+    wd.innerHTML=`<div class="word-display">${esc(st.word||"—")}</div>`;
+
+  // sections
+  ["hintSection","voteSection","guessSection","resultSection"].forEach(id=>document.getElementById(id).style.display="none");
+  if(phase==="play"&&isMy){
+    const key=(st.hintPhase||1)===1?"hint1":"hint2";
+    if(!(players[myId]?.[key])) document.getElementById("hintSection").style.display="block";
+  }
+  if(phase==="vote"){ document.getElementById("voteSection").style.display="block"; renderVoteBtns(players); }
+  if(phase==="result"){
+    document.getElementById("resultSection").style.display="block";
+    renderResult(st,players);
+    if(st.imposterId===myId&&!st.imposterGuess) document.getElementById("guessSection").style.display="block";
+  }
+}
+
+function renderPlayerList(players,st){
+  const c=document.getElementById("playerList"); c.innerHTML="";
+  const turnPid=getTurn(st);
+  Object.entries(players).forEach(([pid,p])=>{
+    const hp=(st.hintPhase||1);
+    const hint=(hp===1?p.hint1:p.hint2)||"";
+    const col=getColor(pid);
+    const isActive=turnPid===pid&&st.phase==="play";
+    const isImpRev=st.phase==="result"&&st.imposterId===pid;
+    const d=document.createElement("div");
+    d.className="player-card";
+    // Farbe als inline-style; active-turn / imposter-reveal überschreiben border
+    d.style.cssText=`background:${col.bg};border-color:${isActive?"#53f6ff":isImpRev?"#ff4fd8":col.border};`
+      +(isActive?`box-shadow:0 0 16px rgba(83,246,255,.3);`:"")
+      +(isImpRev?`box-shadow:0 0 16px rgba(255,79,216,.3);`:"");
+    d.innerHTML=`<div class="player-name" style="color:${col.main};">${esc(p.name)}${pid===myId?" (Du)":""}${isOnline(p)?"":" 💤"}</div>
+      ${hint?`<div class="player-hint">💬 ${esc(hint)}</div>`:""}
+      <div class="score-badge" style="color:${col.main};">${p.score||0}pt</div>
+      ${p.isKI?`<div class="player-badge ki">KI</div>`:""}`;
+    c.appendChild(d);
+  });
+}
+
+function renderScoreTable(players,elId){
+  const t=document.getElementById(elId); t.innerHTML="";
+  Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
+    const col=getColor(pid);
+    t.innerHTML+=`<div class="score-row">
+      <span class="score-player" style="color:${col.main};">${esc(p.name)}</span>
+      <span class="score-val" style="color:${col.main};">${p.score||0}</span>
+    </div>`;
+  });
+}
+
+function renderHintPanels(st){
+  const players=st.players||{};
   const log=document.getElementById("hintLog");
   const h1=document.getElementById("hints1");
   const h2=document.getElementById("hints2");
   log.innerHTML=""; h1.innerHTML=""; h2.innerHTML="";
-  const players=st.players||{};
-
   Object.entries(players).forEach(([pid,p])=>{
-    const n=esc(p.name);
-    if(p.hint1){
-      const e=`<div class='log-entry'><span class='le-name'>${n}:</span> <span class='le-hint'>${esc(p.hint1)}</span></div>`;
-      h1.innerHTML+=e; log.innerHTML+=e;
-    }
-    if(p.hint2){
-      const e=`<div class='log-entry'><span class='le-name'>${n}:</span> <span class='le-hint'>${esc(p.hint2)}</span></div>`;
-      h2.innerHTML+=e; log.innerHTML+=e;
-    }
+    const col=getColor(pid);
+    const n=`<span class="le-name" style="color:${col.main};">${esc(p.name)}:</span>`;
+    if(p.hint1){const e=`<div class="log-entry">${n} ${esc(p.hint1)}</div>`;h1.innerHTML+=e;log.innerHTML+=e;}
+    if(p.hint2){const e=`<div class="log-entry">${n} ${esc(p.hint2)}</div>`;h2.innerHTML+=e;log.innerHTML+=e;}
   });
 }
 
-function renderVoteButtons(players,st){
-  const c=document.getElementById("voteButtons");
-  c.innerHTML="";
+function renderVoteBtns(players){
+  const c=document.getElementById("voteButtons"); c.innerHTML="";
   Object.entries(players).forEach(([pid,p])=>{
-    if(pid===myId)return; // cant vote for self
-    const btn=document.createElement("button");
-    btn.className="vote-btn"+(myVote===pid?" selected":"");
-    btn.textContent="👤 "+p.name+(p.isKI?" (KI)":"");
-    btn.onclick=()=>{myVote=pid;renderVoteButtons(players,st);document.getElementById("btnConfirmVote").disabled=false;};
-    c.appendChild(btn);
+    if(pid===myId)return;
+    const col=getColor(pid);
+    const b=document.createElement("button");
+    b.className="vote-btn"+(myVote===pid?" selected":"");
+    b.style.cssText=myVote===pid
+      ?`border-color:${col.main};background:${col.bg};box-shadow:0 0 10px ${col.border};`
+      :`border-color:${col.border};`;
+    b.innerHTML=`<span style="color:${col.main};font-weight:800;">●</span> ${esc(p.name)}${p.isKI?" (KI)":""}`;
+    b.onclick=()=>{ myVote=pid; renderVoteBtns(players); document.getElementById("btnVote").disabled=false; };
+    c.appendChild(b);
   });
 }
 
 function renderResult(st,players){
-  const rt=document.getElementById("resultTitle");
-  const rtxt=document.getElementById("resultText");
-  // tally votes
   const tally={};
-  Object.values(players).forEach(p=>{if(p.vote)tally[p.vote]=(tally[p.vote]||0)+1;});
-  const sorted=Object.entries(tally).sort((a,b)=>b[1]-a[1]);
-  const mostVotedId=sorted[0]?.[0];
-  const impId=st.imposterId;
-  const impName=players[impId]?.name||"?";
-  const word=st.word||"?";
-
-  if(mostVotedId===impId){
-    rt.textContent="🎉 Crew hat gewonnen!";
-    rtxt.innerHTML=`Der Imposter war <b>${esc(impName)}</b>.<br>Das Wort war: <b>${esc(word)}</b><br>${st.imposterGuess===word?"🎯 Imposter hat das Wort erraten (+1 für Imposter)":""}`;
-  } else {
-    rt.textContent="🕵️ Imposter hat gewonnen!";
-    rtxt.innerHTML=`Der Imposter war <b>${esc(impName)}</b> und blieb unentdeckt!<br>Das Wort war: <b>${esc(word)}</b><br>${st.imposterGuess===word?"🎯 Imposter hat das Wort erraten (+1 für Imposter)":""}`;
-  }
+  Object.values(players).forEach(p=>{ if(p.vote)tally[p.vote]=(tally[p.vote]||0)+1; });
+  const topId=Object.entries(tally).sort((a,b)=>b[1]-a[1])[0]?.[0];
+  const crewWon=topId===st.imposterId;
+  const impName=esc(players[st.imposterId]?.name||"?");
+  const word=esc(st.word||"?");
+  document.getElementById("resultTitle").textContent=crewWon?"🎉 Crew hat gewonnen!":"🕵️ Imposter hat gewonnen!";
+  document.getElementById("resultText").innerHTML=`Der Imposter war <b>${impName}</b>.<br>Das Wort war: <b>${word}</b>${st.imposterGuess?`<br>🎯 Imposter tippte: <b>${esc(st.imposterGuess)}</b>`:""}`;
+  document.getElementById("btnNext").style.display=isHost?"block":"none";
 }
 
-// ===== TURN LOGIC =====
-function getTurnPlayer(st){
-  const players=st.players||{};
-  const pids=Object.keys(players);
-  if(!pids.length)return null;
-  const idx=(st.turnIndex||0)%pids.length;
-  return pids[idx];
-}
-
-function allHintsDone(st,phase){
-  const players=st.players||{};
-  const key=phase===1?"hint1":"hint2";
-  return Object.values(players).every(p=>p[key]&&p[key].length>0);
-}
-
-// ===== SUBMIT HINT =====
-window.submitHint=async function(){
-  const val=document.getElementById("hintInput").value.trim();
-  if(!val)return;
-  const st=localState;
-  if(!st)return;
-  const hp=st.hintPhase||1;
-  const key=hp===1?"hint1":"hint2";
+// ── Online actions ──────────────────────────────────────────────────────────
+window.submitHint = async function(){
+  const val=document.getElementById("hintInput").value.trim(); if(!val)return;
+  const st=state; if(!st)return;
+  const hp=st.hintPhase||1, key=hp===1?"hint1":"hint2";
   await update(ref(db,ROOM+"/players/"+myId),{[key]:val});
   document.getElementById("hintInput").value="";
-  playSound("dice.mp3");
-
-  // advance turn
-  const pids=Object.keys(st.players||{});
-  const nextIdx=((st.turnIndex||0)+1)%pids.length;
-  const newState={turnIndex:nextIdx};
-
-  // check if phase complete
-  const updatedPlayers={...st.players,[myId]:{...st.players[myId],[key]:val}};
-  if(Object.values(updatedPlayers).every(p=>p[key]&&p[key].length>0)){
-    if(hp===1){
-      newState.hintPhase=2;
-      newState.turnIndex=0;
-    } else {
-      newState.phase="vote";
-    }
+  snd("dice.mp3");
+  const ids=pids(st);
+  const nextIdx=((st.turnIndex||0)+1)%ids.length;
+  const upd={turnIndex:nextIdx};
+  const updP={...st.players,[myId]:{...st.players[myId],[key]:val}};
+  if(Object.values(updP).every(p=>p[key]&&p[key].length>0)){
+    if(hp===1){upd.hintPhase=2;upd.turnIndex=0;}
+    else       upd.phase="vote";
   }
-  await update(ref(db,ROOM),newState);
-  // KI takes turn if needed
-  setTimeout(()=>kiAutoPlay(),800);
+  await update(ref(db,ROOM),upd);
 };
 
-// ===== CONFIRM VOTE =====
-window.confirmVote=async function(){
+window.confirmVote = async function(){
   if(!myVote)return;
   await update(ref(db,ROOM+"/players/"+myId),{vote:myVote});
-  document.getElementById("btnConfirmVote").disabled=true;
-
-  // check if all voted
-  const st=localState;
-  const players=st?.players||{};
-  const updPlayers={...players,[myId]:{...players[myId],vote:myVote}};
-  if(Object.values(updPlayers).every(p=>p.vote)){
-    // tally & award points, then result
-    await tallyVotesAndAdvance(updPlayers,st);
-  }
+  document.getElementById("btnVote").disabled=true;
+  const st=state;
+  const updP={...st.players,[myId]:{...st.players[myId],vote:myVote}};
+  if(Object.values(updP).every(p=>p.vote)) await tally(updP,st);
 };
 
-async function tallyVotesAndAdvance(players,st){
-  const tally={};
-  Object.values(players).forEach(p=>{if(p.vote)tally[p.vote]=(tally[p.vote]||0)+1;});
-  const sorted=Object.entries(tally).sort((a,b)=>b[1]-a[1]);
-  const mostVotedId=sorted[0]?.[0];
+async function tally(players,st){
+  const cnt={};
+  Object.values(players).forEach(p=>{ if(p.vote)cnt[p.vote]=(cnt[p.vote]||0)+1; });
+  const topId=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0]?.[0];
   const impId=st.imposterId;
-
-  const updates={};
-  if(mostVotedId===impId){
-    // crew wins: everyone who voted correctly gets +1, bonus +1
+  const upd={phase:"result",voteResults:cnt};
+  if(topId===impId){
     Object.entries(players).forEach(([pid,p])=>{
-      if(pid!==impId){
-        const bonus=p.vote===impId?1:0;
-        updates[`players/${pid}/score`]=(p.score||0)+1+bonus;
-      }
+      if(pid!==impId) upd[`players/${pid}/score`]=(p.score||0)+1+(p.vote===impId?1:0);
     });
   } else {
-    // imposter wins
-    updates[`players/${impId}/score`]=(players[impId]?.score||0)+1;
+    upd[`players/${impId}/score`]=(players[impId]?.score||0)+1;
   }
-  updates["phase"]="result";
-  updates["voteResults"]=tally;
-  await update(ref(db,ROOM),updates);
-
-  playSound("applause.mp3");
-  showOverlay(mostVotedId===impId,players[impId]?.name||"?",st.word||"?");
+  await update(ref(db,ROOM),upd);
+  snd("applause.mp3");
+  showOverlay(topId===impId, players[impId]?.name||"?", st.word||"?");
 }
 
-// ===== IMPOSTER GUESS =====
-window.submitGuess=async function(){
-  const val=document.getElementById("guessInput").value.trim();
-  if(!val)return;
+window.submitGuess = async function(){
+  const val=document.getElementById("guessInput").value.trim(); if(!val)return;
   await update(ref(db,ROOM),{imposterGuess:val});
-  const st=localState;
-  if(val.toLowerCase()===(st?.word||"").toLowerCase()){
-    // bonus point
+  const st=state;
+  if(val.toLowerCase()===(st?.word||"").toLowerCase())
     await update(ref(db,ROOM+"/players/"+myId),{score:(st?.players?.[myId]?.score||0)+1});
-  }
   document.getElementById("guessSection").style.display="none";
 };
 
-// ===== NEXT ROUND =====
-window.nextRound=async function(){
+window.nextRound = async function(){
   if(!isHost)return;
-  const st=localState;
-  const players={...st.players};
-  // reset hints & votes
-  Object.keys(players).forEach(pid=>{
-    players[pid]={...players[pid],hint1:"",hint2:"",vote:""};
-  });
-  // pick new word & imposter
+  const st=state;
+  const players={};
+  Object.entries(st.players||{}).forEach(([pid,p])=>{ players[pid]={...p,hint1:"",hint2:"",vote:""}; });
   const word=pickWord();
-  const pids=Object.keys(players);
-  const impIdx=Math.floor(Math.random()*pids.length);
-  const impId=pids[impIdx];
-
-  await set(ref(db,ROOM),{
-    ...st,
-    phase:"play",
-    round:(st.round||1)+1,
-    turnIndex:0,
-    word,
-    imposterId:impId,
-    hintPhase:1,
-    hints1:{},hints2:{},
-    voteResults:{},
-    imposterGuess:"",
-    players,
-    timestamp:Date.now()
-  });
-  document.getElementById("overlay").classList.remove("show");
-  myVote=null;
-};
-
-// ===== HOST START =====
-window.hostStartGame=async function(){
-  const st=localState;
-  if(!st)return;
-  const players={...st.players};
-  const word=pickWord();
-  const pids=Object.keys(players);
-  const impIdx=Math.floor(Math.random()*pids.length);
-  const impId=pids[impIdx];
-  Object.keys(players).forEach(pid=>{players[pid]={...players[pid],hint1:"",hint2:"",vote:""};});
-  await update(ref(db,ROOM),{phase:"play",round:1,turnIndex:0,word,imposterId:impId,hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players});
-};
-
-// ===== VS KI =====
-window.startVsKI=async function(){
-  const st=localState;
-  if(!st)return;
-  const players={...st.players};
-  // add 2 KI players
-  const taken=Object.values(players).map(p=>p.name.replace(/\s*\(KI\)/,""));
-  const available=KI_NAMES.filter(n=>!taken.includes(n));
-  shuffle(available);
-  const kiCount=Math.max(0,3-Object.keys(players).length);
-  for(let i=0;i<kiCount&&i<available.length;i++){
-    const kid="ki_"+Date.now()+"_"+i;
-    players[kid]={name:available[i]+" (KI)",score:0,hint1:"",hint2:"",vote:"",online:true,isKI:true};
-  }
-  const word=pickWord();
-  const pids=Object.keys(players);
-  const impIdx=Math.floor(Math.random()*pids.length);
-  const impId=pids[impIdx];
-  await set(ref(db,ROOM),{
-    ...st,
-    phase:"play",round:1,turnIndex:0,word,imposterId:impId,hintPhase:1,
-    hints1:{},hints2:{},voteResults:{},imposterGuess:"",
-    players,host:myId,timestamp:Date.now()
-  });
-  isHost=true;
-  setTimeout(()=>kiAutoPlay(),1000);
-};
-
-// ===== KI AUTO PLAY =====
-async function kiAutoPlay(){
-  const st=localState;
-  if(!st||!isHost)return;
-  if(st.phase!=="play")return;
-  const turnPid=getTurnPlayer(st);
-  if(!turnPid)return;
-  const p=st.players?.[turnPid];
-  if(!p||!p.isKI)return;
-  const hp=st.hintPhase||1;
-  const key=hp===1?"hint1":"hint2";
-  if(p[key])return; // already has hint
-
-  const hint=generateKIHint(st,turnPid);
-  await update(ref(db,ROOM+"/players/"+turnPid),{[key]:hint});
-
-  const pids=Object.keys(st.players||{});
-  const nextIdx=((st.turnIndex||0)+1)%pids.length;
-  const newState={turnIndex:nextIdx};
-  const updPlayers={...st.players,[turnPid]:{...p,[key]:hint}};
-  if(Object.values(updPlayers).every(pl=>pl[key]&&pl[key].length>0)){
-    if(hp===1){newState.hintPhase=2;newState.turnIndex=0;}
-    else{newState.phase="vote";}
-  }
-  await update(ref(db,ROOM),newState);
-  // check if next also KI
-  setTimeout(()=>kiAutoPlay(),800);
-}
-
-const KI_GENERIC_HINTS=["interessant","besonders","schön","nützlich","bekannt","groß","typisch","beliebt","wichtig","natürlich"];
-const KI_CREW_PREFIXES=["Man kann","Es gibt","Jeder kennt","Sehr","Ziemlich","Wirklich","Oft","Fast immer","Meistens"];
-
-function generateKIHint(st,kidId){
-  const isImp=st.imposterId===kidId;
-  if(isImp){
-    // bluff: generic hint
-    return KI_GENERIC_HINTS[Math.floor(Math.random()*KI_GENERIC_HINTS.length)];
+  const ids=Object.keys(players);
+  const impId=ids[Math.floor(Math.random()*ids.length)];
+  const mode=st.gameMode||"online";
+  if(mode==="live"){
+    await update(ref(db,ROOM),{
+      phase:"roleReveal", round:(st.round||1)+1, word, imposterId:impId,
+      hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
+      liveStep:0, players, history:st.history||[]
+    });
   } else {
-    // crew hint: related to word (simplified)
-    const word=st.word||"";
-    const prefix=KI_CREW_PREFIXES[Math.floor(Math.random()*KI_CREW_PREFIXES.length)];
-    const adj=["toll","groß","bunt","warm","kalt","laut","leise","schnell","langsam","rund"][Math.floor(Math.random()*10)];
-    if(word.length>3) return word.slice(0,2)+"…-artig";
-    return adj;
+    await set(ref(db,ROOM),{
+      ...st, phase:"play", round:(st.round||1)+1, turnIndex:0,
+      word, imposterId:impId, hintPhase:1, hints1:{}, hints2:{},
+      voteResults:{}, imposterGuess:"", players, timestamp:Date.now()
+    });
   }
+  document.getElementById("overlay").classList.remove("show");
+  myVote=null; liveWinner=null; liveGuess=null;
+};
+
+// ── Offline → KI ────────────────────────────────────────────────────────────
+function replaceOfflineWithKI(st){
+  Object.entries(st.players||{}).forEach(([pid,p])=>{
+    if(!p.isKI&&pid!==st.host&&!isOnline(p)){
+      const taken=Object.values(st.players).map(q=>q.name.toLowerCase().replace(/\s*\(ki\)/,""));
+      const avail=KI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));
+      if(!avail.length)return;
+      shuffle(avail);
+      update(ref(db,ROOM+"/players/"+pid),{name:avail[0]+" (KI)",isKI:true,lastSeen:Date.now()});
+    }
+  });
 }
 
-// ===== KI VOTE =====
-async function kiAutoVote(){
-  const st=localState;
-  if(!st||st.phase!=="vote")return;
+// ── KI auto-play ─────────────────────────────────────────────────────────────
+async function kiTurn(){
+  const st=state; if(!st||!isHost||st.phase!=="play")return;
+  const turnPid=getTurn(st); if(!turnPid)return;
+  const p=st.players?.[turnPid]; if(!p?.isKI)return;
+  const hp=st.hintPhase||1, key=hp===1?"hint1":"hint2";
+  if(p[key])return;
+  const hint=st.imposterId===turnPid
+    ? KI_GENERIC[Math.floor(Math.random()*KI_GENERIC.length)]
+    : KI_ADJ[Math.floor(Math.random()*KI_ADJ.length)];
+  await update(ref(db,ROOM+"/players/"+turnPid),{[key]:hint});
+  const ids=pids(st);
+  const nextIdx=((st.turnIndex||0)+1)%ids.length;
+  const upd={turnIndex:nextIdx};
+  const updP={...st.players,[turnPid]:{...p,[key]:hint}};
+  if(Object.values(updP).every(q=>q[key]&&q[key].length>0)){
+    if(hp===1){upd.hintPhase=2;upd.turnIndex=0;}
+    else       upd.phase="vote";
+  }
+  await update(ref(db,ROOM),upd);
+  setTimeout(()=>kiTurn(),700);
+}
+
+async function kiVote(){
+  const st=state; if(!st||!isHost||st.phase!=="vote")return;
   const players=st.players||{};
-  const kipids=Object.keys(players).filter(pid=>players[pid].isKI&&!players[pid].vote);
-  if(!kipids.length)return;
-  for(const kid of kipids){
+  const kip=Object.keys(players).filter(pid=>players[pid].isKI&&!players[pid].vote);
+  for(const kid of kip){
     const others=Object.keys(players).filter(p=>p!==kid);
-    const target=others[Math.floor(Math.random()*others.length)];
-    await update(ref(db,ROOM+"/players/"+kid),{vote:target});
+    await update(ref(db,ROOM+"/players/"+kid),{vote:others[Math.floor(Math.random()*others.length)]});
   }
-  // check complete
-  const updated=await get(ref(db,ROOM+"/players"));
-  const pls=updated.val()||{};
-  if(Object.values(pls).every(p=>p.vote)){
-    await tallyVotesAndAdvance(pls,st);
-  }
+  const snap=await get(ref(db,ROOM+"/players"));
+  const pls=snap.val()||{};
+  if(Object.values(pls).every(p=>p.vote)) await tally(pls,st);
 }
 
-// ===== REPLACE WITH KI =====
-async function replaceWithKI(pid,oldName,st){
-  const taken=Object.values(st.players||{}).map(p=>p.name.replace(/\s*\(KI\)/,""));
-  const available=KI_NAMES.filter(n=>!taken.includes(n));
-  if(!available.length)return;
-  const newName=available[Math.floor(Math.random()*available.length)]+" (KI)";
-  await update(ref(db,ROOM+"/players/"+pid),{name:newName,isKI:true,online:true});
-}
-
-// ===== OVERLAY =====
+// ── Overlay ──────────────────────────────────────────────────────────────────
 function showOverlay(crewWon,impName,word){
-  const ov=document.getElementById("overlay");
   document.getElementById("overlayEmoji").textContent=crewWon?"🎉":"🕵️";
   document.getElementById("overlayTitle").textContent=crewWon?"Crew gewinnt!":"Imposter gewinnt!";
-  document.getElementById("overlayComment").textContent=crewWon?`${impName} war der Imposter und wurde entlarvt!`:`${impName} blieb unentdeckt!`;
+  document.getElementById("overlayComment").textContent=crewWon
+    ?`${impName} war der Imposter und wurde entlarvt!`
+    :`${impName} blieb unentdeckt!`;
   document.getElementById("overlayWord").textContent="Das geheime Wort war: "+word;
-  playSound("applause.mp3");
-  ov.classList.add("show");
+  document.getElementById("overlay").classList.add("show");
 }
-window.closeOverlay=function(){
-  document.getElementById("overlay").classList.remove("show");
-};
+window.closeOverlay = ()=>document.getElementById("overlay").classList.remove("show");
 
-// ===== GEAR =====
-window.toggleGear=function(){document.getElementById("gearPanel").classList.toggle("open");};
-window.syncState=function(){if(localState)renderState(localState);document.getElementById("gearPanel").classList.remove("open");};
-window.resetRoom=async function(){
+// ── Gear ─────────────────────────────────────────────────────────────────────
+window.toggleGear = ()=>document.getElementById("gearPanel").classList.toggle("open");
+window.syncNow    = ()=>{ if(state)dispatch(state); document.getElementById("gearPanel").classList.remove("open"); };
+window.resetRoom  = async()=>{
   await remove(ref(db,ROOM));
+  if(hbTimer)clearInterval(hbTimer);
+  sessionStorage.removeItem("imp_id");
   document.getElementById("gearPanel").classList.remove("open");
-  sessionStorage.removeItem("imposter_id");
+  location.reload();
+};
+window.leaveRoom  = async()=>{
+  if(myId)await update(ref(db,ROOM+"/players/"+myId),{lastSeen:0});
+  if(hbTimer)clearInterval(hbTimer);
   location.reload();
 };
 
-// ===== LEAVE =====
-window.leaveRoom=async function(){
-  if(myId) await update(ref(db,ROOM+"/players/"+myId),{online:false});
-  location.reload();
-};
-
-// ===== UTILS =====
-function showScreen(id){
-  ["screenSetup","screenWait","screenGame"].forEach(s=>{
-    document.getElementById(s).className="screen"+(s===id?" active":"");
-  });
-}
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
-
-// ===== RECONNECT from session =====
+// ── Boot / Reconnect ──────────────────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded",()=>{
-  const savedName=sessionStorage.getItem("imposter_name");
+  const savedName=sessionStorage.getItem("imp_name");
+  const savedMode=sessionStorage.getItem("imp_mode")||"live";
   if(savedName) document.getElementById("nameInput").value=savedName;
-  // auto-reconnect if id exists
-  const savedId=sessionStorage.getItem("imposter_id");
+  selectMode(savedMode);
+
+  const savedId=sessionStorage.getItem("imp_id");
   if(savedId&&savedName){
-    myId=savedId; myName=savedName;
+    myId=savedId; myName=savedName; gameMode=savedMode;
     get(ref(db,ROOM)).then(snap=>{
       const st=snap.val();
-      if(st&&st.players&&st.players[myId]){
+      if(st?.players?.[myId]){
         isHost=(st.host===myId);
-        update(ref(db,ROOM+"/players/"+myId),{online:true});
-        showScreen(st.phase==="wait"?"screenWait":"screenGame");
-        document.getElementById("waitName").textContent="👋 "+myName;
-        listenRoom();
+        gameMode=st.gameMode||savedMode;
+        update(ref(db,ROOM+"/players/"+myId),{lastSeen:Date.now()});
+        startHB();
+        startListen();
+        if(st.phase==="wait"){
+          showScreen("screenWait");
+          document.getElementById("waitName").textContent="👋 "+myName;
+          document.getElementById("btnStartGame").style.display=isHost?"block":"none";
+        } else {
+          dispatch(st);
+        }
       }
     });
   }
-  // watch for vote-phase KI
-  setInterval(()=>{
-    if(localState?.phase==="vote"&&isHost) kiAutoVote();
-    if(localState?.phase==="play"&&isHost) kiAutoPlay();
-  },1500);
 });
 
-// mark offline on unload
 window.addEventListener("beforeunload",()=>{
-  if(myId) update(ref(db,ROOM+"/players/"+myId),{online:false});
+  if(myId)update(ref(db,ROOM+"/players/"+myId),{lastSeen:0});
+  if(hbTimer)clearInterval(hbTimer);
 });
 </script>
 </body>
