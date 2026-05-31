@@ -393,7 +393,11 @@ selectMode("live"); // default
 // ── Join ────────────────────────────────────────────────────────────────────
 window.joinRoom = async function(){
   const n=document.getElementById("nameInput").value.trim();
-  if(!n)return;
+  if(!n){
+    document.getElementById("nameInput").style.borderColor="#ff4fd8";
+    setTimeout(()=>document.getElementById("nameInput").style.borderColor="",1500);
+    return;
+  }
   myId=getId(); myName=n;
   sessionStorage.setItem("imp_name",n);
   sessionStorage.setItem("imp_mode",gameMode);
@@ -417,6 +421,16 @@ window.joinRoom = async function(){
   } else {
     isHost=(st.host===myId);
     gameMode=st.gameMode||gameMode;
+    // Phantom-Einträge (kein Name, schon lange offline) beim Beitreten bereinigen
+    if(st.phase==="wait"){
+      const cleanupUpdates={};
+      Object.entries(st.players||{}).forEach(([pid,p])=>{
+        if(!p.name||p.name.trim()===""){
+          cleanupUpdates[`players/${pid}`]=null; // löschen
+        }
+      });
+      if(Object.keys(cleanupUpdates).length) await update(ref(db,ROOM),cleanupUpdates);
+    }
     await update(ref(db,ROOM+"/players/"+myId),{
       name:n, score:st.players?.[myId]?.score||0,
       hint1:"",hint2:"",vote:"", lastSeen:Date.now()
@@ -465,12 +479,14 @@ function dispatch(st){
 // ── Wait screen ─────────────────────────────────────────────────────────────
 function renderWaitList(st){
   const c=document.getElementById("waitPlayerList"); c.innerHTML="";
-  Object.entries(st.players||{}).forEach(([pid,p])=>{
-    const col=getColor(pid);
-    c.innerHTML+=`<div style="padding:7px 11px;margin-bottom:5px;border-radius:10px;background:${col.bg};border:1px solid ${col.border};font-size:13px;">
-      <span style="color:${col.main};font-weight:700;">${pid===st.host?"👑 ":"👤 "}${esc(p.name)}</span>${pid===myId?" (Du)":""}
-    </div>`;
-  });
+  Object.entries(st.players||{})
+    .filter(([,p])=>p.name&&p.name.trim()!=="") // keine Phantom-Einträge
+    .forEach(([pid,p])=>{
+      const col=getColor(pid);
+      c.innerHTML+=`<div style="padding:7px 11px;margin-bottom:5px;border-radius:10px;background:${col.bg};border:1px solid ${col.border};font-size:13px;">
+        <span style="color:${col.main};font-weight:700;">${pid===st.host?"👑 ":"👤 "}${esc(p.name)}</span>${pid===myId?" (Du)":""}
+      </div>`;
+    });
 }
 
 // ── Host start ───────────────────────────────────────────────────────────────
@@ -961,7 +977,8 @@ window.addEventListener("DOMContentLoaded",()=>{
     myId=savedId; myName=savedName; gameMode=savedMode;
     get(ref(db,ROOM)).then(snap=>{
       const st=snap.val();
-      if(st?.players?.[myId]){
+      // Nur reconnecten wenn Eintrag in Firebase noch gültig und Name vorhanden
+      if(st?.players?.[myId]&&st.players[myId].name&&st.players[myId].name.trim()!==""){
         isHost=(st.host===myId);
         gameMode=st.gameMode||savedMode;
         update(ref(db,ROOM+"/players/"+myId),{lastSeen:Date.now()});
