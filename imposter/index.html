@@ -507,10 +507,11 @@ window.hostStartGame = async function(){
   const impId=ids[Math.floor(Math.random()*ids.length)];
 
   if(mode==="live"){
+    const playerOrder=Object.keys(players); // einmal festlegen, auf allen Geräten identisch
     await update(ref(db,ROOM),{
       phase:"roleReveal", round:(st.round||0)+1, word, imposterId:impId,
       hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
-      liveStep:0, players, history:st.history||[]
+      liveStep:0, playerOrder, players, history:st.history||[]
     });
   } else {
     await update(ref(db,ROOM),{
@@ -541,11 +542,12 @@ window.startVsKI = async function(){
   const ids=Object.keys(players);
   const impId=ids[Math.floor(Math.random()*ids.length)];
   const mode=st.gameMode||gameMode;
+  const playerOrder=Object.keys(players);
   await set(ref(db,ROOM),{
     ...st, phase: mode==="live"?"roleReveal":"play",
     round:1, turnIndex:0, word, imposterId:impId,
     hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
-    liveStep:0, players, host:myId, gameMode:mode, history:[], timestamp:Date.now()
+    liveStep:0, playerOrder, players, host:myId, gameMode:mode, history:[], timestamp:Date.now()
   });
 };
 
@@ -554,14 +556,16 @@ window.startVsKI = async function(){
 // ════════════════════════════════════════════════════════════════════════════
 
 function handleRoleReveal(st){
-  const ids=pids(st);
+  // playerOrder aus Firebase - auf allen Geräten identisch
+  const ids=st.playerOrder||pids(st);
   const step=st.liveStep||0;
   if(step>=ids.length){
-    // alle fertig
+    // alle fertig → Host setzt livePlay
     if(isHost) update(ref(db,ROOM),{phase:"livePlay"});
     return;
   }
   const curPid=ids[step];
+  const curName=st.players[curPid]?.name||"?";
   if(curPid===myId){
     // mein Turn → Rolle zeigen
     showScreen("screenRole");
@@ -572,12 +576,12 @@ function handleRoleReveal(st){
     document.getElementById("btnRoleNext").style.display="none";
     document.getElementById("btnRoleStart").style.display="none";
   } else {
-    // warten
+    // warten – korrekte Namen anzeigen
     showScreen("screenWait");
-    const curName=st.players[curPid]?.name||"?";
     document.getElementById("waitMsg").textContent=`⏳ ${esc(curName)} schaut gerade…`;
     document.getElementById("waitPlayerList").innerHTML="";
     document.getElementById("btnStartGame").style.display="none";
+    document.getElementById("btnKI").style.display="none";
   }
 }
 
@@ -593,7 +597,7 @@ window.revealRole = function(){
     c.innerHTML=`<div class="word-label">Das geheime Wort ist</div>
       <div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
   }
-  const ids=pids(st);
+  const ids=st.playerOrder||pids(st);
   const step=st.liveStep||0;
   const nextBtn=document.getElementById("btnRoleNext");
   const startBtn=document.getElementById("btnRoleStart");
@@ -882,10 +886,11 @@ window.nextRound = async function(){
   const impId=ids[Math.floor(Math.random()*ids.length)];
   const mode=st.gameMode||"online";
   if(mode==="live"){
+    const playerOrder=Object.keys(players);
     await update(ref(db,ROOM),{
       phase:"roleReveal", round:(st.round||1)+1, word, imposterId:impId,
       hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
-      liveStep:0, players, history:st.history||[]
+      liveStep:0, playerOrder, players, history:st.history||[]
     });
   } else {
     await set(ref(db,ROOM),{
