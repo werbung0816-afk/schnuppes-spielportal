@@ -155,7 +155,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
     </div>
     <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
-    <div class="version" style="margin-top:14px;">v2.0 • Schnuppes Spielportal</div>
+    <div class="version" style="margin-top:14px;">v2.1 • Schnuppes Spielportal</div>
   </div>
 </div>
 
@@ -176,7 +176,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: ROLLEN-ANZEIGE -->
 <div id="screenRole" class="screen">
   <div class="role-card">
-    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.0 • Live</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.1 • Live</div></div>
     <div style="font-size:clamp(15px,2.5vw,20px);font-weight:700;color:#ff9ef0;margin-bottom:6px;" id="rolePlayerName"></div>
     <div class="role-tap">Tippe auf das Feld – halte das Gerät zu dir!</div>
     <div class="role-hidden" id="roleHidden" onclick="revealRole()">👁️ Tippen zum Anzeigen</div>
@@ -189,7 +189,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: SPIELFELD -->
 <div id="screenLive" class="screen">
   <div class="live-wrap">
-    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.0</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.1</div></div>
     <div class="status-bar" id="liveStatus">Runde läuft…</div>
 
     <div class="panel" style="margin-bottom:14px;">
@@ -234,7 +234,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       <div id="scoreTable"></div>
     </div>
     <div class="game-center">
-      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.0</div></div>
+      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.1</div></div>
       <div class="status-bar" id="statusBar">Warte…</div>
       <div class="word-box">
         <div class="word-label">Deine Rolle</div>
@@ -492,7 +492,7 @@ function renderWaitList(st){
   const kiBtn=document.getElementById("btnKI");
   if(kiBtn){
     const n=validPlayers.length;
-    kiBtn.textContent = n>=3 ? "▶ Spiel starten (ohne KI)" : "🤖 Gegen KI starten";
+    kiBtn.textContent = n>=3 ? "▶ Spiel starten" : "🤖 Gegen KI starten";
   }
 }
 
@@ -507,7 +507,7 @@ window.hostStartGame = async function(){
   const impId=ids[Math.floor(Math.random()*ids.length)];
 
   if(mode==="live"){
-    const playerOrder=Object.keys(players); // einmal festlegen, auf allen Geräten identisch
+    const playerOrder=Object.keys(players).join(","); // als String → kein Firebase-Array-Problem
     await update(ref(db,ROOM),{
       phase:"roleReveal", round:(st.round||0)+1, word, imposterId:impId,
       hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
@@ -542,7 +542,7 @@ window.startVsKI = async function(){
   const ids=Object.keys(players);
   const impId=ids[Math.floor(Math.random()*ids.length)];
   const mode=st.gameMode||gameMode;
-  const playerOrder=Object.keys(players);
+  const playerOrder=Object.keys(players).join(",");
   await set(ref(db,ROOM),{
     ...st, phase: mode==="live"?"roleReveal":"play",
     round:1, turnIndex:0, word, imposterId:impId,
@@ -555,25 +555,44 @@ window.startVsKI = async function(){
 // LIVE MODUS
 // ════════════════════════════════════════════════════════════════════════════
 
-// Firebase speichert Arrays als {0:"val",1:"val"} → sicher in echtes Array umwandeln
+// playerOrder wird als String "pid1,pid2,pid3" gespeichert → kein Firebase-Array-Problem
 function getPlayerOrder(st){
-  const po=st.playerOrder;
-  if(!po) return pids(st);
-  if(Array.isArray(po)) return po;
-  // Firebase-Objekt → Array
-  return Object.keys(po).sort((a,b)=>Number(a)-Number(b)).map(k=>po[k]);
+  if(!st.playerOrder) return pids(st);
+  if(typeof st.playerOrder==="string") return st.playerOrder.split(",").filter(Boolean);
+  // Fallback: Firebase-Objekt
+  if(Array.isArray(st.playerOrder)) return st.playerOrder;
+  return Object.keys(st.playerOrder).sort((a,b)=>Number(a)-Number(b)).map(k=>st.playerOrder[k]);
 }
 
 function handleRoleReveal(st){
   const ids=getPlayerOrder(st);
   const step=st.liveStep||0;
-  if(step>=ids.length){
-    // alle haben geschaut → Host startet Spiel
+
+  // Schutzmechanismus: playerOrder enthält unbekannte PIDs oder ist leer
+  const validIds=ids.filter(pid=>st.players?.[pid]);
+  if(!validIds.length){
+    // playerOrder kaputt → Host baut neu auf
+    if(isHost){
+      const freshOrder=Object.keys(st.players||{}).join(",");
+      update(ref(db,ROOM),{playerOrder:freshOrder, liveStep:0});
+    }
+    showScreen("screenWait");
+    document.getElementById("waitMsg").textContent="⏳ Starte Rollenverteilung…";
+    document.getElementById("waitPlayerList").innerHTML="";
+    document.getElementById("btnStartGame").style.display="none";
+    document.getElementById("btnKI").style.display="none";
+    return;
+  }
+
+  // Wenn step über valide Liste hinaus → alle fertig
+  if(step>=validIds.length){
     if(isHost) update(ref(db,ROOM),{phase:"livePlay"});
     return;
   }
-  const curPid=ids[step];
-  const curName=st.players?.[curPid]?.name||"?";
+
+  const curPid=validIds[step];
+  const curName=st.players[curPid]?.name||"?";
+
   if(curPid===myId){
     showScreen("screenRole");
     document.getElementById("rolePlayerName").textContent="👤 "+myName;
@@ -608,7 +627,7 @@ window.revealRole = function(){
     c.innerHTML=`<div class="word-label">Das geheime Wort ist</div>
       <div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
   }
-  const ids=getPlayerOrder(st);
+  const ids=getPlayerOrder(st).filter(pid=>st.players?.[pid]);
   const nextBtn=document.getElementById("btnRoleNext");
   const startBtn=document.getElementById("btnRoleStart");
   if(myRevealStep<ids.length-1){
@@ -912,7 +931,7 @@ window.nextRound = async function(){
   const impId=ids[Math.floor(Math.random()*ids.length)];
   const mode=st.gameMode||"online";
   if(mode==="live"){
-    const playerOrder=Object.keys(players);
+    const playerOrder=Object.keys(players).join(",");
     await update(ref(db,ROOM),{
       phase:"roleReveal", round:(st.round||1)+1, word, imposterId:impId,
       hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
