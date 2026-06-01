@@ -155,7 +155,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
     </div>
     <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
-    <div class="version" style="margin-top:14px;">v2.5 • Schnuppes Spielportal</div>
+    <div class="version" style="margin-top:14px;">v2.6 • Schnuppes Spielportal</div>
   </div>
 </div>
 
@@ -176,7 +176,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: ROLLEN-ANZEIGE -->
 <div id="screenRole" class="screen">
   <div class="role-card">
-    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.5 • Live</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.6 • Live</div></div>
     <div style="font-size:clamp(15px,2.5vw,20px);font-weight:700;color:#ff9ef0;margin-bottom:6px;" id="rolePlayerName"></div>
     <div class="role-tap">Tippe auf das Feld – halte das Gerät zu dir!</div>
     <div class="role-hidden" id="roleHidden" onclick="revealRole()">👁️ Tippen zum Anzeigen</div>
@@ -189,7 +189,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: SPIELFELD -->
 <div id="screenLive" class="screen">
   <div class="live-wrap">
-    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.5</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.6</div></div>
     <div class="status-bar" id="liveStatus">Runde läuft…</div>
 
     <div class="panel" style="margin-bottom:14px;">
@@ -235,7 +235,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       <div id="scoreTable"></div>
     </div>
     <div class="game-center">
-      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.5</div></div>
+      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.6</div></div>
       <div class="status-bar" id="statusBar">Warte…</div>
       <div class="word-box">
         <div class="word-label">Deine Rolle</div>
@@ -381,7 +381,11 @@ function showScreen(id){
     .forEach(s=>{ document.getElementById(s).className="screen"+(s===id?" active":""); });
 }
 function pids(st){return Object.keys(st.players||{});}
-function getTurn(st){const k=pids(st);return k[(st.turnIndex||0)%k.length]||null;}
+function getTurn(st){
+  const k=Object.keys(st.players||{}).filter(pid=>st.players[pid]?.name?.trim());
+  if(!k.length) return null;
+  return k[(st.turnIndex||0)%k.length];
+}
 
 // ── Mode selection ──────────────────────────────────────────────────────────
 window.selectMode = function(m){
@@ -520,7 +524,10 @@ window.hostStartGame = async function(){
   const st=state; if(!st)return;
   const mode=st.gameMode||gameMode;
   const players={};
-  Object.entries(st.players||{}).forEach(([pid,p])=>{ players[pid]={...p,hint1:"",hint2:"",vote:""}; });
+  // Nur Spieler mit echtem Namen übernehmen
+  Object.entries(st.players||{}).forEach(([pid,p])=>{
+    if(p.name&&p.name.trim()!=="") players[pid]={...p,hint1:"",hint2:"",vote:""};
+  });
   const word=pickWord();
   const ids=Object.keys(players);
   const impId=ids[Math.floor(Math.random()*ids.length)];
@@ -544,7 +551,11 @@ window.hostStartGame = async function(){
 window.startVsKI = async function(){
   const st=state; if(!st)return;
   isHost=true;
-  const players={...st.players};
+  // Nur Spieler mit echtem Namen
+  const players={};
+  Object.entries(st.players||{}).forEach(([pid,p])=>{
+    if(p.name&&p.name.trim()!=="") players[pid]={...p};
+  });
   const currentCount=Object.keys(players).length;
   if(currentCount < 3){
     const taken=Object.values(players).map(p=>p.name.toLowerCase().replace(/\s*\(ki\)/,""));
@@ -789,7 +800,11 @@ function handleOnlinePlay(st){
 }
 
 function renderOnline(st){
-  const players=st.players||{};
+  // Phantoms (kein Name) aus der Anzeige filtern
+  const players={};
+  Object.entries(st.players||{}).forEach(([pid,p])=>{
+    if(p.name&&p.name.trim()!=="") players[pid]=p;
+  });
   const phase=st.phase||"play";
   renderPlayerList(players,st);
   renderScoreTable(players,"scoreTable");
