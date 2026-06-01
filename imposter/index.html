@@ -555,19 +555,26 @@ window.startVsKI = async function(){
 // LIVE MODUS
 // ════════════════════════════════════════════════════════════════════════════
 
+// Firebase speichert Arrays als {0:"val",1:"val"} → sicher in echtes Array umwandeln
+function getPlayerOrder(st){
+  const po=st.playerOrder;
+  if(!po) return pids(st);
+  if(Array.isArray(po)) return po;
+  // Firebase-Objekt → Array
+  return Object.keys(po).sort((a,b)=>Number(a)-Number(b)).map(k=>po[k]);
+}
+
 function handleRoleReveal(st){
-  // playerOrder aus Firebase - auf allen Geräten identisch
-  const ids=st.playerOrder||pids(st);
+  const ids=getPlayerOrder(st);
   const step=st.liveStep||0;
   if(step>=ids.length){
-    // alle fertig → Host setzt livePlay
+    // alle haben geschaut → Host startet Spiel
     if(isHost) update(ref(db,ROOM),{phase:"livePlay"});
     return;
   }
   const curPid=ids[step];
-  const curName=st.players[curPid]?.name||"?";
+  const curName=st.players?.[curPid]?.name||"?";
   if(curPid===myId){
-    // mein Turn → Rolle zeigen
     showScreen("screenRole");
     document.getElementById("rolePlayerName").textContent="👤 "+myName;
     document.getElementById("roleHidden").style.display="block";
@@ -576,7 +583,6 @@ function handleRoleReveal(st){
     document.getElementById("btnRoleNext").style.display="none";
     document.getElementById("btnRoleStart").style.display="none";
   } else {
-    // warten – korrekte Namen anzeigen
     showScreen("screenWait");
     document.getElementById("waitMsg").textContent=`⏳ ${esc(curName)} schaut gerade…`;
     document.getElementById("waitPlayerList").innerHTML="";
@@ -585,8 +591,13 @@ function handleRoleReveal(st){
   }
 }
 
+// myRevealStep: den step zum Zeitpunkt des Tippens merken, nicht aus state lesen
+let myRevealStep=0;
+
 window.revealRole = function(){
   const st=state; if(!st)return;
+  // step zum Zeitpunkt des Aufrufs einfrieren
+  myRevealStep=st.liveStep||0;
   document.getElementById("roleHidden").style.display="none";
   const c=document.getElementById("roleContent"); c.style.display="block";
   const isImp=st.imposterId===myId;
@@ -597,12 +608,11 @@ window.revealRole = function(){
     c.innerHTML=`<div class="word-label">Das geheime Wort ist</div>
       <div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
   }
-  const ids=st.playerOrder||pids(st);
-  const step=st.liveStep||0;
+  const ids=getPlayerOrder(st);
   const nextBtn=document.getElementById("btnRoleNext");
   const startBtn=document.getElementById("btnRoleStart");
-  if(step<ids.length-1){
-    const nextName=st.players[ids[step+1]]?.name||"?";
+  if(myRevealStep<ids.length-1){
+    const nextName=st.players?.[ids[myRevealStep+1]]?.name||"?";
     document.getElementById("btnRoleNextName").textContent=esc(nextName);
     nextBtn.style.display="block"; startBtn.style.display="none";
   } else {
@@ -611,8 +621,9 @@ window.revealRole = function(){
 };
 
 window.roleNext = async function(){
-  const st=state; if(!st)return;
-  await update(ref(db,ROOM),{liveStep:(st.liveStep||0)+1});
+  // myRevealStep statt state.liveStep verwenden → race condition vermeiden
+  const newStep=myRevealStep+1;
+  await update(ref(db,ROOM),{liveStep:newStep});
 };
 
 window.liveBegin = async function(){
