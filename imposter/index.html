@@ -168,7 +168,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
     <div id="waitPlayerList" style="text-align:left;margin-bottom:14px;"></div>
     <button id="btnStartGame" class="btn-success" style="display:none;" onclick="hostStartGame()">🎮 Spiel starten</button>
     <hr class="divider">
-    <button class="btn-primary" onclick="startVsKI()">🤖 Gegen KI starten</button>
+    <button id="btnKI" class="btn-primary" onclick="startVsKI()">🤖 Gegen KI starten</button>
     <button class="btn-secondary" style="margin-top:8px;" onclick="leaveRoom()">← Verlassen</button>
   </div>
 </div>
@@ -464,6 +464,7 @@ function dispatch(st){
   if(phase==="wait"){
     showScreen("screenWait");
     renderWaitList(st);
+    isHost=(st.host===myId);
     document.getElementById("btnStartGame").style.display=isHost?"block":"none";
     return;
   }
@@ -479,14 +480,20 @@ function dispatch(st){
 // ── Wait screen ─────────────────────────────────────────────────────────────
 function renderWaitList(st){
   const c=document.getElementById("waitPlayerList"); c.innerHTML="";
-  Object.entries(st.players||{})
-    .filter(([,p])=>p.name&&p.name.trim()!=="") // keine Phantom-Einträge
-    .forEach(([pid,p])=>{
-      const col=getColor(pid);
-      c.innerHTML+=`<div style="padding:7px 11px;margin-bottom:5px;border-radius:10px;background:${col.bg};border:1px solid ${col.border};font-size:13px;">
-        <span style="color:${col.main};font-weight:700;">${pid===st.host?"👑 ":"👤 "}${esc(p.name)}</span>${pid===myId?" (Du)":""}
-      </div>`;
-    });
+  const validPlayers=Object.entries(st.players||{})
+    .filter(([,p])=>p.name&&p.name.trim()!=="");
+  validPlayers.forEach(([pid,p])=>{
+    const col=getColor(pid);
+    c.innerHTML+=`<div style="padding:7px 11px;margin-bottom:5px;border-radius:10px;background:${col.bg};border:1px solid ${col.border};font-size:13px;">
+      <span style="color:${col.main};font-weight:700;">${pid===st.host?"👑 ":"👤 "}${esc(p.name)}</span>${pid===myId?" (Du)":""}
+    </div>`;
+  });
+  // Button-Text anpassen: genug Spieler = kein KI nötig
+  const kiBtn=document.getElementById("btnKI");
+  if(kiBtn){
+    const n=validPlayers.length;
+    kiBtn.textContent = n>=3 ? "▶ Spiel starten (ohne KI)" : "🤖 Gegen KI starten";
+  }
 }
 
 // ── Host start ───────────────────────────────────────────────────────────────
@@ -516,20 +523,23 @@ window.hostStartGame = async function(){
 // ── vs KI ────────────────────────────────────────────────────────────────────
 window.startVsKI = async function(){
   const st=state; if(!st)return;
+  isHost=true;
   const players={...st.players};
-  const taken=Object.values(players).map(p=>p.name.toLowerCase().replace(/\s*\(ki\)/,""));
-  const avail=KI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));
-  shuffle(avail);
-  const need=Math.max(0,3-Object.keys(players).length);
-  for(let i=0;i<need&&i<avail.length;i++){
-    const kid="ki_"+Date.now()+"_"+i;
-    players[kid]={name:avail[i]+" (KI)",score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now(),isKI:true};
+  const currentCount=Object.keys(players).length;
+  if(currentCount < 3){
+    const taken=Object.values(players).map(p=>p.name.toLowerCase().replace(/\s*\(ki\)/,""));
+    const avail=KI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));
+    shuffle(avail);
+    const need=3-currentCount;
+    for(let i=0;i<need&&i<avail.length;i++){
+      const kid="ki_"+Date.now()+"_"+i;
+      players[kid]={name:avail[i]+" (KI)",score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now(),isKI:true};
+    }
   }
   Object.keys(players).forEach(pid=>{ players[pid]={...players[pid],hint1:"",hint2:"",vote:""}; });
   const word=pickWord();
   const ids=Object.keys(players);
   const impId=ids[Math.floor(Math.random()*ids.length)];
-  isHost=true;
   const mode=st.gameMode||gameMode;
   await set(ref(db,ROOM),{
     ...st, phase: mode==="live"?"roleReveal":"play",
