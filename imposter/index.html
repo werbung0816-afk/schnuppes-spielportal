@@ -155,7 +155,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
     </div>
     <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
-    <div class="version" style="margin-top:14px;">v2.1 • Schnuppes Spielportal</div>
+    <div class="version" style="margin-top:14px;">v2.2 • Schnuppes Spielportal</div>
   </div>
 </div>
 
@@ -176,7 +176,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: ROLLEN-ANZEIGE -->
 <div id="screenRole" class="screen">
   <div class="role-card">
-    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.1 • Live</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.2 • Live</div></div>
     <div style="font-size:clamp(15px,2.5vw,20px);font-weight:700;color:#ff9ef0;margin-bottom:6px;" id="rolePlayerName"></div>
     <div class="role-tap">Tippe auf das Feld – halte das Gerät zu dir!</div>
     <div class="role-hidden" id="roleHidden" onclick="revealRole()">👁️ Tippen zum Anzeigen</div>
@@ -189,7 +189,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: SPIELFELD -->
 <div id="screenLive" class="screen">
   <div class="live-wrap">
-    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.1</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.2</div></div>
     <div class="status-bar" id="liveStatus">Runde läuft…</div>
 
     <div class="panel" style="margin-bottom:14px;">
@@ -234,7 +234,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       <div id="scoreTable"></div>
     </div>
     <div class="game-center">
-      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.1</div></div>
+      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.2</div></div>
       <div class="status-bar" id="statusBar">Warte…</div>
       <div class="word-box">
         <div class="word-label">Deine Rolle</div>
@@ -568,10 +568,8 @@ function handleRoleReveal(st){
   const ids=getPlayerOrder(st);
   const step=st.liveStep||0;
 
-  // Schutzmechanismus: playerOrder enthält unbekannte PIDs oder ist leer
-  const validIds=ids.filter(pid=>st.players?.[pid]);
-  if(!validIds.length){
-    // playerOrder kaputt → Host baut neu auf
+  // Schutzmechanismus: playerOrder leer oder step zu groß
+  if(!ids.length){
     if(isHost){
       const freshOrder=Object.keys(st.players||{}).join(",");
       update(ref(db,ROOM),{playerOrder:freshOrder, liveStep:0});
@@ -584,39 +582,47 @@ function handleRoleReveal(st){
     return;
   }
 
-  // Wenn step über valide Liste hinaus → alle fertig
-  if(step>=validIds.length){
+  if(step>=ids.length){
     if(isHost) update(ref(db,ROOM),{phase:"livePlay"});
     return;
   }
 
-  const curPid=validIds[step];
+  const curPid=ids[step];
   const curName=st.players[curPid]?.name||"?";
 
   if(curPid===myId){
-    showScreen("screenRole");
-    document.getElementById("rolePlayerName").textContent="👤 "+myName;
-    document.getElementById("roleHidden").style.display="block";
-    document.getElementById("roleContent").style.display="none";
-    document.getElementById("roleContent").innerHTML="";
-    document.getElementById("btnRoleNext").style.display="none";
-    document.getElementById("btnRoleStart").style.display="none";
+    // Wenn gerade viewing → Screen NICHT zurücksetzen, Inhalt bleibt
+    if(!viewingRole){
+      showScreen("screenRole");
+      document.getElementById("rolePlayerName").textContent="👤 "+myName;
+      document.getElementById("roleHidden").style.display="block";
+      document.getElementById("roleContent").style.display="none";
+      document.getElementById("roleContent").innerHTML="";
+      document.getElementById("btnRoleNext").style.display="none";
+      document.getElementById("btnRoleStart").style.display="none";
+    }
   } else {
-    showScreen("screenWait");
-    document.getElementById("waitMsg").textContent=`⏳ ${esc(curName)} schaut gerade…`;
-    document.getElementById("waitPlayerList").innerHTML="";
-    document.getElementById("btnStartGame").style.display="none";
-    document.getElementById("btnKI").style.display="none";
+    // Nur wechseln wenn wir NICHT gerade selbst schauen
+    if(!viewingRole){
+      showScreen("screenWait");
+      document.getElementById("waitMsg").textContent=`⏳ ${esc(curName)} schaut gerade…`;
+      document.getElementById("waitPlayerList").innerHTML="";
+      document.getElementById("btnStartGame").style.display="none";
+      document.getElementById("btnKI").style.display="none";
+    }
   }
 }
 
 // myRevealStep: den step zum Zeitpunkt des Tippens merken, nicht aus state lesen
 let myRevealStep=0;
+// viewingRole: verhindert dass Listener den Role-Screen schließt während man schaut
+let viewingRole=false;
 
 window.revealRole = function(){
   const st=state; if(!st)return;
-  // step zum Zeitpunkt des Aufrufs einfrieren
+  // step einfrieren + Screen gegen Listener-Updates sperren
   myRevealStep=st.liveStep||0;
+  viewingRole=true;
   document.getElementById("roleHidden").style.display="none";
   const c=document.getElementById("roleContent"); c.style.display="block";
   const isImp=st.imposterId===myId;
@@ -627,7 +633,7 @@ window.revealRole = function(){
     c.innerHTML=`<div class="word-label">Das geheime Wort ist</div>
       <div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
   }
-  const ids=getPlayerOrder(st).filter(pid=>st.players?.[pid]);
+  const ids=getPlayerOrder(st);
   const nextBtn=document.getElementById("btnRoleNext");
   const startBtn=document.getElementById("btnRoleStart");
   if(myRevealStep<ids.length-1){
@@ -640,12 +646,13 @@ window.revealRole = function(){
 };
 
 window.roleNext = async function(){
-  // myRevealStep statt state.liveStep verwenden → race condition vermeiden
+  viewingRole=false; // Sperre aufheben bevor Listener wieder feuert
   const newStep=myRevealStep+1;
   await update(ref(db,ROOM),{liveStep:newStep});
 };
 
 window.liveBegin = async function(){
+  viewingRole=false;
   await update(ref(db,ROOM),{phase:"livePlay"});
 };
 
