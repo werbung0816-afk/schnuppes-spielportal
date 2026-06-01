@@ -155,7 +155,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
     </div>
     <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
-    <div class="version" style="margin-top:14px;">v2.4 • Schnuppes Spielportal</div>
+    <div class="version" style="margin-top:14px;">v2.5 • Schnuppes Spielportal</div>
   </div>
 </div>
 
@@ -176,7 +176,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: ROLLEN-ANZEIGE -->
 <div id="screenRole" class="screen">
   <div class="role-card">
-    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.4 • Live</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.5 • Live</div></div>
     <div style="font-size:clamp(15px,2.5vw,20px);font-weight:700;color:#ff9ef0;margin-bottom:6px;" id="rolePlayerName"></div>
     <div class="role-tap">Tippe auf das Feld – halte das Gerät zu dir!</div>
     <div class="role-hidden" id="roleHidden" onclick="revealRole()">👁️ Tippen zum Anzeigen</div>
@@ -189,7 +189,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: SPIELFELD -->
 <div id="screenLive" class="screen">
   <div class="live-wrap">
-    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.4</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.5</div></div>
     <div class="status-bar" id="liveStatus">Runde läuft…</div>
 
     <div class="panel" style="margin-bottom:14px;">
@@ -235,7 +235,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       <div id="scoreTable"></div>
     </div>
     <div class="game-center">
-      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.4</div></div>
+      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.5</div></div>
       <div class="status-bar" id="statusBar">Warte…</div>
       <div class="word-box">
         <div class="word-label">Deine Rolle</div>
@@ -411,6 +411,7 @@ window.joinRoom = async function(){
   const snap=await get(ref(db,ROOM));
   const st=snap.val();
   if(!st||!st.players||!Object.keys(st.players).length){
+    // Erster Spieler → Raum neu anlegen
     isHost=true;
     await set(ref(db,ROOM),{
       host:myId, phase:"wait", round:0, turnIndex:0,
@@ -422,20 +423,37 @@ window.joinRoom = async function(){
   } else {
     isHost=(st.host===myId);
     gameMode=st.gameMode||gameMode;
-    // Phantom-Einträge (kein Name, schon lange offline) beim Beitreten bereinigen
+    const existingPlayers=st.players||{};
+    const alreadyIn=!!existingPlayers[myId];
+
     if(st.phase==="wait"){
+      // Phantom-Einträge bereinigen (kein Name)
       const cleanupUpdates={};
-      Object.entries(st.players||{}).forEach(([pid,p])=>{
-        if(!p.name||p.name.trim()===""){
-          cleanupUpdates[`players/${pid}`]=null; // löschen
-        }
+      Object.entries(existingPlayers).forEach(([pid,p])=>{
+        if(!p.name||p.name.trim()==="") cleanupUpdates[`players/${pid}`]=null;
       });
       if(Object.keys(cleanupUpdates).length) await update(ref(db,ROOM),cleanupUpdates);
+
+      // Maximal 8 Spieler, keinen neuen anlegen wenn schon voll
+      const validCount=Object.values(existingPlayers).filter(p=>p.name&&p.name.trim()!=="").length;
+      if(!alreadyIn && validCount>=8){
+        alert("Der Raum ist voll (max. 8 Spieler).");
+        showScreen("screenSetup");
+        return;
+      }
     }
-    await update(ref(db,ROOM+"/players/"+myId),{
-      name:n, score:st.players?.[myId]?.score||0,
-      hint1:"",hint2:"",vote:"", lastSeen:Date.now()
-    });
+
+    if(alreadyIn){
+      // Bekannter Spieler rejoined → nur lastSeen + Name aktualisieren, Score behalten
+      await update(ref(db,ROOM+"/players/"+myId),{
+        name:n, lastSeen:Date.now()
+      });
+    } else {
+      // Neuer Spieler → Score 0, frische Felder
+      await update(ref(db,ROOM+"/players/"+myId),{
+        name:n, score:0, hint1:"",hint2:"",vote:"", lastSeen:Date.now()
+      });
+    }
   }
   startHB();
   startListen();
