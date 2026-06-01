@@ -630,11 +630,15 @@ window.liveBegin = async function(){
   await update(ref(db,ROOM),{phase:"livePlay"});
 };
 
+// Verhindert dass handleLivePlay die laufende Eingabe zurücksetzt
+let liveResultUIInitialized=false;
+let lastLiveRound=-1;
+
 function handleLivePlay(st){
   showScreen("screenLive");
-  // Status
   document.getElementById("liveStatus").textContent=`Runde ${st.round||1} – Spielt mündlich!`;
-  // Punkte
+
+  // Punkte immer aktualisieren
   const t=document.getElementById("liveScores"); t.innerHTML="";
   Object.entries(st.players||{}).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
     const col=getColor(pid);
@@ -643,19 +647,30 @@ function handleLivePlay(st){
       <span class="score-val" style="color:${col.main};">${p.score||0}</span>
     </div>`;
   });
-  // History
+
+  // History immer aktualisieren
   const h=document.getElementById("liveHistory"); h.innerHTML="";
   (st.history||[]).slice(-10).reverse().forEach(e=>{ h.innerHTML+=`<div class="log-entry">${esc(e)}</div>`; });
-  // Result-Box nur für Host und nur in livePlay
+
+  // Result-Box: nur einmal pro Runde initialisieren, nie mitten in der Eingabe resetten
   const rb=document.getElementById("liveResultBox");
   rb.style.display=(isHost&&st.phase==="livePlay")?"block":"none";
-  if(isHost&&st.phase==="livePlay"){
+
+  const currentRound=st.round||1;
+  if(isHost&&st.phase==="livePlay"&&currentRound!==lastLiveRound){
+    // Neue Runde → UI einmalig zurücksetzen
+    lastLiveRound=currentRound;
+    liveResultUIInitialized=false;
+  }
+  if(isHost&&st.phase==="livePlay"&&!liveResultUIInitialized){
+    liveResultUIInitialized=true;
     liveWinner=null; liveGuess=null;
     ["btnCrew","btnImp"].forEach(id=>document.getElementById(id).classList.remove("tog-active"));
     document.getElementById("guessRow").style.display="none";
     document.getElementById("guessAnswer").textContent="";
     document.getElementById("btnLiveConfirm").disabled=true;
   }
+  // Wenn liveResultUIInitialized=true: UI-Zustand NICHT anfassen → Eingabe bleibt erhalten
 }
 
 window.pickWinner = function(w){
