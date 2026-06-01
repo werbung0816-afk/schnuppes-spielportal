@@ -155,7 +155,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
     </div>
     <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
-    <div class="version" style="margin-top:14px;">v2.2 • Schnuppes Spielportal</div>
+    <div class="version" style="margin-top:14px;">v2.3 • Schnuppes Spielportal</div>
   </div>
 </div>
 
@@ -176,7 +176,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: ROLLEN-ANZEIGE -->
 <div id="screenRole" class="screen">
   <div class="role-card">
-    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.2 • Live</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.3 • Live</div></div>
     <div style="font-size:clamp(15px,2.5vw,20px);font-weight:700;color:#ff9ef0;margin-bottom:6px;" id="rolePlayerName"></div>
     <div class="role-tap">Tippe auf das Feld – halte das Gerät zu dir!</div>
     <div class="role-hidden" id="roleHidden" onclick="revealRole()">👁️ Tippen zum Anzeigen</div>
@@ -189,7 +189,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: SPIELFELD -->
 <div id="screenLive" class="screen">
   <div class="live-wrap">
-    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.2</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.3</div></div>
     <div class="status-bar" id="liveStatus">Runde läuft…</div>
 
     <div class="panel" style="margin-bottom:14px;">
@@ -234,7 +234,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       <div id="scoreTable"></div>
     </div>
     <div class="game-center">
-      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.2</div></div>
+      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.3</div></div>
       <div class="status-bar" id="statusBar">Warte…</div>
       <div class="word-box">
         <div class="word-label">Deine Rolle</div>
@@ -565,6 +565,12 @@ function getPlayerOrder(st){
 }
 
 function handleRoleReveal(st){
+  // Sicherheit: falls phase bereits livePlay, direkt weiter
+  if(st.phase==="livePlay"){
+    viewingRole=false;
+    handleLivePlay(st);
+    return;
+  }
   const ids=getPlayerOrder(st);
   const step=st.liveStep||0;
 
@@ -653,7 +659,10 @@ window.roleNext = async function(){
 
 window.liveBegin = async function(){
   viewingRole=false;
-  await update(ref(db,ROOM),{phase:"livePlay"});
+  const st=state; if(!st)return;
+  const ids=getPlayerOrder(st);
+  // liveStep auf ids.length setzen → handleRoleReveal erkennt sofort "alle fertig"
+  await update(ref(db,ROOM),{phase:"livePlay", liveStep:ids.length});
 };
 
 // Verhindert dass handleLivePlay die laufende Eingabe zurücksetzt
