@@ -132,7 +132,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
     </div>
     <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
-    <div class="version" style="margin-top:14px;">v2.8 • Schnuppes Spielportal</div>
+    <div class="version" style="margin-top:14px;">v2.9 • Schnuppes Spielportal</div>
   </div>
 </div>
 
@@ -153,7 +153,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: ROLLEN-ANZEIGE -->
 <div id="screenRole" class="screen">
   <div class="role-card">
-    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.8 • Live</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.9 • Live</div></div>
     <div style="font-size:clamp(15px,2.5vw,20px);font-weight:700;color:#ff9ef0;margin-bottom:6px;" id="rolePlayerName"></div>
     <div class="role-tap">Tippe auf das Feld – halte das Gerät zu dir!</div>
     <div class="role-hidden" id="roleHidden" onclick="revealRole()">👁️ Tippen zum Anzeigen</div>
@@ -166,7 +166,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: SPIELFELD -->
 <div id="screenLive" class="screen">
   <div class="live-wrap">
-    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.8</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.9</div></div>
     <div class="status-bar" id="liveStatus">Runde läuft…</div>
     <div class="panel" style="margin-bottom:14px;">
       <div class="panel-title">🏆 Punkte</div>
@@ -208,7 +208,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       <div id="scoreTable"></div>
     </div>
     <div class="game-center">
-      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.8</div></div>
+      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.9</div></div>
       <div class="status-bar" id="statusBar">Warte…</div>
       <div class="word-box">
         <div class="word-label">Deine Rolle</div>
@@ -437,6 +437,7 @@ function renderWaitList(st){
 window.hostStartGame=async function(){
   const st=state;if(!st)return;
   const mode=st.gameMode||gameMode;
+  if(mode==="live") isHost=true; // Live: jeder darf starten
   const players={};
   Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name&&p.name.trim()!=="")players[pid]={...p,hint1:"",hint2:"",vote:""};});
   const word=pickWord();
@@ -495,7 +496,8 @@ function handleRoleReveal(st){
     return;
   }
   if(step>=ids.length){
-    if(isHost)update(ref(db,ROOM),{phase:"livePlay"});
+    // Letzter Schritt: jedes Gerät kann livePlay setzen
+    update(ref(db,ROOM),{phase:"livePlay"});
     return;
   }
   const curPid=ids[step];
@@ -569,14 +571,14 @@ function handleLivePlay(st){
   const h=document.getElementById("liveHistory");h.innerHTML="";
   (st.history||[]).slice(-10).reverse().forEach(e=>{h.innerHTML+=`<div class="log-entry">${esc(e)}</div>`;});
   const nnr=document.getElementById("btnLiveNextRound");
-  if(nnr)nnr.style.display=(isHost&&st.phase==="liveResult")?"block":"none";
+  if(nnr)nnr.style.display=(st.phase==="liveResult")?"block":"none";
   const rb=document.getElementById("liveResultBox");
-  rb.style.display=(isHost&&st.phase==="livePlay")?"block":"none";
+  rb.style.display=(st.phase==="livePlay")?"block":"none";
   const currentRound=st.round||1;
-  if(isHost&&st.phase==="livePlay"&&currentRound!==lastLiveRound){
+  if(st.phase==="livePlay"&&currentRound!==lastLiveRound){
     lastLiveRound=currentRound;liveResultUIInitialized=false;
   }
-  if(isHost&&st.phase==="livePlay"&&!liveResultUIInitialized){
+  if(st.phase==="livePlay"&&!liveResultUIInitialized){
     liveResultUIInitialized=true;
     liveWinner=null;liveGuess=null;
     ["btnCrew","btnImp"].forEach(id=>document.getElementById(id).classList.remove("tog-active"));
@@ -782,7 +784,9 @@ window.submitGuess=async function(){
 };
 
 window.nextRound=async function(){
-  if(!isHost)return;
+  const _st=state;if(!_st)return;
+  if((_st.gameMode||"online")==="online"&&!isHost)return; // Online: nur Host
+  // Live: jeder darf nächste Runde starten
   const st=state;
   const players={};
   Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name?.trim())players[pid]={...p,hint1:"",hint2:"",vote:""};});
