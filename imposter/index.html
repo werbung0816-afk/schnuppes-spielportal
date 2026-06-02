@@ -520,12 +520,12 @@ function renderWaitList(st){
     // Live: kein KI-Button, kein Divider
     if(kiBtn) kiBtn.style.display="none";
     if(dividerKI) dividerKI.style.display="none";
-    // Start-Button für alle sichtbar, aber nur Host kann klicken
+    // Live: jeder kann starten (alle sitzen zusammen)
     if(startBtn){
       startBtn.style.display="block";
-      startBtn.disabled=!isHost;
-      startBtn.title=isHost?"":"Nur der Host kann das Spiel starten";
-      startBtn.style.opacity=isHost?"1":"0.5";
+      startBtn.disabled=false;
+      startBtn.style.opacity="1";
+      startBtn.title="";
     }
   } else {
     // Online: KI-Button anzeigen, Start-Button nur für Host
@@ -543,6 +543,8 @@ function renderWaitList(st){
 window.hostStartGame = async function(){
   const st=state; if(!st)return;
   const mode=st.gameMode||gameMode;
+  // Im Live-Modus darf jeder starten
+  if(mode==="live") isHost=true;
   const players={};
   // Nur Spieler mit echtem Namen übernehmen
   Object.entries(st.players||{}).forEach(([pid,p])=>{
