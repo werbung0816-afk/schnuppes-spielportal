@@ -43,7 +43,6 @@ body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top le
 .game-input:focus{border-color:#53f6ff;box-shadow:0 0 12px rgba(83,246,255,.2);}
 .game-input::placeholder{color:rgba(255,255,255,.3);}
 .guess-input{border-color:rgba(143,95,255,.3);}
-.guess-input:focus{border-color:#8f5fff;}
 button{padding:13px 18px;border:none;border-radius:18px;font-size:clamp(13px,1.8vw,16px);font-weight:800;color:#fff;cursor:pointer;transition:.2s;font-family:'Outfit',sans-serif;width:100%;margin-top:10px;}
 .btn-primary{background:linear-gradient(90deg,#53f6ff,#5677ff);}
 .btn-primary:hover{opacity:.85;transform:translateY(-2px);}
@@ -61,21 +60,19 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 .score-val{font-size:clamp(16px,2.5vw,22px);font-weight:900;color:#53f6ff;}
 .log{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-top:8px;}
 .log-entry{padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.04);font-size:clamp(11px,1.5vw,13px);}
-.log-entry .le-name{color:#53f6ff;font-weight:700;}
 .screen{display:none;}
 .screen.active{display:block;}
 .setup-card{max-width:520px;margin:40px auto;padding:36px;border-radius:32px;background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px);text-align:center;}
 .setup-title{font-size:clamp(36px,7vw,68px);font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;}
 .setup-sub{color:#ff9ef0;font-size:clamp(13px,1.8vw,17px);margin-bottom:16px;}
 .setup-input{width:100%;padding:14px 18px;margin-bottom:14px;border-radius:16px;border:2px solid rgba(83,246,255,.3);background:rgba(0,0,0,.4);color:#fff;font-family:'Outfit',sans-serif;font-size:17px;outline:none;text-align:center;transition:.2s;}
-.setup-input:focus{border-color:#53f6ff;box-shadow:0 0 18px rgba(83,246,255,.2);}
+.setup-input:focus{border-color:#53f6ff;}
 .setup-input::placeholder{color:rgba(255,255,255,.3);}
 .mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
 @media(max-width:480px){.mode-cards{grid-template-columns:1fr;}}
 .mode-card{padding:20px 16px;border-radius:22px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);cursor:pointer;transition:.2s;text-align:center;}
-.mode-card:hover{border-color:rgba(83,246,255,.4);}
-.mode-card.selected-online{border-color:#53f6ff;background:rgba(83,246,255,.1);box-shadow:0 0 16px rgba(83,246,255,.15);}
 .mode-card.selected-live{border-color:#ffb347;background:rgba(255,159,40,.1);box-shadow:0 0 16px rgba(255,159,40,.15);}
+.mode-card.selected-online{border-color:#53f6ff;background:rgba(83,246,255,.1);box-shadow:0 0 16px rgba(83,246,255,.15);}
 .mode-emoji{font-size:32px;margin-bottom:8px;}
 .mode-name{font-size:clamp(14px,2vw,17px);font-weight:900;margin-bottom:6px;}
 .mode-desc{font-size:clamp(11px,1.5vw,13px);color:rgba(255,255,255,.6);line-height:1.4;}
@@ -94,7 +91,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 .live-wrap{max-width:680px;margin:0 auto;}
 .result-toggle{display:flex;gap:10px;margin-bottom:12px;}
 .result-toggle button{flex:1;padding:12px;border-radius:14px;font-size:14px;margin-top:0;}
-.result-toggle button.tog-active{box-shadow:0 0 14px rgba(83,246,255,.3);opacity:1;}
+.tog-active{box-shadow:0 0 14px rgba(255,255,255,.3)!important;}
 #overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(5,5,20,.92);z-index:9999;backdrop-filter:blur(12px);text-align:center;padding:20px;}
 #overlay.show{display:flex;}
 #overlayEmoji{font-size:clamp(40px,8vw,80px);margin-bottom:12px;}
@@ -108,7 +105,6 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 .gear-panel.open{display:block;}
 .gear-item{display:block;width:100%;padding:9px 12px;margin-bottom:5px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.7);font-size:13px;font-weight:600;cursor:pointer;text-align:left;transition:.15s;font-family:'Outfit',sans-serif;}
 .gear-item:hover{background:rgba(255,79,216,.15);color:#ff4fd8;}
-.gear-item:last-child{margin-bottom:0;}
 </style>
 </head>
 <body>
@@ -132,7 +128,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
     </div>
     <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
-    <div class="version" style="margin-top:14px;">v2.9 • Schnuppes Spielportal</div>
+    <div class="version" style="margin-top:14px;">v2.4 • Schnuppes Spielportal</div>
   </div>
 </div>
 
@@ -144,8 +140,10 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
     <div class="wait-dots" id="waitMsg">⏳ Warte auf Mitspieler…</div>
     <div id="waitPlayerList" style="text-align:left;margin-bottom:14px;"></div>
     <button id="btnStartGame" class="btn-success" style="display:none;" onclick="hostStartGame()">🎮 Spiel starten</button>
-    <hr class="divider" id="dividerKI">
-    <button id="btnKI" class="btn-primary" onclick="startVsKI()">🤖 Gegen KI starten</button>
+    <div id="kiArea">
+      <hr class="divider">
+      <button id="btnKI" class="btn-primary" onclick="startVsKI()">🤖 Gegen KI starten</button>
+    </div>
     <button class="btn-secondary" style="margin-top:8px;" onclick="leaveRoom()">← Verlassen</button>
   </div>
 </div>
@@ -153,7 +151,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: ROLLEN-ANZEIGE -->
 <div id="screenRole" class="screen">
   <div class="role-card">
-    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.9 • Live</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.4 • Live</div></div>
     <div style="font-size:clamp(15px,2.5vw,20px);font-weight:700;color:#ff9ef0;margin-bottom:6px;" id="rolePlayerName"></div>
     <div class="role-tap">Tippe auf das Feld – halte das Gerät zu dir!</div>
     <div class="role-hidden" id="roleHidden" onclick="revealRole()">👁️ Tippen zum Anzeigen</div>
@@ -166,7 +164,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: SPIELFELD -->
 <div id="screenLive" class="screen">
   <div class="live-wrap">
-    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.9</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.4</div></div>
     <div class="status-bar" id="liveStatus">Runde läuft…</div>
     <div class="panel" style="margin-bottom:14px;">
       <div class="panel-title">🏆 Punkte</div>
@@ -193,12 +191,12 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       <div class="panel-title">📜 Rundenhistorie</div>
       <div id="liveHistory" class="log"></div>
     </div>
-    <button id="btnLiveNextRound" class="btn-success" style="margin-top:14px;display:none;" onclick="nextRound()">▶ Nächste Runde</button>
+    <button id="btnLiveNext" class="btn-success" style="margin-top:14px;display:none;" onclick="liveNextRound()">▶ Nächste Runde</button>
     <button class="btn-secondary" style="margin-top:10px;" onclick="leaveRoom()">← Verlassen</button>
   </div>
 </div>
 
-<!-- ONLINE: SPIELFELD -->
+<!-- ONLINE -->
 <div id="screenGame" class="screen">
   <div class="layout">
     <div class="panel">
@@ -208,12 +206,9 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       <div id="scoreTable"></div>
     </div>
     <div class="game-center">
-      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.9</div></div>
+      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.4</div></div>
       <div class="status-bar" id="statusBar">Warte…</div>
-      <div class="word-box">
-        <div class="word-label">Deine Rolle</div>
-        <div id="wordDisplay">—</div>
-      </div>
+      <div class="word-box"><div class="word-label">Deine Rolle</div><div id="wordDisplay">—</div></div>
       <div class="round-info">
         <div><div class="round-num">Runde</div><div class="round-val" id="roundNum">—</div></div>
         <div><div class="round-num">Phase</div><div class="round-val" id="phaseName">—</div></div>
@@ -231,34 +226,27 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
       <div class="section-box guess-box" id="guessSection" style="display:none;">
         <div class="panel-title" style="color:#8f5fff;">🎯 Wort erraten (+1 Punkt)</div>
-        <input id="guessInput" class="game-input guess-input" type="text" placeholder="Das geheime Wort…" maxlength="30" autocomplete="off">
+        <input id="guessInput" class="game-input" style="border-color:rgba(143,95,255,.3);" type="text" placeholder="Das geheime Wort…" maxlength="30" autocomplete="off">
         <button class="btn-primary" onclick="submitGuess()">Raten ✓</button>
       </div>
       <div class="section-box result-box" id="resultSection" style="display:none;">
         <div class="panel-title" id="resultTitle" style="color:#53f6ff;">Ergebnis</div>
         <div id="resultText" style="font-size:clamp(12px,1.6vw,14px);color:rgba(255,255,255,.7);margin-top:8px;line-height:1.6;"></div>
-        <button id="btnNext" class="btn-primary" style="margin-top:14px;display:none;" onclick="nextRound()">Nächste Runde ▶</button>
+        <button id="btnNext" class="btn-primary" style="margin-top:14px;display:none;" onclick="onlineNextRound()">Nächste Runde ▶</button>
       </div>
-      <div class="panel">
-        <div class="panel-title">📋 Hinweis-Verlauf</div>
-        <div class="log" id="hintLog"></div>
-      </div>
+      <div class="panel"><div class="panel-title">📋 Hinweis-Verlauf</div><div class="log" id="hintLog"></div></div>
     </div>
     <div class="panel">
-      <div class="panel-title">💬 Hinweise Runde 1</div>
-      <div id="hints1" class="log" style="max-height:190px;"></div>
-      <div class="panel-title" style="margin-top:14px;">💬 Hinweise Runde 2</div>
-      <div id="hints2" class="log" style="max-height:190px;"></div>
+      <div class="panel-title">💬 Hinweise Runde 1</div><div id="hints1" class="log" style="max-height:190px;"></div>
+      <div class="panel-title" style="margin-top:14px;">💬 Hinweise Runde 2</div><div id="hints2" class="log" style="max-height:190px;"></div>
     </div>
   </div>
 </div>
 
 <!-- OVERLAY -->
 <div id="overlay">
-  <div id="overlayEmoji">🎉</div>
-  <div id="overlayTitle"></div>
-  <div id="overlayComment"></div>
-  <div id="overlayWord"></div>
+  <div id="overlayEmoji">🎉</div><div id="overlayTitle"></div>
+  <div id="overlayComment"></div><div id="overlayWord"></div>
   <button class="btn-primary" style="margin-top:22px;max-width:280px;" onclick="closeOverlay()">Weiter</button>
 </div>
 
@@ -273,128 +261,103 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, update, remove }
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase,ref,set,get,onValue,update,remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+const FB={apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",authDomain:"schnuppes-spielportal.firebaseapp.com",databaseURL:"https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",projectId:"schnuppes-spielportal",storageBucket:"schnuppes-spielportal.firebasestorage.app",messagingSenderId:"1022973500272",appId:"1:1022973500272:web:f9e39d0dfd3c61c3c88db5"};
+const db=getDatabase(initializeApp(FB));
+const ROOM="imposter/room1";
+const HB=8000, OFFLINE=20000;
 
-const firebaseConfig = {
-  apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",
-  authDomain:"schnuppes-spielportal.firebaseapp.com",
-  databaseURL:"https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:"schnuppes-spielportal",
-  storageBucket:"schnuppes-spielportal.firebasestorage.app",
-  messagingSenderId:"1022973500272",
-  appId:"1:1022973500272:web:f9e39d0dfd3c61c3c88db5"
-};
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
-const ROOM = "imposter/room1";
-const HB_INTERVAL = 8000;
-const OFFLINE_MS  = 20000;
-
-// ── Sounds ──────────────────────────────────────────────────────────────────
-function snd(name){try{const a=new Audio(`https://werbung0816-afk.github.io/schnuppes-spielportal/${name}`);a.volume=.5;a.play().catch(()=>{});}catch(_){}}
-
-// ── Spielerfarben ───────────────────────────────────────────────────────────
-const PLAYER_COLORS=[
-  {main:"#53f6ff",bg:"rgba(83,246,255,.12)",border:"rgba(83,246,255,.35)"},
-  {main:"#ff4fd8",bg:"rgba(255,79,216,.12)",border:"rgba(255,79,216,.35)"},
-  {main:"#5eff9b",bg:"rgba(94,255,155,.12)",border:"rgba(94,255,155,.35)"},
-  {main:"#ffb347",bg:"rgba(255,179,71,.12)",border:"rgba(255,179,71,.35)"},
-  {main:"#a78bfa",bg:"rgba(167,139,250,.12)",border:"rgba(167,139,250,.35)"},
-  {main:"#f87171",bg:"rgba(248,113,113,.12)",border:"rgba(248,113,113,.35)"},
-  {main:"#34d399",bg:"rgba(52,211,153,.12)",border:"rgba(52,211,153,.35)"},
-  {main:"#fbbf24",bg:"rgba(251,191,36,.12)",border:"rgba(251,191,36,.35)"},
+// ── Farben ───────────────────────────────────────────────────────────────────
+const COLORS=[
+  {m:"#53f6ff",bg:"rgba(83,246,255,.12)",b:"rgba(83,246,255,.35)"},
+  {m:"#ff4fd8",bg:"rgba(255,79,216,.12)",b:"rgba(255,79,216,.35)"},
+  {m:"#5eff9b",bg:"rgba(94,255,155,.12)",b:"rgba(94,255,155,.35)"},
+  {m:"#ffb347",bg:"rgba(255,179,71,.12)",b:"rgba(255,179,71,.35)"},
+  {m:"#a78bfa",bg:"rgba(167,139,250,.12)",b:"rgba(167,139,250,.35)"},
+  {m:"#f87171",bg:"rgba(248,113,113,.12)",b:"rgba(248,113,113,.35)"},
+  {m:"#34d399",bg:"rgba(52,211,153,.12)",b:"rgba(52,211,153,.35)"},
+  {m:"#fbbf24",bg:"rgba(251,191,36,.12)",b:"rgba(251,191,36,.35)"},
 ];
-const colorMap={};
-function getColor(pid){if(colorMap[pid]===undefined)colorMap[pid]=Object.keys(colorMap).length%PLAYER_COLORS.length;return PLAYER_COLORS[colorMap[pid]];}
-function assignColors(players){Object.keys(players).forEach((pid,i)=>{if(colorMap[pid]===undefined)colorMap[pid]=i%PLAYER_COLORS.length;});}
+const cmap={};
+function gc(pid){if(cmap[pid]===undefined)cmap[pid]=Object.keys(cmap).length%COLORS.length;return COLORS[cmap[pid]];}
+function ac(players){Object.keys(players).forEach((p,i)=>{if(cmap[p]===undefined)cmap[p]=i%COLORS.length;});}
 
-// ── Globals ─────────────────────────────────────────────────────────────────
+// ── Globals ──────────────────────────────────────────────────────────────────
 const KI_NAMES=["Nici","Marco","Leni","Mia","Nele","Dani","Finn","Sascha"];
-const KI_GENERIC=["interessant","besonders","schön","nützlich","bekannt","groß","typisch","beliebt","wichtig","natürlich"];
-const KI_ADJ=["toll","bunt","warm","kalt","laut","leise","schnell","langsam","rund","weich"];
+const KI_G=["interessant","besonders","schön","nützlich","bekannt","groß","typisch","beliebt"];
+const KI_A=["toll","bunt","warm","kalt","laut","leise","schnell","langsam"];
 let myId=null,myName=null,isHost=false,gameMode="live";
-let state=null,myVote=null,hbTimer=null;
-let liveWinner=null,liveGuess=null;
-let myRevealStep=0,viewingRole=false;
-let liveResultUIInitialized=false,lastLiveRound=-1;
+let ST=null,myVote=null,hbT=null;
+let liveW=null,liveG=null,liveUIInit=false,liveLastRound=-1;
+let revStep=0,viewing=false;
 
-// ── Wörter ──────────────────────────────────────────────────────────────────
+// ── Wörter ───────────────────────────────────────────────────────────────────
 let words=[];
-(async()=>{try{const r=await fetch("words.json");words=(await r.json()).words;}catch(_){words=["Elefant","Pizza","Strand","Gitarre","Vulkan","Delfin","Kaktus","Rakete","Pinguin","Wasserfall"];}})();
-const pickWord=()=>words[Math.floor(Math.random()*words.length)]||"Geheimnis";
+(async()=>{try{words=(await(await fetch("words.json")).json()).words;}catch(_){words=["Elefant","Pizza","Strand","Gitarre","Vulkan","Delfin","Kaktus","Rakete","Pinguin","Wasserfall"];}})();
+const pw=()=>words[Math.floor(Math.random()*words.length)]||"Geheimnis";
 
-// ── Utils ───────────────────────────────────────────────────────────────────
-function getId(){let id=sessionStorage.getItem("imp_id");if(!id){id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);sessionStorage.setItem("imp_id",id);}return id;}
-function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
-function isOnline(p){return p.isKI||!p.lastSeen||(Date.now()-p.lastSeen)<OFFLINE_MS;}
-function validPlayers(players){return Object.fromEntries(Object.entries(players||{}).filter(([,p])=>p.name&&p.name.trim()!==""));}
-function showScreen(id){["screenSetup","screenWait","screenRole","screenLive","screenGame"].forEach(s=>{document.getElementById(s).className="screen"+(s===id?" active":"");});}
-function pids(st){return Object.keys(validPlayers(st.players||{}));}
-function getTurn(st){const k=pids(st);if(!k.length)return null;return k[(st.turnIndex||0)%k.length];}
-// playerOrder als String speichern – kein Firebase-Array-Problem
-function getPlayerOrder(st){
-  if(!st.playerOrder)return pids(st);
-  if(typeof st.playerOrder==="string")return st.playerOrder.split(",").filter(pid=>st.players?.[pid]?.name?.trim());
-  if(Array.isArray(st.playerOrder))return st.playerOrder.filter(pid=>st.players?.[pid]?.name?.trim());
-  return Object.keys(st.playerOrder).sort((a,b)=>Number(a)-Number(b)).map(k=>st.playerOrder[k]).filter(pid=>st.players?.[pid]?.name?.trim());
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function gid(){let i=sessionStorage.getItem("imp_id");if(!i){i="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);sessionStorage.setItem("imp_id",i);}return i;}
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function sh(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+function online(p){return p.isKI||!p.lastSeen||(Date.now()-p.lastSeen)<OFFLINE;}
+function vp(players){return Object.fromEntries(Object.entries(players||{}).filter(([,p])=>p.name?.trim()));}
+function ss(id){["screenSetup","screenWait","screenRole","screenLive","screenGame"].forEach(s=>document.getElementById(s).className="screen"+(s===id?" active":""));}
+function vpids(st){return Object.keys(vp(st.players||{}));}
+function getTurn(st){const k=vpids(st);return k.length?k[(st.turnIndex||0)%k.length]:null;}
+function snd(n){try{const a=new Audio(`https://werbung0816-afk.github.io/schnuppes-spielportal/${n}`);a.volume=.5;a.play().catch(()=>{});}catch(_){}}
+
+// playerOrder als String – kein Firebase-Array-Problem
+function gpo(st){
+  if(!st.playerOrder)return vpids(st);
+  const s=typeof st.playerOrder==="string"?st.playerOrder.split(","):
+    Array.isArray(st.playerOrder)?st.playerOrder:
+    Object.keys(st.playerOrder).sort((a,b)=>+a-+b).map(k=>st.playerOrder[k]);
+  return s.filter(pid=>st.players?.[pid]?.name?.trim());
 }
 
-// ── Mode ─────────────────────────────────────────────────────────────────────
+// ── Mode ──────────────────────────────────────────────────────────────────────
 window.selectMode=function(m){
   gameMode=m;
   document.getElementById("cardLive").className="mode-card"+(m==="live"?" selected-live":"");
   document.getElementById("cardOnline").className="mode-card"+(m==="online"?" selected-online":"");
 };
-selectMode("live");
 
-// ── Join ─────────────────────────────────────────────────────────────────────
+// ── Join ──────────────────────────────────────────────────────────────────────
 window.joinRoom=async function(){
   const n=document.getElementById("nameInput").value.trim();
-  if(!n){document.getElementById("nameInput").style.borderColor="#ff4fd8";setTimeout(()=>document.getElementById("nameInput").style.borderColor="",1500);return;}
-  myId=getId();myName=n;
+  if(!n)return;
+  myId=gid();myName=n;
   sessionStorage.setItem("imp_name",n);sessionStorage.setItem("imp_mode",gameMode);
-  showScreen("screenWait");
+  ss("screenWait");
   document.getElementById("waitName").textContent="👋 "+n;
   document.getElementById("waitBadge").textContent=gameMode==="live"?"🏠 Live-Modus":"💻 Online-Modus";
   document.getElementById("waitBadge").className="mode-badge "+(gameMode==="live"?"live":"online");
-  const snap=await get(ref(db,ROOM));
-  const st=snap.val();
-  if(!st||!st.players||!Object.keys(st.players).length){
+  const snap=await get(ref(db,ROOM));const st=snap.val();
+  if(!st?.players||!Object.keys(st.players).length){
     isHost=true;
     await set(ref(db,ROOM),{host:myId,phase:"wait",round:0,turnIndex:0,word:"",imposterId:"",gameMode,
       players:{[myId]:{name:n,score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now()}},
       hints1:{},hints2:{},voteResults:{},hintPhase:1,imposterGuess:"",history:[],timestamp:Date.now()});
-    document.getElementById("btnStartGame").style.display="block";
   } else {
-    isHost=(st.host===myId);
-    gameMode=st.gameMode||gameMode;
-    const existing=st.players||{};
-    const alreadyIn=!!existing[myId];
+    isHost=(st.host===myId);gameMode=st.gameMode||gameMode;
+    const exists=!!st.players[myId];
     if(st.phase==="wait"){
-      const cleanup={};
-      Object.entries(existing).forEach(([pid,p])=>{if(!p.name||p.name.trim()==="")cleanup[`players/${pid}`]=null;});
-      if(Object.keys(cleanup).length)await update(ref(db,ROOM),cleanup);
+      const cl={};Object.entries(st.players).forEach(([p,v])=>{if(!v.name?.trim())cl[`players/${p}`]=null;});
+      if(Object.keys(cl).length)await update(ref(db,ROOM),cl);
     }
-    if(alreadyIn){
-      await update(ref(db,ROOM+"/players/"+myId),{name:n,lastSeen:Date.now()});
-    } else {
-      await update(ref(db,ROOM+"/players/"+myId),{name:n,score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now()});
-    }
+    await update(ref(db,ROOM+"/players/"+myId),exists?{name:n,lastSeen:Date.now()}:{name:n,score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now()});
   }
-  startHB();startListen();
+  startHB();listen();
 };
 
-// ── Heartbeat ────────────────────────────────────────────────────────────────
-function startHB(){if(hbTimer)clearInterval(hbTimer);hbTimer=setInterval(()=>{if(myId)update(ref(db,ROOM+"/players/"+myId),{lastSeen:Date.now()});},HB_INTERVAL);}
+function startHB(){if(hbT)clearInterval(hbT);hbT=setInterval(()=>{if(myId)update(ref(db,ROOM+"/players/"+myId),{lastSeen:Date.now()});},HB);}
 
-// ── Listener ─────────────────────────────────────────────────────────────────
-function startListen(){
+// ── Listen ────────────────────────────────────────────────────────────────────
+function listen(){
   onValue(ref(db,ROOM),snap=>{
     const st=snap.val();if(!st)return;
-    state=st;
-    if(st.players)assignColors(st.players);
+    ST=st;if(st.players)ac(st.players);
     dispatch(st);
   });
 }
@@ -403,108 +366,80 @@ function dispatch(st){
   const phase=st.phase||"wait";
   const mode=st.gameMode||"online";
   if(phase==="wait"){
-    showScreen("screenWait");
-    renderWaitList(st);
+    ss("screenWait");renderWait(st);
     isHost=(st.host===myId);
     document.getElementById("btnStartGame").style.display=isHost?"block":"none";
-    // KI-Button nur im Online-Modus
-    const kiBtn=document.getElementById("btnKI");
-    const divKI=document.getElementById("dividerKI");
-    if(mode==="live"){kiBtn.style.display="none";divKI.style.display="none";}
-    else{kiBtn.style.display="block";divKI.style.display="block";}
+    document.getElementById("kiArea").style.display=mode==="live"?"none":"block";
     return;
   }
   if(mode==="live"){
-    if(phase==="roleReveal")handleRoleReveal(st);
-    else handleLivePlay(st);
+    if(phase==="roleReveal")handleRR(st);
+    else handleLP(st);
   } else {
-    handleOnlinePlay(st);
+    handleOP(st);
   }
 }
 
-// ── Wait ─────────────────────────────────────────────────────────────────────
-function renderWaitList(st){
+// ── Wait ──────────────────────────────────────────────────────────────────────
+function renderWait(st){
   const c=document.getElementById("waitPlayerList");c.innerHTML="";
-  Object.entries(st.players||{}).filter(([,p])=>p.name&&p.name.trim()!=="").forEach(([pid,p])=>{
-    const col=getColor(pid);
-    c.innerHTML+=`<div style="padding:7px 11px;margin-bottom:5px;border-radius:10px;background:${col.bg};border:1px solid ${col.border};font-size:13px;">
-      <span style="color:${col.main};font-weight:700;">${pid===st.host?"👑 ":"👤 "}${esc(p.name)}</span>${pid===myId?" (Du)":""}
-    </div>`;
+  Object.entries(st.players||{}).filter(([,p])=>p.name?.trim()).forEach(([pid,p])=>{
+    const col=gc(pid);
+    c.innerHTML+=`<div style="padding:7px 11px;margin-bottom:5px;border-radius:10px;background:${col.bg};border:1px solid ${col.b};font-size:13px;"><span style="color:${col.m};font-weight:700;">${pid===st.host?"👑 ":"👤 "}${esc(p.name)}</span>${pid===myId?" (Du)":""}</div>`;
   });
 }
 
 // ── Host start ────────────────────────────────────────────────────────────────
 window.hostStartGame=async function(){
-  const st=state;if(!st)return;
+  const st=ST;if(!st)return;
   const mode=st.gameMode||gameMode;
-  if(mode==="live") isHost=true; // Live: jeder darf starten
   const players={};
-  Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name&&p.name.trim()!=="")players[pid]={...p,hint1:"",hint2:"",vote:""};});
-  const word=pickWord();
-  const ids=Object.keys(players);
-  const impId=ids[Math.floor(Math.random()*ids.length)];
+  Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name?.trim())players[pid]={...p,hint1:"",hint2:"",vote:""};});
+  const word=pw(),ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
   if(mode==="live"){
     const playerOrder=ids.join(",");
     await update(ref(db,ROOM),{phase:"roleReveal",round:(st.round||0)+1,word,imposterId:impId,
-      hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",
-      liveStep:0,playerOrder,players,history:st.history||[]});
+      hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",liveStep:0,playerOrder,players,history:st.history||[]});
   } else {
     await update(ref(db,ROOM),{phase:"play",round:1,turnIndex:0,word,imposterId:impId,
       hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players});
   }
 };
 
-// ── vs KI ─────────────────────────────────────────────────────────────────────
+// ── KI ───────────────────────────────────────────────────────────────────────
 window.startVsKI=async function(){
-  const st=state;if(!st)return;
-  isHost=true;
+  const st=ST;if(!st)return;isHost=true;
   const players={};
-  Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name&&p.name.trim()!=="")players[pid]={...p,hint1:"",hint2:"",vote:""};});
+  Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name?.trim())players[pid]={...p,hint1:"",hint2:"",vote:""};});
   if(Object.keys(players).length<3){
     const taken=Object.values(players).map(p=>p.name.toLowerCase().replace(/\s*\(ki\)/,""));
-    const avail=KI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));
-    shuffle(avail);
+    const avail=KI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));sh(avail);
     const need=3-Object.keys(players).length;
-    for(let i=0;i<need&&i<avail.length;i++){
-      const kid="ki_"+Date.now()+"_"+i;
-      players[kid]={name:avail[i]+" (KI)",score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now(),isKI:true};
-    }
+    for(let i=0;i<need&&i<avail.length;i++){const kid="ki_"+Date.now()+"_"+i;players[kid]={name:avail[i]+" (KI)",score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now(),isKI:true};}
   }
-  const word=pickWord();
-  const ids=Object.keys(players);
-  const impId=ids[Math.floor(Math.random()*ids.length)];
+  const word=pw(),ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
   await set(ref(db,ROOM),{...st,phase:"play",round:1,turnIndex:0,word,imposterId:impId,
-    hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",
-    players,host:myId,gameMode:"online",history:[],timestamp:Date.now()});
+    hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players,host:myId,gameMode:"online",history:[],timestamp:Date.now()});
 };
 
-// ════════════════════════════════════════════════════════════════════════════
-// LIVE MODUS
-// ════════════════════════════════════════════════════════════════════════════
+// ════════════════ LIVE ═══════════════════════════════════════════════════════
 
-function handleRoleReveal(st){
-  if(st.phase==="livePlay"){viewingRole=false;handleLivePlay(st);return;}
-  const ids=getPlayerOrder(st);
-  const step=st.liveStep||0;
+function handleRR(st){
+  if(st.phase==="livePlay"){viewing=false;handleLP(st);return;}
+  const ids=gpo(st),step=st.liveStep||0;
   if(!ids.length){
-    if(isHost){const fo=pids(st).join(",");update(ref(db,ROOM),{playerOrder:fo,liveStep:0});}
-    showScreen("screenWait");
-    document.getElementById("waitMsg").textContent="⏳ Starte Rollenverteilung…";
+    if(isHost){update(ref(db,ROOM),{playerOrder:vpids(st).join(","),liveStep:0});}
+    ss("screenWait");document.getElementById("waitMsg").textContent="⏳ Starte Rollenverteilung…";
     document.getElementById("waitPlayerList").innerHTML="";
     document.getElementById("btnStartGame").style.display="none";
-    document.getElementById("btnKI").style.display="none";
+    document.getElementById("kiArea").style.display="none";
     return;
   }
-  if(step>=ids.length){
-    // Letzter Schritt: jedes Gerät kann livePlay setzen
-    update(ref(db,ROOM),{phase:"livePlay"});
-    return;
-  }
-  const curPid=ids[step];
-  const curName=st.players[curPid]?.name||"?";
+  if(step>=ids.length){if(isHost)update(ref(db,ROOM),{phase:"livePlay"});return;}
+  const curPid=ids[step],curName=st.players[curPid]?.name||"?";
   if(curPid===myId){
-    if(!viewingRole){
-      showScreen("screenRole");
+    if(!viewing){
+      ss("screenRole");
       document.getElementById("rolePlayerName").textContent="👤 "+myName;
       document.getElementById("roleHidden").style.display="block";
       document.getElementById("roleContent").style.display="none";
@@ -513,74 +448,61 @@ function handleRoleReveal(st){
       document.getElementById("btnRoleStart").style.display="none";
     }
   } else {
-    if(!viewingRole){
-      showScreen("screenWait");
+    if(!viewing){
+      ss("screenWait");
       document.getElementById("waitMsg").textContent=`⏳ ${esc(curName)} schaut gerade…`;
       document.getElementById("waitPlayerList").innerHTML="";
       document.getElementById("btnStartGame").style.display="none";
-      document.getElementById("btnKI").style.display="none";
+      document.getElementById("kiArea").style.display="none";
     }
   }
 }
 
 window.revealRole=function(){
-  const st=state;if(!st)return;
-  myRevealStep=st.liveStep||0;
-  viewingRole=true;
+  const st=ST;if(!st)return;
+  revStep=st.liveStep||0;viewing=true;
   document.getElementById("roleHidden").style.display="none";
   const c=document.getElementById("roleContent");c.style.display="block";
-  const isImp=st.imposterId===myId;
-  if(isImp){
-    c.innerHTML=`<div class="imposter-label">🕵️ Du bist der<br>IMPOSTER!</div><div class="imposter-sub" style="margin-top:10px;">Bluff überzeugend!</div>`;
-  } else {
-    c.innerHTML=`<div class="word-label">Das geheime Wort ist</div><div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
-  }
-  const ids=getPlayerOrder(st);
-  const nextBtn=document.getElementById("btnRoleNext");
-  const startBtn=document.getElementById("btnRoleStart");
-  if(myRevealStep<ids.length-1){
-    const nextName=st.players?.[ids[myRevealStep+1]]?.name||"?";
-    document.getElementById("btnRoleNextName").textContent=esc(nextName);
-    nextBtn.style.display="block";startBtn.style.display="none";
-  } else {
-    nextBtn.style.display="none";startBtn.style.display="block";
-  }
+  c.innerHTML=st.imposterId===myId
+    ?`<div class="imposter-label">🕵️ Du bist der<br>IMPOSTER!</div><div class="imposter-sub" style="margin-top:10px;">Bluff überzeugend!</div>`
+    :`<div class="word-label">Das geheime Wort ist</div><div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
+  const ids=gpo(st);
+  const nb=document.getElementById("btnRoleNext"),sb=document.getElementById("btnRoleStart");
+  if(revStep<ids.length-1){
+    document.getElementById("btnRoleNextName").textContent=esc(st.players?.[ids[revStep+1]]?.name||"?");
+    nb.style.display="block";sb.style.display="none";
+  } else {nb.style.display="none";sb.style.display="block";}
 };
 
-window.roleNext=async function(){
-  viewingRole=false;
-  const newStep=myRevealStep+1;
-  await update(ref(db,ROOM),{liveStep:newStep});
-};
+window.roleNext=async function(){viewing=false;await update(ref(db,ROOM),{liveStep:revStep+1});};
 
 window.liveBegin=async function(){
-  viewingRole=false;
-  const st=state;if(!st)return;
-  const ids=getPlayerOrder(st);
-  await update(ref(db,ROOM),{phase:"livePlay",liveStep:ids.length});
+  viewing=false;const st=ST;if(!st)return;
+  await update(ref(db,ROOM),{phase:"livePlay",liveStep:gpo(st).length});
 };
 
-function handleLivePlay(st){
-  showScreen("screenLive");
+function handleLP(st){
+  ss("screenLive");
   document.getElementById("liveStatus").textContent=`Runde ${st.round||1} – Spielt mündlich!`;
+  // Punkte
   const t=document.getElementById("liveScores");t.innerHTML="";
-  Object.entries(validPlayers(st.players||{})).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
-    const col=getColor(pid);
-    t.innerHTML+=`<div class="score-row"><span class="score-player" style="color:${col.main};">${esc(p.name)}</span><span class="score-val" style="color:${col.main};">${p.score||0}</span></div>`;
+  Object.entries(vp(st.players||{})).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
+    const col=gc(pid);
+    t.innerHTML+=`<div class="score-row"><span class="score-player" style="color:${col.m};">${esc(p.name)}</span><span class="score-val" style="color:${col.m};">${p.score||0}</span></div>`;
   });
+  // History
   const h=document.getElementById("liveHistory");h.innerHTML="";
   (st.history||[]).slice(-10).reverse().forEach(e=>{h.innerHTML+=`<div class="log-entry">${esc(e)}</div>`;});
-  const nnr=document.getElementById("btnLiveNextRound");
-  if(nnr)nnr.style.display=(st.phase==="liveResult")?"block":"none";
+  // Nächste Runde Button
+  document.getElementById("btnLiveNext").style.display=st.phase==="liveResult"?"block":"none";
+  // Ergebnis-Box: nur in livePlay, nur Host
   const rb=document.getElementById("liveResultBox");
-  rb.style.display=(st.phase==="livePlay")?"block":"none";
-  const currentRound=st.round||1;
-  if(st.phase==="livePlay"&&currentRound!==lastLiveRound){
-    lastLiveRound=currentRound;liveResultUIInitialized=false;
-  }
-  if(st.phase==="livePlay"&&!liveResultUIInitialized){
-    liveResultUIInitialized=true;
-    liveWinner=null;liveGuess=null;
+  rb.style.display=(isHost&&st.phase==="livePlay")?"block":"none";
+  // UI nur einmal pro Runde initialisieren – nicht bei jedem Heartbeat zurücksetzen
+  const round=st.round||1;
+  if(isHost&&st.phase==="livePlay"&&round!==liveLastRound){liveLastRound=round;liveUIInit=false;}
+  if(isHost&&st.phase==="livePlay"&&!liveUIInit){
+    liveUIInit=true;liveW=null;liveG=null;
     ["btnCrew","btnImp"].forEach(id=>document.getElementById(id).classList.remove("tog-active"));
     document.getElementById("guessRow").style.display="none";
     document.getElementById("guessAnswer").textContent="";
@@ -589,269 +511,196 @@ function handleLivePlay(st){
 }
 
 window.pickWinner=function(w){
-  liveWinner=w;
+  liveW=w;
   document.getElementById("btnCrew").classList.toggle("tog-active",w==="crew");
   document.getElementById("btnImp").classList.toggle("tog-active",w==="imposter");
   document.getElementById("guessRow").style.display="block";
-  liveGuess=null;
-  document.getElementById("guessAnswer").textContent="";
+  liveG=null;document.getElementById("guessAnswer").textContent="";
   document.getElementById("btnLiveConfirm").disabled=true;
 };
-
 window.pickGuess=function(yes){
-  liveGuess=yes;
+  liveG=yes;
   document.getElementById("guessAnswer").textContent=yes?"✓ Ja, erraten!":"✗ Nicht erraten";
   document.getElementById("btnLiveConfirm").disabled=false;
 };
-
 window.confirmLive=async function(){
-  if(liveWinner===null||liveGuess===null)return;
-  const st=state;if(!st)return;
-  const players={...st.players};
-  const impId=st.imposterId;
-  const updates={};
-  if(liveWinner==="crew"){
-    Object.entries(players).forEach(([pid,p])=>{if(pid!==impId)updates[`players/${pid}/score`]=(p.score||0)+1;});
-  } else {
-    updates[`players/${impId}/score`]=(players[impId]?.score||0)+1;
-  }
-  if(liveGuess){
-    const base=updates[`players/${impId}/score`]??players[impId]?.score??0;
-    updates[`players/${impId}/score`]=base+1;
-  }
+  if(liveW===null||liveG===null)return;
+  const st=ST;if(!st)return;
+  const players={...st.players},impId=st.imposterId,upd={};
+  if(liveW==="crew"){Object.entries(players).forEach(([pid,p])=>{if(pid!==impId)upd[`players/${pid}/score`]=(p.score||0)+1;});}
+  else{upd[`players/${impId}/score`]=(players[impId]?.score||0)+1;}
+  if(liveG){const base=upd[`players/${impId}/score`]??players[impId]?.score??0;upd[`players/${impId}/score`]=base+1;}
   const impName=players[impId]?.name||"?";
-  const entry=`Runde ${st.round}: ${liveWinner==="crew"?"🎉 Crew gewann":"🕵️ Imposter gewann"} | Imposter: ${impName} | Wort: ${st.word||"?"}${liveGuess?" | 🎯 Wort erraten":""}`;
-  updates["history"]=[...(st.history||[]),entry];
-  updates["phase"]="liveResult";
-  await update(ref(db,ROOM),updates);
-  snd("applause.mp3");
-  showOverlay(liveWinner==="crew",impName,st.word||"?");
+  upd["history"]=[...(st.history||[]),`Runde ${st.round}: ${liveW==="crew"?"🎉 Crew gewann":"🕵️ Imposter gewann"} | Imposter: ${impName} | Wort: ${st.word||"?"}${liveG?" | 🎯 Wort erraten":""}`];
+  upd["phase"]="liveResult";
+  await update(ref(db,ROOM),upd);
+  snd("applause.mp3");showOverlay(liveW==="crew",impName,st.word||"?");
+};
+window.liveNextRound=async function(){
+  const st=ST;if(!st)return;
+  const players={};
+  Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name?.trim())players[pid]={...p,hint1:"",hint2:"",vote:""};});
+  const word=pw(),ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
+  const playerOrder=ids.join(",");
+  await update(ref(db,ROOM),{phase:"roleReveal",round:(st.round||1)+1,word,imposterId:impId,
+    hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",liveStep:0,playerOrder,players,history:st.history||[]});
+  document.getElementById("overlay").classList.remove("show");
+  liveW=null;liveG=null;
 };
 
-// ════════════════════════════════════════════════════════════════════════════
-// ONLINE MODUS
-// ════════════════════════════════════════════════════════════════════════════
+// ════════════════ ONLINE ══════════════════════════════════════════════════════
 
-function handleOnlinePlay(st){
-  showScreen("screenGame");
-  renderOnline(st);
+function handleOP(st){
+  ss("screenGame");renderO(st);
   if(isHost){
-    replaceOfflineWithKI(st);
+    repOff(st);
     if(st.phase==="play")setTimeout(()=>kiTurn(),600);
     if(st.phase==="vote")setTimeout(()=>kiVote(),600);
   }
 }
 
-function renderOnline(st){
-  const players=validPlayers(st.players||{});
-  const phase=st.phase||"play";
-  renderPlayerList(players,st);
-  renderScoreTable(players,"scoreTable");
-  renderHintPanels(st,players);
-  const turnPid=getTurn(st);
-  const turnName=players[turnPid]?.name||"?";
-  const isMy=(turnPid===myId);
+function renderO(st){
+  const players=vp(st.players||{}),phase=st.phase||"play";
+  renderPL(players,st);renderST(players,"scoreTable");renderHL(st,players);
+  const tp=getTurn(st),tn=players[tp]?.name||"?",im=(tp===myId);
   let sb="";
-  if(phase==="play")sb=`Runde ${st.round||1} | Hinweisphase ${st.hintPhase||1}/2 | Am Zug: <span class="you-active">${esc(turnName)}${isMy?" – du bist dran ✦":""}</span>`;
+  if(phase==="play")sb=`Runde ${st.round||1} | Hinweisphase ${st.hintPhase||1}/2 | Am Zug: <span class="you-active">${esc(tn)}${im?" – du bist dran ✦":""}</span>`;
   else if(phase==="vote")sb="🗳️ Abstimmungsphase";
   else if(phase==="result")sb="📊 Ergebnis";
   document.getElementById("statusBar").innerHTML=sb;
   document.getElementById("roundNum").textContent=st.round||1;
   document.getElementById("phaseName").textContent=phase==="play"?`Hinweise ${st.hintPhase||1}/2`:phase==="vote"?"Abstimmung":"Ergebnis";
-  document.getElementById("turnName").textContent=phase==="play"?esc(turnName):"—";
+  document.getElementById("turnName").textContent=phase==="play"?esc(tn):"—";
   const wd=document.getElementById("wordDisplay");
-  if(st.imposterId===myId)wd.innerHTML=`<div class="imposter-label">🕵️ Du bist der Imposter!</div><div class="imposter-sub">Bluff überzeugend!</div>`;
-  else wd.innerHTML=`<div class="word-display">${esc(st.word||"—")}</div>`;
+  wd.innerHTML=st.imposterId===myId?`<div class="imposter-label">🕵️ Du bist der Imposter!</div><div class="imposter-sub">Bluff überzeugend!</div>`:`<div class="word-display">${esc(st.word||"—")}</div>`;
   ["hintSection","voteSection","guessSection","resultSection"].forEach(id=>document.getElementById(id).style.display="none");
-  if(phase==="play"&&isMy){const key=(st.hintPhase||1)===1?"hint1":"hint2";if(!(players[myId]?.[key]))document.getElementById("hintSection").style.display="block";}
-  if(phase==="vote"){document.getElementById("voteSection").style.display="block";renderVoteBtns(players);}
-  if(phase==="result"){document.getElementById("resultSection").style.display="block";renderResult(st,players);if(st.imposterId===myId&&!st.imposterGuess)document.getElementById("guessSection").style.display="block";}
+  if(phase==="play"&&im){const k=(st.hintPhase||1)===1?"hint1":"hint2";if(!players[myId]?.[k])document.getElementById("hintSection").style.display="block";}
+  if(phase==="vote"){document.getElementById("voteSection").style.display="block";renderVB(players);}
+  if(phase==="result"){document.getElementById("resultSection").style.display="block";renderRes(st,players);if(st.imposterId===myId&&!st.imposterGuess)document.getElementById("guessSection").style.display="block";}
 }
 
-function renderPlayerList(players,st){
-  const c=document.getElementById("playerList");c.innerHTML="";
-  const turnPid=getTurn(st);
+function renderPL(players,st){
+  const c=document.getElementById("playerList");c.innerHTML="";const tp=getTurn(st);
   Object.entries(players).forEach(([pid,p])=>{
-    const col=getColor(pid);
-    const hp=(st.hintPhase||1);
-    const hint=(hp===1?p.hint1:p.hint2)||"";
-    const isActive=turnPid===pid&&st.phase==="play";
-    const isImpRev=st.phase==="result"&&st.imposterId===pid;
-    const d=document.createElement("div");
-    d.className="player-card";
-    d.style.cssText=`background:${col.bg};border-color:${isActive?"#53f6ff":isImpRev?"#ff4fd8":col.border};${isActive?"box-shadow:0 0 16px rgba(83,246,255,.3);":""}${isImpRev?"box-shadow:0 0 16px rgba(255,79,216,.3);":""}`;
-    d.innerHTML=`<div class="player-name" style="color:${col.main};">${esc(p.name)}${pid===myId?" (Du)":""}${isOnline(p)?"":" 💤"}</div>${hint?`<div class="player-hint">💬 ${esc(hint)}</div>`:""}<div class="score-badge" style="color:${col.main};">${p.score||0}pt</div>${p.isKI?`<div class="player-badge ki">KI</div>`:""}`;
+    const col=gc(pid),hp=st.hintPhase||1,hint=(hp===1?p.hint1:p.hint2)||"";
+    const isA=tp===pid&&st.phase==="play",isI=st.phase==="result"&&st.imposterId===pid;
+    const d=document.createElement("div");d.className="player-card";
+    d.style.cssText=`background:${col.bg};border-color:${isA?"#53f6ff":isI?"#ff4fd8":col.b};${isA?"box-shadow:0 0 16px rgba(83,246,255,.3);":""}${isI?"box-shadow:0 0 16px rgba(255,79,216,.3);":""}`;
+    d.innerHTML=`<div class="player-name" style="color:${col.m};">${esc(p.name)}${pid===myId?" (Du)":""}${online(p)?"":" 💤"}</div>${hint?`<div class="player-hint">💬 ${esc(hint)}</div>`:""}<div class="score-badge" style="color:${col.m};">${p.score||0}pt</div>${p.isKI?`<div class="player-badge ki">KI</div>`:""}`;
     c.appendChild(d);
   });
 }
-
-function renderScoreTable(players,elId){
+function renderST(players,elId){
   const t=document.getElementById(elId);t.innerHTML="";
   Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
-    const col=getColor(pid);
-    t.innerHTML+=`<div class="score-row"><span class="score-player" style="color:${col.main};">${esc(p.name)}</span><span class="score-val" style="color:${col.main};">${p.score||0}</span></div>`;
+    const col=gc(pid);t.innerHTML+=`<div class="score-row"><span class="score-player" style="color:${col.m};">${esc(p.name)}</span><span class="score-val" style="color:${col.m};">${p.score||0}</span></div>`;
   });
 }
-
-function renderHintPanels(st,players){
-  const log=document.getElementById("hintLog");
-  const h1=document.getElementById("hints1");
-  const h2=document.getElementById("hints2");
+function renderHL(st,players){
+  const log=document.getElementById("hintLog"),h1=document.getElementById("hints1"),h2=document.getElementById("hints2");
   log.innerHTML="";h1.innerHTML="";h2.innerHTML="";
   Object.entries(players).forEach(([pid,p])=>{
-    const col=getColor(pid);
-    const n=`<span class="le-name" style="color:${col.main};">${esc(p.name)}:</span>`;
+    const col=gc(pid),n=`<span class="le-name" style="color:${col.m};">${esc(p.name)}:</span>`;
     if(p.hint1){const e=`<div class="log-entry">${n} ${esc(p.hint1)}</div>`;h1.innerHTML+=e;log.innerHTML+=e;}
     if(p.hint2){const e=`<div class="log-entry">${n} ${esc(p.hint2)}</div>`;h2.innerHTML+=e;log.innerHTML+=e;}
   });
 }
-
-function renderVoteBtns(players){
+function renderVB(players){
   const c=document.getElementById("voteButtons");c.innerHTML="";
   Object.entries(players).forEach(([pid,p])=>{
-    if(pid===myId)return;
-    const col=getColor(pid);
-    const b=document.createElement("button");
-    b.className="vote-btn"+(myVote===pid?" selected":"");
-    b.style.cssText=myVote===pid?`border-color:${col.main};background:${col.bg};`:`border-color:${col.border};`;
-    b.innerHTML=`<span style="color:${col.main};font-weight:800;">●</span> ${esc(p.name)}${p.isKI?" (KI)":""}`;
-    b.onclick=()=>{myVote=pid;renderVoteBtns(players);document.getElementById("btnVote").disabled=false;};
+    if(pid===myId)return;const col=gc(pid);
+    const b=document.createElement("button");b.className="vote-btn"+(myVote===pid?" selected":"");
+    b.style.cssText=myVote===pid?`border-color:${col.m};background:${col.bg};`:`border-color:${col.b};`;
+    b.innerHTML=`<span style="color:${col.m};font-weight:800;">●</span> ${esc(p.name)}${p.isKI?" (KI)":""}`;
+    b.onclick=()=>{myVote=pid;renderVB(players);document.getElementById("btnVote").disabled=false;};
     c.appendChild(b);
   });
 }
-
-function renderResult(st,players){
+function renderRes(st,players){
   const tally={};Object.values(players).forEach(p=>{if(p.vote)tally[p.vote]=(tally[p.vote]||0)+1;});
   const topId=Object.entries(tally).sort((a,b)=>b[1]-a[1])[0]?.[0];
-  const crewWon=topId===st.imposterId;
-  const impName=esc(players[st.imposterId]?.name||"?");
-  const word=esc(st.word||"?");
-  document.getElementById("resultTitle").textContent=crewWon?"🎉 Crew hat gewonnen!":"🕵️ Imposter hat gewonnen!";
-  document.getElementById("resultText").innerHTML=`Der Imposter war <b>${impName}</b>.<br>Das Wort war: <b>${word}</b>${st.imposterGuess?`<br>🎯 Imposter tippte: <b>${esc(st.imposterGuess)}</b>`:""}`;
+  const cw=topId===st.imposterId,im=esc(players[st.imposterId]?.name||"?"),w=esc(st.word||"?");
+  document.getElementById("resultTitle").textContent=cw?"🎉 Crew hat gewonnen!":"🕵️ Imposter hat gewonnen!";
+  document.getElementById("resultText").innerHTML=`Der Imposter war <b>${im}</b>.<br>Das Wort war: <b>${w}</b>${st.imposterGuess?`<br>🎯 Imposter tippte: <b>${esc(st.imposterGuess)}</b>`:""}`;
   document.getElementById("btnNext").style.display=isHost?"block":"none";
 }
 
-// ── Online actions ────────────────────────────────────────────────────────────
 window.submitHint=async function(){
   const val=document.getElementById("hintInput").value.trim();if(!val)return;
-  const st=state;if(!st)return;
-  const hp=st.hintPhase||1,key=hp===1?"hint1":"hint2";
+  const st=ST;if(!st)return;const hp=st.hintPhase||1,key=hp===1?"hint1":"hint2";
   await update(ref(db,ROOM+"/players/"+myId),{[key]:val});
   document.getElementById("hintInput").value="";snd("dice.mp3");
-  const ids=pids(st);
-  const nextIdx=((st.turnIndex||0)+1)%ids.length;
-  const upd={turnIndex:nextIdx};
+  const ids=vpids(st),nextIdx=((st.turnIndex||0)+1)%ids.length,upd={turnIndex:nextIdx};
   const updP={...st.players,[myId]:{...st.players[myId],[key]:val}};
-  if(Object.values(updP).filter(p=>p.name?.trim()).every(p=>p[key]&&p[key].length>0)){
+  if(Object.values(updP).filter(p=>p.name?.trim()).every(p=>p[key]?.length)){
     if(hp===1){upd.hintPhase=2;upd.turnIndex=0;}else upd.phase="vote";
   }
   await update(ref(db,ROOM),upd);
 };
-
 window.confirmVote=async function(){
   if(!myVote)return;
   await update(ref(db,ROOM+"/players/"+myId),{vote:myVote});
   document.getElementById("btnVote").disabled=true;
-  const st=state;
-  const updP={...st.players,[myId]:{...st.players[myId],vote:myVote}};
+  const st=ST,updP={...st.players,[myId]:{...st.players[myId],vote:myVote}};
   if(Object.values(updP).filter(p=>p.name?.trim()).every(p=>p.vote))await tally(updP,st);
 };
-
 async function tally(players,st){
   const cnt={};Object.values(players).filter(p=>p.name?.trim()).forEach(p=>{if(p.vote)cnt[p.vote]=(cnt[p.vote]||0)+1;});
   const topId=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0]?.[0];
-  const impId=st.imposterId;
-  const upd={phase:"result",voteResults:cnt};
-  if(topId===impId){
-    Object.entries(players).filter(([,p])=>p.name?.trim()).forEach(([pid,p])=>{
-      if(pid!==impId)upd[`players/${pid}/score`]=(p.score||0)+1+(p.vote===impId?1:0);
-    });
-  } else {
-    upd[`players/${impId}/score`]=(players[impId]?.score||0)+1;
-  }
-  await update(ref(db,ROOM),upd);
-  snd("applause.mp3");
-  showOverlay(topId===impId,players[impId]?.name||"?",st.word||"?");
+  const impId=st.imposterId,upd={phase:"result",voteResults:cnt};
+  if(topId===impId){Object.entries(players).filter(([,p])=>p.name?.trim()).forEach(([pid,p])=>{if(pid!==impId)upd[`players/${pid}/score`]=(p.score||0)+1+(p.vote===impId?1:0);});}
+  else{upd[`players/${impId}/score`]=(players[impId]?.score||0)+1;}
+  await update(ref(db,ROOM),upd);snd("applause.mp3");showOverlay(topId===impId,players[impId]?.name||"?",st.word||"?");
 }
-
 window.submitGuess=async function(){
   const val=document.getElementById("guessInput").value.trim();if(!val)return;
   await update(ref(db,ROOM),{imposterGuess:val});
-  const st=state;
-  if(val.toLowerCase()===(st?.word||"").toLowerCase())
-    await update(ref(db,ROOM+"/players/"+myId),{score:(st?.players?.[myId]?.score||0)+1});
+  const st=ST;if(val.toLowerCase()===(st?.word||"").toLowerCase())await update(ref(db,ROOM+"/players/"+myId),{score:(st?.players?.[myId]?.score||0)+1});
   document.getElementById("guessSection").style.display="none";
 };
-
-window.nextRound=async function(){
-  const _st=state;if(!_st)return;
-  if((_st.gameMode||"online")==="online"&&!isHost)return; // Online: nur Host
-  // Live: jeder darf nächste Runde starten
-  const st=state;
-  const players={};
-  Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name?.trim())players[pid]={...p,hint1:"",hint2:"",vote:""};});
-  const word=pickWord();
-  const ids=Object.keys(players);
-  const impId=ids[Math.floor(Math.random()*ids.length)];
-  const mode=st.gameMode||"online";
-  if(mode==="live"){
-    const playerOrder=ids.join(",");
-    await update(ref(db,ROOM),{phase:"roleReveal",round:(st.round||1)+1,word,imposterId:impId,
-      hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",
-      liveStep:0,playerOrder,players,history:st.history||[]});
-  } else {
-    await set(ref(db,ROOM),{...st,phase:"play",round:(st.round||1)+1,turnIndex:0,
-      word,imposterId:impId,hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players,timestamp:Date.now()});
-  }
-  document.getElementById("overlay").classList.remove("show");
-  myVote=null;liveWinner=null;liveGuess=null;
+window.onlineNextRound=async function(){
+  if(!isHost)return;const st=ST;
+  const players={};Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name?.trim())players[pid]={...p,hint1:"",hint2:"",vote:""};});
+  const word=pw(),ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
+  await set(ref(db,ROOM),{...st,phase:"play",round:(st.round||1)+1,turnIndex:0,word,imposterId:impId,
+    hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players,timestamp:Date.now()});
+  document.getElementById("overlay").classList.remove("show");myVote=null;
 };
 
-// ── Offline → KI ─────────────────────────────────────────────────────────────
-function replaceOfflineWithKI(st){
+// ── Offline → KI ──────────────────────────────────────────────────────────────
+function repOff(st){
   Object.entries(st.players||{}).forEach(([pid,p])=>{
-    if(!p.isKI&&pid!==st.host&&!isOnline(p)&&p.name?.trim()){
+    if(!p.isKI&&pid!==st.host&&!online(p)&&p.name?.trim()){
       const taken=Object.values(st.players).map(q=>q.name.toLowerCase().replace(/\s*\(ki\)/,""));
-      const avail=KI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));
-      if(!avail.length)return;shuffle(avail);
+      const avail=KI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));if(!avail.length)return;sh(avail);
       update(ref(db,ROOM+"/players/"+pid),{name:avail[0]+" (KI)",isKI:true,lastSeen:Date.now()});
     }
   });
 }
-
 async function kiTurn(){
-  const st=state;if(!st||!isHost||st.phase!=="play")return;
-  const turnPid=getTurn(st);if(!turnPid)return;
-  const p=st.players?.[turnPid];if(!p?.isKI)return;
+  const st=ST;if(!st||!isHost||st.phase!=="play")return;
+  const tp=getTurn(st);if(!tp)return;const p=st.players?.[tp];if(!p?.isKI)return;
   const hp=st.hintPhase||1,key=hp===1?"hint1":"hint2";if(p[key])return;
-  const hint=st.imposterId===turnPid?KI_GENERIC[Math.floor(Math.random()*KI_GENERIC.length)]:KI_ADJ[Math.floor(Math.random()*KI_ADJ.length)];
-  await update(ref(db,ROOM+"/players/"+turnPid),{[key]:hint});
-  const ids=pids(st);
-  const nextIdx=((st.turnIndex||0)+1)%ids.length;
-  const upd={turnIndex:nextIdx};
-  const updP={...st.players,[turnPid]:{...p,[key]:hint}};
-  if(Object.values(updP).filter(q=>q.name?.trim()).every(q=>q[key]&&q[key].length>0)){
-    if(hp===1){upd.hintPhase=2;upd.turnIndex=0;}else upd.phase="vote";
-  }
-  await update(ref(db,ROOM),upd);
-  setTimeout(()=>kiTurn(),700);
+  const hint=st.imposterId===tp?KI_G[Math.floor(Math.random()*KI_G.length)]:KI_A[Math.floor(Math.random()*KI_A.length)];
+  await update(ref(db,ROOM+"/players/"+tp),{[key]:hint});
+  const ids=vpids(st),nextIdx=((st.turnIndex||0)+1)%ids.length,upd={turnIndex:nextIdx};
+  const updP={...st.players,[tp]:{...p,[key]:hint}};
+  if(Object.values(updP).filter(q=>q.name?.trim()).every(q=>q[key]?.length)){if(hp===1){upd.hintPhase=2;upd.turnIndex=0;}else upd.phase="vote";}
+  await update(ref(db,ROOM),upd);setTimeout(()=>kiTurn(),700);
 }
-
 async function kiVote(){
-  const st=state;if(!st||!isHost||st.phase!=="vote")return;
-  const players=st.players||{};
-  const kip=Object.keys(players).filter(pid=>players[pid].isKI&&!players[pid].vote);
+  const st=ST;if(!st||!isHost||st.phase!=="vote")return;
+  const players=st.players||{};const kip=Object.keys(players).filter(pid=>players[pid].isKI&&!players[pid].vote);
   for(const kid of kip){const others=Object.keys(players).filter(p=>p!==kid);await update(ref(db,ROOM+"/players/"+kid),{vote:others[Math.floor(Math.random()*others.length)]});}
-  const snap=await get(ref(db,ROOM+"/players"));
-  const pls=snap.val()||{};
+  const snap=await get(ref(db,ROOM+"/players"));const pls=snap.val()||{};
   if(Object.values(pls).filter(p=>p.name?.trim()).every(p=>p.vote))await tally(pls,st);
 }
 
 // ── Overlay ───────────────────────────────────────────────────────────────────
-function showOverlay(crewWon,impName,word){
-  document.getElementById("overlayEmoji").textContent=crewWon?"🎉":"🕵️";
-  document.getElementById("overlayTitle").textContent=crewWon?"Crew gewinnt!":"Imposter gewinnt!";
-  document.getElementById("overlayComment").textContent=crewWon?`${impName} war der Imposter und wurde entlarvt!`:`${impName} blieb unentdeckt!`;
+function showOverlay(cw,impName,word){
+  document.getElementById("overlayEmoji").textContent=cw?"🎉":"🕵️";
+  document.getElementById("overlayTitle").textContent=cw?"Crew gewinnt!":"Imposter gewinnt!";
+  document.getElementById("overlayComment").textContent=cw?`${impName} war der Imposter und wurde entlarvt!`:`${impName} blieb unentdeckt!`;
   document.getElementById("overlayWord").textContent="Das geheime Wort war: "+word;
   document.getElementById("overlay").classList.add("show");
 }
@@ -859,48 +708,44 @@ window.closeOverlay=()=>document.getElementById("overlay").classList.remove("sho
 
 // ── Gear ──────────────────────────────────────────────────────────────────────
 window.toggleGear=()=>document.getElementById("gearPanel").classList.toggle("open");
-window.syncNow=()=>{if(state)dispatch(state);document.getElementById("gearPanel").classList.remove("open");};
+window.syncNow=()=>{if(ST)dispatch(ST);document.getElementById("gearPanel").classList.remove("open");};
 window.resetRoom=async()=>{
-  await remove(ref(db,ROOM));if(hbTimer)clearInterval(hbTimer);
-  sessionStorage.removeItem("imp_id");
-  document.getElementById("gearPanel").classList.remove("open");
-  location.reload();
+  await remove(ref(db,ROOM));if(hbT)clearInterval(hbT);
+  sessionStorage.removeItem("imp_id");document.getElementById("gearPanel").classList.remove("open");location.reload();
 };
 window.leaveRoom=async()=>{
   if(myId)await update(ref(db,ROOM+"/players/"+myId),{lastSeen:0});
-  if(hbTimer)clearInterval(hbTimer);
+  if(hbT)clearInterval(hbT);
   sessionStorage.removeItem("imp_id");sessionStorage.removeItem("imp_name");sessionStorage.removeItem("imp_mode");
   location.reload();
 };
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded",()=>{
-  const savedName=sessionStorage.getItem("imp_name");
-  const savedMode=sessionStorage.getItem("imp_mode")||"live";
-  if(savedName)document.getElementById("nameInput").value=savedName;
-  selectMode(savedMode);
-  const savedId=sessionStorage.getItem("imp_id");
-  if(savedId&&savedName){
-    myId=savedId;myName=savedName;gameMode=savedMode;
+  const sn=sessionStorage.getItem("imp_name"),sm=sessionStorage.getItem("imp_mode")||"live";
+  if(sn)document.getElementById("nameInput").value=sn;
+  selectMode(sm);
+  const si=sessionStorage.getItem("imp_id");
+  if(si&&sn){
+    myId=si;myName=sn;gameMode=sm;
     get(ref(db,ROOM)).then(snap=>{
       const st=snap.val();
       if(st?.players?.[myId]?.name?.trim()){
-        isHost=(st.host===myId);
-        gameMode=st.gameMode||savedMode;
+        isHost=(st.host===myId);gameMode=st.gameMode||sm;
         update(ref(db,ROOM+"/players/"+myId),{lastSeen:Date.now()});
-        startHB();startListen();
+        startHB();listen();
         if(st.phase==="wait"){
-          showScreen("screenWait");
-          document.getElementById("waitName").textContent="👋 "+myName;
+          ss("screenWait");document.getElementById("waitName").textContent="👋 "+myName;
           document.getElementById("btnStartGame").style.display=isHost?"block":"none";
-        } else {dispatch(st);}
+          document.getElementById("kiArea").style.display=st.gameMode==="live"?"none":"block";
+        } else dispatch(st);
       }
     });
   }
 });
 window.addEventListener("beforeunload",()=>{
   if(myId)update(ref(db,ROOM+"/players/"+myId),{lastSeen:0});
-  if(hbTimer)clearInterval(hbTimer);
+  if(hbT)clearInterval(hbT);
 });
 </script>
 </body>
