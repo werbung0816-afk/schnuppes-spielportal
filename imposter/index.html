@@ -8,18 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:'Outfit',sans-serif;
-  background:
-    radial-gradient(circle at top left,rgba(143,95,255,.35),transparent 30%),
-    radial-gradient(circle at top right,rgba(255,79,216,.25),transparent 35%),
-    linear-gradient(180deg,#050111,#120523);
-  color:#fff;min-height:100vh;padding:20px;
-  user-select:none;-webkit-user-select:none;
-}
+body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at top left,rgba(143,95,255,.35),transparent 30%),radial-gradient(circle at top right,rgba(255,79,216,.25),transparent 35%),linear-gradient(180deg,#050111,#120523);color:#fff;min-height:100vh;padding:20px;user-select:none;-webkit-user-select:none;}
 .layout{display:grid;grid-template-columns:240px 1fr 240px;gap:16px;max-width:1100px;margin:0 auto;}
 @media(max-width:700px){.layout{grid-template-columns:1fr;}}
-@media(max-width:450px){.layout{grid-template-columns:1fr;}}
 .panel{background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);border-radius:28px;padding:20px;backdrop-filter:blur(18px);}
 .panel-title{font-size:clamp(12px,1.8vw,15px);font-weight:700;color:#53f6ff;letter-spacing:.05em;text-transform:uppercase;margin-bottom:12px;}
 .logo{text-align:center;margin-bottom:16px;}
@@ -27,8 +18,6 @@ body{
 .logo p{font-size:clamp(12px,1.8vw,16px);margin-top:6px;color:#ff9ef0;}
 .version{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px;}
 .player-card{padding:12px 14px;margin-bottom:8px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);position:relative;}
-.player-card.active-turn{border-color:#53f6ff;box-shadow:0 0 16px rgba(83,246,255,.3);}
-.player-card.imposter-reveal{border-color:#ff4fd8;box-shadow:0 0 16px rgba(255,79,216,.3);}
 .player-name{font-size:clamp(13px,1.8vw,15px);font-weight:700;}
 .player-hint{font-size:clamp(11px,1.5vw,13px);color:rgba(255,255,255,.6);margin-top:3px;}
 .player-badge{position:absolute;top:8px;right:8px;font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(83,246,255,.2);color:#53f6ff;font-weight:700;}
@@ -75,8 +64,6 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 .log-entry .le-name{color:#53f6ff;font-weight:700;}
 .screen{display:none;}
 .screen.active{display:block;}
-
-/* SETUP */
 .setup-card{max-width:520px;margin:40px auto;padding:36px;border-radius:32px;background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px);text-align:center;}
 .setup-title{font-size:clamp(36px,7vw,68px);font-weight:900;background:linear-gradient(90deg,#ff4fd8,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;}
 .setup-sub{color:#ff9ef0;font-size:clamp(13px,1.8vw,17px);margin-bottom:16px;}
@@ -92,8 +79,6 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 .mode-emoji{font-size:32px;margin-bottom:8px;}
 .mode-name{font-size:clamp(14px,2vw,17px);font-weight:900;margin-bottom:6px;}
 .mode-desc{font-size:clamp(11px,1.5vw,13px);color:rgba(255,255,255,.6);line-height:1.4;}
-
-/* WAIT */
 .wait-card{max-width:440px;margin:40px auto;padding:36px;border-radius:32px;background:rgba(10,12,38,.85);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px);text-align:center;}
 .wait-name{font-size:clamp(18px,3.5vw,28px);font-weight:900;color:#53f6ff;margin-bottom:6px;}
 .wait-dots{font-size:clamp(14px,2.2vw,20px);color:#ff4fd8;margin-bottom:20px;animation:pulse 1.5s infinite;}
@@ -102,28 +87,20 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 .mode-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:14px;}
 .mode-badge.online{background:rgba(83,246,255,.2);color:#53f6ff;}
 .mode-badge.live{background:rgba(255,159,40,.2);color:#ffb347;}
-
-/* ROLE REVEAL */
 .role-card{max-width:440px;margin:30px auto;padding:32px;border-radius:28px;background:rgba(10,12,38,.9);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);text-align:center;}
 .role-tap{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:14px;}
 .role-hidden{font-size:clamp(18px,3.5vw,26px);font-weight:900;color:rgba(255,255,255,.15);letter-spacing:.3em;cursor:pointer;padding:22px;border-radius:18px;background:rgba(255,255,255,.04);border:2px dashed rgba(255,255,255,.15);transition:.3s;}
 .role-hidden:hover{border-color:rgba(83,246,255,.4);}
-
-/* LIVE GAME */
 .live-wrap{max-width:680px;margin:0 auto;}
 .result-toggle{display:flex;gap:10px;margin-bottom:12px;}
 .result-toggle button{flex:1;padding:12px;border-radius:14px;font-size:14px;margin-top:0;}
 .result-toggle button.tog-active{box-shadow:0 0 14px rgba(83,246,255,.3);opacity:1;}
-
-/* OVERLAY */
 #overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(5,5,20,.92);z-index:9999;backdrop-filter:blur(12px);text-align:center;padding:20px;}
 #overlay.show{display:flex;}
 #overlayEmoji{font-size:clamp(40px,8vw,80px);margin-bottom:12px;}
 #overlayTitle{font-size:clamp(36px,7vw,80px);font-weight:900;background:linear-gradient(90deg,#53f6ff,#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 #overlayComment{margin-top:14px;font-size:clamp(14px,2.2vw,22px);color:rgba(255,255,255,.8);}
 #overlayWord{margin-top:10px;font-size:clamp(12px,1.8vw,17px);color:rgba(255,255,255,.5);}
-
-/* GEAR */
 .gear-wrapper{position:fixed;bottom:18px;right:18px;z-index:100;}
 .gear-btn{width:auto;padding:0 14px;height:40px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Outfit',sans-serif;font-weight:600;transition:.2s;margin-top:0;}
 .gear-btn:hover{background:rgba(255,255,255,.15);}
@@ -155,7 +132,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
     </div>
     <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
-    <div class="version" style="margin-top:14px;">v2.7 • Schnuppes Spielportal</div>
+    <div class="version" style="margin-top:14px;">v2.8 • Schnuppes Spielportal</div>
   </div>
 </div>
 
@@ -167,7 +144,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
     <div class="wait-dots" id="waitMsg">⏳ Warte auf Mitspieler…</div>
     <div id="waitPlayerList" style="text-align:left;margin-bottom:14px;"></div>
     <button id="btnStartGame" class="btn-success" style="display:none;" onclick="hostStartGame()">🎮 Spiel starten</button>
-    <div id="dividerKI"><hr class="divider"></div>
+    <hr class="divider" id="dividerKI">
     <button id="btnKI" class="btn-primary" onclick="startVsKI()">🤖 Gegen KI starten</button>
     <button class="btn-secondary" style="margin-top:8px;" onclick="leaveRoom()">← Verlassen</button>
   </div>
@@ -176,7 +153,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: ROLLEN-ANZEIGE -->
 <div id="screenRole" class="screen">
   <div class="role-card">
-    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.7 • Live</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v2.8 • Live</div></div>
     <div style="font-size:clamp(15px,2.5vw,20px);font-weight:700;color:#ff9ef0;margin-bottom:6px;" id="rolePlayerName"></div>
     <div class="role-tap">Tippe auf das Feld – halte das Gerät zu dir!</div>
     <div class="role-hidden" id="roleHidden" onclick="revealRole()">👁️ Tippen zum Anzeigen</div>
@@ -189,15 +166,12 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: SPIELFELD -->
 <div id="screenLive" class="screen">
   <div class="live-wrap">
-    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.7</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v2.8</div></div>
     <div class="status-bar" id="liveStatus">Runde läuft…</div>
-
     <div class="panel" style="margin-bottom:14px;">
       <div class="panel-title">🏆 Punkte</div>
       <div id="liveScores"></div>
     </div>
-
-    <!-- Ergebnis eingeben (nur Host) -->
     <div class="section-box live-box" id="liveResultBox" style="display:none;">
       <div class="panel-title" style="color:#ffb347;">📋 Ergebnis eingeben</div>
       <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:12px;">Wer hat gewonnen?</div>
@@ -215,7 +189,6 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
       <button id="btnLiveConfirm" class="btn-primary" onclick="confirmLive()" disabled>Bestätigen</button>
     </div>
-
     <div class="panel" style="margin-top:14px;">
       <div class="panel-title">📜 Rundenhistorie</div>
       <div id="liveHistory" class="log"></div>
@@ -235,7 +208,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       <div id="scoreTable"></div>
     </div>
     <div class="game-center">
-      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.7</div></div>
+      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v2.8</div></div>
       <div class="status-bar" id="statusBar">Warte…</div>
       <div class="word-box">
         <div class="word-label">Deine Rolle</div>
@@ -315,324 +288,205 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 const ROOM = "imposter/room1";
-const HB_INTERVAL  = 8000;   // Heartbeat alle 8s schreiben
-const OFFLINE_MS   = 20000;  // nach 20s ohne HB = offline
+const HB_INTERVAL = 8000;
+const OFFLINE_MS  = 20000;
 
-// ── Sounds ─────────────────────────────────────────────────────────────────
-function snd(name){
-  try{const a=new Audio(`https://werbung0816-afk.github.io/schnuppes-spielportal/${name}`);a.volume=.5;a.play().catch(()=>{});}catch(_){}
-}
+// ── Sounds ──────────────────────────────────────────────────────────────────
+function snd(name){try{const a=new Audio(`https://werbung0816-afk.github.io/schnuppes-spielportal/${name}`);a.volume=.5;a.play().catch(()=>{});}catch(_){}}
 
-// ── Spielerfarben ────────────────────────────────────────────────────────────
-const PLAYER_COLORS = [
-  { main:"#53f6ff", bg:"rgba(83,246,255,.12)",  border:"rgba(83,246,255,.35)"  }, // Cyan
-  { main:"#ff4fd8", bg:"rgba(255,79,216,.12)",  border:"rgba(255,79,216,.35)"  }, // Pink
-  { main:"#5eff9b", bg:"rgba(94,255,155,.12)",  border:"rgba(94,255,155,.35)"  }, // Grün
-  { main:"#ffb347", bg:"rgba(255,179,71,.12)",  border:"rgba(255,179,71,.35)"  }, // Orange
-  { main:"#a78bfa", bg:"rgba(167,139,250,.12)", border:"rgba(167,139,250,.35)" }, // Lila
-  { main:"#f87171", bg:"rgba(248,113,113,.12)", border:"rgba(248,113,113,.35)" }, // Rot
-  { main:"#34d399", bg:"rgba(52,211,153,.12)",  border:"rgba(52,211,153,.35)"  }, // Mint
-  { main:"#fbbf24", bg:"rgba(251,191,36,.12)",  border:"rgba(251,191,36,.35)"  }, // Gelb
+// ── Spielerfarben ───────────────────────────────────────────────────────────
+const PLAYER_COLORS=[
+  {main:"#53f6ff",bg:"rgba(83,246,255,.12)",border:"rgba(83,246,255,.35)"},
+  {main:"#ff4fd8",bg:"rgba(255,79,216,.12)",border:"rgba(255,79,216,.35)"},
+  {main:"#5eff9b",bg:"rgba(94,255,155,.12)",border:"rgba(94,255,155,.35)"},
+  {main:"#ffb347",bg:"rgba(255,179,71,.12)",border:"rgba(255,179,71,.35)"},
+  {main:"#a78bfa",bg:"rgba(167,139,250,.12)",border:"rgba(167,139,250,.35)"},
+  {main:"#f87171",bg:"rgba(248,113,113,.12)",border:"rgba(248,113,113,.35)"},
+  {main:"#34d399",bg:"rgba(52,211,153,.12)",border:"rgba(52,211,153,.35)"},
+  {main:"#fbbf24",bg:"rgba(251,191,36,.12)",border:"rgba(251,191,36,.35)"},
 ];
-// pid → Farb-Index (stabil für eine Session)
-const colorMap = {};
-function getColor(pid) {
-  if(colorMap[pid] === undefined) {
-    colorMap[pid] = Object.keys(colorMap).length % PLAYER_COLORS.length;
-  }
-  return PLAYER_COLORS[colorMap[pid]];
-}
-function assignColors(players) {
-  // Reihenfolge aus Firebase-Keys → reproduzierbar
-  Object.keys(players).forEach((pid, i) => {
-    if(colorMap[pid] === undefined) colorMap[pid] = i % PLAYER_COLORS.length;
-  });
-}
+const colorMap={};
+function getColor(pid){if(colorMap[pid]===undefined)colorMap[pid]=Object.keys(colorMap).length%PLAYER_COLORS.length;return PLAYER_COLORS[colorMap[pid]];}
+function assignColors(players){Object.keys(players).forEach((pid,i)=>{if(colorMap[pid]===undefined)colorMap[pid]=i%PLAYER_COLORS.length;});}
 
 // ── Globals ─────────────────────────────────────────────────────────────────
-const KI_NAMES = ["Nici","Marco","Leni","Mia","Nele","Dani","Finn","Sascha"];
-const KI_GENERIC = ["interessant","besonders","schön","nützlich","bekannt","groß","typisch","beliebt","wichtig","natürlich"];
-const KI_ADJ     = ["toll","bunt","warm","kalt","laut","leise","schnell","langsam","rund","weich"];
-
-let myId=null, myName=null, isHost=false, gameMode="live";
-let state=null, myVote=null, hbTimer=null;
-// Live-Modus lokaler Zustand
-let liveWinner=null, liveGuess=null;
+const KI_NAMES=["Nici","Marco","Leni","Mia","Nele","Dani","Finn","Sascha"];
+const KI_GENERIC=["interessant","besonders","schön","nützlich","bekannt","groß","typisch","beliebt","wichtig","natürlich"];
+const KI_ADJ=["toll","bunt","warm","kalt","laut","leise","schnell","langsam","rund","weich"];
+let myId=null,myName=null,isHost=false,gameMode="live";
+let state=null,myVote=null,hbTimer=null;
+let liveWinner=null,liveGuess=null;
+let myRevealStep=0,viewingRole=false;
+let liveResultUIInitialized=false,lastLiveRound=-1;
 
 // ── Wörter ──────────────────────────────────────────────────────────────────
 let words=[];
-(async()=>{
-  try{const r=await fetch("words.json");words=(await r.json()).words;}
-  catch(_){words=["Elefant","Pizza","Strand","Gitarre","Vulkan","Delfin","Kaktus","Rakete","Pinguin","Wasserfall"];}
-})();
-const pickWord = () => words[Math.floor(Math.random()*words.length)]||"Geheimnis";
+(async()=>{try{const r=await fetch("words.json");words=(await r.json()).words;}catch(_){words=["Elefant","Pizza","Strand","Gitarre","Vulkan","Delfin","Kaktus","Rakete","Pinguin","Wasserfall"];}})();
+const pickWord=()=>words[Math.floor(Math.random()*words.length)]||"Geheimnis";
 
 // ── Utils ───────────────────────────────────────────────────────────────────
-function getId(){
-  let id=sessionStorage.getItem("imp_id");
-  if(!id){id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);sessionStorage.setItem("imp_id",id);}
-  return id;
-}
+function getId(){let id=sessionStorage.getItem("imp_id");if(!id){id="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);sessionStorage.setItem("imp_id",id);}return id;}
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
 function isOnline(p){return p.isKI||!p.lastSeen||(Date.now()-p.lastSeen)<OFFLINE_MS;}
-function showScreen(id){
-  ["screenSetup","screenWait","screenRole","screenLive","screenGame"]
-    .forEach(s=>{ document.getElementById(s).className="screen"+(s===id?" active":""); });
-}
-function pids(st){return Object.keys(st.players||{});}
-function getTurn(st){
-  const k=Object.keys(st.players||{}).filter(pid=>st.players[pid]?.name?.trim());
-  if(!k.length) return null;
-  return k[(st.turnIndex||0)%k.length];
+function validPlayers(players){return Object.fromEntries(Object.entries(players||{}).filter(([,p])=>p.name&&p.name.trim()!==""));}
+function showScreen(id){["screenSetup","screenWait","screenRole","screenLive","screenGame"].forEach(s=>{document.getElementById(s).className="screen"+(s===id?" active":"");});}
+function pids(st){return Object.keys(validPlayers(st.players||{}));}
+function getTurn(st){const k=pids(st);if(!k.length)return null;return k[(st.turnIndex||0)%k.length];}
+// playerOrder als String speichern – kein Firebase-Array-Problem
+function getPlayerOrder(st){
+  if(!st.playerOrder)return pids(st);
+  if(typeof st.playerOrder==="string")return st.playerOrder.split(",").filter(pid=>st.players?.[pid]?.name?.trim());
+  if(Array.isArray(st.playerOrder))return st.playerOrder.filter(pid=>st.players?.[pid]?.name?.trim());
+  return Object.keys(st.playerOrder).sort((a,b)=>Number(a)-Number(b)).map(k=>st.playerOrder[k]).filter(pid=>st.players?.[pid]?.name?.trim());
 }
 
-// ── Mode selection ──────────────────────────────────────────────────────────
-window.selectMode = function(m){
+// ── Mode ─────────────────────────────────────────────────────────────────────
+window.selectMode=function(m){
   gameMode=m;
-  document.getElementById("cardLive").className  ="mode-card"+(m==="live"?" selected-live":"");
+  document.getElementById("cardLive").className="mode-card"+(m==="live"?" selected-live":"");
   document.getElementById("cardOnline").className="mode-card"+(m==="online"?" selected-online":"");
 };
-selectMode("live"); // default
+selectMode("live");
 
-// ── Join ────────────────────────────────────────────────────────────────────
-window.joinRoom = async function(){
+// ── Join ─────────────────────────────────────────────────────────────────────
+window.joinRoom=async function(){
   const n=document.getElementById("nameInput").value.trim();
-  if(!n){
-    document.getElementById("nameInput").style.borderColor="#ff4fd8";
-    setTimeout(()=>document.getElementById("nameInput").style.borderColor="",1500);
-    return;
-  }
-  myId=getId(); myName=n;
-  sessionStorage.setItem("imp_name",n);
-  sessionStorage.setItem("imp_mode",gameMode);
-
+  if(!n){document.getElementById("nameInput").style.borderColor="#ff4fd8";setTimeout(()=>document.getElementById("nameInput").style.borderColor="",1500);return;}
+  myId=getId();myName=n;
+  sessionStorage.setItem("imp_name",n);sessionStorage.setItem("imp_mode",gameMode);
   showScreen("screenWait");
   document.getElementById("waitName").textContent="👋 "+n;
-  document.getElementById("waitBadge").textContent = gameMode==="live"?"🏠 Live-Modus":"💻 Online-Modus";
-  document.getElementById("waitBadge").className   = "mode-badge "+(gameMode==="live"?"live":"online");
-
+  document.getElementById("waitBadge").textContent=gameMode==="live"?"🏠 Live-Modus":"💻 Online-Modus";
+  document.getElementById("waitBadge").className="mode-badge "+(gameMode==="live"?"live":"online");
   const snap=await get(ref(db,ROOM));
   const st=snap.val();
   if(!st||!st.players||!Object.keys(st.players).length){
-    // Erster Spieler → Raum neu anlegen
     isHost=true;
-    await set(ref(db,ROOM),{
-      host:myId, phase:"wait", round:0, turnIndex:0,
-      word:"", imposterId:"", gameMode,
+    await set(ref(db,ROOM),{host:myId,phase:"wait",round:0,turnIndex:0,word:"",imposterId:"",gameMode,
       players:{[myId]:{name:n,score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now()}},
-      hints1:{},hints2:{},voteResults:{},hintPhase:1,imposterGuess:"",history:[],timestamp:Date.now()
-    });
+      hints1:{},hints2:{},voteResults:{},hintPhase:1,imposterGuess:"",history:[],timestamp:Date.now()});
     document.getElementById("btnStartGame").style.display="block";
   } else {
     isHost=(st.host===myId);
     gameMode=st.gameMode||gameMode;
-    const existingPlayers=st.players||{};
-    const alreadyIn=!!existingPlayers[myId];
-
+    const existing=st.players||{};
+    const alreadyIn=!!existing[myId];
     if(st.phase==="wait"){
-      // Phantom-Einträge bereinigen (kein Name)
-      const cleanupUpdates={};
-      Object.entries(existingPlayers).forEach(([pid,p])=>{
-        if(!p.name||p.name.trim()==="") cleanupUpdates[`players/${pid}`]=null;
-      });
-      if(Object.keys(cleanupUpdates).length) await update(ref(db,ROOM),cleanupUpdates);
-
-      // Maximal 8 Spieler, keinen neuen anlegen wenn schon voll
-      const validCount=Object.values(existingPlayers).filter(p=>p.name&&p.name.trim()!=="").length;
-      if(!alreadyIn && validCount>=8){
-        alert("Der Raum ist voll (max. 8 Spieler).");
-        showScreen("screenSetup");
-        return;
-      }
+      const cleanup={};
+      Object.entries(existing).forEach(([pid,p])=>{if(!p.name||p.name.trim()==="")cleanup[`players/${pid}`]=null;});
+      if(Object.keys(cleanup).length)await update(ref(db,ROOM),cleanup);
     }
-
     if(alreadyIn){
-      // Bekannter Spieler rejoined → nur lastSeen + Name aktualisieren, Score behalten
-      await update(ref(db,ROOM+"/players/"+myId),{
-        name:n, lastSeen:Date.now()
-      });
+      await update(ref(db,ROOM+"/players/"+myId),{name:n,lastSeen:Date.now()});
     } else {
-      // Neuer Spieler → Score 0, frische Felder
-      await update(ref(db,ROOM+"/players/"+myId),{
-        name:n, score:0, hint1:"",hint2:"",vote:"", lastSeen:Date.now()
-      });
+      await update(ref(db,ROOM+"/players/"+myId),{name:n,score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now()});
     }
   }
-  startHB();
-  startListen();
+  startHB();startListen();
 };
 
-// ── Heartbeat ───────────────────────────────────────────────────────────────
-function startHB(){
-  if(hbTimer)clearInterval(hbTimer);
-  hbTimer=setInterval(()=>{ if(myId)update(ref(db,ROOM+"/players/"+myId),{lastSeen:Date.now()}); },HB_INTERVAL);
-}
+// ── Heartbeat ────────────────────────────────────────────────────────────────
+function startHB(){if(hbTimer)clearInterval(hbTimer);hbTimer=setInterval(()=>{if(myId)update(ref(db,ROOM+"/players/"+myId),{lastSeen:Date.now()});},HB_INTERVAL);}
 
-// ── Central listener ────────────────────────────────────────────────────────
+// ── Listener ─────────────────────────────────────────────────────────────────
 function startListen(){
-  onValue(ref(db,ROOM), snap=>{
-    const st=snap.val();
-    if(!st)return;
+  onValue(ref(db,ROOM),snap=>{
+    const st=snap.val();if(!st)return;
     state=st;
+    if(st.players)assignColors(st.players);
     dispatch(st);
   });
 }
 
 function dispatch(st){
   const phase=st.phase||"wait";
-  const mode =st.gameMode||"online";
-  if(st.players) assignColors(st.players);
-
+  const mode=st.gameMode||"online";
   if(phase==="wait"){
     showScreen("screenWait");
     renderWaitList(st);
     isHost=(st.host===myId);
-    // btnStartGame wird von renderWaitList gesteuert
+    document.getElementById("btnStartGame").style.display=isHost?"block":"none";
+    // KI-Button nur im Online-Modus
+    const kiBtn=document.getElementById("btnKI");
+    const divKI=document.getElementById("dividerKI");
+    if(mode==="live"){kiBtn.style.display="none";divKI.style.display="none";}
+    else{kiBtn.style.display="block";divKI.style.display="block";}
     return;
   }
-
   if(mode==="live"){
-    if(phase==="roleReveal") handleRoleReveal(st);
-    else                     handleLivePlay(st);
+    if(phase==="roleReveal")handleRoleReveal(st);
+    else handleLivePlay(st);
   } else {
     handleOnlinePlay(st);
   }
 }
 
-// ── Wait screen ─────────────────────────────────────────────────────────────
+// ── Wait ─────────────────────────────────────────────────────────────────────
 function renderWaitList(st){
-  const c=document.getElementById("waitPlayerList"); c.innerHTML="";
-  const validPlayers=Object.entries(st.players||{})
-    .filter(([,p])=>p.name&&p.name.trim()!=="");
-  validPlayers.forEach(([pid,p])=>{
+  const c=document.getElementById("waitPlayerList");c.innerHTML="";
+  Object.entries(st.players||{}).filter(([,p])=>p.name&&p.name.trim()!=="").forEach(([pid,p])=>{
     const col=getColor(pid);
     c.innerHTML+=`<div style="padding:7px 11px;margin-bottom:5px;border-radius:10px;background:${col.bg};border:1px solid ${col.border};font-size:13px;">
       <span style="color:${col.main};font-weight:700;">${pid===st.host?"👑 ":"👤 "}${esc(p.name)}</span>${pid===myId?" (Du)":""}
     </div>`;
   });
-  const mode=st.gameMode||gameMode;
-  const kiBtn=document.getElementById("btnKI");
-  const dividerKI=document.getElementById("dividerKI");
-  const startBtn=document.getElementById("btnStartGame");
-
-  if(mode==="live"){
-    // Live: kein KI-Button, kein Divider
-    if(kiBtn) kiBtn.style.display="none";
-    if(dividerKI) dividerKI.style.display="none";
-    // Live: jeder kann starten (alle sitzen zusammen)
-    if(startBtn){
-      startBtn.style.display="block";
-      startBtn.disabled=false;
-      startBtn.style.opacity="1";
-      startBtn.title="";
-    }
-  } else {
-    // Online: KI-Button anzeigen, Start-Button nur für Host
-    if(kiBtn){ kiBtn.style.display="block"; }
-    if(dividerKI) dividerKI.style.display="block";
-    if(startBtn) startBtn.style.display=isHost?"block":"none";
-    if(kiBtn){
-      const n=validPlayers.length;
-      kiBtn.textContent = n>=3 ? "▶ Spiel starten" : "🤖 Gegen KI starten";
-    }
-  }
 }
 
-// ── Host start ───────────────────────────────────────────────────────────────
-window.hostStartGame = async function(){
-  const st=state; if(!st)return;
+// ── Host start ────────────────────────────────────────────────────────────────
+window.hostStartGame=async function(){
+  const st=state;if(!st)return;
   const mode=st.gameMode||gameMode;
-  // Im Live-Modus darf jeder starten
-  if(mode==="live") isHost=true;
   const players={};
-  // Nur Spieler mit echtem Namen übernehmen
-  Object.entries(st.players||{}).forEach(([pid,p])=>{
-    if(p.name&&p.name.trim()!=="") players[pid]={...p,hint1:"",hint2:"",vote:""};
-  });
+  Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name&&p.name.trim()!=="")players[pid]={...p,hint1:"",hint2:"",vote:""};});
   const word=pickWord();
   const ids=Object.keys(players);
   const impId=ids[Math.floor(Math.random()*ids.length)];
-
   if(mode==="live"){
-    const playerOrder=Object.keys(players).join(","); // als String → kein Firebase-Array-Problem
-    await update(ref(db,ROOM),{
-      phase:"roleReveal", round:(st.round||0)+1, word, imposterId:impId,
-      hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
-      liveStep:0, playerOrder, players, history:st.history||[]
-    });
+    const playerOrder=ids.join(",");
+    await update(ref(db,ROOM),{phase:"roleReveal",round:(st.round||0)+1,word,imposterId:impId,
+      hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",
+      liveStep:0,playerOrder,players,history:st.history||[]});
   } else {
-    await update(ref(db,ROOM),{
-      phase:"play", round:1, turnIndex:0, word, imposterId:impId,
-      hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"", players
-    });
+    await update(ref(db,ROOM),{phase:"play",round:1,turnIndex:0,word,imposterId:impId,
+      hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players});
   }
 };
 
-// ── vs KI ────────────────────────────────────────────────────────────────────
-window.startVsKI = async function(){
-  const st=state; if(!st)return;
+// ── vs KI ─────────────────────────────────────────────────────────────────────
+window.startVsKI=async function(){
+  const st=state;if(!st)return;
   isHost=true;
-  // Nur Spieler mit echtem Namen
   const players={};
-  Object.entries(st.players||{}).forEach(([pid,p])=>{
-    if(p.name&&p.name.trim()!=="") players[pid]={...p};
-  });
-  const currentCount=Object.keys(players).length;
-  if(currentCount < 3){
+  Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name&&p.name.trim()!=="")players[pid]={...p,hint1:"",hint2:"",vote:""};});
+  if(Object.keys(players).length<3){
     const taken=Object.values(players).map(p=>p.name.toLowerCase().replace(/\s*\(ki\)/,""));
     const avail=KI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));
     shuffle(avail);
-    const need=3-currentCount;
+    const need=3-Object.keys(players).length;
     for(let i=0;i<need&&i<avail.length;i++){
       const kid="ki_"+Date.now()+"_"+i;
       players[kid]={name:avail[i]+" (KI)",score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now(),isKI:true};
     }
   }
-  Object.keys(players).forEach(pid=>{ players[pid]={...players[pid],hint1:"",hint2:"",vote:""}; });
   const word=pickWord();
   const ids=Object.keys(players);
   const impId=ids[Math.floor(Math.random()*ids.length)];
-  const mode=st.gameMode||gameMode;
-  const playerOrder=Object.keys(players).join(",");
-  await set(ref(db,ROOM),{
-    ...st, phase: mode==="live"?"roleReveal":"play",
-    round:1, turnIndex:0, word, imposterId:impId,
-    hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
-    liveStep:0, playerOrder, players, host:myId, gameMode:mode, history:[], timestamp:Date.now()
-  });
+  await set(ref(db,ROOM),{...st,phase:"play",round:1,turnIndex:0,word,imposterId:impId,
+    hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",
+    players,host:myId,gameMode:"online",history:[],timestamp:Date.now()});
 };
 
 // ════════════════════════════════════════════════════════════════════════════
 // LIVE MODUS
 // ════════════════════════════════════════════════════════════════════════════
 
-// playerOrder wird als String "pid1,pid2,pid3" gespeichert → kein Firebase-Array-Problem
-function getPlayerOrder(st){
-  if(!st.playerOrder) return pids(st);
-  if(typeof st.playerOrder==="string") return st.playerOrder.split(",").filter(Boolean);
-  // Fallback: Firebase-Objekt
-  if(Array.isArray(st.playerOrder)) return st.playerOrder;
-  return Object.keys(st.playerOrder).sort((a,b)=>Number(a)-Number(b)).map(k=>st.playerOrder[k]);
-}
-
 function handleRoleReveal(st){
-  // Sicherheit: falls phase bereits livePlay, direkt weiter
-  if(st.phase==="livePlay"){
-    viewingRole=false;
-    handleLivePlay(st);
-    return;
-  }
+  if(st.phase==="livePlay"){viewingRole=false;handleLivePlay(st);return;}
   const ids=getPlayerOrder(st);
   const step=st.liveStep||0;
-
-  // Schutzmechanismus: playerOrder leer oder step zu groß
   if(!ids.length){
-    // playerOrder reparieren – jedes Gerät kann das
-    const freshOrder=Object.keys(st.players||{})
-      .filter(pid=>st.players[pid]?.name?.trim())
-      .join(",");
-    update(ref(db,ROOM),{playerOrder:freshOrder, liveStep:0});
+    if(isHost){const fo=pids(st).join(",");update(ref(db,ROOM),{playerOrder:fo,liveStep:0});}
     showScreen("screenWait");
     document.getElementById("waitMsg").textContent="⏳ Starte Rollenverteilung…";
     document.getElementById("waitPlayerList").innerHTML="";
@@ -640,18 +494,13 @@ function handleRoleReveal(st){
     document.getElementById("btnKI").style.display="none";
     return;
   }
-
   if(step>=ids.length){
-    // Jedes Gerät kann livePlay setzen – kein isHost nötig im Live-Modus
-    update(ref(db,ROOM),{phase:"livePlay"});
+    if(isHost)update(ref(db,ROOM),{phase:"livePlay"});
     return;
   }
-
   const curPid=ids[step];
   const curName=st.players[curPid]?.name||"?";
-
   if(curPid===myId){
-    // Wenn gerade viewing → Screen NICHT zurücksetzen, Inhalt bleibt
     if(!viewingRole){
       showScreen("screenRole");
       document.getElementById("rolePlayerName").textContent="👤 "+myName;
@@ -662,7 +511,6 @@ function handleRoleReveal(st){
       document.getElementById("btnRoleStart").style.display="none";
     }
   } else {
-    // Nur wechseln wenn wir NICHT gerade selbst schauen
     if(!viewingRole){
       showScreen("screenWait");
       document.getElementById("waitMsg").textContent=`⏳ ${esc(curName)} schaut gerade…`;
@@ -673,25 +521,17 @@ function handleRoleReveal(st){
   }
 }
 
-// myRevealStep: den step zum Zeitpunkt des Tippens merken, nicht aus state lesen
-let myRevealStep=0;
-// viewingRole: verhindert dass Listener den Role-Screen schließt während man schaut
-let viewingRole=false;
-
-window.revealRole = function(){
-  const st=state; if(!st)return;
-  // step einfrieren + Screen gegen Listener-Updates sperren
+window.revealRole=function(){
+  const st=state;if(!st)return;
   myRevealStep=st.liveStep||0;
   viewingRole=true;
   document.getElementById("roleHidden").style.display="none";
-  const c=document.getElementById("roleContent"); c.style.display="block";
+  const c=document.getElementById("roleContent");c.style.display="block";
   const isImp=st.imposterId===myId;
   if(isImp){
-    c.innerHTML=`<div class="imposter-label">🕵️ Du bist der<br>IMPOSTER!</div>
-      <div class="imposter-sub" style="margin-top:10px;">Bluff überzeugend!</div>`;
+    c.innerHTML=`<div class="imposter-label">🕵️ Du bist der<br>IMPOSTER!</div><div class="imposter-sub" style="margin-top:10px;">Bluff überzeugend!</div>`;
   } else {
-    c.innerHTML=`<div class="word-label">Das geheime Wort ist</div>
-      <div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
+    c.innerHTML=`<div class="word-label">Das geheime Wort ist</div><div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
   }
   const ids=getPlayerOrder(st);
   const nextBtn=document.getElementById("btnRoleNext");
@@ -699,74 +539,54 @@ window.revealRole = function(){
   if(myRevealStep<ids.length-1){
     const nextName=st.players?.[ids[myRevealStep+1]]?.name||"?";
     document.getElementById("btnRoleNextName").textContent=esc(nextName);
-    nextBtn.style.display="block"; startBtn.style.display="none";
+    nextBtn.style.display="block";startBtn.style.display="none";
   } else {
-    nextBtn.style.display="none"; startBtn.style.display="block";
+    nextBtn.style.display="none";startBtn.style.display="block";
   }
 };
 
-window.roleNext = async function(){
-  viewingRole=false; // Sperre aufheben bevor Listener wieder feuert
+window.roleNext=async function(){
+  viewingRole=false;
   const newStep=myRevealStep+1;
   await update(ref(db,ROOM),{liveStep:newStep});
 };
 
-window.liveBegin = async function(){
+window.liveBegin=async function(){
   viewingRole=false;
-  const st=state; if(!st)return;
+  const st=state;if(!st)return;
   const ids=getPlayerOrder(st);
-  // liveStep auf ids.length setzen → handleRoleReveal erkennt sofort "alle fertig"
-  await update(ref(db,ROOM),{phase:"livePlay", liveStep:ids.length});
+  await update(ref(db,ROOM),{phase:"livePlay",liveStep:ids.length});
 };
-
-// Verhindert dass handleLivePlay die laufende Eingabe zurücksetzt
-let liveResultUIInitialized=false;
-let lastLiveRound=-1;
 
 function handleLivePlay(st){
   showScreen("screenLive");
   document.getElementById("liveStatus").textContent=`Runde ${st.round||1} – Spielt mündlich!`;
-
-  // Punkte immer aktualisieren
-  const t=document.getElementById("liveScores"); t.innerHTML="";
-  Object.entries(st.players||{}).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
+  const t=document.getElementById("liveScores");t.innerHTML="";
+  Object.entries(validPlayers(st.players||{})).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
     const col=getColor(pid);
-    t.innerHTML+=`<div class="score-row">
-      <span class="score-player" style="color:${col.main};">${esc(p.name)}</span>
-      <span class="score-val" style="color:${col.main};">${p.score||0}</span>
-    </div>`;
+    t.innerHTML+=`<div class="score-row"><span class="score-player" style="color:${col.main};">${esc(p.name)}</span><span class="score-val" style="color:${col.main};">${p.score||0}</span></div>`;
   });
-
-  // History immer aktualisieren
-  const h=document.getElementById("liveHistory"); h.innerHTML="";
-  (st.history||[]).slice(-10).reverse().forEach(e=>{ h.innerHTML+=`<div class="log-entry">${esc(e)}</div>`; });
-
-  // Nächste-Runde-Button: nur für Host, nur nach Ergebnis
+  const h=document.getElementById("liveHistory");h.innerHTML="";
+  (st.history||[]).slice(-10).reverse().forEach(e=>{h.innerHTML+=`<div class="log-entry">${esc(e)}</div>`;});
   const nnr=document.getElementById("btnLiveNextRound");
-  if(nnr) nnr.style.display=(isHost&&st.phase==="liveResult")?"block":"none";
-
-  // Result-Box: nur für Host, nur in livePlay (nicht nach Bestätigung)
+  if(nnr)nnr.style.display=(isHost&&st.phase==="liveResult")?"block":"none";
   const rb=document.getElementById("liveResultBox");
   rb.style.display=(isHost&&st.phase==="livePlay")?"block":"none";
-
   const currentRound=st.round||1;
   if(isHost&&st.phase==="livePlay"&&currentRound!==lastLiveRound){
-    // Neue Runde → UI einmalig zurücksetzen
-    lastLiveRound=currentRound;
-    liveResultUIInitialized=false;
+    lastLiveRound=currentRound;liveResultUIInitialized=false;
   }
   if(isHost&&st.phase==="livePlay"&&!liveResultUIInitialized){
     liveResultUIInitialized=true;
-    liveWinner=null; liveGuess=null;
+    liveWinner=null;liveGuess=null;
     ["btnCrew","btnImp"].forEach(id=>document.getElementById(id).classList.remove("tog-active"));
     document.getElementById("guessRow").style.display="none";
     document.getElementById("guessAnswer").textContent="";
     document.getElementById("btnLiveConfirm").disabled=true;
   }
-  // Wenn liveResultUIInitialized=true: UI-Zustand NICHT anfassen → Eingabe bleibt erhalten
 }
 
-window.pickWinner = function(w){
+window.pickWinner=function(w){
   liveWinner=w;
   document.getElementById("btnCrew").classList.toggle("tog-active",w==="crew");
   document.getElementById("btnImp").classList.toggle("tog-active",w==="imposter");
@@ -776,23 +596,20 @@ window.pickWinner = function(w){
   document.getElementById("btnLiveConfirm").disabled=true;
 };
 
-window.pickGuess = function(yes){
+window.pickGuess=function(yes){
   liveGuess=yes;
   document.getElementById("guessAnswer").textContent=yes?"✓ Ja, erraten!":"✗ Nicht erraten";
   document.getElementById("btnLiveConfirm").disabled=false;
 };
 
-window.confirmLive = async function(){
+window.confirmLive=async function(){
   if(liveWinner===null||liveGuess===null)return;
-  const st=state; if(!st)return;
+  const st=state;if(!st)return;
   const players={...st.players};
   const impId=st.imposterId;
   const updates={};
-
   if(liveWinner==="crew"){
-    Object.entries(players).forEach(([pid,p])=>{
-      if(pid!==impId) updates[`players/${pid}/score`]=(p.score||0)+1;
-    });
+    Object.entries(players).forEach(([pid,p])=>{if(pid!==impId)updates[`players/${pid}/score`]=(p.score||0)+1;});
   } else {
     updates[`players/${impId}/score`]=(players[impId]?.score||0)+1;
   }
@@ -818,96 +635,67 @@ function handleOnlinePlay(st){
   renderOnline(st);
   if(isHost){
     replaceOfflineWithKI(st);
-    if(st.phase==="play") setTimeout(()=>kiTurn(),600);
-    if(st.phase==="vote") setTimeout(()=>kiVote(),600);
+    if(st.phase==="play")setTimeout(()=>kiTurn(),600);
+    if(st.phase==="vote")setTimeout(()=>kiVote(),600);
   }
 }
 
 function renderOnline(st){
-  // Phantoms (kein Name) aus der Anzeige filtern
-  const players={};
-  Object.entries(st.players||{}).forEach(([pid,p])=>{
-    if(p.name&&p.name.trim()!=="") players[pid]=p;
-  });
+  const players=validPlayers(st.players||{});
   const phase=st.phase||"play";
   renderPlayerList(players,st);
   renderScoreTable(players,"scoreTable");
-  renderHintPanels(st);
-
+  renderHintPanels(st,players);
   const turnPid=getTurn(st);
   const turnName=players[turnPid]?.name||"?";
   const isMy=(turnPid===myId);
   let sb="";
-  if(phase==="play")
-    sb=`Runde ${st.round||1} | Hinweisphase ${st.hintPhase||1}/2 | Am Zug: <span class="you-active">${esc(turnName)}${isMy?" – du bist dran ✦":""}</span>`;
-  else if(phase==="vote") sb="🗳️ Abstimmungsphase";
-  else if(phase==="result") sb="📊 Ergebnis";
+  if(phase==="play")sb=`Runde ${st.round||1} | Hinweisphase ${st.hintPhase||1}/2 | Am Zug: <span class="you-active">${esc(turnName)}${isMy?" – du bist dran ✦":""}</span>`;
+  else if(phase==="vote")sb="🗳️ Abstimmungsphase";
+  else if(phase==="result")sb="📊 Ergebnis";
   document.getElementById("statusBar").innerHTML=sb;
   document.getElementById("roundNum").textContent=st.round||1;
   document.getElementById("phaseName").textContent=phase==="play"?`Hinweise ${st.hintPhase||1}/2`:phase==="vote"?"Abstimmung":"Ergebnis";
   document.getElementById("turnName").textContent=phase==="play"?esc(turnName):"—";
-
-  // word/role box
   const wd=document.getElementById("wordDisplay");
-  if(st.imposterId===myId)
-    wd.innerHTML=`<div class="imposter-label">🕵️ Du bist der Imposter!</div><div class="imposter-sub">Bluff überzeugend!</div>`;
-  else
-    wd.innerHTML=`<div class="word-display">${esc(st.word||"—")}</div>`;
-
-  // sections
+  if(st.imposterId===myId)wd.innerHTML=`<div class="imposter-label">🕵️ Du bist der Imposter!</div><div class="imposter-sub">Bluff überzeugend!</div>`;
+  else wd.innerHTML=`<div class="word-display">${esc(st.word||"—")}</div>`;
   ["hintSection","voteSection","guessSection","resultSection"].forEach(id=>document.getElementById(id).style.display="none");
-  if(phase==="play"&&isMy){
-    const key=(st.hintPhase||1)===1?"hint1":"hint2";
-    if(!(players[myId]?.[key])) document.getElementById("hintSection").style.display="block";
-  }
-  if(phase==="vote"){ document.getElementById("voteSection").style.display="block"; renderVoteBtns(players); }
-  if(phase==="result"){
-    document.getElementById("resultSection").style.display="block";
-    renderResult(st,players);
-    if(st.imposterId===myId&&!st.imposterGuess) document.getElementById("guessSection").style.display="block";
-  }
+  if(phase==="play"&&isMy){const key=(st.hintPhase||1)===1?"hint1":"hint2";if(!(players[myId]?.[key]))document.getElementById("hintSection").style.display="block";}
+  if(phase==="vote"){document.getElementById("voteSection").style.display="block";renderVoteBtns(players);}
+  if(phase==="result"){document.getElementById("resultSection").style.display="block";renderResult(st,players);if(st.imposterId===myId&&!st.imposterGuess)document.getElementById("guessSection").style.display="block";}
 }
 
 function renderPlayerList(players,st){
-  const c=document.getElementById("playerList"); c.innerHTML="";
+  const c=document.getElementById("playerList");c.innerHTML="";
   const turnPid=getTurn(st);
   Object.entries(players).forEach(([pid,p])=>{
+    const col=getColor(pid);
     const hp=(st.hintPhase||1);
     const hint=(hp===1?p.hint1:p.hint2)||"";
-    const col=getColor(pid);
     const isActive=turnPid===pid&&st.phase==="play";
     const isImpRev=st.phase==="result"&&st.imposterId===pid;
     const d=document.createElement("div");
     d.className="player-card";
-    // Farbe als inline-style; active-turn / imposter-reveal überschreiben border
-    d.style.cssText=`background:${col.bg};border-color:${isActive?"#53f6ff":isImpRev?"#ff4fd8":col.border};`
-      +(isActive?`box-shadow:0 0 16px rgba(83,246,255,.3);`:"")
-      +(isImpRev?`box-shadow:0 0 16px rgba(255,79,216,.3);`:"");
-    d.innerHTML=`<div class="player-name" style="color:${col.main};">${esc(p.name)}${pid===myId?" (Du)":""}${isOnline(p)?"":" 💤"}</div>
-      ${hint?`<div class="player-hint">💬 ${esc(hint)}</div>`:""}
-      <div class="score-badge" style="color:${col.main};">${p.score||0}pt</div>
-      ${p.isKI?`<div class="player-badge ki">KI</div>`:""}`;
+    d.style.cssText=`background:${col.bg};border-color:${isActive?"#53f6ff":isImpRev?"#ff4fd8":col.border};${isActive?"box-shadow:0 0 16px rgba(83,246,255,.3);":""}${isImpRev?"box-shadow:0 0 16px rgba(255,79,216,.3);":""}`;
+    d.innerHTML=`<div class="player-name" style="color:${col.main};">${esc(p.name)}${pid===myId?" (Du)":""}${isOnline(p)?"":" 💤"}</div>${hint?`<div class="player-hint">💬 ${esc(hint)}</div>`:""}<div class="score-badge" style="color:${col.main};">${p.score||0}pt</div>${p.isKI?`<div class="player-badge ki">KI</div>`:""}`;
     c.appendChild(d);
   });
 }
 
 function renderScoreTable(players,elId){
-  const t=document.getElementById(elId); t.innerHTML="";
+  const t=document.getElementById(elId);t.innerHTML="";
   Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([pid,p])=>{
     const col=getColor(pid);
-    t.innerHTML+=`<div class="score-row">
-      <span class="score-player" style="color:${col.main};">${esc(p.name)}</span>
-      <span class="score-val" style="color:${col.main};">${p.score||0}</span>
-    </div>`;
+    t.innerHTML+=`<div class="score-row"><span class="score-player" style="color:${col.main};">${esc(p.name)}</span><span class="score-val" style="color:${col.main};">${p.score||0}</span></div>`;
   });
 }
 
-function renderHintPanels(st){
-  const players=st.players||{};
+function renderHintPanels(st,players){
   const log=document.getElementById("hintLog");
   const h1=document.getElementById("hints1");
   const h2=document.getElementById("hints2");
-  log.innerHTML=""; h1.innerHTML=""; h2.innerHTML="";
+  log.innerHTML="";h1.innerHTML="";h2.innerHTML="";
   Object.entries(players).forEach(([pid,p])=>{
     const col=getColor(pid);
     const n=`<span class="le-name" style="color:${col.main};">${esc(p.name)}:</span>`;
@@ -917,24 +705,21 @@ function renderHintPanels(st){
 }
 
 function renderVoteBtns(players){
-  const c=document.getElementById("voteButtons"); c.innerHTML="";
+  const c=document.getElementById("voteButtons");c.innerHTML="";
   Object.entries(players).forEach(([pid,p])=>{
     if(pid===myId)return;
     const col=getColor(pid);
     const b=document.createElement("button");
     b.className="vote-btn"+(myVote===pid?" selected":"");
-    b.style.cssText=myVote===pid
-      ?`border-color:${col.main};background:${col.bg};box-shadow:0 0 10px ${col.border};`
-      :`border-color:${col.border};`;
+    b.style.cssText=myVote===pid?`border-color:${col.main};background:${col.bg};`:`border-color:${col.border};`;
     b.innerHTML=`<span style="color:${col.main};font-weight:800;">●</span> ${esc(p.name)}${p.isKI?" (KI)":""}`;
-    b.onclick=()=>{ myVote=pid; renderVoteBtns(players); document.getElementById("btnVote").disabled=false; };
+    b.onclick=()=>{myVote=pid;renderVoteBtns(players);document.getElementById("btnVote").disabled=false;};
     c.appendChild(b);
   });
 }
 
 function renderResult(st,players){
-  const tally={};
-  Object.values(players).forEach(p=>{ if(p.vote)tally[p.vote]=(tally[p.vote]||0)+1; });
+  const tally={};Object.values(players).forEach(p=>{if(p.vote)tally[p.vote]=(tally[p.vote]||0)+1;});
   const topId=Object.entries(tally).sort((a,b)=>b[1]-a[1])[0]?.[0];
   const crewWon=topId===st.imposterId;
   const impName=esc(players[st.imposterId]?.name||"?");
@@ -944,54 +729,51 @@ function renderResult(st,players){
   document.getElementById("btnNext").style.display=isHost?"block":"none";
 }
 
-// ── Online actions ──────────────────────────────────────────────────────────
-window.submitHint = async function(){
-  const val=document.getElementById("hintInput").value.trim(); if(!val)return;
-  const st=state; if(!st)return;
-  const hp=st.hintPhase||1, key=hp===1?"hint1":"hint2";
+// ── Online actions ────────────────────────────────────────────────────────────
+window.submitHint=async function(){
+  const val=document.getElementById("hintInput").value.trim();if(!val)return;
+  const st=state;if(!st)return;
+  const hp=st.hintPhase||1,key=hp===1?"hint1":"hint2";
   await update(ref(db,ROOM+"/players/"+myId),{[key]:val});
-  document.getElementById("hintInput").value="";
-  snd("dice.mp3");
+  document.getElementById("hintInput").value="";snd("dice.mp3");
   const ids=pids(st);
   const nextIdx=((st.turnIndex||0)+1)%ids.length;
   const upd={turnIndex:nextIdx};
   const updP={...st.players,[myId]:{...st.players[myId],[key]:val}};
-  if(Object.values(updP).every(p=>p[key]&&p[key].length>0)){
-    if(hp===1){upd.hintPhase=2;upd.turnIndex=0;}
-    else       upd.phase="vote";
+  if(Object.values(updP).filter(p=>p.name?.trim()).every(p=>p[key]&&p[key].length>0)){
+    if(hp===1){upd.hintPhase=2;upd.turnIndex=0;}else upd.phase="vote";
   }
   await update(ref(db,ROOM),upd);
 };
 
-window.confirmVote = async function(){
+window.confirmVote=async function(){
   if(!myVote)return;
   await update(ref(db,ROOM+"/players/"+myId),{vote:myVote});
   document.getElementById("btnVote").disabled=true;
   const st=state;
   const updP={...st.players,[myId]:{...st.players[myId],vote:myVote}};
-  if(Object.values(updP).every(p=>p.vote)) await tally(updP,st);
+  if(Object.values(updP).filter(p=>p.name?.trim()).every(p=>p.vote))await tally(updP,st);
 };
 
 async function tally(players,st){
-  const cnt={};
-  Object.values(players).forEach(p=>{ if(p.vote)cnt[p.vote]=(cnt[p.vote]||0)+1; });
+  const cnt={};Object.values(players).filter(p=>p.name?.trim()).forEach(p=>{if(p.vote)cnt[p.vote]=(cnt[p.vote]||0)+1;});
   const topId=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0]?.[0];
   const impId=st.imposterId;
   const upd={phase:"result",voteResults:cnt};
   if(topId===impId){
-    Object.entries(players).forEach(([pid,p])=>{
-      if(pid!==impId) upd[`players/${pid}/score`]=(p.score||0)+1+(p.vote===impId?1:0);
+    Object.entries(players).filter(([,p])=>p.name?.trim()).forEach(([pid,p])=>{
+      if(pid!==impId)upd[`players/${pid}/score`]=(p.score||0)+1+(p.vote===impId?1:0);
     });
   } else {
     upd[`players/${impId}/score`]=(players[impId]?.score||0)+1;
   }
   await update(ref(db,ROOM),upd);
   snd("applause.mp3");
-  showOverlay(topId===impId, players[impId]?.name||"?", st.word||"?");
+  showOverlay(topId===impId,players[impId]?.name||"?",st.word||"?");
 }
 
-window.submitGuess = async function(){
-  const val=document.getElementById("guessInput").value.trim(); if(!val)return;
+window.submitGuess=async function(){
+  const val=document.getElementById("guessInput").value.trim();if(!val)return;
   await update(ref(db,ROOM),{imposterGuess:val});
   const st=state;
   if(val.toLowerCase()===(st?.word||"").toLowerCase())
@@ -999,145 +781,119 @@ window.submitGuess = async function(){
   document.getElementById("guessSection").style.display="none";
 };
 
-window.nextRound = async function(){
+window.nextRound=async function(){
   if(!isHost)return;
   const st=state;
   const players={};
-  Object.entries(st.players||{}).forEach(([pid,p])=>{ players[pid]={...p,hint1:"",hint2:"",vote:""}; });
+  Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name?.trim())players[pid]={...p,hint1:"",hint2:"",vote:""};});
   const word=pickWord();
   const ids=Object.keys(players);
   const impId=ids[Math.floor(Math.random()*ids.length)];
   const mode=st.gameMode||"online";
   if(mode==="live"){
-    const playerOrder=Object.keys(players).join(",");
-    await update(ref(db,ROOM),{
-      phase:"roleReveal", round:(st.round||1)+1, word, imposterId:impId,
-      hintPhase:1, hints1:{}, hints2:{}, voteResults:{}, imposterGuess:"",
-      liveStep:0, playerOrder, players, history:st.history||[]
-    });
+    const playerOrder=ids.join(",");
+    await update(ref(db,ROOM),{phase:"roleReveal",round:(st.round||1)+1,word,imposterId:impId,
+      hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",
+      liveStep:0,playerOrder,players,history:st.history||[]});
   } else {
-    await set(ref(db,ROOM),{
-      ...st, phase:"play", round:(st.round||1)+1, turnIndex:0,
-      word, imposterId:impId, hintPhase:1, hints1:{}, hints2:{},
-      voteResults:{}, imposterGuess:"", players, timestamp:Date.now()
-    });
+    await set(ref(db,ROOM),{...st,phase:"play",round:(st.round||1)+1,turnIndex:0,
+      word,imposterId:impId,hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players,timestamp:Date.now()});
   }
   document.getElementById("overlay").classList.remove("show");
-  myVote=null; liveWinner=null; liveGuess=null;
+  myVote=null;liveWinner=null;liveGuess=null;
 };
 
-// ── Offline → KI ────────────────────────────────────────────────────────────
+// ── Offline → KI ─────────────────────────────────────────────────────────────
 function replaceOfflineWithKI(st){
   Object.entries(st.players||{}).forEach(([pid,p])=>{
-    if(!p.isKI&&pid!==st.host&&!isOnline(p)){
+    if(!p.isKI&&pid!==st.host&&!isOnline(p)&&p.name?.trim()){
       const taken=Object.values(st.players).map(q=>q.name.toLowerCase().replace(/\s*\(ki\)/,""));
       const avail=KI_NAMES.filter(n=>!taken.includes(n.toLowerCase()));
-      if(!avail.length)return;
-      shuffle(avail);
+      if(!avail.length)return;shuffle(avail);
       update(ref(db,ROOM+"/players/"+pid),{name:avail[0]+" (KI)",isKI:true,lastSeen:Date.now()});
     }
   });
 }
 
-// ── KI auto-play ─────────────────────────────────────────────────────────────
 async function kiTurn(){
-  const st=state; if(!st||!isHost||st.phase!=="play")return;
-  const turnPid=getTurn(st); if(!turnPid)return;
-  const p=st.players?.[turnPid]; if(!p?.isKI)return;
-  const hp=st.hintPhase||1, key=hp===1?"hint1":"hint2";
-  if(p[key])return;
-  const hint=st.imposterId===turnPid
-    ? KI_GENERIC[Math.floor(Math.random()*KI_GENERIC.length)]
-    : KI_ADJ[Math.floor(Math.random()*KI_ADJ.length)];
+  const st=state;if(!st||!isHost||st.phase!=="play")return;
+  const turnPid=getTurn(st);if(!turnPid)return;
+  const p=st.players?.[turnPid];if(!p?.isKI)return;
+  const hp=st.hintPhase||1,key=hp===1?"hint1":"hint2";if(p[key])return;
+  const hint=st.imposterId===turnPid?KI_GENERIC[Math.floor(Math.random()*KI_GENERIC.length)]:KI_ADJ[Math.floor(Math.random()*KI_ADJ.length)];
   await update(ref(db,ROOM+"/players/"+turnPid),{[key]:hint});
   const ids=pids(st);
   const nextIdx=((st.turnIndex||0)+1)%ids.length;
   const upd={turnIndex:nextIdx};
   const updP={...st.players,[turnPid]:{...p,[key]:hint}};
-  if(Object.values(updP).every(q=>q[key]&&q[key].length>0)){
-    if(hp===1){upd.hintPhase=2;upd.turnIndex=0;}
-    else       upd.phase="vote";
+  if(Object.values(updP).filter(q=>q.name?.trim()).every(q=>q[key]&&q[key].length>0)){
+    if(hp===1){upd.hintPhase=2;upd.turnIndex=0;}else upd.phase="vote";
   }
   await update(ref(db,ROOM),upd);
   setTimeout(()=>kiTurn(),700);
 }
 
 async function kiVote(){
-  const st=state; if(!st||!isHost||st.phase!=="vote")return;
+  const st=state;if(!st||!isHost||st.phase!=="vote")return;
   const players=st.players||{};
   const kip=Object.keys(players).filter(pid=>players[pid].isKI&&!players[pid].vote);
-  for(const kid of kip){
-    const others=Object.keys(players).filter(p=>p!==kid);
-    await update(ref(db,ROOM+"/players/"+kid),{vote:others[Math.floor(Math.random()*others.length)]});
-  }
+  for(const kid of kip){const others=Object.keys(players).filter(p=>p!==kid);await update(ref(db,ROOM+"/players/"+kid),{vote:others[Math.floor(Math.random()*others.length)]});}
   const snap=await get(ref(db,ROOM+"/players"));
   const pls=snap.val()||{};
-  if(Object.values(pls).every(p=>p.vote)) await tally(pls,st);
+  if(Object.values(pls).filter(p=>p.name?.trim()).every(p=>p.vote))await tally(pls,st);
 }
 
-// ── Overlay ──────────────────────────────────────────────────────────────────
+// ── Overlay ───────────────────────────────────────────────────────────────────
 function showOverlay(crewWon,impName,word){
   document.getElementById("overlayEmoji").textContent=crewWon?"🎉":"🕵️";
   document.getElementById("overlayTitle").textContent=crewWon?"Crew gewinnt!":"Imposter gewinnt!";
-  document.getElementById("overlayComment").textContent=crewWon
-    ?`${impName} war der Imposter und wurde entlarvt!`
-    :`${impName} blieb unentdeckt!`;
+  document.getElementById("overlayComment").textContent=crewWon?`${impName} war der Imposter und wurde entlarvt!`:`${impName} blieb unentdeckt!`;
   document.getElementById("overlayWord").textContent="Das geheime Wort war: "+word;
   document.getElementById("overlay").classList.add("show");
 }
-window.closeOverlay = ()=>document.getElementById("overlay").classList.remove("show");
+window.closeOverlay=()=>document.getElementById("overlay").classList.remove("show");
 
-// ── Gear ─────────────────────────────────────────────────────────────────────
-window.toggleGear = ()=>document.getElementById("gearPanel").classList.toggle("open");
-window.syncNow    = ()=>{ if(state)dispatch(state); document.getElementById("gearPanel").classList.remove("open"); };
-window.resetRoom  = async()=>{
-  await remove(ref(db,ROOM));
-  if(hbTimer)clearInterval(hbTimer);
+// ── Gear ──────────────────────────────────────────────────────────────────────
+window.toggleGear=()=>document.getElementById("gearPanel").classList.toggle("open");
+window.syncNow=()=>{if(state)dispatch(state);document.getElementById("gearPanel").classList.remove("open");};
+window.resetRoom=async()=>{
+  await remove(ref(db,ROOM));if(hbTimer)clearInterval(hbTimer);
   sessionStorage.removeItem("imp_id");
   document.getElementById("gearPanel").classList.remove("open");
   location.reload();
 };
-window.leaveRoom  = async()=>{
+window.leaveRoom=async()=>{
   if(myId)await update(ref(db,ROOM+"/players/"+myId),{lastSeen:0});
   if(hbTimer)clearInterval(hbTimer);
-  // Session-Daten löschen → kein automatischer Reconnect
-  sessionStorage.removeItem("imp_id");
-  sessionStorage.removeItem("imp_name");
-  sessionStorage.removeItem("imp_mode");
+  sessionStorage.removeItem("imp_id");sessionStorage.removeItem("imp_name");sessionStorage.removeItem("imp_mode");
   location.reload();
 };
 
-// ── Boot / Reconnect ──────────────────────────────────────────────────────────
+// ── Boot ──────────────────────────────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded",()=>{
   const savedName=sessionStorage.getItem("imp_name");
   const savedMode=sessionStorage.getItem("imp_mode")||"live";
-  if(savedName) document.getElementById("nameInput").value=savedName;
+  if(savedName)document.getElementById("nameInput").value=savedName;
   selectMode(savedMode);
-
   const savedId=sessionStorage.getItem("imp_id");
   if(savedId&&savedName){
-    myId=savedId; myName=savedName; gameMode=savedMode;
+    myId=savedId;myName=savedName;gameMode=savedMode;
     get(ref(db,ROOM)).then(snap=>{
       const st=snap.val();
-      // Nur reconnecten wenn Eintrag in Firebase noch gültig und Name vorhanden
-      if(st?.players?.[myId]&&st.players[myId].name&&st.players[myId].name.trim()!==""){
+      if(st?.players?.[myId]?.name?.trim()){
         isHost=(st.host===myId);
         gameMode=st.gameMode||savedMode;
         update(ref(db,ROOM+"/players/"+myId),{lastSeen:Date.now()});
-        startHB();
-        startListen();
+        startHB();startListen();
         if(st.phase==="wait"){
           showScreen("screenWait");
           document.getElementById("waitName").textContent="👋 "+myName;
           document.getElementById("btnStartGame").style.display=isHost?"block":"none";
-        } else {
-          dispatch(st);
-        }
+        } else {dispatch(st);}
       }
     });
   }
 });
-
 window.addEventListener("beforeunload",()=>{
   if(myId)update(ref(db,ROOM+"/players/"+myId),{lastSeen:0});
   if(hbTimer)clearInterval(hbTimer);
