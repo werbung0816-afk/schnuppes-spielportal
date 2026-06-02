@@ -511,11 +511,17 @@ function renderWaitList(st){
       <span style="color:${col.main};font-weight:700;">${pid===st.host?"👑 ":"👤 "}${esc(p.name)}</span>${pid===myId?" (Du)":""}
     </div>`;
   });
-  // Button-Text anpassen: genug Spieler = kein KI nötig
+  // KI-Button nur im Online-Modus anzeigen
   const kiBtn=document.getElementById("btnKI");
   if(kiBtn){
-    const n=validPlayers.length;
-    kiBtn.textContent = n>=3 ? "▶ Spiel starten" : "🤖 Gegen KI starten";
+    const mode=st.gameMode||gameMode;
+    if(mode==="live"){
+      kiBtn.style.display="none";
+    } else {
+      kiBtn.style.display="block";
+      const n=validPlayers.length;
+      kiBtn.textContent = n>=3 ? "▶ Spiel starten" : "🤖 Gegen KI starten";
+    }
   }
 }
 
