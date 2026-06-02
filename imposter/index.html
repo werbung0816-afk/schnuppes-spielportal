@@ -167,7 +167,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
     <div class="wait-dots" id="waitMsg">⏳ Warte auf Mitspieler…</div>
     <div id="waitPlayerList" style="text-align:left;margin-bottom:14px;"></div>
     <button id="btnStartGame" class="btn-success" style="display:none;" onclick="hostStartGame()">🎮 Spiel starten</button>
-    <hr class="divider">
+    <div id="dividerKI"><hr class="divider"></div>
     <button id="btnKI" class="btn-primary" onclick="startVsKI()">🤖 Gegen KI starten</button>
     <button class="btn-secondary" style="margin-top:8px;" onclick="leaveRoom()">← Verlassen</button>
   </div>
@@ -488,7 +488,7 @@ function dispatch(st){
     showScreen("screenWait");
     renderWaitList(st);
     isHost=(st.host===myId);
-    document.getElementById("btnStartGame").style.display=isHost?"block":"none";
+    // btnStartGame wird von renderWaitList gesteuert
     return;
   }
 
@@ -511,14 +511,28 @@ function renderWaitList(st){
       <span style="color:${col.main};font-weight:700;">${pid===st.host?"👑 ":"👤 "}${esc(p.name)}</span>${pid===myId?" (Du)":""}
     </div>`;
   });
-  // KI-Button nur im Online-Modus anzeigen
+  const mode=st.gameMode||gameMode;
   const kiBtn=document.getElementById("btnKI");
-  if(kiBtn){
-    const mode=st.gameMode||gameMode;
-    if(mode==="live"){
-      kiBtn.style.display="none";
-    } else {
-      kiBtn.style.display="block";
+  const dividerKI=document.getElementById("dividerKI");
+  const startBtn=document.getElementById("btnStartGame");
+
+  if(mode==="live"){
+    // Live: kein KI-Button, kein Divider
+    if(kiBtn) kiBtn.style.display="none";
+    if(dividerKI) dividerKI.style.display="none";
+    // Start-Button für alle sichtbar, aber nur Host kann klicken
+    if(startBtn){
+      startBtn.style.display="block";
+      startBtn.disabled=!isHost;
+      startBtn.title=isHost?"":"Nur der Host kann das Spiel starten";
+      startBtn.style.opacity=isHost?"1":"0.5";
+    }
+  } else {
+    // Online: KI-Button anzeigen, Start-Button nur für Host
+    if(kiBtn){ kiBtn.style.display="block"; }
+    if(dividerKI) dividerKI.style.display="block";
+    if(startBtn) startBtn.style.display=isHost?"block":"none";
+    if(kiBtn){
       const n=validPlayers.length;
       kiBtn.textContent = n>=3 ? "▶ Spiel starten" : "🤖 Gegen KI starten";
     }
