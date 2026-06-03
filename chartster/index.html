@@ -272,7 +272,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .vsilver{color:#dce8ff;border-color:#dce8ff;box-shadow:0 0 50px rgba(200,220,255,.4)}
 .vbronze{color:#ffb36b;border-color:#ffb36b;box-shadow:0 0 50px rgba(255,180,100,.4)}
 .vfinal-btn{padding:18px 32px;border:none;border-radius:16px;font-size:20px;font-weight:800;color:#fff;background:linear-gradient(90deg,var(--purple),var(--pink));font-family:'Outfit',sans-serif}
-.version{position:fixed;bottom:8px;right:12px;font-size:10px;color:rgba(255,255,255,.15);z-index:100}
+.version{position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px}
 
 /* ── PWA INSTALL BANNER ── */
 #pwa-banner{
@@ -375,7 +375,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v3.6.9</div>
+<div class="version">v3.7.0</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -540,7 +540,7 @@ const DECADES=['70','80','90','00','10','20'];
 // Clockwise from top-left (viewed from above): top→right→bottom→left
 const CW_ORDER=['top-l','top-r','right','bot-r','bot-l','left'];
 const SEAT_DEF={'top-l':{side:'top'},'top-r':{side:'top'},'left':{side:'left'},'right':{side:'right'},'bot-l':{side:'bot'},'bot-r':{side:'bot'}};
-const CENTER_ROT={bot:'r0',top:'r180',left:'r0',right:'r180'};
+const CENTER_ROT={bot:'r0',top:'r180',left:'r90',right:'r270'};
 
 const CP1=[t=>`${t} – Ihr seid dran!`,t=>`Jetzt kommen ${t}!`,t=>`Alle Ohren auf ${t}!`,t=>`${t} – zeigt Euren Musikgeschmack!`,t=>`${t}: Die Bühne gehört Euch!`,t=>`Keine Ausreden – ${t} legt los!`];
 const CP2=[(t)=>`Welches Jahr steckt dahinter?`,(t,o)=>o.length?`${t} gegen ${o[0]}.`:`Lauscht gut, ${t}!`,(t)=>`Vertraut Eurem Bauchgefühl!`,(t,o)=>o.length?`${o.join(' & ')} überlegen…`:`Der Beat verrät alles.`,(t)=>`Hört rein!`];
@@ -768,7 +768,7 @@ function newSongToken(){var team=G.teams[G.cur];if(team.tokens<=0){showHint('Kei
 function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort((a,b)=>a-b);var correctPos=getCorrectPos(G.currentCard.y,sorted);if(type==='year'||type==='both'){team.years.push(G.currentCard.y);team.years.sort((a,b)=>a-b);if(type==='both')team.tokens=Math.min(MAX_TOK,team.tokens+1);spawnConfetti(team.color,90,false);}else{for(var i=0;i<G.teams.length;i++){if(i!==G.cur&&G.bets[i]===correctPos){G.teams[i].years.push(G.currentCard.y);G.teams[i].years.sort((a,b)=>a-b);spawnConfetti(G.teams[i].color,60,false);showHint(`${G.teams[i].name} stehlen die Jahreszahl! 🎉`);break;}}}G.bets={};G.betMode=null;if(team.years.length>=WIN){showVictory();return;}showTransition();}
 
 // ── TRANSITION ──
-function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':'','right':' r180','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
+function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':' r90','right':' r270','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
 function continueGame(){G.cur=nextTeamIdx();G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
 
 // ── VICTORY ──
