@@ -58,7 +58,7 @@
 *{box-sizing:border-box;margin:0;padding:0;cursor:default!important;-webkit-tap-highlight-color:transparent}
 input,label,button,select{cursor:pointer!important}
 
-.screen{display:none;min-height:100vh;padding:16px;align-items:center;justify-content:flex-start;flex-direction:column}
+.screen{display:none;min-height:100vh;padding:16px;align-items:center;justify-content:center;flex-direction:column}
 .screen.active{display:flex}
 .screen.r180{transform:rotate(180deg)}
 body{font-family:'Outfit',sans-serif;background:var(--bg);
@@ -120,7 +120,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #screen-slot{justify-content:center;align-items:center}
 #screen-game{padding:8px;align-items:center;justify-content:flex-start}
 /* Wrapper allows side panels to overflow outside grid */
-#game-wrapper{position:relative;width:100%;max-width:760px;margin:0 auto}
+#game-wrapper{position:relative;width:100%;max-width:900px;margin:0 auto}
 #game-outer{width:100%;display:flex;flex-direction:column;gap:12px}
 #area-top{display:flex;gap:12px;justify-content:space-around;transform:rotate(180deg);transform-origin:center}
 #game-center{display:flex;flex-direction:column;gap:12px;transition:transform .5s ease}
@@ -536,7 +536,7 @@ const DECADES=['70','80','90','00','10','20'];
 // Clockwise from top-left (viewed from above): top→right→bottom→left
 const CW_ORDER=['top-l','top-r','right','bot-r','bot-l','left'];
 const SEAT_DEF={'top-l':{side:'top'},'top-r':{side:'top'},'left':{side:'left'},'right':{side:'right'},'bot-l':{side:'bot'},'bot-r':{side:'bot'}};
-const CENTER_ROT={bot:'r0',top:'r180',left:'r90',right:'r270'};
+const CENTER_ROT={bot:'r0',top:'r180',left:'r180',right:'r0'};
 
 const CP1=[t=>`${t} – Ihr seid dran!`,t=>`Jetzt kommen ${t}!`,t=>`Alle Ohren auf ${t}!`,t=>`${t} – zeigt Euren Musikgeschmack!`,t=>`${t}: Die Bühne gehört Euch!`,t=>`Keine Ausreden – ${t} legt los!`];
 const CP2=[(t)=>`Welches Jahr steckt dahinter?`,(t,o)=>o.length?`${t} gegen ${o[0]}.`:`Lauscht gut, ${t}!`,(t)=>`Vertraut Eurem Bauchgefühl!`,(t,o)=>o.length?`${o.join(' & ')} überlegen…`:`Der Beat verrät alles.`,(t)=>`Hört rein!`];
@@ -764,7 +764,7 @@ function newSongToken(){var team=G.teams[G.cur];if(team.tokens<=0){showHint('Kei
 function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort((a,b)=>a-b);var correctPos=getCorrectPos(G.currentCard.y,sorted);if(type==='year'||type==='both'){team.years.push(G.currentCard.y);team.years.sort((a,b)=>a-b);if(type==='both')team.tokens=Math.min(MAX_TOK,team.tokens+1);spawnConfetti(team.color,90,false);}else{for(var i=0;i<G.teams.length;i++){if(i!==G.cur&&G.bets[i]===correctPos){G.teams[i].years.push(G.currentCard.y);G.teams[i].years.sort((a,b)=>a-b);spawnConfetti(G.teams[i].color,60,false);showHint(`${G.teams[i].name} stehlen die Jahreszahl! 🎉`);break;}}}G.bets={};G.betMode=null;if(team.years.length>=WIN){showVictory();return;}showTransition();}
 
 // ── TRANSITION ──
-function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':' r270','right':' r90','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
+function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':' r180','right':'','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
 function continueGame(){G.cur=nextTeamIdx();G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
 
 // ── VICTORY ──
