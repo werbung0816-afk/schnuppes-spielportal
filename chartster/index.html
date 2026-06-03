@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="screen-orientation" content="portrait">
 <title>Chartster</title>
 
 <!-- ═══ PWA: Standard ═══ -->
@@ -890,6 +891,17 @@ window.addEventListener('appinstalled', () => {
   console.log('[PWA] App installiert!');
   document.getElementById('pwa-banner').classList.remove('show');
   pwaInstallPrompt = null;
+});
+
+
+// ── Orientation Lock (Android PWA) ──────────
+if (screen.orientation && screen.orientation.lock) {
+  screen.orientation.lock('portrait').catch(() => {});
+}
+window.addEventListener('load', () => {
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('portrait').catch(() => {});
+  }
 });
 
 // ── "Installed" Indikator (optional) ─────────
