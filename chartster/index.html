@@ -4,6 +4,49 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Chartster</title>
+
+<!-- ═══ PWA: Standard ═══ -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#07000f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Chartster">
+<meta name="description" content="Das Musik-Quiz mit den Deutschland Top 100 Charts">
+
+<!-- ═══ PWA: Apple / iOS ═══ -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chartster">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<!-- Splash Screens iOS (portrait) -->
+<link rel="apple-touch-startup-image"
+  media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)"
+  href="icons/splash-1290x2796.png">
+<link rel="apple-touch-startup-image"
+  media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)"
+  href="icons/splash-1179x2556.png">
+<link rel="apple-touch-startup-image"
+  media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)"
+  href="icons/splash-1170x2532.png">
+<link rel="apple-touch-startup-image"
+  media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
+  href="icons/splash-1125x2436.png">
+<link rel="apple-touch-startup-image"
+  media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)"
+  href="icons/splash-828x1792.png">
+<link rel="apple-touch-startup-image"
+  media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)"
+  href="icons/splash-750x1334.png">
+
+<!-- ═══ Favicon ═══ -->
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+
+<!-- ═══ Open Graph (für Share-Vorschauen) ═══ -->
+<meta property="og:title" content="Chartster">
+<meta property="og:description" content="Wer kennt die meisten Hits? Das Musik-Quiz mit den Deutschland Top 100 Charts.">
+<meta property="og:image" content="icons/icon-512x512.png">
+<meta property="og:type" content="website">
+
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -224,9 +267,104 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .vbronze{color:#ffb36b;border-color:#ffb36b;box-shadow:0 0 50px rgba(255,180,100,.4)}
 .vfinal-btn{padding:18px 32px;border:none;border-radius:16px;font-size:20px;font-weight:800;color:#fff;background:linear-gradient(90deg,var(--purple),var(--pink));font-family:'Outfit',sans-serif}
 .version{position:fixed;bottom:8px;right:12px;font-size:10px;color:rgba(255,255,255,.15);z-index:100}
+
+/* ── PWA INSTALL BANNER ── */
+#pwa-banner{
+  position:fixed;bottom:0;left:0;right:0;z-index:990;
+  background:rgba(8,2,18,.96);backdrop-filter:blur(20px);
+  border-top:1px solid rgba(83,246,255,.25);
+  padding:14px 18px calc(22px + env(safe-area-inset-bottom));
+  display:none;flex-direction:row;align-items:center;gap:14px;
+  transform:translateY(100%);transition:transform .4s cubic-bezier(.25,.46,.45,.94);
+  box-shadow:0 -4px 32px rgba(83,246,255,.08)
+}
+#pwa-banner.show{display:flex;transform:translateY(0)}
+#pwa-banner-icon{width:48px;height:48px;border-radius:12px;flex-shrink:0;
+  border:1px solid rgba(83,246,255,.3);overflow:hidden}
+#pwa-banner-icon img{width:100%;height:100%;object-fit:cover}
+#pwa-banner-text{flex:1;min-width:0}
+#pwa-banner-text strong{display:block;font-size:15px;font-weight:700;color:var(--text)}
+#pwa-banner-text span{font-size:12px;color:var(--muted);line-height:1.4}
+#pwa-install-btn{
+  padding:10px 18px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(83,246,255,.2),rgba(143,95,255,.2));
+  color:var(--cyan);border:1px solid rgba(83,246,255,.4);
+  font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;
+  white-space:nowrap;flex-shrink:0;transition:all .2s
+}
+#pwa-install-btn:active{background:rgba(83,246,255,.3)}
+#pwa-dismiss-btn{
+  background:none;border:none;color:var(--muted);font-size:22px;
+  padding:4px 8px;flex-shrink:0;line-height:1;cursor:pointer!important
+}
+#pwa-update-toast{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);
+  background:rgba(143,95,255,.25);border:1px solid rgba(143,95,255,.5);
+  color:var(--text);padding:12px 20px;border-radius:14px;
+  font-size:14px;font-weight:600;z-index:999;
+  transition:transform .3s ease;white-space:nowrap;
+  display:flex;align-items:center;gap:10px
+}
+#pwa-update-toast.show{transform:translateX(-50%) translateY(0)}
+#pwa-update-toast button{
+  background:rgba(143,95,255,.4);border:1px solid rgba(143,95,255,.6);
+  color:#fff;padding:5px 12px;border-radius:8px;cursor:pointer!important;
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:700
+}
+#ios-hint{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  background:rgba(8,2,18,.97);backdrop-filter:blur(20px);
+  border:1px solid rgba(83,246,255,.3);border-radius:18px;
+  padding:18px 22px;z-index:991;display:none;
+  flex-direction:column;gap:8px;max-width:320px;width:90%;
+  box-shadow:0 8px 40px rgba(0,0,0,.6)
+}
+#ios-hint.show{display:flex}
+#ios-hint::after{
+  content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);
+  width:0;height:0;border:10px solid transparent;
+  border-top:10px solid rgba(83,246,255,.3);border-bottom:none
+}
+#ios-hint-title{font-size:14px;font-weight:700;color:var(--cyan)}
+#ios-hint-steps{font-size:13px;color:var(--muted);line-height:1.7}
+#ios-hint-steps strong{color:var(--text)}
+#ios-hint-close{
+  margin-top:4px;padding:10px;border-radius:10px;border:1px solid var(--glass-b);
+  background:var(--glass);color:var(--muted);font-family:'Outfit',sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer!important
+}
 </style>
 </head>
 <body>
+
+<!-- ═══ PWA: Install Banner (Android/Desktop) ═══ -->
+<div id="pwa-banner">
+  <div id="pwa-banner-icon"><img src="icons/icon-192x192.png" alt="Chartster"></div>
+  <div id="pwa-banner-text">
+    <strong>📲 Chartster installieren</strong>
+    <span>Direkt auf dem Homescreen – immer dabei</span>
+  </div>
+  <button id="pwa-install-btn" onclick="pwaTriggerInstall()">Installieren</button>
+  <button id="pwa-dismiss-btn" onclick="pwaDismiss()" title="Schließen">✕</button>
+</div>
+
+<!-- ═══ PWA: iOS Anleitung ═══ -->
+<div id="ios-hint">
+  <div id="ios-hint-title">📲 Chartster installieren</div>
+  <div id="ios-hint-steps">
+    1. Tippe auf <strong>Teilen</strong> (□↑) in der Leiste<br>
+    2. Wähle <strong>„Zum Home-Bildschirm"</strong><br>
+    3. Tippe <strong>„Hinzufügen"</strong>
+  </div>
+  <button id="ios-hint-close" onclick="document.getElementById('ios-hint').classList.remove('show')">✕ Schließen</button>
+</div>
+
+<!-- ═══ PWA: Update-Toast ═══ -->
+<div id="pwa-update-toast">
+  🔄 Update verfügbar
+  <button onclick="pwaApplyUpdate()">Neu laden</button>
+</div>
+
 <div id="confetti"></div>
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
@@ -650,5 +788,116 @@ window.addEventListener('resize',updateHole);updateHole();
 function comment(type,team,extra){var others=G.teams.filter((_,i)=>i!==G.cur).map(t=>t.name);var pool=type==='p1'?CP1:type==='p2'?CP2:type==='tr'?CPI:CPW;var idx=G.commentIdx%pool.length;G.commentIdx++;try{if(type==='tr'&&extra)return pool[idx](extra[0],team.name,extra[1]);return pool[idx](team.name,others);}catch(e){return pool[idx](team.name);}}
 document.addEventListener('touchstart',function(e){var op=document.getElementById('opt-panel');if(op.classList.contains('show')&&!op.contains(e.target))closeOpt();});
 </script>
+
+<script>
+// ══════════════════════════════════════════════
+//  CHARTSTER PWA – Service Worker & Install
+// ══════════════════════════════════════════════
+
+let pwaInstallPrompt = null;
+let pwaNewWorker = null;
+const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
+
+// ── Service Worker registrieren ──────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js', {
+      scope: '/schnuppes-spielportal/chartster/'
+    }).then(reg => {
+      console.log('[PWA] SW registriert, scope:', reg.scope);
+
+      // Update-Check
+      reg.addEventListener('updatefound', () => {
+        pwaNewWorker = reg.installing;
+        pwaNewWorker?.addEventListener('statechange', () => {
+          if (pwaNewWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // Neues Update verfügbar
+            setTimeout(() => {
+              document.getElementById('pwa-update-toast').classList.add('show');
+            }, 1500);
+          }
+        });
+      });
+    }).catch(err => console.warn('[PWA] SW-Registrierung fehlgeschlagen:', err));
+
+    // Seiten-Reload nach SW-Aktivierung
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    });
+  });
+}
+
+// ── beforeinstallprompt abfangen ─────────────
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  pwaInstallPrompt = e;
+
+  // Nur zeigen wenn nicht dismissed
+  const dismissed = sessionStorage.getItem(PWA_DISMISSED_KEY);
+  if (!dismissed) {
+    setTimeout(() => {
+      const banner = document.getElementById('pwa-banner');
+      if (banner) banner.classList.add('show');
+    }, 3000); // 3s Delay – Nutzer soll erst die App sehen
+  }
+});
+
+// ── iOS-Erkennung ────────────────────────────
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+}
+function isInStandaloneMode() {
+  return window.navigator.standalone === true ||
+         window.matchMedia('(display-mode: standalone)').matches;
+}
+
+// iOS: Hinweis nach 4s wenn nicht installed
+if (isIOS() && !isInStandaloneMode()) {
+  const dismissed = sessionStorage.getItem(PWA_DISMISSED_KEY);
+  if (!dismissed) {
+    setTimeout(() => {
+      document.getElementById('ios-hint').classList.add('show');
+    }, 4000);
+  }
+}
+
+// ── Install auslösen ─────────────────────────
+async function pwaTriggerInstall() {
+  if (!pwaInstallPrompt) return;
+  const result = await pwaInstallPrompt.prompt();
+  console.log('[PWA] Install-Ergebnis:', result.outcome);
+  pwaInstallPrompt = null;
+  document.getElementById('pwa-banner').classList.remove('show');
+}
+
+// ── Banner dismissen ─────────────────────────
+function pwaDismiss() {
+  document.getElementById('pwa-banner').classList.remove('show');
+  document.getElementById('ios-hint').classList.remove('show');
+  sessionStorage.setItem(PWA_DISMISSED_KEY, '1');
+}
+
+// ── Update anwenden ──────────────────────────
+function pwaApplyUpdate() {
+  document.getElementById('pwa-update-toast').classList.remove('show');
+  if (pwaNewWorker) {
+    pwaNewWorker.postMessage('SKIP_WAITING');
+  }
+}
+
+// ── App installiert: Banner ausblenden ───────
+window.addEventListener('appinstalled', () => {
+  console.log('[PWA] App installiert!');
+  document.getElementById('pwa-banner').classList.remove('show');
+  pwaInstallPrompt = null;
+});
+
+// ── "Installed" Indikator (optional) ─────────
+if (isInStandaloneMode()) {
+  console.log('[PWA] Läuft als installierte App');
+  document.documentElement.classList.add('pwa-standalone');
+}
+</script>
+
 </body>
 </html>
