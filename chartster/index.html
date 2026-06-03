@@ -125,8 +125,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #game-outer{width:100%;display:flex;flex-direction:column;gap:12px}
 #area-top{display:flex;gap:12px;justify-content:space-around;transform:rotate(180deg);transform-origin:center}
 #game-center{display:flex;flex-direction:column;gap:12px;transition:transform .5s ease}
-#game-center.r0{transform:rotate(0deg)}
+#game-center.r0  {transform:rotate(0deg)}
+#game-center.r90 {transform:rotate(90deg)}
 #game-center.r180{transform:rotate(180deg)}
+#game-center.r270{transform:rotate(270deg)}
 #area-bot{display:flex;gap:12px;justify-content:space-around}
 
 /* Side panels: absolute positioned outside center column */
@@ -535,7 +537,7 @@ const DECADES=['70','80','90','00','10','20'];
 // Clockwise from top-left (viewed from above): top→right→bottom→left
 const CW_ORDER=['top-l','top-r','right','bot-r','bot-l','left'];
 const SEAT_DEF={'top-l':{side:'top'},'top-r':{side:'top'},'left':{side:'left'},'right':{side:'right'},'bot-l':{side:'bot'},'bot-r':{side:'bot'}};
-const CENTER_ROT={bot:'r0',top:'r180',left:'r0',right:'r0'};
+const CENTER_ROT={bot:'r0',top:'r180',left:'r270',right:'r90'};
 
 const CP1=[t=>`${t} – Ihr seid dran!`,t=>`Jetzt kommen ${t}!`,t=>`Alle Ohren auf ${t}!`,t=>`${t} – zeigt Euren Musikgeschmack!`,t=>`${t}: Die Bühne gehört Euch!`,t=>`Keine Ausreden – ${t} legt los!`];
 const CP2=[(t)=>`Welches Jahr steckt dahinter?`,(t,o)=>o.length?`${t} gegen ${o[0]}.`:`Lauscht gut, ${t}!`,(t)=>`Vertraut Eurem Bauchgefühl!`,(t,o)=>o.length?`${o.join(' & ')} überlegen…`:`Der Beat verrät alles.`,(t)=>`Hört rein!`];
@@ -783,7 +785,7 @@ function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay'
 // ── UTILS ──
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el){el.classList.add('active');G.screen=name;}document.getElementById('opt-fab').style.display=(name==='game')?'flex':'none';}
 function showHint(msg){var el=document.getElementById('hint-toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
-function toggleCenter(){var gc=document.getElementById('game-center');gc.className=gc.className.includes('r180')?'r0':'r180';}
+function toggleCenter(){var gc=document.getElementById('game-center');var rots=['r0','r90','r180','r270'];var ci=rots.indexOf(gc.className.split(' ').find(c=>c.startsWith('r'))||'r0');gc.className=rots[(ci+1)%4];}
 function updateHole(){var o=document.getElementById('player-outer');var w=o.offsetWidth||412,mob=window.innerWidth<600;document.getElementById('play-hole').setAttribute('cx',mob?w-32:w-28);document.getElementById('play-hole').setAttribute('r',mob?18:22);document.getElementById('play-hole').setAttribute('cy',mob?128:124);}
 window.addEventListener('resize',updateHole);updateHole();
 function comment(type,team,extra){var others=G.teams.filter((_,i)=>i!==G.cur).map(t=>t.name);var pool=type==='p1'?CP1:type==='p2'?CP2:type==='tr'?CPI:CPW;var idx=G.commentIdx%pool.length;G.commentIdx++;try{if(type==='tr'&&extra)return pool[idx](extra[0],team.name,extra[1]);return pool[idx](team.name,others);}catch(e){return pool[idx](team.name);}}
