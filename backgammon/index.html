@@ -1151,8 +1151,8 @@ function listenRoom() {
     const data = snap.val();
     if (!data) { handleRoomGone(); return; }
 
-    // WHITE: second player joined → auto-create game immediately
-    if (myColor === 'white' && data.players && data.players.black && !data.state) {
+    // WHITE: second player joined → auto-create game
+    if (myColor === 'white' && data.players?.black && !data.state) {
       const blackName = data.players.black;
       showToast(`${blackName} ist beigetreten! Spiel startet…`);
       const state = newGameState(myName, blackName);
@@ -1161,32 +1161,32 @@ function listenRoom() {
       return;
     }
 
-    // Update name if black joined after state was already created
-    if (data.state && myColor === 'white' && data.players && data.players.black) {
-      const blackName = data.players.black;
-      if (data.state.players && data.state.players.black !== blackName && blackName !== '…wartet') {
-        const newG = deepClone(data.state);
-        newG.players.black = blackName;
-        set(ref(db, ROOM_PATH + '/state'), newG);
-        return;
-      }
-    }
-
-    // State arrived → update game
+    // State exists → sync game
     if (data.state) {
       const wasWinner = G && G.winner;
       G = data.state;
-      // Both players present → enter game screen
-      if (data.players && data.players.white && data.players.black) {
+
+      // Fix black player name if it got updated after state creation
+      if (myColor === 'white' && data.players?.black &&
+          G.players.black !== data.players.black) {
+        const newG = deepClone(G);
+        newG.players.black = data.players.black;
+        set(ref(db, ROOM_PATH + '/state'), newG);
+        return;
+      }
+
+      // Both players confirmed → enter game
+      if (data.players?.white && data.players?.black) {
         if (document.getElementById('screen-wait').classList.contains('active')) {
           showScreen('game');
         }
       }
+
       if (!wasWinner) updateUI();
       if (G.winner && !wasWinner) showWin(G);
     }
 
-    // Opponent disconnect → zombie check via heartbeat age
+    // Opponent heartbeat timeout → replace with AI
     if (data.heartbeats && myColor && G && !G.winner && !isAIGame) {
       const opp = myColor === 'white' ? 'black' : 'white';
       const oppHb = data.heartbeats[opp];
@@ -1216,15 +1216,12 @@ async function joinRoom() {
   const snap = await get(ref(db, ROOM_PATH));
   const data = snap.val();
 
-  // Zombie detection: room exists but heartbeat is stale
-  if (data && data.heartbeats) {
-    const whiteHb = data.heartbeats.white;
-    const blackHb = data.heartbeats.black;
+  // Zombie detection: only if BOTH heartbeats are stale (not just missing)
+  if (data && data.heartbeats && data.players) {
     const now = Date.now();
-    const whiteZombie = !whiteHb || (now - whiteHb > HEARTBEAT_TIMEOUT);
-    const blackZombie = !blackHb || (now - blackHb > HEARTBEAT_TIMEOUT);
-    if (whiteZombie && (blackZombie || !data.players?.black)) {
-      // Stale room — hard clean
+    const whiteHb = data.heartbeats.white;
+    const whiteZombie = whiteHb && (now - whiteHb > HEARTBEAT_TIMEOUT);
+    if (whiteZombie) {
       await hardResetRoom(false);
       return joinRoom();
     }
@@ -1238,18 +1235,19 @@ async function joinRoom() {
       createdAt: Date.now(),
       heartbeats: { white: Date.now() }
     });
-    onDisconnect(ref(db, ROOM_PATH)).remove();
+    // Only remove our heartbeat on disconnect, not the whole room
+    onDisconnect(ref(db, ROOM_PATH + '/heartbeats/white')).remove();
     showScreen('wait');
-    document.getElementById('create-game-area').style.display = 'block';
     document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Weiß)`;
   } else if (data.players.white && !data.players.black) {
     // Join as black
     myColor = 'black';
     await update(ref(db, ROOM_PATH + '/players'), { black: myName });
     await set(ref(db, ROOM_PATH + '/heartbeats/black'), Date.now());
+    onDisconnect(ref(db, ROOM_PATH + '/heartbeats/black')).remove();
     showScreen('wait');
     document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Schwarz)`;
-    // If game already created by white, go straight in
+    // If game already created, go straight in
     if (data.state) { showScreen('game'); }
   } else {
     showToast('Raum ist voll — KI-Spiel wird gestartet.', 'error');
