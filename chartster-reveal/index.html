@@ -288,7 +288,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.0.3</div>
+<div class="ver">v1.0.4</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -380,7 +380,7 @@ var COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91'];
 
 // ════ PIXELATION STEPS ════
 // 8 steps: block size from very large → 1 (full res)
-var BLUR_STEPS=[60,50,40,32,25,19,14,10,7,4,2,1,0];
+var BLUR_STEPS=[20,16,13,10,8,6,4,3,2,1,0];
 var STEP_INTERVAL=1600; // ms per step
 
 // ════ STATE ════
@@ -547,7 +547,6 @@ function drawStep(stepIdx){
   var blur = steps[Math.min(stepIdx, steps.length-1)];
   if(revealImg){
     revealImg.style.filter = blur > 0 ? 'blur('+blur+'px)' : 'none';
-    revealImg.style.transform = blur > 0 ? 'scale(1.08)' : 'scale(1)'; // hide blur edges
   }
 }
 
