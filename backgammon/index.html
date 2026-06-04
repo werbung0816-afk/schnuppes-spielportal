@@ -420,7 +420,6 @@ canvas#bgCanvas {
 <div class="app">
   <header>
     <h1>🎲 Backgammon</h1>
-    <div class="portal-tag">Schnuppes Spielportal · v1.0</div>
   </header>
 
   <!-- SETUP SCREEN -->
@@ -430,6 +429,10 @@ canvas#bgCanvas {
       <p>Gib deinen Namen ein und betritt den Spielraum.<br>Der erste Spieler erstellt das Spiel, der zweite tritt bei.</p>
       <input type="text" id="player-name" class="input-field" placeholder="Dein Name..." maxlength="20">
       <button class="btn btn-primary" id="btn-enter" style="width:100%">Raum betreten →</button>
+      <div style="text-align:right; margin-top:8px;">
+        <button id="btn-hard-reset-lobby" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.0</span>
+      </div>
     </div>
   </div>
 
@@ -1591,6 +1594,11 @@ document.getElementById('btn-vs-ai').addEventListener('click', () => {
   if (roomListener) { roomListener(); roomListener = null; }
   remove(ref(db, ROOM_PATH)).catch(()=>{});
   startAIGame();
+});
+
+document.getElementById('btn-hard-reset-lobby').addEventListener('click', async () => {
+  try { await remove(ref(db, ROOM_PATH)); } catch(e){}
+  showToast('Raum gelöscht ✓');
 });
 
 document.getElementById('btn-hard-reset').addEventListener('click', () => hardResetRoom(true));
