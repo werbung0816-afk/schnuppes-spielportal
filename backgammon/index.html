@@ -1164,6 +1164,9 @@ function listenRoom() {
       const wasWinner = G && G.winner;
       const wasTurn = G && G.turn;
       G = data.state;
+      // Normalize arrays that Firebase might omit when empty
+      G.usedDice = G.usedDice || [];
+      G.dice = G.dice || [];
 
       // Reset selection when turn changes
       if (wasTurn !== G.turn) {
@@ -1450,7 +1453,7 @@ function updateUI() {
   document.getElementById('status-bar').innerHTML =
     `${G.players.white} ⚪ vs 🔵 ${G.players.black} &nbsp;|&nbsp; ` +
     `<span class="active-player">${activeName}</span> — ${isMe ? 'du bist dran ✦' : 'am Zug'} &nbsp;|&nbsp; ` +
-    `🎲 ${G.phase === 'rolling' ? 'Würfeln!' : `Würfel: ${(G.dice||[]).filter((_,i)=>!G.usedDice.includes(i)).join(', ')}`}`;
+    `🎲 ${G.phase === 'rolling' ? 'Würfeln!' : `Würfel: ${(G.dice||[]).filter((_,i)=>!(G.usedDice||[]).includes(i)).join(', ')}`}`;
 
   // Round info
   document.getElementById('round-info').innerHTML =
@@ -1477,7 +1480,6 @@ function updateUI() {
   // Roll button
   const canRoll = !!(myColor && G && myColor === G.turn && G.phase === 'rolling' && !G.winner);
   document.getElementById('btn-roll').disabled = !canRoll;
-  console.log(`updateUI: myColor=${myColor} G.turn=${G?.turn} phase=${G?.phase} canRoll=${canRoll} isAIGame=${isAIGame}`);
 
   drawBoard();
 }
@@ -1500,10 +1502,11 @@ function updateDiceDisplay(color, active) {
   if (!G) return;
   // Show dice whenever it's this color's turn AND dice exist (both players see them)
   if (G.turn !== color || !G.dice || G.dice.length === 0) return;
+  const usedDice = G.usedDice || [];
   G.dice.forEach((d, i) => {
     const div = document.createElement('div');
-    div.className = `die ${color}-die ${G.usedDice.includes(i) ? 'used' : ''}`;
-    if (G.phase === 'moving' && !G.usedDice.includes(i)) div.classList.add('rolling');
+    div.className = `die ${color}-die ${usedDice.includes(i) ? 'used' : ''}`;
+    if (G.phase === 'moving' && !usedDice.includes(i)) div.classList.add('rolling');
     div.innerHTML = buildDiceDots(d);
     container.appendChild(div);
   });
