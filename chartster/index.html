@@ -93,11 +93,6 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #ts-table-body::after{content:'';position:absolute;bottom:-10px;left:15%;width:70%;height:10px;background:radial-gradient(ellipse,rgba(143,95,255,.35) 0%,transparent 70%);border-radius:50%;filter:blur(6px)}
 .ts-side{display:flex;align-items:center;justify-content:center;padding:4px 0;flex:1}
 .seat{display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px;cursor:pointer}
-.seat-circle{width:52px;height:52px;border-radius:50%;border:2px dashed rgba(83,246,255,.3);display:flex;align-items:center;justify-content:center;transition:all .25s;background:rgba(83,246,255,.04);position:relative;overflow:hidden;color:rgba(83,246,255,.4);box-shadow:0 0 8px rgba(83,246,255,.08)}
-.seat.active .seat-circle{border-style:solid;border-width:2.5px;color:#07000f}
-.seat.active .seat-circle::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.18),transparent 70%)}
-.seat-inp{width:88px;background:var(--glass);border:1px solid var(--glass-b);border-radius:8px;padding:6px 8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:12px;outline:none;display:none;text-align:center}
-.seat.active .seat-inp{display:block}
 .ts-side .seat-inp{width:72px}
 
 /* ── CHART MACHINE (full-width, big) ── */
@@ -376,7 +371,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v3.9.4</div>
+<div class="version">v3.9.5</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -406,8 +401,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="setup-section">
     <div id="table-selector">
       <div class="ts-top-row">
-        <div class="seat" data-pos="top-r" onclick="toggleSeat('top-r')"><div class="seat-circle"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Teamname" onclick="event.stopPropagation()"></div>
         <div class="seat" data-pos="top-l" onclick="toggleSeat('top-l')"><div class="seat-circle"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Teamname" onclick="event.stopPropagation()"></div>
+        <div class="seat" data-pos="top-r" onclick="toggleSeat('top-r')"><div class="seat-circle"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Teamname" onclick="event.stopPropagation()"></div>
       </div>
       <div class="ts-mid-row">
         <div class="ts-side"><div class="seat" data-pos="left" onclick="toggleSeat('left')"><div class="seat-circle"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Team" onclick="event.stopPropagation()"></div></div>
@@ -539,8 +534,8 @@ const MAX_TEAMS=6,MAX_TOK=5;var WIN=10;
 const DECADES=['70','80','90','00','10','20'];
 // Clockwise from top-left (viewed from above): top→right→bottom→left
 const CW_ORDER=['bot-l','bot-r','right','top-r','top-l','left'];
-const SEAT_DEF={'top-l':{side:'top-l'},'top-r':{side:'top-r'},'left':{side:'left'},'right':{side:'right'},'bot-l':{side:'bot'},'bot-r':{side:'bot'}};
-const CENTER_ROT={bot:'r0','bot-l':'r0','bot-r':'r0',top:'r180','top-l':'r180','top-r':'r180',left:'r90',right:'r270'};
+const SEAT_DEF={'top-l':{side:'top'},'top-r':{side:'top'},'left':{side:'left'},'right':{side:'right'},'bot-l':{side:'bot'},'bot-r':{side:'bot'}};
+const CENTER_ROT={bot:'r0',top:'r180',left:'r90',right:'r270'};
 
 const CP1=[t=>`${t} – Ihr seid dran!`,t=>`Jetzt kommen ${t}!`,t=>`Alle Ohren auf ${t}!`,t=>`${t} – zeigt Euren Musikgeschmack!`,t=>`${t}: Die Bühne gehört Euch!`,t=>`Keine Ausreden – ${t} legt los!`];
 const CP2=[(t)=>`Welches Jahr steckt dahinter?`,(t,o)=>o.length?`${t} gegen ${o[0]}.`:`Lauscht gut, ${t}!`,(t)=>`Vertraut Eurem Bauchgefühl!`,(t,o)=>o.length?`${o.join(' & ')} überlegen…`:`Der Beat verrät alles.`,(t)=>`Hört rein!`];
@@ -579,7 +574,7 @@ function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.flo
 // ── SEAT SELECTOR ──
 function toggleSeat(pos){
   var seat=document.querySelector(`.seat[data-pos="${pos}"]`);
-  if(G.seatCfg[pos]){G.seatCfg[pos]=null;seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';reassignSeatColors();}
+  if(G.seatCfg[pos]){G.seatCfg[pos]=null;seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';reassignSeatColors();}
   else{var active=getActiveSeats();if(active.length>=MAX_TEAMS){showHint(`Maximal ${MAX_TEAMS} Teams!`);return;}var ci=active.length;G.seatCfg[pos]={name:'',colorIdx:ci};seat.classList.add('active');var circ=seat.querySelector('.seat-circle');circ.style.background=COLORS[ci];circ.style.borderColor=COLORS[ci];circ.style.borderStyle='solid';circ.style.color='#07000f';circ.style.color='#07000f';var inp=seat.querySelector('.seat-inp');inp.style.display='block';inp.placeholder=DEFAULTS[ci];}
   updateStartBtn();
 }
@@ -623,7 +618,7 @@ function updateSlotUI(){var team=G.teams[G.slotTeam];var el=document.getElementB
 function nextSlotTeam(){G.slotTeam++;if(G.slotTeam>=G.teams.length){var validYears=G.slotYears.slice(0,G.teams.length);G.teams.forEach((t,i)=>{t.years=[validYears[i]||1990];});var activeCW=CW_ORDER.filter(pos=>G.teams.some(t=>t.pos===pos));var startPos=activeCW[Math.floor(Math.random()*activeCW.length)];G.cur=G.teams.findIndex(t=>t.pos===startPos);if(G.cur<0)G.cur=0;beginPlay();}else{updateSlotUI();initSlot();}}
 
 // ── PLAY ──
-function beginPlay(){G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.readyToReveal=false;clearCd();if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();var gc=document.getElementById('game-center');if(gc)gc.className=CENTER_ROT[G.teams[G.cur].side]||CENTER_ROT[G.teams[G.cur].pos]||'r0';showScreen('game');buildOptFilter();renderPanels();updateGameUI();pushState();}
+function beginPlay(){G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.readyToReveal=false;clearCd();if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();var gc=document.getElementById('game-center');if(gc)gc.className=CENTER_ROT[G.teams[G.cur].side]||'r0';showScreen('game');buildOptFilter();renderPanels();updateGameUI();pushState();}
 function drawCard(){if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();}
 
 // ── PANELS ──
@@ -768,7 +763,7 @@ function newSongToken(){var team=G.teams[G.cur];if(team.tokens<=0){showHint('Kei
 function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort((a,b)=>a-b);var correctPos=getCorrectPos(G.currentCard.y,sorted);if(type==='year'||type==='both'){team.years.push(G.currentCard.y);team.years.sort((a,b)=>a-b);if(type==='both')team.tokens=Math.min(MAX_TOK,team.tokens+1);spawnConfetti(team.color,90,false);}else{for(var i=0;i<G.teams.length;i++){if(i!==G.cur&&G.bets[i]===correctPos){G.teams[i].years.push(G.currentCard.y);G.teams[i].years.sort((a,b)=>a-b);spawnConfetti(G.teams[i].color,60,false);showHint(`${G.teams[i].name} stehlen die Jahreszahl! 🎉`);break;}}}G.bets={};G.betMode=null;if(team.years.length>=WIN){showVictory();return;}showTransition();}
 
 // ── TRANSITION ──
-function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','top-l':' r180','top-r':' r180','left':' r90','right':' r270','bot':'','bot-l':'','bot-r':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
+function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':' r90','right':' r270','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
 function continueGame(){G.cur=nextTeamIdx();G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
 
 // ── VICTORY ──
@@ -783,7 +778,7 @@ function openOpt(){buildOptFilter();document.getElementById('opt-panel').classLi
 function closeOpt(){document.getElementById('opt-panel').classList.remove('show');document.getElementById('opt-confirm').classList.remove('show');}
 function optNewSong(){closeOpt();clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();showHint('Schiedsrichter: Neuer Song! ⚖️');}
 function optResetPrompt(){document.getElementById('opt-confirm').classList.add('show');}
-function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');document.getElementById('lobby-status').textContent=G.songs.length?`${G.songs.length} Songs`:'';document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
+function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');document.getElementById('lobby-status').textContent=G.songs.length?`${G.songs.length} Songs`:'';document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
 
 // ── UTILS ──
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el){el.classList.add('active');G.screen=name;}document.getElementById('opt-fab').style.display=(name==='game')?'flex':'none';}
