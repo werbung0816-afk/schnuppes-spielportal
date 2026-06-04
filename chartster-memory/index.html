@@ -135,9 +135,8 @@ body{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:7px 6px;text-align:center;gap:3px;
 }
-.mc-text .mt-year{font-size:11px;font-weight:800;color:var(--pink);letter-spacing:.08em}
-.mc-text .mt-title{font-size:11px;font-weight:700;color:var(--text);line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
-.mc-text .mt-artist{font-size:10px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.mc-text .mt-title{font-size:13px;font-weight:700;color:var(--cyan);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+.mc-text .mt-artist{font-size:13px;font-weight:700;color:var(--pink);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 
 /* Matched state */
 .mc.matched .mc-cover,.mc.matched .mc-text{opacity:.38}
@@ -437,7 +436,6 @@ function renderGrid(){
         '</div>';
     } else {
       front='<div class="mc-face mc-text">'+
-        '<div class="mt-year">'+esc(card.song.y||'')+'</div>'+
         '<div class="mt-title">'+esc(card.song.t||'')+'</div>'+
         '<div class="mt-artist">'+esc(card.song.a||'')+'</div>'+
         '</div>';
