@@ -79,7 +79,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 /* ── LOBBY ── */
 .setup-section{width:100%;display:flex;flex-direction:column;gap:8px}
-.flt{padding:9px 16px;border-radius:10px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);font-size:14px;font-weight:600;font-family:'Outfit',sans-serif}
+.flt{padding:6px 10px;border-radius:12px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px}
+.flt img{width:48px;height:48px;border-radius:8px;object-fit:cover}
 .flt.on{border-color:var(--purple);color:var(--purple);background:rgba(143,95,255,.12)}
 .flt.off{opacity:.3;pointer-events:none}
 .filter-wrap{display:flex;flex-wrap:wrap;gap:8px}
@@ -375,7 +376,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v3.7.0</div>
+<div class="version">v3.7.4</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -422,16 +423,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="setup-section">
     <div class="label">Chartsjahre</div>
     <div class="filter-wrap" id="flt-wrap">
-      <button class="flt on" data-f="all" onclick="toggleFlt(this)">Alle</button>
-      <button class="flt" data-f="70" onclick="toggleFlt(this)">70er</button>
-      <button class="flt" data-f="80" onclick="toggleFlt(this)">80er</button>
-      <button class="flt" data-f="90" onclick="toggleFlt(this)">90er</button>
-      <button class="flt" data-f="00" onclick="toggleFlt(this)">00er</button>
-      <button class="flt" data-f="10" onclick="toggleFlt(this)">10er</button>
-      <button class="flt" data-f="20" onclick="toggleFlt(this)">20er</button>
+      <button class="flt" data-f="70" onclick="toggleFlt(this)"><img src="filter/filter-70er.png" alt="70er">70er</button>
+      <button class="flt" data-f="80" onclick="toggleFlt(this)"><img src="filter/filter-80er.png" alt="80er">80er</button>
+      <button class="flt" data-f="90" onclick="toggleFlt(this)"><img src="filter/filter-90er.png" alt="90er">90er</button>
+      <button class="flt" data-f="00" onclick="toggleFlt(this)"><img src="filter/filter-00er.png" alt="00er">00er</button>
+      <button class="flt" data-f="10" onclick="toggleFlt(this)"><img src="filter/filter-10er.png" alt="10er">10er</button>
+      <button class="flt" data-f="20" onclick="toggleFlt(this)"><img src="filter/filter-20er.png" alt="20er">20er</button>
       <div style="width:100%"></div>
-      <button class="flt" data-f="top20" onclick="toggleFlt(this)">Top 20</button>
-      <button class="flt" data-f="top10" onclick="toggleFlt(this)">Top 10</button>
+      <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20">Top 20</button>
+      <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10">Top 10</button>
     </div>
   </div>
   <div class="sep"></div>
@@ -573,7 +573,7 @@ initFirebase();
 
 // ── SONGS ──
 function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);document.getElementById('lobby-status').textContent=`${G.songs.length} Songs`;updateStartBtn();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
-function filteredSongs(){var s=G.songs.filter(x=>x.l);if(G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20'))return s;var dec=DECADES.filter(d=>G.filters.has(d));if(dec.length)s=s.filter(x=>dec.some(d=>{if(d==='70')return x.y>=1970&&x.y<1980;if(d==='80')return x.y>=1980&&x.y<1990;if(d==='90')return x.y>=1990&&x.y<2000;if(d==='00')return x.y>=2000&&x.y<2010;if(d==='10')return x.y>=2010&&x.y<2020;if(d==='20')return x.y>=2020;return false;}));if(G.filters.has('top10'))s=s.filter(x=>x.p<=10);else if(G.filters.has('top20'))s=s.filter(x=>x.p<=20);return s;}
+function filteredSongs(){var s=G.songs.filter(x=>x.l);if(G.filters.size===0||G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20'))return s;var dec=DECADES.filter(d=>G.filters.has(d));if(dec.length)s=s.filter(x=>dec.some(d=>{if(d==='70')return x.y>=1970&&x.y<1980;if(d==='80')return x.y>=1980&&x.y<1990;if(d==='90')return x.y>=1990&&x.y<2000;if(d==='00')return x.y>=2000&&x.y<2010;if(d==='10')return x.y>=2010&&x.y<2020;if(d==='20')return x.y>=2020;return false;}));if(G.filters.has('top10'))s=s.filter(x=>x.p<=10);else if(G.filters.has('top20'))s=s.filter(x=>x.p<=20);return s;}
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 
 // ── SEAT SELECTOR ──
@@ -596,7 +596,7 @@ function toggleS5(){
 function updateStartBtn(){document.getElementById('start-btn').disabled=!IS_HOST||getActiveSeats().length<2;}
 
 // ── FILTER ──
-function toggleFlt(btn,isOpt){var f=btn.dataset.f;if(f==='all'){G.filters=new Set(['all']);}else if(f==='top10'){G.filters.delete('all');G.filters.delete('top20');G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');}else if(f==='top20'){G.filters.delete('all');G.filters.delete('top10');G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');}else{G.filters.delete('all');G.filters.has(f)?G.filters.delete(f):G.filters.add(f);if(G.filters.size===0)G.filters.add('all');}syncFlt('flt-wrap');syncFlt('opt-filter');if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}}
+function toggleFlt(btn,isOpt){var f=btn.dataset.f;if(f==='all'){G.filters=new Set();}else if(f==='top10'){G.filters.delete('all');G.filters.delete('top20');G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');}else if(f==='top20'){G.filters.delete('all');G.filters.delete('top10');G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');}else{G.filters.delete('all');G.filters.has(f)?G.filters.delete(f):G.filters.add(f);// leere Auswahl = alle Songs}syncFlt('flt-wrap');syncFlt('opt-filter');if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}}
 function syncFlt(id){var w=document.getElementById(id);if(!w)return;w.querySelectorAll('.flt').forEach(b=>{b.classList.toggle('on',G.filters.has(b.dataset.f));b.classList.remove('off');});if(G.filters.has('all')){DECADES.forEach(d=>{var el=w.querySelector(`[data-f="${d}"]`);if(el)el.classList.add('off');});}var t10=w.querySelector('[data-f="top10"]'),t20=w.querySelector('[data-f="top20"]');if(G.filters.has('top10')&&t20)t20.classList.add('off');if(G.filters.has('top20')&&t10)t10.classList.add('off');}
 function buildOptFilter(){var w=document.getElementById('opt-filter');w.innerHTML=document.getElementById('flt-wrap').innerHTML;w.querySelectorAll('.flt').forEach(b=>{b.onclick=function(){toggleFlt(b,true);};});syncFlt('opt-filter');}
 
@@ -909,35 +909,6 @@ if (isInStandaloneMode()) {
 </script>
 
 
-<script>
-// ══ CHARTSTER PWA ══
-let pwaInstallPrompt=null;
-const PWA_DISMISSED='chartster_pwa_dismissed';
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js',{scope:'/schnuppes-spielportal/chartster/'})
-    .then(reg=>{
-      reg.addEventListener('updatefound',()=>{
-        const nw=reg.installing;
-        nw?.addEventListener('statechange',()=>{
-          if(nw.state==='installed'&&navigator.serviceWorker.controller){
-            setTimeout(()=>document.getElementById('pwa-update-toast')?.classList.add('show'),1500);
-          }
-        });
-      });
-    }).catch(e=>console.warn('[PWA]',e));
-    navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());
-  });
-}
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();pwaInstallPrompt=e;
-  if(!sessionStorage.getItem(PWA_DISMISSED))setTimeout(()=>document.getElementById('pwa-banner')?.classList.add('show'),3000);
-});
-async function pwaTriggerInstall(){if(!pwaInstallPrompt)return;await pwaInstallPrompt.prompt();pwaInstallPrompt=null;document.getElementById('pwa-banner')?.classList.remove('show');}
-function pwaDismiss(){document.getElementById('pwa-banner')?.classList.remove('show');sessionStorage.setItem(PWA_DISMISSED,'1');}
-function pwaApplyUpdate(){document.getElementById('pwa-update-toast')?.classList.remove('show');navigator.serviceWorker.controller?.postMessage('SKIP_WAITING');}
-window.addEventListener('appinstalled',()=>{document.getElementById('pwa-banner')?.classList.remove('show');pwaInstallPrompt=null;});
-</script>
 
 </body>
 </html>
