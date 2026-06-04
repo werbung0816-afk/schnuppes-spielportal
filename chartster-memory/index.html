@@ -1,1 +1,591 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Chartster Memory</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS (1:1 aus Chartster) ── */
+:root{
+  --cyan:#53f6ff;--pink:#ff4fd8;--purple:#8f5fff;
+  --bg:#07000f;--glass:rgba(255,255,255,.055);--glass-b:rgba(255,255,255,.10);
+  --text:rgba(240,240,255,1);--muted:rgba(240,240,255,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0;cursor:default!important;-webkit-tap-highlight-color:transparent}
+input,label,button,select{cursor:pointer!important}
 
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 40%,rgba(143,95,255,.18) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 15%,rgba(83,246,255,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 45% at 65% 85%,rgba(255,79,216,.12) 0%,transparent 60%);
+  min-height:100vh;color:var(--text);
+}
+
+/* ── BASE (aus Chartster) ── */
+.screen{display:none;min-height:100vh;padding:16px;align-items:center;justify-content:center;flex-direction:column}
+.screen.active{display:flex}
+.card{width:100%;max-width:560px;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:28px 22px 22px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative}
+.sep{width:100%;height:1px;background:var(--glass-b)}
+.game-title{font-size:44px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px rgba(83,246,255,.4))}
+.label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.btn{width:100%;padding:16px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:18px;font-weight:600;transition:all .2s;border:none;outline:none;-webkit-appearance:none;touch-action:manipulation;user-select:none}
+.btn[disabled]{opacity:.35;pointer-events:none}
+.btn-primary{background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));color:var(--cyan);border:1px solid rgba(83,246,255,.4);box-shadow:0 0 20px rgba(83,246,255,.12)}
+.btn-primary:active{box-shadow:0 0 32px rgba(83,246,255,.4)}
+.btn-secondary{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--glass-b)}
+
+/* ── FILTER (1:1 aus Chartster, Pfad relativ zu Chartster) ── */
+.flt{padding:6px 10px;border-radius:12px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px}
+.flt img{width:48px;height:48px;border-radius:8px;object-fit:cover}
+.flt.on{border-color:var(--purple);color:var(--purple);background:rgba(143,95,255,.12)}
+.flt.off{opacity:.3;pointer-events:none}
+.filter-wrap{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ── HINT TOAST (aus Chartster) ── */
+#hint-toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(255,79,216,.18);border:1px solid rgba(255,79,216,.4);color:var(--pink);padding:11px 20px;border-radius:12px;font-size:16px;font-weight:600;z-index:900;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;white-space:nowrap;max-width:90vw}
+#hint-toast.show{opacity:1}
+
+/* ── CONFETTI ── */
+#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:700;overflow:hidden}
+@keyframes cf-fall{0%{opacity:1;transform:translateY(-20px) rotate(0deg)}100%{opacity:0;transform:translateY(105vh) rotate(720deg)}}
+
+/* ── LOBBY ── */
+#screen-lobby{justify-content:flex-start;padding-top:32px}
+.setup-section{width:100%;display:flex;flex-direction:column;gap:8px}
+
+.player-rows{display:flex;flex-direction:column;gap:8px;width:100%}
+.player-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid var(--glass-b);border-radius:12px;padding:10px 14px;transition:border-color .2s}
+.player-row:focus-within{border-color:var(--purple);box-shadow:0 0 0 2px rgba(143,95,255,.15)}
+.pdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.player-row input{background:transparent;border:none;outline:none;color:var(--text);font-family:'Outfit',sans-serif;font-size:15px;font-weight:500;width:100%}
+.player-row input::placeholder{color:var(--muted)}
+
+/* Pair selector */
+.pair-sel{display:flex;gap:8px;width:100%}
+.pair-btn{flex:1;background:var(--glass);border:1px solid var(--glass-b);border-radius:12px;padding:14px 8px;font-family:'Outfit',sans-serif;color:var(--muted);transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pair-btn .pn{font-size:28px;font-weight:900;line-height:1}
+.pair-btn .pl{font-size:10px;letter-spacing:.04em}
+.pair-btn.on{border-color:var(--pink);color:var(--pink);background:rgba(255,79,216,.08)}
+
+/* filter count info */
+#flt-info{font-size:12px;color:var(--muted);min-height:18px}
+#flt-info.warn{color:var(--pink)}
+
+/* ── GAME SCREEN ── */
+#screen-game{justify-content:flex-start;padding:12px 12px 24px;align-items:center}
+
+/* Scoreboard */
+.scoreboard{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%;max-width:900px;margin-bottom:10px}
+.s-chip{display:flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--glass-b);border-radius:40px;padding:7px 14px;font-size:14px;font-weight:600;transition:all .25s}
+.s-chip.cur{border-width:2px;box-shadow:0 0 16px rgba(0,0,0,.5)}
+.s-chip .sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.s-chip .spts{font-size:17px;font-weight:900;min-width:22px;text-align:center}
+
+.turn-line{font-size:13px;color:var(--muted);height:20px;text-align:center;margin-bottom:8px}
+.turn-line span{font-weight:700;color:var(--text)}
+
+/* Memory grid */
+.mem-grid{
+  display:grid;
+  gap:8px;
+  width:100%;
+  max-width:900px;
+}
+.mem-grid.g8 {grid-template-columns:repeat(4,1fr)}
+.mem-grid.g10{grid-template-columns:repeat(5,1fr)}
+.mem-grid.g12{grid-template-columns:repeat(6,1fr)}
+
+@media(max-width:480px){
+  .mem-grid.g12{grid-template-columns:repeat(4,1fr)}
+}
+
+/* Card flip */
+.mc{width:100%;aspect-ratio:2/3;perspective:600px;position:relative}
+.mc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .38s cubic-bezier(.4,0,.2,1);border-radius:10px}
+.mc.flipped .mc-inner,.mc.matched .mc-inner{transform:rotateY(180deg)}
+.mc-face{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+
+/* Back */
+.mc-back{
+  background:linear-gradient(145deg,#0e0120,#07000f);
+  border:1px solid var(--glass-b);
+  display:flex;align-items:center;justify-content:center;
+}
+.mc-back-pattern{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 5px,rgba(143,95,255,.04) 5px,rgba(143,95,255,.04) 6px)}
+.mc-back-icon{position:relative;z-index:1;width:54%;aspect-ratio:1;object-fit:contain;opacity:.55;border-radius:12px}
+
+/* Front – cover */
+.mc-cover{
+  transform:rotateY(180deg);
+  background:#08001a;
+  border:1px solid rgba(83,246,255,.25);
+}
+.mc-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.mc-cover-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:30px;background:linear-gradient(135deg,rgba(83,246,255,.08),rgba(143,95,255,.08))}
+
+/* Front – text */
+.mc-text{
+  transform:rotateY(180deg);
+  background:linear-gradient(145deg,#12002a,#07000f);
+  border:1px solid rgba(255,79,216,.28);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:7px 6px;text-align:center;gap:3px;
+}
+.mc-text .mt-year{font-size:11px;font-weight:800;color:var(--pink);letter-spacing:.08em}
+.mc-text .mt-title{font-size:11px;font-weight:700;color:var(--text);line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.mc-text .mt-artist{font-size:10px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+/* Matched state */
+.mc.matched .mc-cover,.mc.matched .mc-text{opacity:.38}
+.mc-match-badge{position:absolute;inset:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(0,0,0,.25);z-index:5;pointer-events:none;opacity:0;transition:opacity .3s}
+.mc.matched .mc-match-badge{opacity:1}
+
+/* Wrong shake */
+@keyframes shake{
+  0%,100%{transform:rotateY(180deg) translateX(0)}
+  20%{transform:rotateY(180deg) translateX(-5px)}
+  50%{transform:rotateY(180deg) translateX(5px)}
+  80%{transform:rotateY(180deg) translateX(-3px)}
+}
+.mc.wrong .mc-inner{animation:shake .38s ease}
+
+/* Match pop */
+@keyframes matchpop{0%{transform:rotateY(180deg) scale(1)}50%{transform:rotateY(180deg) scale(1.06)}100%{transform:rotateY(180deg) scale(1)}}
+.mc.justmatched .mc-inner{animation:matchpop .3s ease}
+
+/* ── VICTORY ── */
+#victoryOverlay{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);z-index:999;overflow:hidden;flex-direction:column;padding:24px}
+#victoryOverlay.show{display:flex}
+@keyframes zoomIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.vc-inner{animation:zoomIn .5s ease;display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;max-width:440px}
+.vc-title{font-size:clamp(36px,9vw,64px);font-weight:900;text-align:center;line-height:1.1}
+.vc-subtitle{font-size:16px;color:var(--muted);text-align:center}
+.vc-scores{display:flex;flex-direction:column;gap:10px;width:100%}
+.vc-row{display:flex;align-items:center;gap:14px;background:var(--glass);border:1px solid var(--glass-b);border-radius:14px;padding:13px 18px}
+.vc-row.winner{border-color:gold;background:rgba(255,215,0,.07);box-shadow:0 0 24px rgba(255,215,0,.15)}
+.vc-medal{font-size:22px;width:30px;text-align:center;flex-shrink:0}
+.vc-name{flex:1;font-size:16px;font-weight:700}
+.vc-pts{font-size:22px;font-weight:900}
+.vc-pts small{font-size:11px;font-weight:400;color:var(--muted)}
+.vfinal-btn{padding:16px 40px;border:none;border-radius:14px;font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--purple),var(--pink));font-family:'Outfit',sans-serif;margin-top:4px}
+</style>
+</head>
+<body>
+
+<div id="hint-toast"></div>
+<div id="confetti"></div>
+<div id="victoryOverlay"></div>
+
+<!-- ════ LOBBY ════ -->
+<div id="screen-lobby" class="screen active">
+<div class="card" style="margin-top:16px;margin-bottom:24px">
+
+  <div class="game-title" style="font-size:36px;letter-spacing:1px">MEMORY</div>
+  <div style="font-size:13px;color:var(--muted);margin-top:-8px">Finde die passenden Cover & Songs</div>
+  <div class="sep"></div>
+
+  <!-- Spieler -->
+  <div class="setup-section">
+    <div class="label">👥 Spieler</div>
+    <div class="player-rows">
+      <div class="player-row"><div class="pdot" style="background:#53f6ff;box-shadow:0 0 7px #53f6ff"></div><input id="p1" type="text" placeholder="Spieler 1" maxlength="18"></div>
+      <div class="player-row"><div class="pdot" style="background:#ff4fd8;box-shadow:0 0 7px #ff4fd8"></div><input id="p2" type="text" placeholder="Spieler 2 (optional)" maxlength="18"></div>
+      <div class="player-row"><div class="pdot" style="background:#8f5fff;box-shadow:0 0 7px #8f5fff"></div><input id="p3" type="text" placeholder="Spieler 3 (optional)" maxlength="18"></div>
+      <div class="player-row"><div class="pdot" style="background:#4dff91;box-shadow:0 0 7px #4dff91"></div><input id="p4" type="text" placeholder="Spieler 4 (optional)" maxlength="18"></div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Jahresfilter -->
+  <div class="setup-section">
+    <div class="label">🗓 Chartsjahre</div>
+    <div class="filter-wrap" id="flt-wrap">
+      <button class="flt" data-f="70" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-70er.png" alt="70er">70er</button>
+      <button class="flt" data-f="80" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-80er.png" alt="80er">80er</button>
+      <button class="flt" data-f="90" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-90er.png" alt="90er">90er</button>
+      <button class="flt" data-f="00" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-00er.png" alt="00er">00er</button>
+      <button class="flt" data-f="10" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-10er.png" alt="10er">10er</button>
+      <button class="flt" data-f="20" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-20er.png" alt="20er">20er</button>
+      <div style="width:100%"></div>
+      <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-top20.png" alt="Top 20">Top 20</button>
+      <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-top10.png" alt="Top 10">Top 10</button>
+    </div>
+    <div id="flt-info"></div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Paare -->
+  <div class="setup-section">
+    <div class="label">🃏 Anzahl Paare</div>
+    <div class="pair-sel">
+      <button class="pair-btn" data-p="8"  onclick="setPairs(this)"><span class="pn">8</span><span class="pl">16 Kacheln</span></button>
+      <button class="pair-btn on" data-p="10" onclick="setPairs(this)"><span class="pn">10</span><span class="pl">20 Kacheln</span></button>
+      <button class="pair-btn" data-p="12" onclick="setPairs(this)"><span class="pn">12</span><span class="pl">24 Kacheln</span></button>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" id="start-btn" onclick="startGame()" disabled>Spiel starten</button>
+  <div id="lobby-status" style="font-size:13px;color:var(--muted);text-align:center;min-height:18px"></div>
+
+</div>
+</div>
+
+<!-- ════ GAME ════ -->
+<div id="screen-game" class="screen">
+  <div class="scoreboard" id="scoreboard"></div>
+  <div class="turn-line" id="turn-line"></div>
+  <div class="mem-grid" id="mem-grid"></div>
+</div>
+
+<script>
+// ════ CONFIG ════
+const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91'];
+const DECADES=['70','80','90','00','10','20'];
+
+// ════ STATE ════
+var G={
+  songs:[],          // all songs with cover
+  filters:new Set(), // active decade/chart filters
+  pairs:10,
+  players:[],
+  scores:[],
+  cur:0,
+  cards:[],          // shuffled card objects
+  flipped:[],        // indices of currently face-up (not yet matched)
+  matched:new Set(), // indices of matched cards
+  locked:false
+};
+
+// ════ BOOT ════
+loadSongs();
+
+function loadSongs(){
+  document.getElementById('lobby-status').textContent='lädt …';
+  fetch('../chartster/songs.json')
+    .then(r=>r.ok?r.json():Promise.reject(r.status))
+    .then(data=>{
+      // songs.json is a plain array
+      var all=Array.isArray(data)?data:(data.songs||[]);
+      // Memory: nur Songs MIT Cover
+      G.songs=all.filter(s=>s.c&&s.c.trim()!=='');
+      document.getElementById('lobby-status').textContent='';
+      document.getElementById('start-btn').disabled=false;
+      updateFltInfo();
+    })
+    .catch(()=>{
+      document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';
+    });
+}
+
+// ════ FILTER LOGIC (aus Chartster übernommen) ════
+function toggleFlt(btn){
+  var f=btn.dataset.f;
+  if(btn.classList.contains('on')){
+    btn.classList.remove('on');
+    G.filters.delete(f);
+  }else{
+    btn.classList.add('on');
+    G.filters.add(f);
+  }
+  updateFltInfo();
+}
+
+function filteredSongs(){
+  var s=G.songs.slice(); // already cover-only
+  if(G.filters.size===0) return s;
+  var dec=DECADES.filter(d=>G.filters.has(d));
+  if(dec.length){
+    s=s.filter(x=>dec.some(d=>{
+      if(d==='70')return x.y>=1970&&x.y<1980;
+      if(d==='80')return x.y>=1980&&x.y<1990;
+      if(d==='90')return x.y>=1990&&x.y<2000;
+      if(d==='00')return x.y>=2000&&x.y<2010;
+      if(d==='10')return x.y>=2010&&x.y<2020;
+      if(d==='20')return x.y>=2020;
+      return false;
+    }));
+  }
+  if(G.filters.has('top10')) s=s.filter(x=>x.p<=10);
+  else if(G.filters.has('top20')) s=s.filter(x=>x.p<=20);
+  return s;
+}
+
+function updateFltInfo(){
+  var n=filteredSongs().length;
+  var el=document.getElementById('flt-info');
+  var need=G.pairs;
+  if(G.filters.size===0){
+    el.textContent=G.songs.length+' Songs verfügbar (kein Filter aktiv = alle)';
+    el.className='';
+  } else if(n<need){
+    el.textContent='⚠ Nur '+n+' Songs mit Cover in diesem Filter – mindestens '+need+' benötigt';
+    el.className='warn';
+  } else {
+    el.textContent=n+' Songs mit Cover verfügbar';
+    el.className='';
+  }
+}
+
+// ════ PAIR SELECTOR ════
+function setPairs(btn){
+  document.querySelectorAll('.pair-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  G.pairs=parseInt(btn.dataset.p);
+  updateFltInfo();
+}
+
+// ════ SHUFFLE (aus Chartster) ════
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+// ════ START ════
+function startGame(){
+  var names=[
+    document.getElementById('p1').value.trim()||'Spieler 1',
+    document.getElementById('p2').value.trim(),
+    document.getElementById('p3').value.trim(),
+    document.getElementById('p4').value.trim()
+  ].filter((n,i)=>i===0||n!=='');
+
+  var pool=filteredSongs();
+  if(pool.length<G.pairs){
+    showHint('Nicht genug Songs mit Cover für '+G.pairs+' Paare!');
+    return;
+  }
+
+  G.players=names;
+  G.scores=names.map(()=>0);
+  G.cur=0;
+  G.flipped=[];
+  G.matched=new Set();
+  G.locked=false;
+
+  // Pick random songs, build card pairs
+  var chosen=shuffle(pool).slice(0,G.pairs);
+  var cards=[];
+  chosen.forEach(function(song,i){
+    cards.push({type:'cover',song:song,pair:i});
+    cards.push({type:'text', song:song,pair:i});
+  });
+  G.cards=shuffle(cards);
+
+  renderScoreboard();
+  renderGrid();
+  updateTurnLine();
+  showScreen('game');
+}
+
+// ════ SCOREBOARD ════
+function renderScoreboard(){
+  var sb=document.getElementById('scoreboard');
+  sb.innerHTML='';
+  G.players.forEach(function(name,i){
+    var chip=document.createElement('div');
+    chip.className='s-chip';
+    chip.id='chip-'+i;
+    chip.innerHTML=
+      '<div class="sdot" style="background:'+COLORS[i]+';box-shadow:0 0 6px '+COLORS[i]+'"></div>'+
+      '<span>'+esc(name)+'</span>'+
+      '<span class="spts" id="pts-'+i+'" style="color:'+COLORS[i]+'">0</span>';
+    sb.appendChild(chip);
+  });
+  highlightCur();
+}
+function updateScoreboard(){
+  G.players.forEach(function(_,i){
+    document.getElementById('pts-'+i).textContent=G.scores[i];
+  });
+  highlightCur();
+}
+function highlightCur(){
+  G.players.forEach(function(_,i){
+    var c=document.getElementById('chip-'+i);
+    if(!c)return;
+    c.classList.toggle('cur',i===G.cur);
+    c.style.borderColor=i===G.cur?COLORS[i]:'';
+    c.style.boxShadow=i===G.cur?'0 0 14px '+COLORS[i]+'55':'';
+  });
+}
+function updateTurnLine(){
+  var el=document.getElementById('turn-line');
+  if(G.players.length<=1){el.innerHTML='';return;}
+  el.innerHTML='Dran: <span>'+esc(G.players[G.cur])+'</span>';
+}
+
+// ════ GRID ════
+function renderGrid(){
+  var grid=document.getElementById('mem-grid');
+  grid.innerHTML='';
+  grid.className='mem-grid g'+G.pairs;
+  G.cards.forEach(function(card,idx){
+    var el=document.createElement('div');
+    el.className='mc';
+    el.dataset.idx=idx;
+    el.ontouchstart=function(){flipCard(idx);}; // snappier on mobile
+    el.onclick=function(){flipCard(idx);};
+
+    var front='';
+    if(card.type==='cover'){
+      front='<div class="mc-face mc-cover">'+
+        '<img src="'+esc(card.song.c)+'" alt="" loading="lazy" '+
+        'onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<div class=mc-cover-fb>🎵</div>\'">'+
+        '</div>';
+    } else {
+      front='<div class="mc-face mc-text">'+
+        '<div class="mt-year">'+esc(card.song.y||'')+'</div>'+
+        '<div class="mt-title">'+esc(card.song.t||'')+'</div>'+
+        '<div class="mt-artist">'+esc(card.song.a||'')+'</div>'+
+        '</div>';
+    }
+
+    el.innerHTML=
+      '<div class="mc-inner">'+
+        '<div class="mc-face mc-back">'+
+          '<div class="mc-back-pattern"></div>'+
+          '<img class="mc-back-icon" src="../chartster/icons/icon-192x192.png" alt="" '+
+          'onerror="this.style.display=\'none\'">'+
+        '</div>'+
+        front+
+        '<div class="mc-match-badge">✓</div>'+
+      '</div>';
+
+    grid.appendChild(el);
+  });
+}
+
+// ════ FLIP LOGIC ════
+function flipCard(idx){
+  if(G.locked)return;
+  if(G.matched.has(idx))return;
+  if(G.flipped.includes(idx))return;
+  if(G.flipped.length>=2)return;
+
+  document.getElementById('mem-grid').children[idx].classList.add('flipped');
+  G.flipped.push(idx);
+
+  if(G.flipped.length===2){
+    G.locked=true;
+    checkMatch();
+  }
+}
+
+function checkMatch(){
+  var a=G.flipped[0],b=G.flipped[1];
+  var ca=G.cards[a],cb=G.cards[b];
+  var els=document.getElementById('mem-grid').children;
+
+  if(ca.pair===cb.pair && ca.type!==cb.type){
+    // ── MATCH ──
+    setTimeout(function(){
+      els[a].classList.remove('flipped');
+      els[b].classList.remove('flipped');
+      els[a].classList.add('matched','justmatched');
+      els[b].classList.add('matched','justmatched');
+      G.matched.add(a);G.matched.add(b);
+      G.scores[G.cur]++;
+      spawnConfetti(COLORS[G.cur],40);
+      updateScoreboard();
+      G.flipped=[];
+      G.locked=false;
+      setTimeout(function(){
+        els[a].classList.remove('justmatched');
+        els[b].classList.remove('justmatched');
+      },350);
+      if(G.matched.size===G.cards.length) setTimeout(showVictory,600);
+    },420);
+  } else {
+    // ── NO MATCH ──
+    setTimeout(function(){
+      els[a].classList.add('wrong');
+      els[b].classList.add('wrong');
+      setTimeout(function(){
+        els[a].classList.remove('flipped','wrong');
+        els[b].classList.remove('flipped','wrong');
+        G.flipped=[];
+        G.locked=false;
+        G.cur=(G.cur+1)%G.players.length;
+        updateTurnLine();
+        updateScoreboard();
+      },380);
+    },700);
+  }
+}
+
+// ════ VICTORY ════
+function showVictory(){
+  var ranked=G.players
+    .map(function(name,i){return{name:name,score:G.scores[i],color:COLORS[i]};})
+    .sort(function(a,b){return b.score-a.score;});
+
+  var isTie=ranked.length>1&&ranked[0].score===ranked[1].score;
+  var medals=['🥇','🥈','🥉','🏅'];
+
+  var rows=ranked.map(function(p,i){
+    var isWinner=i===0&&!isTie;
+    return '<div class="vc-row'+(isWinner?' winner':'')+'">'+
+      '<span class="vc-medal">'+medals[i]+'</span>'+
+      '<span class="vc-name">'+esc(p.name)+'</span>'+
+      '<span class="vc-pts" style="color:'+(isWinner?'gold':p.color)+'">'+
+        p.score+'<small> Paar'+(p.score!==1?'e':'')+'</small>'+
+      '</span>'+
+    '</div>';
+  }).join('');
+
+  var title=isTie?'🤝 Unentschieden!':'🏆 '+esc(ranked[0].name)+' gewinnt!';
+  var sub=isTie
+    ?'Beide mit '+ranked[0].score+' Paar'+(ranked[0].score!==1?'en':'')
+    :ranked[0].score+' Paar'+(ranked[0].score!==1?'e':'');
+
+  document.getElementById('victoryOverlay').innerHTML=
+    '<div class="vc-inner">'+
+      '<div class="vc-title" style="background:linear-gradient(135deg,gold,var(--pink),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+title+'</div>'+
+      '<div class="vc-subtitle">'+sub+'</div>'+
+      '<div class="vc-scores">'+rows+'</div>'+
+      '<button class="vfinal-btn" onclick="resetToLobby()">🔄 Nochmal spielen</button>'+
+    '</div>';
+  document.getElementById('victoryOverlay').classList.add('show');
+  spawnConfetti(COLORS[0],120);
+}
+
+function resetToLobby(){
+  document.getElementById('victoryOverlay').classList.remove('show');
+  updateFltInfo();
+  showScreen('lobby');
+}
+
+// ════ CONFETTI (aus Chartster) ════
+function spawnConfetti(color,count){
+  var c=document.getElementById('confetti');
+  var cols=[color,'#fff','#ffd84d',COLORS[Math.floor(Math.random()*COLORS.length)]];
+  for(var i=0;i<count;i++){
+    var p=document.createElement('div');
+    var sz=5+Math.random()*12;
+    var dur=1.2+Math.random()*1.8;
+    p.style.cssText='position:absolute;top:-20px;left:'+Math.random()*100+'%;width:'+sz+'px;height:'+sz+'px;background:'+cols[i%cols.length]+';border-radius:'+['50%','3px','0'][i%3]+';transform:rotate('+Math.random()*360+'deg);animation:cf-fall '+dur+'s '+Math.random()*.6+'s linear both';
+    c.appendChild(p);
+    setTimeout(function(el){el.remove();},(dur+1)*1000,p);
+  }
+}
+
+// ════ UTILS ════
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  var el=document.getElementById('screen-'+name);
+  if(el)el.classList.add('active');
+}
+function showHint(msg){
+  var el=document.getElementById('hint-toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);
+}
+function esc(str){
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
