@@ -56,7 +56,7 @@
 }
 /* Remove cursors except for interactive elements */
 *{box-sizing:border-box;margin:0;padding:0;cursor:default!important;-webkit-tap-highlight-color:transparent}
-input,label,button,select{cursor:pointer!important}
+input,label,button,select{!important}
 
 .screen{display:none;min-height:100vh;padding:16px;align-items:center;justify-content:center;flex-direction:column}
 .screen.active{display:flex}
@@ -92,7 +92,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #ts-table-body{width:280px;height:132px;flex:none;margin:0 8px;display:flex;align-items:center;justify-content:center;color:transparent;background:url(icons/table.png) center/contain no-repeat;position:relative;filter:drop-shadow(0 4px 24px rgba(143,95,255,.5))}
 #ts-table-body::after{content:'';position:absolute;bottom:-10px;left:15%;width:70%;height:10px;background:radial-gradient(ellipse,rgba(143,95,255,.35) 0%,transparent 70%);border-radius:50%;filter:blur(6px)}
 .ts-side{display:flex;align-items:center;justify-content:center;padding:4px 0;flex:1}
-.seat{display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px;cursor:pointer}
+.seat{display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px;}
 .seat-inp{width:92px;background:var(--glass);border:1px solid var(--glass-b);border-radius:8px;padding:6px 8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:12px;outline:none;display:none;text-align:center}
 .seat.active .seat-inp{display:block}
 .ts-side .seat-inp{width:72px}
@@ -302,7 +302,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #pwa-install-btn:active{background:rgba(83,246,255,.3)}
 #pwa-dismiss-btn{
   background:none;border:none;color:var(--muted);font-size:22px;
-  padding:4px 8px;flex-shrink:0;line-height:1;cursor:pointer!important
+  padding:4px 8px;flex-shrink:0;line-height:1;!important
 }
 #pwa-update-toast{
   position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);
@@ -315,7 +315,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #pwa-update-toast.show{transform:translateX(-50%) translateY(0)}
 #pwa-update-toast button{
   background:rgba(143,95,255,.4);border:1px solid rgba(143,95,255,.6);
-  color:#fff;padding:5px 12px;border-radius:8px;cursor:pointer!important;
+  color:#fff;padding:5px 12px;border-radius:8px;!important;
   font-family:'Outfit',sans-serif;font-size:13px;font-weight:700
 }
 #ios-hint{
@@ -338,7 +338,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #ios-hint-close{
   margin-top:4px;padding:10px;border-radius:10px;border:1px solid var(--glass-b);
   background:var(--glass);color:var(--muted);font-family:'Outfit',sans-serif;
-  font-size:14px;font-weight:600;cursor:pointer!important
+  font-size:14px;font-weight:600;!important
 }
 </style>
 </head>
@@ -376,7 +376,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.0.2</div>
+<div class="version">v4.0.3</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -534,7 +534,7 @@ const DB=firebase.database(),REF=DB.ref('chartster/game');
 var IS_HOST=false,fbListener=null;
 
 const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ffd84d','#ff6b35'];
-const DEFAULTS=['Die Helden','Die Legenden','Die Stars','Die Cracks','Die Profis','Die Champs'];
+const DEFAULTS=['Helden','Legenden','Stars','Cracks','Profis','Champs'];
 const MAX_TEAMS=6,MAX_TOK=5;var WIN=10;
 const DECADES=['70','80','90','00','10','20'];
 // Clockwise from top-left (viewed from above): top→right→bottom→left
