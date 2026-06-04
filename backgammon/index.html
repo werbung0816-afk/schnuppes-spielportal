@@ -946,10 +946,8 @@ function canSelectPoint(pt) {
 }
 
 function isMyTurn() {
-  if (!G) return false;
-  if (isAIGame && myColor === G.turn) return true;
-  if (!isAIGame && myColor === G.turn) return true;
-  return false;
+  if (!G || !myColor) return false;
+  return myColor === G.turn;
 }
 
 // =============== GAME LOGIC ===============
@@ -1182,7 +1180,7 @@ function listenRoom() {
         return;
       }
 
-      // Both players confirmed → enter game
+      // Both players confirmed → enter game (G is already set above)
       if (data.players?.white && data.players?.black) {
         if (document.getElementById('screen-wait').classList.contains('active')) {
           showScreen('game');
@@ -1477,7 +1475,9 @@ function updateUI() {
   updateDiceDisplay('black', G.turn === 'black');
 
   // Roll button
-  document.getElementById('btn-roll').disabled = !(myTurn && G.phase === 'rolling' && !G.winner);
+  const canRoll = !!(myColor && G && myColor === G.turn && G.phase === 'rolling' && !G.winner);
+  document.getElementById('btn-roll').disabled = !canRoll;
+  console.log(`updateUI: myColor=${myColor} G.turn=${G?.turn} phase=${G?.phase} canRoll=${canRoll} isAIGame=${isAIGame}`);
 
   drawBoard();
 }
