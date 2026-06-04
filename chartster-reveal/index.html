@@ -287,6 +287,56 @@ body{
 .vc-pts small{font-size:11px;font-weight:400;color:var(--muted)}
 .vfinal-btn{padding:16px 40px;border:none;border-radius:14px;font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--purple),var(--pink));font-family:'Outfit',sans-serif;cursor:pointer}
 
+
+/* ── SEAT SELECTOR (from Chartster) ── */
+#table-selector{width:100%;display:flex;flex-direction:column;align-items:center;gap:0}
+.ts-top-row,.ts-bot-row{display:flex;gap:32px;justify-content:center;padding:8px 0}
+.ts-mid-row{display:flex;align-items:center;justify-content:center;width:100%;padding:4px 0}
+#ts-table-body{width:220px;height:104px;flex:none;margin:0 8px;display:flex;align-items:center;justify-content:center;color:transparent;background:url(../chartster/icons/table.png) center/contain no-repeat;position:relative;filter:drop-shadow(0 4px 24px rgba(143,95,255,.5))}
+.ts-side{display:flex;align-items:center;justify-content:center;padding:4px 0;flex:1}
+.seat{display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px;cursor:pointer}
+.seat-inp{width:92px;background:var(--glass);border:1px solid var(--glass-b);border-radius:8px;padding:6px 8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:12px;outline:none;display:none;text-align:center}
+.seat.active .seat-inp{display:block}
+.ts-side .seat-inp{width:72px}
+.seat-circle{width:48px;height:48px;border-radius:50%;border:2px dashed rgba(83,246,255,.3);display:flex;align-items:center;justify-content:center;transition:all .25s;background:rgba(83,246,255,.04);position:relative;overflow:hidden;color:rgba(83,246,255,.4);box-shadow:0 0 8px rgba(83,246,255,.08)}
+.seat.active .seat-circle{border-style:solid;border-width:2.5px;color:#07000f}
+.seat.active .seat-circle::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.18),transparent 70%)}
+
+/* ── GAME LAYOUT WITH POSITIONED BUZZERS ── */
+#buzz-arena{
+  position:relative;
+  width:100%;
+  max-width:700px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+.buzz-row{display:flex;gap:12px;justify-content:center;width:100%}
+.buzz-row.top{transform:rotate(180deg)} /* flipped for top-seated teams */
+.team-buzz-btn{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:10px 16px;border-radius:14px;border:2px solid;
+  font-family:'Outfit',sans-serif;font-weight:800;font-size:14px;
+  cursor:pointer;transition:all .15s;min-width:90px;
+  background:rgba(0,0,0,.3);
+}
+.team-buzz-btn:active{transform:scale(.94)}
+.team-buzz-btn.buzzed-out{opacity:.3;pointer-events:none}
+.team-buzz-btn .buzz-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.team-buzz-btn .buzz-label{font-size:10px;font-weight:600;letter-spacing:.08em;opacity:.6;text-transform:uppercase}
+
+/* judge panel below image */
+.judge-panel{
+  width:100%;max-width:520px;
+  background:var(--glass);border:1px solid var(--glass-b);
+  border-radius:14px;padding:14px 16px;
+  display:none;flex-direction:column;align-items:center;gap:10px;
+}
+.judge-panel.show{display:flex}
+.judge-who{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.judge-name{font-size:20px;font-weight:900}
+
 /* version */
 .ver{position:fixed;bottom:12px;right:16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);z-index:100}
 </style>
@@ -296,7 +346,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.0.7</div>
+<div class="ver">v1.0.8</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -305,12 +355,21 @@ body{
   <div style="font-size:13px;color:var(--muted);margin-top:-8px">Erkenne den Künstler aus dem verpixelten Bild</div>
   <div class="sep"></div>
 
-  <div class="label">👥 Teams / Spieler</div>
-  <div class="player-rows">
-    <div class="player-row"><div class="pdot" style="background:#53f6ff;box-shadow:0 0 7px #53f6ff"></div><input id="p1" type="text" placeholder="Team 1" maxlength="18"></div>
-    <div class="player-row"><div class="pdot" style="background:#ff4fd8;box-shadow:0 0 7px #ff4fd8"></div><input id="p2" type="text" placeholder="Team 2" maxlength="18"></div>
-    <div class="player-row"><div class="pdot" style="background:#8f5fff;box-shadow:0 0 7px #8f5fff"></div><input id="p3" type="text" placeholder="Team 3" maxlength="18"></div>
-    <div class="player-row"><div class="pdot" style="background:#4dff91;box-shadow:0 0 7px #4dff91"></div><input id="p4" type="text" placeholder="Team 4" maxlength="18"></div>
+  <div class="label">👥 Sitzordnung</div>
+  <div id="table-selector">
+    <div class="ts-top-row">
+      <div class="seat" data-pos="top-l" onclick="toggleSeat('top-l')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Teamname" onclick="event.stopPropagation()"></div>
+      <div class="seat" data-pos="top-r" onclick="toggleSeat('top-r')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Teamname" onclick="event.stopPropagation()"></div>
+    </div>
+    <div class="ts-mid-row">
+      <div class="ts-side"><div class="seat" data-pos="left" onclick="toggleSeat('left')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Team" onclick="event.stopPropagation()"></div></div>
+      <div id="ts-table-body"></div>
+      <div class="ts-side"><div class="seat" data-pos="right" onclick="toggleSeat('right')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Team" onclick="event.stopPropagation()"></div></div>
+    </div>
+    <div class="ts-bot-row">
+      <div class="seat" data-pos="bot-l" onclick="toggleSeat('bot-l')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Teamname" onclick="event.stopPropagation()"></div>
+      <div class="seat" data-pos="bot-r" onclick="toggleSeat('bot-r')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Teamname" onclick="event.stopPropagation()"></div>
+    </div>
   </div>
 
   <div class="sep"></div>
@@ -330,40 +389,42 @@ body{
 <!-- ════ GAME ════ -->
 <div id="screen-game" class="screen">
   <div class="scoreboard" id="scoreboard"></div>
-  <div class="game-row">
-    <!-- LEFT: pixelation image -->
-    <div class="reveal-wrap" id="reveal-wrap">
+
+  <div id="buzz-arena">
+    <!-- TOP buzzers (rendered by JS) -->
+    <div class="buzz-row top" id="buzz-row-top"></div>
+
+    <!-- CENTER: image -->
+    <div class="reveal-wrap" id="reveal-wrap" style="width:100%;max-width:520px">
       <canvas id="reveal-canvas" style="display:none"></canvas>
       <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
     </div>
 
-    <!-- RIGHT: buzzer + panels -->
-    <div class="game-right">
-      <div class="buzzer-wrap">
-        <button class="buzzer" id="buzzer" onclick="onBuzz()">
-          <div class="buzzer-outer"></div>
-          <div class="buzzer-dome"></div>
-          <div class="buzzer-shine"></div>
-        </button>
-        <div class="buzzer-label">BUZZER</div>
-      </div>
-      <div class="answer-panel" id="answer-panel">
-        <div class="buzzer-who" id="buzz-who"></div>
-        <div class="answer-name" id="buzz-name"></div>
-        <button class="btn-reveal" id="btn-reveal" onclick="revealNow()">🔍 Auflösen</button>
-        <div class="answer-question" id="answer-question" style="display:none">Ist das richtig?</div>
-        <div class="answer-btns" id="answer-btns" style="display:none">
-          <button class="btn-correct" onclick="judge(true)">✓ Richtig</button>
-          <button class="btn-wrong"   onclick="judge(false)">✗ Falsch</button>
-        </div>
-      </div>
-      <div class="solution-panel" id="solution-panel">
-        <div id="sol-result-badge" class="sol-result"></div>
-        <div class="sol-artist" id="sol-artist"></div>
-        <div class="sol-followers" id="sol-followers"></div>
-        <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
-      </div>
+    <!-- BOTTOM buzzers (rendered by JS) -->
+    <div class="buzz-row" id="buzz-row-bot"></div>
+
+    <!-- LEFT/RIGHT buzzers (rendered by JS, absolute) -->
+    <div id="buzz-col-left" style="position:absolute;left:-110px;top:50%;transform:translateY(-50%)"></div>
+    <div id="buzz-col-right" style="position:absolute;right:-110px;top:50%;transform:translateY(-50%)"></div>
+  </div>
+
+  <!-- JUDGE PANEL (below image, shown after buzz+reveal) -->
+  <div class="judge-panel" id="judge-panel">
+    <div class="judge-who">Hat gebuzzert:</div>
+    <div class="judge-name" id="judge-name"></div>
+    <button class="btn-reveal" id="btn-reveal" onclick="revealNow()" style="width:100%">🔍 Auflösen &amp; urteilen</button>
+    <div id="judge-btns" style="display:none;width:100%;gap:10px;flex-direction:row">
+      <button class="btn-correct" onclick="judge(true)" style="flex:1;padding:12px;border-radius:12px;border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#00c853,#00962f);color:#fff">✓ Richtig</button>
+      <button class="btn-wrong"   onclick="judge(false)" style="flex:1;padding:12px;border-radius:12px;border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#e60000,#8b0000);color:#fff">✗ Falsch</button>
     </div>
+  </div>
+
+  <!-- SOLUTION PANEL -->
+  <div class="solution-panel" id="solution-panel" style="width:100%;max-width:520px">
+    <div id="sol-result-badge" class="sol-result"></div>
+    <div class="sol-artist" id="sol-artist"></div>
+    <div class="sol-followers" id="sol-followers"></div>
+    <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
   </div>
 </div>
 
@@ -384,8 +445,54 @@ function playBell(){
   }catch(e){}
 }
 
-// ════ COLORS ════
+// ════ COLORS + SEAT CONFIG ════
 var COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91'];
+var DEFAULTS=['Team 1','Team 2','Team 3','Team 4'];
+var MAX_TEAMS=4;
+var SEAT_POS=['top-l','top-r','left','right','bot-l','bot-r'];
+var SEAT_SIDE={
+  'top-l':'top','top-r':'top',
+  'left':'left','right':'right',
+  'bot-l':'bot','bot-r':'bot'
+};
+// seatCfg: pos → {name, colorIdx} | null
+var seatCfg={'top-l':null,'top-r':null,'left':null,'right':null,'bot-l':null,'bot-r':null};
+
+function toggleSeat(pos){
+  var seat=document.querySelector('.seat[data-pos="'+pos+'"]');
+  if(seatCfg[pos]){
+    seatCfg[pos]=null;seat.classList.remove('active');
+    seat.querySelector('.seat-circle').style.cssText='';
+    var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';
+    reassignSeatColors();
+  } else {
+    var active=getActiveSeats();
+    if(active.length>=MAX_TEAMS){showHint('Maximal '+MAX_TEAMS+' Teams!');return;}
+    var ci=active.length;
+    seatCfg[pos]={name:'',colorIdx:ci};
+    seat.classList.add('active');
+    var circ=seat.querySelector('.seat-circle');
+    circ.style.background=COLORS[ci];circ.style.borderColor=COLORS[ci];
+    circ.style.borderStyle='solid';circ.textContent=DEFAULTS[ci].substring(0,2);
+    var inp=seat.querySelector('.seat-inp');
+    inp.style.display='block';inp.placeholder=DEFAULTS[ci];
+  }
+  updateStartBtn();
+}
+function reassignSeatColors(){
+  getActiveSeats().forEach(function(pos,i){
+    var seat=document.querySelector('.seat[data-pos="'+pos+'"]');
+    seatCfg[pos].colorIdx=i;
+    var circ=seat.querySelector('.seat-circle');
+    circ.style.background=COLORS[i];circ.style.borderColor=COLORS[i];
+    seat.querySelector('.seat-inp').placeholder=DEFAULTS[i];
+  });
+}
+function getActiveSeats(){return SEAT_POS.filter(function(p){return seatCfg[p]!==null;});}
+function updateStartBtn(){
+  var ok=getActiveSeats().length>=2 && G.artists.length>0;
+  document.getElementById('start-btn').disabled=!ok;
+}
 
 // ════ PIXELATION STEPS ════
 // 8 steps: block size from very large → 1 (full res)
@@ -449,7 +556,7 @@ function loadSongs(){
       }
       document.getElementById('lobby-status').textContent=
         G.artists.length+' Künstler verfügbar';
-      document.getElementById('start-btn').disabled=false;
+      updateStartBtn();
     })
     .catch(function(){
       document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';
@@ -516,9 +623,14 @@ function updateScoreboard(){
 // ════ NEXT ARTIST ════
 function nextArtist(){
   // Hide panels
-  document.getElementById('answer-panel').classList.remove('show');
+  document.getElementById('judge-panel').classList.remove('show');
   document.getElementById('solution-panel').classList.remove('show');
-  document.getElementById('buzzer').classList.remove('inactive');
+  // Re-enable all buzz buttons
+  document.querySelectorAll('.team-buzz-btn').forEach(function(b){
+    b.classList.remove('buzzed-out');
+    b.style.pointerEvents='';b.style.opacity='1';
+    b.style.transform='';b.style.boxShadow='';
+  });
 
   if(G.queue.length===0) G.queue=shuffle(G.artists.map(function(_,i){return i;}));
   var idx=G.queue.pop();
@@ -578,97 +690,76 @@ function scheduleNext(){
   },STEP_INTERVAL);
 }
 
-// ════ BUZZ ════
-function onBuzz(){
-  if(!G.running) return;
-  // Unlock audio context on first interaction
-  initAudio();
-  playBell();
+// ════ BUZZ ARENA ════
+function renderBuzzArena(){
+  var rows={top:[],bot:[],left:[],right:[]};
+  G.teams.forEach(function(team,i){ rows[team.side].push({team:team,idx:i}); });
+  function btnHTML(t,i){
+    return '<button class="team-buzz-btn" id="buzz-btn-'+i+'" '+
+      'style="border-color:'+t.color+';color:'+t.color+'" '+
+      'onclick="onBuzz('+i+')" ontouchstart="onBuzz('+i+')">'+
+      '<div class="buzz-dot" style="background:'+t.color+';box-shadow:0 0 6px '+t.color+'"></div>'+
+      '<span>'+esc(t.name)+'</span>'+
+      '<span class="buzz-label">BUZZER</span></button>';
+  }
+  document.getElementById('buzz-row-top').innerHTML=rows.top.map(function(x){return btnHTML(x.team,x.idx);}).join('');
+  document.getElementById('buzz-row-bot').innerHTML=rows.bot.map(function(x){return btnHTML(x.team,x.idx);}).join('');
+  document.getElementById('buzz-col-left').innerHTML=rows.left.map(function(x){return btnHTML(x.team,x.idx);}).join('');
+  document.getElementById('buzz-col-right').innerHTML=rows.right.map(function(x){return btnHTML(x.team,x.idx);}).join('');
+}
 
+function onBuzz(playerIdx){
+  if(!G.running) return;
+  if(G.buzzedOut.includes(playerIdx)) return;
+  initAudio();playBell();
   clearTimeout(G.stepTimer);
   G.running=false;
-
-  // Find first available player (not buzzed out)
-  // In single-device mode: rotate through players who havent buzzed out
-  // We track buzzedPlayer as "currently answering"
-  // Since all share one device, we just show "who buzzed?" selector
-  showBuzzSelector();
+  G.buzzedPlayer=playerIdx;
+  // Dim all buttons, highlight buzzer
+  document.querySelectorAll('.team-buzz-btn').forEach(function(b){b.style.pointerEvents='none';b.style.opacity='.35';});
+  var bb=document.getElementById('buzz-btn-'+playerIdx);
+  if(bb){bb.style.opacity='1';bb.style.transform='scale(1.12)';bb.style.boxShadow='0 0 20px '+G.teams[playerIdx].color;}
+  // Show judge panel
+  document.getElementById('judge-name').innerHTML='<span style="color:'+G.teams[playerIdx].color+'">'+esc(G.teams[playerIdx].name)+'</span>';
+  document.getElementById('judge-btns').style.display='none';
+  document.getElementById('btn-reveal').style.display='block';
+  document.getElementById('judge-panel').classList.add('show');
 }
 
 function revealNow(){
-  // Show full image, then show judge buttons
   drawStep(BLUR_STEPS.length-1);
   document.getElementById('progress-bar').style.width='100%';
   document.getElementById('btn-reveal').style.display='none';
-  document.getElementById('answer-question').style.display='block';
-  document.getElementById('answer-btns').style.display='flex';
+  document.getElementById('judge-btns').style.display='flex';
 }
 
-function showBuzzSelector(){
-  // Build a simple overlay showing player buttons
-  var panel=document.getElementById('answer-panel');
-  // Available players (not buzzed out)
-  var avail=G.players.filter(function(_,i){ return !G.buzzedOut.includes(i); });
-  if(avail.length===0){
-    // Everyone buzzed out, reveal
-    showSolution('timeout');
-    return;
-  }
 
-  document.getElementById('buzz-who').textContent='Wer hat gebuzzert?';
-  document.getElementById('buzz-name').innerHTML=
-    avail.map(function(name,i){
-      var realIdx=G.players.indexOf(name);
-      return '<button onclick="selectBuzzer('+realIdx+')" style="'+
-        'display:inline-block;margin:4px;padding:8px 16px;border-radius:10px;border:none;'+
-        'font-family:Outfit,sans-serif;font-size:15px;font-weight:700;cursor:pointer;'+
-        'background:'+COLORS[realIdx]+'22;color:'+COLORS[realIdx]+';'+
-        'border:1px solid '+COLORS[realIdx]+'66">'+esc(name)+'</button>';
-    }).join('');
-  // hide judge buttons until player selected
-  document.querySelector('.answer-question').style.display='none';
-  document.querySelector('.answer-btns').style.display='none';
-  panel.classList.add('show');
-}
-
-function selectBuzzer(playerIdx){
-  G.buzzedPlayer=playerIdx;
-  document.getElementById('buzz-who').textContent='Team / Spieler:';
-  document.getElementById('buzz-name').innerHTML=
-    '<span style="color:'+COLORS[playerIdx]+'">'+esc(G.players[playerIdx])+'</span>';
-  // Show reveal button, keep judge buttons hidden until revealed
-  document.getElementById('btn-reveal').style.display='block';
-  document.getElementById('answer-question').style.display='none';
-  document.getElementById('answer-btns').style.display='none';
-}
 
 function judge(correct){
   var pi=G.buzzedPlayer;
-  document.getElementById('answer-panel').classList.remove('show');
+  document.getElementById('judge-panel').classList.remove('show');
 
   if(correct){
     G.scores[pi]++;
     updateScoreboard();
-    spawnConfetti(COLORS[pi],50);
+    spawnConfetti(G.teams[pi].color,50);
     showSolution('correct',pi);
-    if(G.scores[pi]>=G.goal){
-      setTimeout(showVictory,1800);
-    }
+    if(G.scores[pi]>=G.goal) setTimeout(showVictory,1800);
   } else {
     G.scores[pi]=Math.max(-99,G.scores[pi]-1);
     updateScoreboard();
     G.buzzedOut.push(pi);
-
-    // Can anyone else still buzz?
-    var avail=G.players.filter(function(_,i){ return !G.buzzedOut.includes(i); });
-    if(avail.length>0){
-      // Resume reveal
-      G.running=true;
-      document.getElementById('answer-panel').classList.remove('show');
-      scheduleNext();
-    } else {
-      showSolution('timeout');
-    }
+    // Re-enable remaining buzz buttons
+    G.teams.forEach(function(_,i){
+      var bb=document.getElementById('buzz-btn-'+i);
+      if(bb){
+        if(G.buzzedOut.includes(i)){bb.classList.add('buzzed-out');}
+        else{bb.style.pointerEvents='';bb.style.opacity='1';bb.style.transform='';bb.style.boxShadow='';}
+      }
+    });
+    var avail=G.teams.filter(function(_,i){return !G.buzzedOut.includes(i);});
+    if(avail.length>0){G.running=true;scheduleNext();}
+    else{showSolution('timeout');}
   }
 }
 
@@ -679,7 +770,7 @@ function showSolution(type,playerIdx){
   // Show full image
   drawStep(BLUR_STEPS.length-1);
   document.getElementById('progress-bar').style.width='100%';
-  document.getElementById('buzzer').classList.add('inactive');
+  document.querySelectorAll('.team-buzz-btn').forEach(function(b){b.style.pointerEvents='none';b.style.opacity='.3';});
 
   var badge=document.getElementById('sol-result-badge');
   if(type==='correct'){
