@@ -97,6 +97,7 @@ body{
 .reveal-progress{
   position:absolute;bottom:0;left:0;width:100%;height:4px;
   background:rgba(255,255,255,.1);
+  z-index:10;
 }
 .reveal-progress-bar{
   height:100%;
@@ -288,7 +289,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.0.5</div>
+<div class="ver">v1.0.6</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -527,6 +528,7 @@ function nextArtist(){
   if(revealImg){ revealImg.remove(); revealImg=null; }
   var img=document.createElement('img');
   img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:filter 0.6s ease, transform 0.6s ease;border-radius:18px;';
+  img.style.filter='blur(20px)'; // pre-blur before image loads
   img.onload=function(){
     revealImg=img;
     drawStep(0);
@@ -562,7 +564,7 @@ function scheduleNext(){
       return;
     }
     drawStep(G.stepIdx);
-    var pct=Math.round((G.stepIdx/(PIXEL_STEPS.length-1))*100);
+    var pct=Math.round((G.stepIdx/(BLUR_STEPS.length-1))*100);
     document.getElementById('progress-bar').style.width=pct+'%';
     scheduleNext();
   },STEP_INTERVAL);
