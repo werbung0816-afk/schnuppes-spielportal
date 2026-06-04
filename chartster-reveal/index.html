@@ -257,6 +257,13 @@ body{
   font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;
   background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;
 }
+.btn-reveal{
+  width:100%;padding:12px;border-radius:12px;border:none;
+  font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;
+  background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));
+  color:var(--cyan);border:1px solid rgba(83,246,255,.4);
+  margin-top:4px;
+}
 
 /* ── VICTORY OVERLAY ── */
 #victoryOverlay{
@@ -289,7 +296,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.0.6</div>
+<div class="ver">v1.0.7</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -343,8 +350,9 @@ body{
       <div class="answer-panel" id="answer-panel">
         <div class="buzzer-who" id="buzz-who"></div>
         <div class="answer-name" id="buzz-name"></div>
-        <div class="answer-question">Ist das richtig?</div>
-        <div class="answer-btns">
+        <button class="btn-reveal" id="btn-reveal" onclick="revealNow()">🔍 Auflösen</button>
+        <div class="answer-question" id="answer-question" style="display:none">Ist das richtig?</div>
+        <div class="answer-btns" id="answer-btns" style="display:none">
           <button class="btn-correct" onclick="judge(true)">✓ Richtig</button>
           <button class="btn-wrong"   onclick="judge(false)">✗ Falsch</button>
         </div>
@@ -381,7 +389,7 @@ var COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91'];
 
 // ════ PIXELATION STEPS ════
 // 8 steps: block size from very large → 1 (full res)
-var BLUR_STEPS=[20,16,13,10,8,6,4,3,2,1,0];
+var BLUR_STEPS=[20,16,13,10,8,6,1,0];
 var STEP_INTERVAL=1600; // ms per step
 
 // ════ STATE ════
@@ -587,6 +595,15 @@ function onBuzz(){
   showBuzzSelector();
 }
 
+function revealNow(){
+  // Show full image, then show judge buttons
+  drawStep(BLUR_STEPS.length-1);
+  document.getElementById('progress-bar').style.width='100%';
+  document.getElementById('btn-reveal').style.display='none';
+  document.getElementById('answer-question').style.display='block';
+  document.getElementById('answer-btns').style.display='flex';
+}
+
 function showBuzzSelector(){
   // Build a simple overlay showing player buttons
   var panel=document.getElementById('answer-panel');
@@ -619,8 +636,10 @@ function selectBuzzer(playerIdx){
   document.getElementById('buzz-who').textContent='Team / Spieler:';
   document.getElementById('buzz-name').innerHTML=
     '<span style="color:'+COLORS[playerIdx]+'">'+esc(G.players[playerIdx])+'</span>';
-  document.querySelector('.answer-question').style.display='block';
-  document.querySelector('.answer-btns').style.display='flex';
+  // Show reveal button, keep judge buttons hidden until revealed
+  document.getElementById('btn-reveal').style.display='block';
+  document.getElementById('answer-question').style.display='none';
+  document.getElementById('answer-btns').style.display='none';
 }
 
 function judge(correct){
