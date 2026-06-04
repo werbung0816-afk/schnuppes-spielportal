@@ -288,7 +288,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.0.1</div>
+<div class="ver">v1.0.3</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -325,7 +325,7 @@ body{
   <div class="game-row">
     <!-- LEFT: pixelation image -->
     <div class="reveal-wrap" id="reveal-wrap">
-      <canvas id="reveal-canvas"></canvas>
+      <canvas id="reveal-canvas" style="display:none"></canvas>
       <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
     </div>
 
@@ -380,8 +380,8 @@ var COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91'];
 
 // ════ PIXELATION STEPS ════
 // 8 steps: block size from very large → 1 (full res)
-var PIXEL_STEPS=[80,60,44,32,22,14,8,4,2,1];
-var STEP_INTERVAL=1800; // ms per step
+var BLUR_STEPS=[60,50,40,32,25,19,14,10,7,4,2,1,0];
+var STEP_INTERVAL=1600; // ms per step
 
 // ════ STATE ════
 var G={
@@ -522,51 +522,33 @@ function nextArtist(){
   // Reset progress
   document.getElementById('progress-bar').style.width='0%';
 
-  // Load image
-  var img=new Image();
+  // Load image via CSS blur img element
+  var wrap=document.getElementById('reveal-wrap');
+  if(revealImg){ revealImg.remove(); revealImg=null; }
+  var img=document.createElement('img');
+  img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:filter 0.6s ease, transform 0.6s ease;border-radius:18px;';
   img.crossOrigin='anonymous';
   img.onload=function(){
-    G.img=img;
+    revealImg=img;
     drawStep(0);
     scheduleNext();
   };
-  img.onerror=function(){
-    // skip this artist
-    nextArtist();
-  };
+  img.onerror=function(){ nextArtist(); };
   img.src=G.cur.img;
+  wrap.appendChild(img);
 }
 
-// ════ CANVAS PIXELATION ════
-var canvas=document.getElementById('reveal-canvas');
-var ctx=canvas.getContext('2d');
+// ════ BLUR REVEAL ════
+// Uses an <img> with CSS filter:blur() instead of canvas pixelation
+var revealImg = null;
 
 function drawStep(stepIdx){
-  var blockSize=PIXEL_STEPS[stepIdx];
-  var W=canvas.width||512;
-  var H=canvas.height||512;
-
-  // Set canvas natural size on first draw
-  if(canvas.width!==512){canvas.width=512;canvas.height=512;}
-  W=512;H=512;
-
-  if(blockSize===1){
-    // Full res
-    ctx.drawImage(G.img,0,0,W,H);
-    return;
+  var steps = BLUR_STEPS;
+  var blur = steps[Math.min(stepIdx, steps.length-1)];
+  if(revealImg){
+    revealImg.style.filter = blur > 0 ? 'blur('+blur+'px)' : 'none';
+    revealImg.style.transform = blur > 0 ? 'scale(1.08)' : 'scale(1)'; // hide blur edges
   }
-
-  // Downscale then upscale for pixelation
-  var offW=Math.ceil(W/blockSize);
-  var offH=Math.ceil(H/blockSize);
-  var off=document.createElement('canvas');
-  off.width=offW;off.height=offH;
-  var oc=off.getContext('2d');
-  oc.imageSmoothingEnabled=false;
-  oc.drawImage(G.img,0,0,offW,offH);
-  ctx.imageSmoothingEnabled=false;
-  ctx.clearRect(0,0,W,H);
-  ctx.drawImage(off,0,0,W,H);
 }
 
 function scheduleNext(){
@@ -575,7 +557,7 @@ function scheduleNext(){
   G.stepTimer=setTimeout(function(){
     if(!G.running) return;
     G.stepIdx++;
-    if(G.stepIdx>=PIXEL_STEPS.length){
+    if(G.stepIdx>=BLUR_STEPS.length){
       // fully revealed — show solution without result badge
       G.running=false;
       showSolution('timeout');
@@ -676,7 +658,7 @@ function showSolution(type,playerIdx){
   clearTimeout(G.stepTimer);
 
   // Show full image
-  if(G.img) drawStep(PIXEL_STEPS.length-1);
+  drawStep(BLUR_STEPS.length-1);
   document.getElementById('progress-bar').style.width='100%';
   document.getElementById('buzzer').classList.add('inactive');
 
