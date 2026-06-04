@@ -431,7 +431,7 @@ canvas#bgCanvas {
       <button class="btn btn-primary" id="btn-enter" style="width:100%">Raum betreten →</button>
       <div style="text-align:right; margin-top:8px;">
         <button id="btn-hard-reset-lobby" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.0</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.1</span>
       </div>
     </div>
   </div>
@@ -442,13 +442,13 @@ canvas#bgCanvas {
       <h2>Warte auf Gegner…</h2>
       <div class="wait-name" id="wait-name-display"></div>
       <div class="dots"><span>●</span><span>●</span><span>●</span></div>
-      <div id="create-game-area" style="display:none; margin-top:20px;">
-        <button class="btn btn-primary" id="btn-create-game" style="width:100%">🎲 Spiel erstellen</button>
-      </div>
       <div class="wait-divider"></div>
       <button class="btn btn-secondary" id="btn-vs-ai" style="width:100%">⚡ Gegen KI starten</button>
-      <button class="btn btn-danger" id="btn-hard-reset" style="width:100%; margin-top:10px;">🗑️ Raum hart löschen &amp; neu starten</button>
       <button class="btn btn-secondary" id="btn-leave" style="width:100%; margin-top:8px; opacity:0.7;">← Verlassen</button>
+      <div style="text-align:right; margin-top:10px;">
+        <button id="btn-hard-reset" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.1</span>
+      </div>
     </div>
   </div>
 
@@ -1151,39 +1151,48 @@ function listenRoom() {
     const data = snap.val();
     if (!data) { handleRoomGone(); return; }
 
+    // WHITE: second player joined → auto-create game immediately
+    if (myColor === 'white' && data.players && data.players.black && !data.state) {
+      const blackName = data.players.black;
+      showToast(`${blackName} ist beigetreten! Spiel startet…`);
+      const state = newGameState(myName, blackName);
+      state.turn = 'white'; state.phase = 'rolling';
+      set(ref(db, ROOM_PATH + '/state'), state);
+      return;
+    }
+
+    // Update name if black joined after state was already created
+    if (data.state && myColor === 'white' && data.players && data.players.black) {
+      const blackName = data.players.black;
+      if (data.state.players && data.state.players.black !== blackName && blackName !== '…wartet') {
+        const newG = deepClone(data.state);
+        newG.players.black = blackName;
+        set(ref(db, ROOM_PATH + '/state'), newG);
+        return;
+      }
+    }
+
+    // State arrived → update game
     if (data.state) {
       const wasWinner = G && G.winner;
       G = data.state;
+      // Both players present → enter game screen
+      if (data.players && data.players.white && data.players.black) {
+        if (document.getElementById('screen-wait').classList.contains('active')) {
+          showScreen('game');
+        }
+      }
       if (!wasWinner) updateUI();
       if (G.winner && !wasWinner) showWin(G);
     }
 
-    // Check if second player joined and we need to update game state with their name
-    if (data.state && myColor === 'white' && data.players && data.players.black) {
-      const blackName = data.players.black;
-      if (G && G.players.black !== blackName && blackName !== '…wartet') {
-        const newG = deepClone(G);
-        newG.players.black = blackName;
-        set(ref(db, ROOM_PATH + '/state'), newG);
-      }
-    }
-
-    // Show game screen once both players present and state exists
-    if (data.state && data.players && data.players.white && data.players.black) {
-      if (document.getElementById('screen-wait').classList.contains('active')) {
-        showScreen('game');
-      }
-    }
-
     // Opponent disconnect → zombie check via heartbeat age
-    if (data.heartbeats && myColor && G && !G.winner) {
+    if (data.heartbeats && myColor && G && !G.winner && !isAIGame) {
       const opp = myColor === 'white' ? 'black' : 'white';
       const oppHb = data.heartbeats[opp];
       if (oppHb && Date.now() - oppHb > HEARTBEAT_TIMEOUT) {
-        if (!isAIGame) {
-          showToast(`${G.players[opp] || opp} hat die Verbindung verloren. KI übernimmt!`);
-          startAIReplacement(opp);
-        }
+        showToast(`${G.players[opp] || opp} hat die Verbindung verloren. KI übernimmt!`);
+        startAIReplacement(opp);
       }
     }
   });
@@ -1587,7 +1596,7 @@ document.getElementById('player-name').addEventListener('keypress', e => {
   if (e.key === 'Enter') document.getElementById('btn-enter').click();
 });
 
-document.getElementById('btn-create-game').addEventListener('click', () => createGame());
+document.getElementById('btn-hard-reset').addEventListener('click', () => hardResetRoom(false));
 
 document.getElementById('btn-vs-ai').addEventListener('click', () => {
   stopHeartbeat();
@@ -1600,8 +1609,6 @@ document.getElementById('btn-hard-reset-lobby').addEventListener('click', async 
   try { await remove(ref(db, ROOM_PATH)); } catch(e){}
   showToast('Raum gelöscht ✓');
 });
-
-document.getElementById('btn-hard-reset').addEventListener('click', () => hardResetRoom(true));
 
 document.getElementById('btn-leave').addEventListener('click', () => {
   stopHeartbeat();
