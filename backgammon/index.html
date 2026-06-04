@@ -420,7 +420,7 @@ canvas#bgCanvas {
 <div class="app">
   <header>
     <h1>🎲 Backgammon</h1>
-    <div class="portal-tag">Schnuppes Spielportal</div>
+    <div class="portal-tag">Schnuppes Spielportal · v1.0</div>
   </header>
 
   <!-- SETUP SCREEN -->
@@ -444,7 +444,8 @@ canvas#bgCanvas {
       </div>
       <div class="wait-divider"></div>
       <button class="btn btn-secondary" id="btn-vs-ai" style="width:100%">⚡ Gegen KI starten</button>
-      <button class="btn btn-danger" id="btn-leave" style="width:100%; margin-top:10px;">← Verlassen</button>
+      <button class="btn btn-danger" id="btn-hard-reset" style="width:100%; margin-top:10px;">🗑️ Raum hart löschen &amp; neu starten</button>
+      <button class="btn btn-secondary" id="btn-leave" style="width:100%; margin-top:8px; opacity:0.7;">← Verlassen</button>
     </div>
   </div>
 
@@ -525,7 +526,7 @@ canvas#bgCanvas {
 <!-- Firebase SDKs -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+import { getDatabase, ref, set, get, onValue, remove, update, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",
@@ -540,6 +541,9 @@ const firebaseConfig = {
 const fireApp = initializeApp(firebaseConfig);
 const db = getDatabase(fireApp);
 const ROOM_PATH = 'backgammon/room';
+const HEARTBEAT_INTERVAL = 8000;  // 8s ping
+const HEARTBEAT_TIMEOUT  = 20000; // 20s stale = zombie
+let heartbeatTimer = null;
 
 // =============== SOUNDS ===============
 const BASE_SOUND_URL = 'https://werbung0816-afk.github.io/schnuppes-spielportal/backgammon/';
@@ -1144,62 +1148,111 @@ function listenRoom() {
     const data = snap.val();
     if (!data) { handleRoomGone(); return; }
 
-    // Join as second player if slot open
-    if (data.players && !data.players[myColor] && !data.state) {
-      joinAsPlayer(data);
-      return;
-    }
-
     if (data.state) {
+      const wasWinner = G && G.winner;
       G = data.state;
-      updateUI();
-      if (G.winner) showWin(G);
+      if (!wasWinner) updateUI();
+      if (G.winner && !wasWinner) showWin(G);
     }
 
-    // Handle disconnect → AI
-    if (data.players) {
+    // Check if second player joined and we need to update game state with their name
+    if (data.state && myColor === 'white' && data.players && data.players.black) {
+      const blackName = data.players.black;
+      if (G && G.players.black !== blackName && blackName !== '…wartet') {
+        const newG = deepClone(G);
+        newG.players.black = blackName;
+        set(ref(db, ROOM_PATH + '/state'), newG);
+      }
+    }
+
+    // Show game screen once both players present and state exists
+    if (data.state && data.players && data.players.white && data.players.black) {
+      if (document.getElementById('screen-wait').classList.contains('active')) {
+        showScreen('game');
+      }
+    }
+
+    // Opponent disconnect → zombie check via heartbeat age
+    if (data.heartbeats && myColor && G && !G.winner) {
       const opp = myColor === 'white' ? 'black' : 'white';
-      if (!data.players[opp] && G && G.turn === opp && !G.winner) {
-        showToast(`${G.players[opp]} hat den Raum verlassen. KI übernimmt!`);
-        startAIReplacement(opp);
+      const oppHb = data.heartbeats[opp];
+      if (oppHb && Date.now() - oppHb > HEARTBEAT_TIMEOUT) {
+        if (!isAIGame) {
+          showToast(`${G.players[opp] || opp} hat die Verbindung verloren. KI übernimmt!`);
+          startAIReplacement(opp);
+        }
       }
     }
   });
+}
+
+function startHeartbeat() {
+  stopHeartbeat();
+  const hbRef = ref(db, ROOM_PATH + '/heartbeats/' + myColor);
+  // Auto-remove heartbeat on disconnect
+  onDisconnect(hbRef).remove();
+  const ping = () => set(hbRef, Date.now()).catch(() => {});
+  ping();
+  heartbeatTimer = setInterval(ping, HEARTBEAT_INTERVAL);
+}
+
+function stopHeartbeat() {
+  if (heartbeatTimer) { clearInterval(heartbeatTimer); heartbeatTimer = null; }
 }
 
 async function joinRoom() {
   const snap = await get(ref(db, ROOM_PATH));
   const data = snap.val();
 
+  // Zombie detection: room exists but heartbeat is stale
+  if (data && data.heartbeats) {
+    const whiteHb = data.heartbeats.white;
+    const blackHb = data.heartbeats.black;
+    const now = Date.now();
+    const whiteZombie = !whiteHb || (now - whiteHb > HEARTBEAT_TIMEOUT);
+    const blackZombie = !blackHb || (now - blackHb > HEARTBEAT_TIMEOUT);
+    if (whiteZombie && (blackZombie || !data.players?.black)) {
+      // Stale room — hard clean
+      await hardResetRoom(false);
+      return joinRoom();
+    }
+  }
+
   if (!data || !data.players) {
-    // Create room
+    // Create fresh room as white
     myColor = 'white';
     await set(ref(db, ROOM_PATH), {
       players: { white: myName },
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      heartbeats: { white: Date.now() }
     });
+    onDisconnect(ref(db, ROOM_PATH)).remove();
     showScreen('wait');
     document.getElementById('create-game-area').style.display = 'block';
+    document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Weiß)`;
   } else if (data.players.white && !data.players.black) {
     // Join as black
     myColor = 'black';
     await update(ref(db, ROOM_PATH + '/players'), { black: myName });
-    // Game should start
-    if (!data.state) {
-      // White should create game, wait
-      showScreen('wait');
-    }
+    await set(ref(db, ROOM_PATH + '/heartbeats/black'), Date.now());
+    showScreen('wait');
+    document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Schwarz)`;
+    // If game already created by white, go straight in
+    if (data.state) { showScreen('game'); }
   } else {
-    showToast('Raum ist voll. KI-Spiel wird gestartet.', 'error');
+    showToast('Raum ist voll — KI-Spiel wird gestartet.', 'error');
     startAIGame();
     return;
   }
+  startHeartbeat();
   listenRoom();
 }
 
 async function createGame() {
-  const state = newGameState(myName, '???');
-  // Opening: white always starts (simplified - random could be added)
+  const snap = await get(ref(db, ROOM_PATH));
+  const data = snap.val();
+  const blackName = data?.players?.black || '…wartet';
+  const state = newGameState(myName, blackName);
   state.turn = 'white';
   state.phase = 'rolling';
   await update(ref(db, ROOM_PATH), { state });
@@ -1215,8 +1268,23 @@ function joinAsPlayer(data) {
 }
 
 function handleRoomGone() {
-  if (G) return; // already playing
+  stopHeartbeat();
+  if (G) return;
   showToast('Raum nicht mehr verfügbar.', 'error');
+  showScreen('setup');
+}
+
+async function hardResetRoom(showConfirm = true) {
+  if (showConfirm) {
+    if (!confirm('Raum komplett löschen? Beide Spieler werden getrennt.')) return;
+  }
+  stopHeartbeat();
+  if (roomListener) { roomListener(); roomListener = null; }
+  try { await remove(ref(db, ROOM_PATH)); } catch(e) {}
+  G = null; myColor = null; isAIGame = false;
+  selectedPoint = -1; validMoves = [];
+  document.getElementById('win-overlay').classList.remove('show');
+  showToast('Raum gelöscht ✓');
   showScreen('setup');
 }
 
@@ -1490,14 +1558,17 @@ function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
 
 // =============== RESET ===============
 async function resetRoom() {
+  stopHeartbeat();
   if (isAIGame) {
     G = null; isAIGame = false; myColor = null;
+    selectedPoint = -1; validMoves = [];
     showScreen('setup');
     return;
   }
+  if (roomListener) { roomListener(); roomListener = null; }
   try { await remove(ref(db, ROOM_PATH)); } catch(e){}
   G = null; myColor = null;
-  if (roomListener) { roomListener(); roomListener = null; }
+  selectedPoint = -1; validMoves = [];
   showScreen('setup');
 }
 
@@ -1513,22 +1584,19 @@ document.getElementById('player-name').addEventListener('keypress', e => {
   if (e.key === 'Enter') document.getElementById('btn-enter').click();
 });
 
-document.getElementById('btn-create-game').addEventListener('click', async () => {
-  // Update with actual player name and create game
-  const state = newGameState(myName, '…wartet');
-  await set(ref(db, ROOM_PATH + '/state'), state);
-  showScreen('game');
-  // Wait for second player via listener
-  listenRoom();
-});
+document.getElementById('btn-create-game').addEventListener('click', () => createGame());
 
 document.getElementById('btn-vs-ai').addEventListener('click', () => {
+  stopHeartbeat();
   if (roomListener) { roomListener(); roomListener = null; }
   remove(ref(db, ROOM_PATH)).catch(()=>{});
   startAIGame();
 });
 
+document.getElementById('btn-hard-reset').addEventListener('click', () => hardResetRoom(true));
+
 document.getElementById('btn-leave').addEventListener('click', () => {
+  stopHeartbeat();
   if (roomListener) { roomListener(); roomListener = null; }
   remove(ref(db, ROOM_PATH)).catch(()=>{});
   G = null; myColor = null; isAIGame = false;
@@ -1558,6 +1626,15 @@ document.getElementById('btn-new-game').addEventListener('click', () => {
 document.getElementById('btn-leave-win').addEventListener('click', () => {
   document.getElementById('win-overlay').classList.remove('show');
   resetRoom();
+});
+
+// Clean up on tab close
+window.addEventListener('beforeunload', () => {
+  stopHeartbeat();
+  if (!isAIGame && myColor) {
+    // Remove our heartbeat synchronously if possible
+    navigator.sendBeacon && navigator.sendBeacon(''); // just triggers beforeunload
+  }
 });
 
 // =============== INIT ===============
