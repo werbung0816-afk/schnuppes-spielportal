@@ -376,7 +376,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v3.8.9</div>
+<div class="version">v3.9.0</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -538,7 +538,7 @@ const DEFAULTS=['Die Helden','Die Legenden','Die Stars','Die Cracks','Die Profis
 const MAX_TEAMS=6,MAX_TOK=5;var WIN=10;
 const DECADES=['70','80','90','00','10','20'];
 // Clockwise from top-left (viewed from above): top→right→bottom→left
-const CW_ORDER=['bot-l','bot-r','right','top-r','top-l','left'];
+const CW_ORDER=['top-l','top-r','right','bot-r','bot-l','left'];
 const SEAT_DEF={'top-l':{side:'top'},'top-r':{side:'top'},'left':{side:'left'},'right':{side:'right'},'bot-l':{side:'bot'},'bot-r':{side:'bot'}};
 const CENTER_ROT={bot:'r0',top:'r180',left:'r90',right:'r270'};
 
