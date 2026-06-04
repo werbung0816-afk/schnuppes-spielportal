@@ -72,12 +72,14 @@ body{
 
 /* ── GAME SCREEN ── */
 #screen-game{justify-content:flex-start;padding:12px 12px 32px;gap:12px}
+.game-row{display:flex;gap:12px;width:100%;max-width:900px;align-items:flex-start}
+.game-right{display:flex;flex-direction:column;gap:12px;width:160px;flex-shrink:0}
 
 /* ── PIXELATION CANVAS ── */
 .reveal-wrap{
   position:relative;
-  width:100%;
-  max-width:520px;
+  flex:1;
+  min-width:0;
   aspect-ratio:1/1;
   border-radius:20px;
   overflow:hidden;
@@ -105,13 +107,12 @@ body{
 
 /* ── BUZZER ── */
 .buzzer-wrap{
-  position:absolute;
-  top:50%;right:16px;
-  transform:translateY(-50%);
-  z-index:20;
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
+  gap:8px;
+  width:100%;
 }
 
 .buzzer{
@@ -199,22 +200,16 @@ body{
 
 /* ── ANSWER PANEL (overlay on image) ── */
 .answer-panel{
-  position:absolute;
-  top:50%;right:0;
-  transform:translateY(-50%);
-  width:52%;
-  background:rgba(7,0,15,.92);
+  background:var(--glass);
   backdrop-filter:blur(8px);
   border:1px solid var(--glass-b);
-  border-right:none;
-  border-radius:16px 0 0 16px;
+  border-radius:14px;
   display:none;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
-  gap:12px;
-  padding:18px 16px;
-  z-index:30;
+  gap:10px;
+  padding:14px 12px;
+  width:100%;
 }
 .answer-panel.show{display:flex}
 .buzzer-who{
@@ -236,13 +231,14 @@ body{
 
 /* ── SOLUTION PANEL ── */
 .solution-panel{
-  position:absolute;inset:0;
-  background:rgba(7,0,15,.92);
-  backdrop-filter:blur(6px);
+  background:var(--glass);
+  backdrop-filter:blur(8px);
+  border:1px solid var(--glass-b);
+  border-radius:14px;
   display:none;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:10px;padding:20px;z-index:30;
-  border-radius:18px;text-align:center;
+  align-items:center;
+  gap:8px;padding:14px 12px;
+  width:100%;text-align:center;
 }
 .solution-panel.show{display:flex}
 .sol-artist{font-size:clamp(22px,5vw,32px);font-weight:900;
@@ -292,7 +288,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.0.0</div>
+<div class="ver">v1.0.1</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -326,38 +322,38 @@ body{
 <!-- ════ GAME ════ -->
 <div id="screen-game" class="screen">
   <div class="scoreboard" id="scoreboard"></div>
-
-  <div class="reveal-wrap" id="reveal-wrap">
-    <canvas id="reveal-canvas"></canvas>
-    <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
-
-    <!-- BUZZER -->
-    <div class="buzzer-wrap">
-      <button class="buzzer" id="buzzer" onclick="onBuzz()">
-        <div class="buzzer-outer"></div>
-        <div class="buzzer-dome"></div>
-        <div class="buzzer-shine"></div>
-      </button>
-      <div class="buzzer-label">BUZZER</div>
+  <div class="game-row">
+    <!-- LEFT: pixelation image -->
+    <div class="reveal-wrap" id="reveal-wrap">
+      <canvas id="reveal-canvas"></canvas>
+      <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
     </div>
 
-    <!-- ANSWER PANEL -->
-    <div class="answer-panel" id="answer-panel">
-      <div class="buzzer-who" id="buzz-who"></div>
-      <div class="answer-name" id="buzz-name"></div>
-      <div class="answer-question">Ist das richtig?</div>
-      <div class="answer-btns">
-        <button class="btn-correct" onclick="judge(true)">✓ Richtig</button>
-        <button class="btn-wrong"   onclick="judge(false)">✗ Falsch</button>
+    <!-- RIGHT: buzzer + panels -->
+    <div class="game-right">
+      <div class="buzzer-wrap">
+        <button class="buzzer" id="buzzer" onclick="onBuzz()">
+          <div class="buzzer-outer"></div>
+          <div class="buzzer-dome"></div>
+          <div class="buzzer-shine"></div>
+        </button>
+        <div class="buzzer-label">BUZZER</div>
       </div>
-    </div>
-
-    <!-- SOLUTION PANEL -->
-    <div class="solution-panel" id="solution-panel">
-      <div id="sol-result-badge" class="sol-result"></div>
-      <div class="sol-artist" id="sol-artist"></div>
-      <div class="sol-followers" id="sol-followers"></div>
-      <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
+      <div class="answer-panel" id="answer-panel">
+        <div class="buzzer-who" id="buzz-who"></div>
+        <div class="answer-name" id="buzz-name"></div>
+        <div class="answer-question">Ist das richtig?</div>
+        <div class="answer-btns">
+          <button class="btn-correct" onclick="judge(true)">✓ Richtig</button>
+          <button class="btn-wrong"   onclick="judge(false)">✗ Falsch</button>
+        </div>
+      </div>
+      <div class="solution-panel" id="solution-panel">
+        <div id="sol-result-badge" class="sol-result"></div>
+        <div class="sol-artist" id="sol-artist"></div>
+        <div class="sol-followers" id="sol-followers"></div>
+        <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
+      </div>
     </div>
   </div>
 </div>
@@ -384,7 +380,7 @@ var COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91'];
 
 // ════ PIXELATION STEPS ════
 // 8 steps: block size from very large → 1 (full res)
-var PIXEL_STEPS=[120,96,74,56,40,26,10,1];
+var PIXEL_STEPS=[80,60,44,32,22,14,8,4,2,1];
 var STEP_INTERVAL=1800; // ms per step
 
 // ════ STATE ════
