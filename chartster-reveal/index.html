@@ -429,13 +429,14 @@ function loadSongs(){
           if(inTop20) artistMap[key].inTop20=true;
         }
       });
-      // Filter: must have image AND been in top20
-      var pool=Object.values(artistMap).filter(function(a){
-        return a.img && a.inTop20;
-      });
-      // Sort by followers desc, take top 50
-      pool.sort(function(a,b){return (b.followers||0)-(a.followers||0);});
-      G.artists=pool.slice(0,50);
+      // Nur Künstler MIT Bild
+      var withImg=Object.values(artistMap).filter(function(a){ return !!a.img; });
+      // Top 50 nach Followern (aus den Bild-Künstlern)
+      var byFollowers=withImg.slice().sort(function(a,b){return (b.followers||0)-(a.followers||0);});
+      var top50names=new Set(byFollowers.slice(0,50).map(function(a){return a.name;}));
+      // Union: Top 50 Follower ODER je in Top 20 gewesen
+      var pool=withImg.filter(function(a){ return top50names.has(a.name) || a.inTop20; });
+      G.artists=shuffle(pool);
 
       if(G.artists.length===0){
         document.getElementById('lobby-status').textContent=
