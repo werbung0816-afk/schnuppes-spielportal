@@ -376,7 +376,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v3.7.4</div>
+<div class="version">v3.7.6</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -596,8 +596,8 @@ function toggleS5(){
 function updateStartBtn(){document.getElementById('start-btn').disabled=!IS_HOST||getActiveSeats().length<2;}
 
 // ── FILTER ──
-function toggleFlt(btn,isOpt){var f=btn.dataset.f;if(f==='all'){G.filters=new Set();}else if(f==='top10'){G.filters.delete('all');G.filters.delete('top20');G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');}else if(f==='top20'){G.filters.delete('all');G.filters.delete('top10');G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');}else{G.filters.delete('all');G.filters.has(f)?G.filters.delete(f):G.filters.add(f);// leere Auswahl = alle Songs}syncFlt('flt-wrap');syncFlt('opt-filter');if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}}
-function syncFlt(id){var w=document.getElementById(id);if(!w)return;w.querySelectorAll('.flt').forEach(b=>{b.classList.toggle('on',G.filters.has(b.dataset.f));b.classList.remove('off');});if(G.filters.has('all')){DECADES.forEach(d=>{var el=w.querySelector(`[data-f="${d}"]`);if(el)el.classList.add('off');});}var t10=w.querySelector('[data-f="top10"]'),t20=w.querySelector('[data-f="top20"]');if(G.filters.has('top10')&&t20)t20.classList.add('off');if(G.filters.has('top20')&&t10)t10.classList.add('off');}
+function toggleFlt(btn,isOpt){var f=btn.dataset.f;if(f==='all'){G.filters=new Set();}else if(f==='top10'){G.filters.delete('all');G.filters.delete('top20');G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');}else if(f==='top20'){G.filters.delete('all');G.filters.delete('top10');G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');}else{G.filters.delete('all');G.filters.has(f)?G.filters.delete(f):G.filters.add(f);if(G.filters.size===0)G.filters.add('all');}syncFlt('flt-wrap');syncFlt('opt-filter');if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}}
+function syncFlt(id){var w=document.getElementById(id);if(!w)return;var isAll=G.filters.size===0||G.filters.has('all');w.querySelectorAll('.flt').forEach(b=>{b.classList.toggle('on',G.filters.has(b.dataset.f));b.classList.remove('off');});if(isAll){DECADES.forEach(d=>{var el=w.querySelector(`[data-f="${d}"]`);if(el)el.classList.add('off');});}var t10=w.querySelector('[data-f="top10"]'),t20=w.querySelector('[data-f="top20"]');if(G.filters.has('top10')&&t20)t20.classList.add('off');if(G.filters.has('top20')&&t10)t10.classList.add('off');}
 function buildOptFilter(){var w=document.getElementById('opt-filter');w.innerHTML=document.getElementById('flt-wrap').innerHTML;w.querySelectorAll('.flt').forEach(b=>{b.onclick=function(){toggleFlt(b,true);};});syncFlt('opt-filter');}
 
 // ── CLOCKWISE ORDER ──
