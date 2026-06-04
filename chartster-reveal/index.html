@@ -106,8 +106,8 @@ body{
 /* ── BUZZER ── */
 .buzzer-wrap{
   position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
+  top:50%;right:16px;
+  transform:translateY(-50%);
   z-index:20;
   display:flex;
   align-items:center;
@@ -200,17 +200,21 @@ body{
 /* ── ANSWER PANEL (overlay on image) ── */
 .answer-panel{
   position:absolute;
-  inset:0;
-  background:rgba(7,0,15,.88);
-  backdrop-filter:blur(4px);
+  top:50%;right:0;
+  transform:translateY(-50%);
+  width:52%;
+  background:rgba(7,0,15,.92);
+  backdrop-filter:blur(8px);
+  border:1px solid var(--glass-b);
+  border-right:none;
+  border-radius:16px 0 0 16px;
   display:none;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:14px;
-  padding:20px;
+  gap:12px;
+  padding:18px 16px;
   z-index:30;
-  border-radius:18px;
 }
 .answer-panel.show{display:flex}
 .buzzer-who{
@@ -380,7 +384,7 @@ var COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91'];
 
 // ════ PIXELATION STEPS ════
 // 8 steps: block size from very large → 1 (full res)
-var PIXEL_STEPS=[64,48,32,22,14,8,4,1];
+var PIXEL_STEPS=[120,96,74,56,40,26,10,1];
 var STEP_INTERVAL=1800; // ms per step
 
 // ════ STATE ════
@@ -429,13 +433,8 @@ function loadSongs(){
           if(inTop20) artistMap[key].inTop20=true;
         }
       });
-      // Nur Künstler MIT Bild
-      var withImg=Object.values(artistMap).filter(function(a){ return !!a.img; });
-      // Top 50 nach Followern (aus den Bild-Künstlern)
-      var byFollowers=withImg.slice().sort(function(a,b){return (b.followers||0)-(a.followers||0);});
-      var top50names=new Set(byFollowers.slice(0,50).map(function(a){return a.name;}));
-      // Union: Top 50 Follower ODER je in Top 20 gewesen
-      var pool=withImg.filter(function(a){ return top50names.has(a.name) || a.inTop20; });
+      // Nur Künstler MIT Bild UND mindestens einmal in Top 20
+      var pool=Object.values(artistMap).filter(function(a){ return !!a.img && a.inTop20; });
       G.artists=shuffle(pool);
 
       if(G.artists.length===0){
