@@ -104,7 +104,7 @@ body{
 }
 
 /* Card flip */
-.mc{width:100%;aspect-ratio:2/3;perspective:600px;position:relative}
+.mc{width:100%;aspect-ratio:1/1;perspective:600px;position:relative}
 .mc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .38s cubic-bezier(.4,0,.2,1);border-radius:10px}
 .mc.flipped .mc-inner,.mc.matched .mc-inner{transform:rotateY(180deg)}
 .mc-face{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
@@ -124,7 +124,7 @@ body{
   background:#08001a;
   border:1px solid rgba(83,246,255,.25);
 }
-.mc-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.mc-cover img{width:100%;height:100%;object-fit:contain;display:block;background:#08001a}
 .mc-cover-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:30px;background:linear-gradient(135deg,rgba(83,246,255,.08),rgba(143,95,255,.08))}
 
 /* Front – text */
@@ -193,9 +193,9 @@ body{
     <div class="label">👥 Spieler</div>
     <div class="player-rows">
       <div class="player-row"><div class="pdot" style="background:#53f6ff;box-shadow:0 0 7px #53f6ff"></div><input id="p1" type="text" placeholder="Spieler 1" maxlength="18"></div>
-      <div class="player-row"><div class="pdot" style="background:#ff4fd8;box-shadow:0 0 7px #ff4fd8"></div><input id="p2" type="text" placeholder="Spieler 2 (optional)" maxlength="18"></div>
-      <div class="player-row"><div class="pdot" style="background:#8f5fff;box-shadow:0 0 7px #8f5fff"></div><input id="p3" type="text" placeholder="Spieler 3 (optional)" maxlength="18"></div>
-      <div class="player-row"><div class="pdot" style="background:#4dff91;box-shadow:0 0 7px #4dff91"></div><input id="p4" type="text" placeholder="Spieler 4 (optional)" maxlength="18"></div>
+      <div class="player-row"><div class="pdot" style="background:#ff4fd8;box-shadow:0 0 7px #ff4fd8"></div><input id="p2" type="text" placeholder="Spieler 2" maxlength="18"></div>
+      <div class="player-row"><div class="pdot" style="background:#8f5fff;box-shadow:0 0 7px #8f5fff"></div><input id="p3" type="text" placeholder="Spieler 3" maxlength="18"></div>
+      <div class="player-row"><div class="pdot" style="background:#4dff91;box-shadow:0 0 7px #4dff91"></div><input id="p4" type="text" placeholder="Spieler 4" maxlength="18"></div>
     </div>
   </div>
 
@@ -321,7 +321,7 @@ function updateFltInfo(){
   var el=document.getElementById('flt-info');
   var need=G.pairs;
   if(G.filters.size===0){
-    el.textContent=G.songs.length+' Songs verfügbar (kein Filter aktiv = alle)';
+    el.textContent='';
     el.className='';
   } else if(n<need){
     el.textContent='⚠ Nur '+n+' Songs mit Cover in diesem Filter – mindestens '+need+' benötigt';
