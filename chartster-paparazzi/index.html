@@ -67,25 +67,24 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .sc-pts{font-size:18px;font-weight:900;min-width:12px;text-align:right}
 
 /* ── ARENA ── */
-#arena{display:flex;flex-direction:column;align-items:center;gap:0;width:100%}
-
-#area-top,#area-bot{
-  width:100%;padding:0 60px;
-  display:flex;justify-content:space-around;align-items:center;
-  min-height:72px;
+#arena{
+  display:grid;
+  grid-template-areas:
+    ".    top   ."
+    "left center right"
+    ".    bot   .";
+  grid-template-columns:72px 1fr 72px;
+  grid-template-rows:auto auto auto;
+  width:min(700px,calc(100vw - 16px));
+  align-items:center;
+  justify-items:stretch;
 }
 
-#arena-mid{display:flex;align-items:center;justify-content:center;width:100%}
-
-#area-left,#area-right{
-  width:60px;min-width:60px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-}
-
-#area-center{
-  flex:1;max-width:min(340px,calc(100vw - 136px));
-  aspect-ratio:1/1;position:relative;
-}
+#area-top   {grid-area:top;   display:flex;justify-content:space-around;align-items:center;}
+#area-bot   {grid-area:bot;   display:flex;justify-content:space-around;align-items:center;}
+#area-left  {grid-area:left;  display:flex;align-items:center;justify-content:center;}
+#area-right {grid-area:right; display:flex;align-items:center;justify-content:center;}
+#area-center{grid-area:center;aspect-ratio:1/1;position:relative;width:100%;}
 
 /* Image */
 #image-container{position:absolute;inset:0;border-radius:18px;overflow:hidden;background:#12041f;border:2px solid rgba(83,246,255,.2);box-shadow:0 0 50px rgba(83,246,255,.1)}
@@ -178,7 +177,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <div class="card">
   <div class="title-row">
     <div class="game-title">Chartster Paparazzi</div>
-    <div class="version">v1.0</div>
+    <div class="version">v1.1</div>
   </div>
 
   <div class="label">Spieler &amp; Teams</div>
@@ -247,23 +246,21 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div id="scores-bar"></div>
   <div id="arena">
     <div id="area-top"></div>
-    <div id="arena-mid">
-      <div id="area-left"></div>
-      <div id="area-center">
-        <div id="image-container">
-          <img id="artist-img" alt="" crossorigin="anonymous">
-          <canvas id="pixel-canvas"></canvas>
-        </div>
-        <div id="judge-overlay">
-          <div id="judge-lbl"></div>
-          <div class="judge-row">
-            <button class="judge-btn j-correct" onclick="judgeAnswer(true)">Richtig</button>
-            <button class="judge-btn j-wrong"   onclick="judgeAnswer(false)">Falsch</button>
-          </div>
+    <div id="area-left"></div>
+    <div id="area-center">
+      <div id="image-container">
+        <img id="artist-img" alt="" crossorigin="anonymous">
+        <canvas id="pixel-canvas"></canvas>
+      </div>
+      <div id="judge-overlay">
+        <div id="judge-lbl"></div>
+        <div class="judge-row">
+          <button class="judge-btn j-correct" onclick="judgeAnswer(true)">Richtig</button>
+          <button class="judge-btn j-wrong"   onclick="judgeAnswer(false)">Falsch</button>
         </div>
       </div>
-      <div id="area-right"></div>
     </div>
+    <div id="area-right"></div>
     <div id="area-bot"></div>
   </div>
 </div>
@@ -509,11 +506,14 @@ function renderBuzzers() {
     area.appendChild(wrap);
   });
 
-  // Show/hide areas based on content
+  // Top/bot: show with padding when populated, collapse when empty
   ['area-top','area-bot'].forEach(function(id) {
     var el = document.getElementById(id);
-    el.style.display = el.children.length > 0 ? 'flex' : 'none';
+    var has = el.children.length > 0;
+    el.style.minHeight = has ? '76px' : '0';
+    el.style.padding   = has ? '6px 0' : '0';
   });
+  // Side areas: keep column width for alignment, hide content if empty
   ['area-left','area-right'].forEach(function(id) {
     var el = document.getElementById(id);
     el.style.visibility = el.children.length > 0 ? 'visible' : 'hidden';
@@ -687,10 +687,19 @@ function onBuzz(teamIdx, evt) {
   clearTimer();
   setBuzzers(false);
 
+  // 1. Bild sofort scharf stellen
+  var imgEl = document.getElementById('artist-img');
+  imgEl.style.transition = 'filter .35s ease';
+  imgEl.style.filter = 'none';
+  document.getElementById('pixel-canvas').style.display = 'none';
+
+  // 2. Richtig/Falsch erst nach Aufdecken anzeigen
   var team = G.teams.find(function(t){ return t.idx === teamIdx; });
-  document.getElementById('judge-lbl').innerHTML =
-    '<span style="color:' + team.color + '">' + team.name + '</span> hat gebuzzert!';
-  document.getElementById('judge-overlay').classList.add('show');
+  setTimeout(function() {
+    document.getElementById('judge-lbl').innerHTML =
+      '<span style="color:' + team.color + '">' + team.name + '</span> hat gebuzzert!';
+    document.getElementById('judge-overlay').classList.add('show');
+  }, 380);
 }
 
 function judgeAnswer(correct) {
@@ -700,23 +709,16 @@ function judgeAnswer(correct) {
   team.score += correct ? 1 : -1;
   updateScores();
 
-  // Reveal image sharp
-  var imgEl = document.getElementById('artist-img');
-  imgEl.style.transition = 'filter .35s ease';
-  imgEl.style.filter = 'none';
-  document.getElementById('pixel-canvas').style.display = 'none';
-
   if (correct) spawnConfetti(team.color, 80, true);
 
   G.phase = 'answer';
 
-  // Check victory after short delay (let confetti start)
   if (correct && team.score >= G.winTarget) {
     setTimeout(showVictory, 500);
     return;
   }
 
-  setTimeout(function(){ showSolution(team, correct); }, 380);
+  setTimeout(function(){ showSolution(team, correct); }, 300);
 }
 
 // ══════════════════════════════════════
