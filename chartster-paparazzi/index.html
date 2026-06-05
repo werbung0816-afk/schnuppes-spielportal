@@ -247,7 +247,6 @@ body{
   z-index:20;
 }
 .solution-panel.show{display:flex}
-.solution-panel.show{display:flex}
 .sol-artist{font-size:clamp(32px,7vw,52px);font-weight:900;line-height:1.1;
   background:linear-gradient(135deg,var(--cyan),var(--pink));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -419,7 +418,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.2.4</div>
+<div class="ver">v1.2.5</div>
 <audio id="preview-audio" preload="none"></audio>
 
 <!-- ════ LOBBY ════ -->
@@ -482,6 +481,7 @@ body{
         <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
         <!-- SOLUTION PANEL inside wrap so it rotates with image -->
         <div class="solution-panel" id="solution-panel">
+          <div id="sol-result-badge" class="sol-result"></div>
           <div class="sol-artist" id="sol-artist"></div>
           <div class="sol-followers" id="sol-followers"></div>
           <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
@@ -682,6 +682,10 @@ function startGame(){
   renderScoreboard();
   renderBuzzArena();
   rotateImageToTeam();
+  // Unlock audio context via user gesture
+  var audio=document.getElementById('preview-audio');
+  audio.src='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+  audio.play().then(function(){audio.pause();audio.src='';}).catch(function(){});
   showScreen('game');
   nextArtist();
 }
@@ -805,7 +809,16 @@ function playPreview(){
   if(previewUrl){
     audio.src=previewUrl;
     audio.currentTime=0;
-    audio.play().catch(function(){});
+    var playPromise=audio.play();
+    if(playPromise!==undefined){
+      playPromise.catch(function(){
+        // Autoplay blocked — skip preview, go straight to reveal
+        overlay.classList.remove('show');
+        G.previewing=false;
+        scheduleNext();
+        return;
+      });
+    }
     overlay.classList.add('show');
     var secs=10;
     cdEl.textContent=secs;
@@ -916,7 +929,7 @@ function renderBuzzArena(){
     var nameRot='';
     if(side==='top')        nameRot='transform:rotate(180deg);display:inline-block;';
     else if(side==='left')  nameRot='transform:rotate(90deg);display:inline-block;';
-    else if(side==='right') nameRot='transform:rotate(90deg);display:inline-block;';
+    else if(side==='right') nameRot='transform:rotate(-90deg);display:inline-block;';
     return '<div class="team-buzz-wrap" id="buzz-btn-'+i+'" '+
       'style="--tcol:'+t.color+';position:relative" '+
       'onclick="onBuzz('+i+')" ontouchstart="event.preventDefault();onBuzz('+i+')">'+
