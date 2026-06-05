@@ -232,21 +232,13 @@ body{
 
 /* ── SOLUTION PANEL ── */
 .solution-panel{
-  position:absolute;
-  inset:4px;
-  background:rgba(7,0,15,.88);
-  backdrop-filter:blur(8px);
-  border-radius:16px;
   display:none;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:14px;
-  padding:24px;
+  gap:12px;
+  padding:16px 12px;
   text-align:center;
-  z-index:20;
-  box-shadow:inset 0 0 40px rgba(83,246,255,.08);
-  border:1px solid rgba(83,246,255,.15);
 }
 .solution-panel.show{display:flex}
 .sol-artist{font-size:clamp(32px,7vw,52px);font-weight:900;line-height:1.1;
@@ -336,12 +328,12 @@ body{
   transition:transform .1s;
 }
 .team-buzz-wrap:active{transform:scale(.93)!important}
-/* Left col: name on right (image side), buzzer on left */
-#buzz-col-left .team-buzz-wrap{flex-direction:row-reverse;gap:4px;align-items:center;}
-#buzz-col-left .team-buzz-name{writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;}
-/* Right col: name on left (image side), buzzer on right */
-#buzz-col-right .team-buzz-wrap{flex-direction:row;gap:4px;align-items:center;}
-#buzz-col-right .team-buzz-name{writing-mode:vertical-rl;transform:rotate(0deg);text-align:center;}
+/* Left col: name between image and buzzer, readable for left-seated player */
+#buzz-col-left .team-buzz-wrap{flex-direction:row-reverse;gap:6px;align-items:center;}
+#buzz-col-left .team-buzz-name{transform:rotate(90deg);display:inline-block;white-space:nowrap;}
+/* Right col: name between image and buzzer, readable for right-seated player */
+#buzz-col-right .team-buzz-wrap{flex-direction:row;gap:6px;align-items:center;}
+#buzz-col-right .team-buzz-name{transform:rotate(-90deg);display:inline-block;white-space:nowrap;}
 .team-buzz-wrap.buzzed-out{opacity:.25;pointer-events:none}
 .team-buzz-3d{
   width:clamp(64px,12vw,90px);
@@ -427,11 +419,13 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.2.7</div>
+<div class="ver">v1.2.9</div>
 <audio id="preview-audio" preload="none"></audio>
-<div id="spotify-embed-wrap" style="position:fixed;bottom:-200px;left:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1">
-  <iframe id="spotify-embed" style="width:300px;height:80px;border:none" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+<div id="spotify-embed-wrap" style="position:fixed;bottom:-300px;left:0;width:300px;height:80px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1">
+  <iframe id="spotify-embed" style="width:300px;height:80px;border:none" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
 </div>
+<!-- Hidden play trigger — gets .click()ed by game buttons for autoplay unlock -->
+<button id="play-trigger" style="position:fixed;bottom:-100px;left:0;opacity:0;pointer-events:none" onclick="triggerSpotifyPlay()">▶</button>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -466,7 +460,7 @@ body{
   </div>
 
   <div class="sep"></div>
-  <button class="btn btn-primary" id="start-btn" onclick="startGame()" disabled>Spiel starten</button>
+  <button class="btn btn-primary" id="start-btn" onclick="document.getElementById('play-trigger').click();startGame()" disabled>Spiel starten</button>
   <div id="lobby-status" style="font-size:13px;color:var(--muted);text-align:center;min-height:18px"></div>
 </div>
 </div>
@@ -491,13 +485,14 @@ body{
           <div class="preview-countdown" id="preview-cd">10</div>
         </div>
         <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
-        <!-- SOLUTION PANEL inside wrap so it rotates with image -->
-        <div class="solution-panel" id="solution-panel">
-          <div id="sol-result-badge" class="sol-result"></div>
-          <div class="sol-artist" id="sol-artist"></div>
-          <div class="sol-followers" id="sol-followers"></div>
-          <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
-        </div>
+
+      </div>
+      <!-- SOLUTION PANEL: right column -->
+      <div class="solution-panel" id="solution-panel" style="width:150px;flex-shrink:0;border-radius:0 14px 14px 0;border-left:none;position:relative;inset:unset;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-left:none">
+        <div id="sol-result-badge" class="sol-result"></div>
+        <div class="sol-artist" id="sol-artist"></div>
+        <div class="sol-followers" id="sol-followers"></div>
+        <button class="sol-next" onclick="document.getElementById('play-trigger').click();nextArtist()">Weiter ▶</button>
       </div>
       <!-- JUDGE PANEL: right of image, same height -->
       <div class="judge-panel" id="judge-panel" style="width:150px;flex-shrink:0;border-radius:0 14px 14px 0;border-left:none">
@@ -804,6 +799,15 @@ function drawStep(stepIdx){
   }
 }
 
+function triggerSpotifyPlay(){
+  // Called via programmatic .click() from a real user gesture (start/next button)
+  var iframe=document.getElementById('spotify-embed');
+  if(G._pendingTrackId){
+    iframe.src='https://open.spotify.com/embed/track/'+G._pendingTrackId+'?utm_source=generator&autoplay=1&theme=0';
+    G._pendingTrackId=null;
+  }
+}
+
 function playPreview(){
   // Find a song by this artist with a Spotify track ID
   var artistKey=G.cur.name.trim().toLowerCase();
@@ -816,9 +820,9 @@ function playPreview(){
   var cdEl=document.getElementById('preview-cd');
 
   if(trackId){
-    // Load Spotify embed with autoplay
-    var iframe=document.getElementById('spotify-embed');
-    iframe.src='https://open.spotify.com/embed/track/'+trackId+'?utm_source=generator&autoplay=1&theme=0';
+    // Store trackId and trigger via hidden button click (real user gesture chain)
+    G._pendingTrackId=trackId;
+    document.getElementById('play-trigger').click();
 
     overlay.classList.add('show');
     var secs=10;
@@ -928,9 +932,8 @@ function renderBuzzArena(){
 
   function buzzerHTML(t,i,side){
     var nameRot='';
-    if(side==='top')        nameRot='transform:rotate(180deg);display:inline-block;';
-    else if(side==='left')  nameRot='transform:rotate(90deg);display:inline-block;';
-    else if(side==='right') nameRot='transform:rotate(-90deg);display:inline-block;';
+    if(side==='top') nameRot='transform:rotate(180deg);display:inline-block;';
+    // left/right rotation handled by CSS
     return '<div class="team-buzz-wrap" id="buzz-btn-'+i+'" '+
       'style="--tcol:'+t.color+';position:relative" '+
       'onclick="onBuzz('+i+')" ontouchstart="event.preventDefault();onBuzz('+i+')">'+
