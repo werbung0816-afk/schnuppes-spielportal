@@ -247,6 +247,7 @@ body{
   z-index:20;
 }
 .solution-panel.show{display:flex}
+.solution-panel.show{display:flex}
 .sol-artist{font-size:clamp(32px,7vw,52px);font-weight:900;line-height:1.1;
   background:linear-gradient(135deg,var(--cyan),var(--pink));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -398,7 +399,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.2.2</div>
+<div class="ver">v1.2.3</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -841,7 +842,7 @@ function renderBuzzArena(){
   function buzzerHTML(t,i,side){
     var nameRot='';
     if(side==='top')        nameRot='transform:rotate(180deg);display:inline-block;';
-    else if(side==='left')  nameRot='transform:rotate(-90deg);display:inline-block;';
+    else if(side==='left')  nameRot='transform:rotate(90deg);display:inline-block;';
     else if(side==='right') nameRot='transform:rotate(90deg);display:inline-block;';
     return '<div class="team-buzz-wrap" id="buzz-btn-'+i+'" '+
       'style="--tcol:'+t.color+';position:relative" '+
