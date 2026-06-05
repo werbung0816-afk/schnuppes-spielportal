@@ -393,7 +393,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.1.9</div>
+<div class="ver">v1.2.0</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -568,7 +568,9 @@ var G={
   buzzedPlayer:-1,  // who buzzed (-1 = none)
   buzzedOut:[],     // players out this round (wrong buzz)
   running:false,
-  startSeatIdx:0    // clockwise rotation: which seat starts next round
+  startSeatIdx:0,   // clockwise rotation: which seat starts next round
+  imgRotateDeg:0,
+  imgRotateScale:1
 };
 
 // Clockwise seat order
@@ -741,6 +743,10 @@ function drawStep(stepIdx){
   var blur = steps[Math.min(stepIdx, steps.length-1)];
   if(revealImg){
     revealImg.style.filter = blur > 0 ? 'blur('+blur+'px)' : 'none';
+    // Preserve rotation
+    var deg=G.imgRotateDeg||0;
+    var scale=G.imgRotateScale||1;
+    revealImg.style.transform='rotate('+deg+'deg) scale('+scale+')';
   }
 }
 
@@ -765,7 +771,7 @@ function scheduleNext(){
 
 // ════ BUZZ ARENA ════
 function rotateImageToTeam(){
-  // Rotate image to face the current start team's position
+  // Determine which side the current start team is on
   var cwTeams=[];
   CW_ORDER.forEach(function(pos){
     G.teams.forEach(function(t,i){if(t.pos===pos) cwTeams.push({team:t,idx:i});});
@@ -779,10 +785,21 @@ function rotateImageToTeam(){
   var rotatedPos=activeCWPos.slice();
   for(var r=0;r<shift;r++) rotatedPos.push(rotatedPos.shift());
   var vSide=SEAT_SIDE[rotatedPos[0]]||'bot';
+  // Map side to degrees: bot=0 (normal), left=90, top=180, right=270
   var degMap={bot:0,left:90,top:180,right:270};
   var deg=degMap[vSide]||0;
-  var wrap=document.getElementById('reveal-wrap');
-  if(wrap) wrap.style.transform='rotate('+deg+'deg)';
+  // Rotate the img element inside reveal-wrap
+  // For 90/270: also scale down to fit inside square container
+  var scale=(deg===90||deg===270)?0.88:1;
+  if(revealImg){
+    revealImg.style.transition='transform 0.6s ease, filter 0.6s ease';
+    // Preserve any existing blur filter
+    var currentFilter=revealImg.style.filter||'none';
+    revealImg.style.transform='rotate('+deg+'deg) scale('+scale+')';
+  }
+  // Store current rotation for drawStep to preserve
+  G.imgRotateDeg=deg;
+  G.imgRotateScale=scale;
 }
 
 function renderBuzzArena(){
