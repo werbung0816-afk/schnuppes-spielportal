@@ -346,7 +346,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.0.9</div>
+<div class="ver">v1.1.0</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -572,18 +572,21 @@ function setGoal(btn){
 
 // ════ START ════
 function startGame(){
-  var names=[
-    document.getElementById('p1').value.trim()||'Team 1',
-    document.getElementById('p2').value.trim(),
-    document.getElementById('p3').value.trim(),
-    document.getElementById('p4').value.trim()
-  ].filter(function(n,i){return i===0||n!=='';});
+  var active=getActiveSeats();
+  if(active.length<2){showHint('Mindestens 2 Teams!');return;}
+  if(G.artists.length===0){showHint('Songs noch nicht geladen – kurz warten!');return;}
 
-  G.players=names;
-  G.scores=names.map(function(){return 0;});
+  G.teams=active.map(function(pos,i){
+    var inp=document.querySelector('.seat[data-pos="'+pos+'"] .seat-inp');
+    var name=inp&&inp.value.trim()?inp.value.trim():DEFAULTS[i];
+    return{name:name,color:COLORS[i],pos:pos,side:SEAT_SIDE[pos]};
+  });
+  G.players=G.teams.map(function(t){return t.name;});
+  G.scores=G.teams.map(function(){return 0;});
   G.queue=shuffle(G.artists.map(function(_,i){return i;}));
 
   renderScoreboard();
+  renderBuzzArena();
   showScreen('game');
   nextArtist();
 }
