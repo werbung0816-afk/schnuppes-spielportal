@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Paparazzi</title>
+<title>Chartster Paparazzi</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* ── TOKENS (1:1 Chartster) ── */
@@ -395,7 +395,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.1.5</div>
+<div class="ver">v1.1.6</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -457,9 +457,10 @@ body{
         <div class="judge-who">Gebuzzert:</div>
         <div class="judge-name" id="judge-name"></div>
         <button class="btn-reveal" id="btn-reveal" onclick="revealNow()" style="width:100%;display:block">🔍 Auflösen</button>
-        <div id="judge-answer-step" style="display:none;width:100%;text-align:center">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.4">Team nennt<br>seinen Tipp…</div>
-          <button onclick="confirmAnswer()" style="width:100%;padding:11px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));color:var(--cyan);border:1px solid rgba(83,246,255,.4)">Tipp genannt ▶</button>
+        <div id="judge-answer-step" style="display:none"></div>
+        <div id="judge-artist-wrap" style="display:none;width:100%;text-align:center;margin:4px 0">
+          <div style="font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Künstler</div>
+          <div id="judge-artist-reveal" style="font-size:15px;font-weight:900;color:var(--cyan);line-height:1.2;word-break:break-word"></div>
         </div>
         <div id="judge-btns" style="display:none;width:100%;gap:8px;flex-direction:column">
           <button class="btn-correct" onclick="judge(true)" style="width:100%;padding:11px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#00c853,#00962f);color:#fff">✓ Richtig</button>
@@ -568,8 +569,12 @@ var G={
   stepTimer:null,
   buzzedPlayer:-1,  // who buzzed (-1 = none)
   buzzedOut:[],     // players out this round (wrong buzz)
-  running:false
+  running:false,
+  startSeatIdx:0    // clockwise rotation: which seat starts next round
 };
+
+// Clockwise seat order
+var CW_ORDER=['top-l','top-r','right','bot-r','bot-l','left'];
 
 // ════ BOOT ════
 loadSongs();
@@ -640,6 +645,7 @@ function startGame(){
   G.scores=G.teams.map(function(){return 0;});
   G.queue=shuffle(G.artists.map(function(_,i){return i;}));
 
+  G.startSeatIdx=0;
   renderScoreboard();
   renderBuzzArena();
   showScreen('game');
@@ -697,6 +703,15 @@ function nextArtist(){
   G.buzzedPlayer=-1;
   G.buzzedOut=[];
   G.running=true;
+  // Reset artist reveal in judge panel
+  document.getElementById('judge-artist-wrap').style.display='none';
+  document.getElementById('judge-artist-reveal').textContent='';
+  // Rotate clockwise
+  G.startSeatIdx=(G.startSeatIdx+1)%Math.max(1,G.teams.length);
+  renderBuzzArena();
+  // Reset artist reveal in judge panel
+  document.getElementById('judge-artist-wrap').style.display='none';
+  document.getElementById('judge-artist-reveal').textContent='';
 
   // Reset progress
   document.getElementById('progress-bar').style.width='0%';
@@ -753,24 +768,47 @@ function renderBuzzArena(){
   var rows={top:[],bot:[],left:[],right:[]};
   G.teams.forEach(function(team,i){ rows[team.side].push({team:team,idx:i}); });
 
-  function buzzerHTML(t,i){
-    // Lighten dome color slightly for gradient
+  function buzzerHTML(t,i,side){
+    var nameRot='';
+    if(side==='top') nameRot='transform:rotate(180deg);';
+    else if(side==='left') nameRot='transform:rotate(90deg);writing-mode:horizontal-tb;';
+    else if(side==='right') nameRot='transform:rotate(-90deg);writing-mode:horizontal-tb;';
+    var wrapRot='';
+    if(side==='top') wrapRot='transform:rotate(180deg);';
+    else if(side==='left') wrapRot='transform:rotate(0deg);';
+    else if(side==='right') wrapRot='transform:rotate(0deg);';
     return '<div class="team-buzz-wrap" id="buzz-btn-'+i+'" '+
-      'style="--tcol:'+t.color+';position:relative" '+
+      'style="--tcol:'+t.color+';position:relative;'+wrapRot+'" '+
       'onclick="onBuzz('+i+')" ontouchstart="event.preventDefault();onBuzz('+i+')">'+
       '<div class="team-buzz-3d">'+
         '<div class="tbz-outer"></div>'+
         '<div class="tbz-dome" style="background:radial-gradient(circle at 38% 28%,'+lighten(t.color)+' 0%,'+t.color+' 40%,'+darken(t.color)+' 100%)"></div>'+
         '<div class="tbz-shine"></div>'+
       '</div>'+
-      '<div class="team-buzz-name">'+esc(t.name)+'</div>'+
+      '<div class="team-buzz-name" style="'+nameRot+'">'+esc(t.name)+'</div>'+
     '</div>';
   }
 
-  document.getElementById('buzz-row-top').innerHTML=rows.top.map(function(x){return buzzerHTML(x.team,x.idx);}).join('');
-  document.getElementById('buzz-row-bot').innerHTML=rows.bot.map(function(x){return buzzerHTML(x.team,x.idx);}).join('');
-  document.getElementById('buzz-col-left').innerHTML=rows.left.map(function(x){return buzzerHTML(x.team,x.idx);}).join('');
-  document.getElementById('buzz-col-right').innerHTML=rows.right.map(function(x){return buzzerHTML(x.team,x.idx);}).join('');
+  // Apply clockwise rotation offset to rows
+  var allTeamsByPos=[];
+  CW_ORDER.forEach(function(pos){
+    G.teams.forEach(function(t,i){if(t.pos===pos)allTeamsByPos.push({team:t,idx:i});});
+  });
+  // Rotate by startSeatIdx
+  for(var r=0;r<G.startSeatIdx%allTeamsByPos.length;r++){
+    allTeamsByPos.push(allTeamsByPos.shift());
+  }
+  // Re-assign visual sides based on rotation
+  var sideSlots=['top','top','right','bot','bot','left'];
+  var visualRows={top:[],bot:[],left:[],right:[]};
+  allTeamsByPos.forEach(function(x,idx){
+    var vSide=sideSlots[idx]||x.team.side;
+    visualRows[vSide].push({team:x.team,idx:x.idx,side:vSide});
+  });
+  document.getElementById('buzz-row-top').innerHTML=visualRows.top.map(function(x){return buzzerHTML(x.team,x.idx,'top');}).join('');
+  document.getElementById('buzz-row-bot').innerHTML=visualRows.bot.map(function(x){return buzzerHTML(x.team,x.idx,'bot');}).join('');
+  document.getElementById('buzz-col-left').innerHTML=visualRows.left.map(function(x){return buzzerHTML(x.team,x.idx,'left');}).join('');
+  document.getElementById('buzz-col-right').innerHTML=visualRows.right.map(function(x){return buzzerHTML(x.team,x.idx,'right');}).join('');
 }
 
 // Color helpers for dome gradient
@@ -793,6 +831,7 @@ function onBuzz(playerIdx){
   document.getElementById('judge-name').innerHTML='<span style="color:'+G.teams[playerIdx].color+'">'+esc(G.teams[playerIdx].name)+'</span>';
   document.getElementById('judge-btns').style.display='none';
   document.getElementById('judge-answer-step').style.display='none';
+  document.getElementById('judge-artist-wrap').style.display='none';
   document.getElementById('btn-reveal').style.display='block';
   document.getElementById('solution-panel').classList.remove('show');
   document.getElementById('judge-panel').classList.add('show');
@@ -802,12 +841,10 @@ function revealNow(){
   drawStep(BLUR_STEPS.length-1);
   document.getElementById('progress-bar').style.width='100%';
   document.getElementById('btn-reveal').style.display='none';
-  // Show intermediate step: team gives answer, then judge
-  document.getElementById('judge-answer-step').style.display='block';
-}
-
-function confirmAnswer(){
   document.getElementById('judge-answer-step').style.display='none';
+  // Show artist name and judge buttons simultaneously
+  document.getElementById('judge-artist-reveal').textContent=G.cur.name;
+  document.getElementById('judge-artist-wrap').style.display='block';
   document.getElementById('judge-btns').style.display='flex';
 }
 
