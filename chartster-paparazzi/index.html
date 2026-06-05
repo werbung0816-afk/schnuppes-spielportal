@@ -232,13 +232,20 @@ body{
 
 /* ── SOLUTION PANEL ── */
 .solution-panel{
+  position:absolute;
+  inset:4px;
+  background:rgba(7,0,15,.88);
+  backdrop-filter:blur(8px);
+  border-radius:16px;
   display:none;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:12px;
-  padding:16px 12px;
+  gap:14px;
+  padding:24px;
   text-align:center;
+  z-index:20;
+  border:1px solid rgba(83,246,255,.15);
 }
 .solution-panel.show{display:flex}
 .sol-artist{font-size:clamp(32px,7vw,52px);font-weight:900;line-height:1.1;
@@ -329,11 +336,8 @@ body{
 }
 .team-buzz-wrap:active{transform:scale(.93)!important}
 /* Left col: name between image and buzzer, readable for left-seated player */
-#buzz-col-left .team-buzz-wrap{flex-direction:row-reverse;gap:12px;align-items:center;}
-#buzz-col-left .team-buzz-name{transform:rotate(90deg);display:inline-block;white-space:nowrap;}
-/* Right col: name between image and buzzer, readable for right-seated player */
-#buzz-col-right .team-buzz-wrap{flex-direction:row;gap:12px;align-items:center;}
-#buzz-col-right .team-buzz-name{transform:rotate(-90deg);display:inline-block;white-space:nowrap;}
+#buzz-col-left .team-buzz-wrap{flex-direction:column;gap:12px;align-items:center;}
+#buzz-col-right .team-buzz-wrap{flex-direction:column;gap:12px;align-items:center;}
 .team-buzz-wrap.buzzed-out{opacity:.25;pointer-events:none}
 .team-buzz-3d{
   width:clamp(64px,12vw,90px);
@@ -398,26 +402,7 @@ body{
 .judge-who{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
 .judge-name{font-size:20px;font-weight:900}
 
-/* Preview countdown */
-#preview-overlay{
-  position:absolute;inset:0;z-index:15;
-  display:none;align-items:center;justify-content:center;
-  flex-direction:column;gap:12px;
-  background:rgba(7,0,15,.35);
-  border-radius:18px;
-  pointer-events:none;
-}
-#preview-overlay.show{display:flex}
-.preview-note{
-  font-size:13px;font-weight:700;color:rgba(255,255,255,.5);
-  letter-spacing:.1em;text-transform:uppercase;
-}
-.preview-countdown{
-  font-size:52px;font-weight:900;
-  background:linear-gradient(135deg,var(--cyan),var(--pink));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  line-height:1;
-}
+
 /* version */
 .ver{position:fixed;bottom:12px;right:16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);z-index:100}
 </style>
@@ -427,13 +412,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.3.0</div>
-<audio id="preview-audio" preload="none"></audio>
-<div id="spotify-embed-wrap" style="position:fixed;bottom:-300px;left:0;width:300px;height:80px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1">
-  <iframe id="spotify-embed" style="width:300px;height:80px;border:none" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-</div>
-<!-- Hidden play trigger — gets .click()ed by game buttons for autoplay unlock -->
-<button id="play-trigger" style="position:fixed;bottom:-100px;left:0;opacity:0;pointer-events:none" onclick="triggerSpotifyPlay()">▶</button>
+<div class="ver">v1.3.3</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -468,7 +447,7 @@ body{
   </div>
 
   <div class="sep"></div>
-  <button class="btn btn-primary" id="start-btn" onclick="document.getElementById('play-trigger').click();startGame()" disabled>Spiel starten</button>
+  <button class="btn btn-primary" id="start-btn" onclick="startGame()" disabled>Spiel starten</button>
   <div id="lobby-status" style="font-size:13px;color:var(--muted);text-align:center;min-height:18px"></div>
 </div>
 </div>
@@ -488,20 +467,15 @@ body{
     <div style="grid-area:img;display:flex;gap:0;align-items:stretch;width:100%">
       <div class="reveal-wrap" id="reveal-wrap" style="flex:1;min-width:0">
         <canvas id="reveal-canvas" style="display:none"></canvas>
-        <div id="preview-overlay">
-          <div class="preview-note">🎵 Hör zu…</div>
-          <div class="preview-countdown" id="preview-cd">10</div>
-        </div>
         <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
+        <div class="solution-panel" id="solution-panel">
+          <div id="sol-result-badge" class="sol-result"></div>
+          <div class="sol-artist" id="sol-artist"></div>
+          <div class="sol-followers" id="sol-followers"></div>
+          <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
+        </div>
+      </div>
 
-      </div>
-      <!-- SOLUTION PANEL: right column -->
-      <div class="solution-panel" id="solution-panel" style="width:150px;flex-shrink:0;border-radius:0 14px 14px 0;border-left:none;position:relative;inset:unset;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-left:none">
-        <div id="sol-result-badge" class="sol-result"></div>
-        <div class="sol-artist" id="sol-artist"></div>
-        <div class="sol-followers" id="sol-followers"></div>
-        <button class="sol-next" onclick="document.getElementById('play-trigger').click();nextArtist()">Weiter ▶</button>
-      </div>
       <!-- JUDGE PANEL: right of image, same height -->
       <div class="judge-panel" id="judge-panel" style="width:150px;flex-shrink:0;border-radius:0 14px 14px 0;border-left:none">
         <div class="judge-who">Gebuzzert:</div>
@@ -614,7 +588,6 @@ var G={
   buzzedPlayer:-1,  // who buzzed (-1 = none)
   buzzedOut:[],     // players out this round (wrong buzz)
   running:false,
-  previewing:false,
   startSeatIdx:0,   // clockwise rotation: which seat starts next round
   imgRotateDeg:0,
   imgRotateScale:1
@@ -739,15 +712,7 @@ function nextArtist(){
   // Hide panels
   document.getElementById('judge-panel').classList.remove('show');
   document.getElementById('solution-panel').classList.remove('show');
-  // Stop any playing preview
-  var audio=document.getElementById('preview-audio');
-  if(audio){audio.pause();audio.src='';}
-  var iframe=document.getElementById('spotify-embed');
-  if(iframe) iframe.src='';
-  if(G.previewTimer){clearInterval(G.previewTimer);G.previewTimer=null;}
-  document.getElementById('preview-overlay').classList.remove('show');
-  G.previewing=false;
-  // Re-enable all buzz buttons
+  // Stop any playing preview  // Re-enable all buzz buttons
   document.querySelectorAll('.team-buzz-wrap').forEach(function(b){
     b.classList.remove('buzzed-out');
     b.style.pointerEvents='';b.style.opacity='1';b.style.transform='';
@@ -784,7 +749,7 @@ function nextArtist(){
   img.onload=function(){
     revealImg=img;
     drawStep(0); // max blur
-    playPreview(); // 10s preview before reveal starts
+    scheduleNext();
   };
   img.onerror=function(){ nextArtist(); };
   img.src=G.cur.img;
@@ -804,53 +769,6 @@ function drawStep(stepIdx){
     var deg=G.imgRotateDeg||0;
     var scale=G.imgRotateScale||1;
     revealImg.style.transform='rotate('+deg+'deg) scale('+scale+')';
-  }
-}
-
-function triggerSpotifyPlay(){
-  // Called via programmatic .click() from a real user gesture (start/next button)
-  var iframe=document.getElementById('spotify-embed');
-  if(G._pendingTrackId){
-    iframe.src='https://open.spotify.com/embed/track/'+G._pendingTrackId+'?utm_source=generator&autoplay=1&theme=0';
-    G._pendingTrackId=null;
-  }
-}
-
-function playPreview(){
-  // Find a song by this artist with a Spotify track ID
-  var artistKey=G.cur.name.trim().toLowerCase();
-  var matches=(G.allSongs||[]).filter(function(s){
-    return s.a&&s.a.trim().toLowerCase()===artistKey&&s.l;
-  });
-  var trackId=matches.length?matches[Math.floor(Math.random()*matches.length)].l:null;
-
-  var overlay=document.getElementById('preview-overlay');
-  var cdEl=document.getElementById('preview-cd');
-
-  if(trackId){
-    G._pendingTrackId=trackId;
-    document.getElementById('play-trigger').click();
-
-    overlay.classList.add('show');
-    var secs=10;
-    cdEl.textContent=secs;
-    G.previewing=true;
-    var timer=setInterval(function(){
-      secs--;
-      cdEl.textContent=Math.max(0,secs);
-      if(secs<=0){
-        clearInterval(timer);
-        G.previewTimer=null;
-        var iframeEl=document.getElementById('spotify-embed');
-        if(iframeEl) iframeEl.src='';
-        overlay.classList.remove('show');
-        G.previewing=false;
-        scheduleNext();
-      }
-    },1000);
-    G.previewTimer=timer;
-  } else {
-    scheduleNext();
   }
 }
 
@@ -939,8 +857,6 @@ function renderBuzzArena(){
 
   function buzzerHTML(t,i,side){
     var nameRot='';
-    if(side==='top') nameRot='transform:rotate(180deg);display:inline-block;';
-    // left/right rotation handled by CSS
     return '<div class="team-buzz-wrap" id="buzz-btn-'+i+'" '+
       'style="--tcol:'+t.color+';position:relative" '+
       'onclick="onBuzz('+i+')" ontouchstart="event.preventDefault();onBuzz('+i+')">'+
