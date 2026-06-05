@@ -346,7 +346,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.0.8</div>
+<div class="ver">v1.0.9</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -355,7 +355,7 @@ body{
   <div style="font-size:13px;color:var(--muted);margin-top:-8px">Erkenne den Künstler aus dem verpixelten Bild</div>
   <div class="sep"></div>
 
-  <div class="label">👥 Sitzordnung</div>
+  
   <div id="table-selector">
     <div class="ts-top-row">
       <div class="seat" data-pos="top-l" onclick="toggleSeat('top-l')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Teamname" onclick="event.stopPropagation()"></div>
@@ -373,7 +373,7 @@ body{
   </div>
 
   <div class="sep"></div>
-  <div class="label">🏆 Ziel-Punkte</div>
+  <div class="label">🏆 Gewinnpunkte</div>
   <div class="goal-sel">
     <button class="goal-btn" data-g="3" onclick="setGoal(this)"><span class="gn">3</span><span class="gl">Punkte</span></button>
     <button class="goal-btn on" data-g="5" onclick="setGoal(this)"><span class="gn">5</span><span class="gl">Punkte</span></button>
@@ -446,9 +446,9 @@ function playBell(){
 }
 
 // ════ COLORS + SEAT CONFIG ════
-var COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91'];
-var DEFAULTS=['Team 1','Team 2','Team 3','Team 4'];
-var MAX_TEAMS=4;
+var COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f1c','#e0ff4f'];
+var DEFAULTS=['Helden','Legenden','Stars','Cracks','Profis','Champs'];
+var MAX_TEAMS=6;
 var SEAT_POS=['top-l','top-r','left','right','bot-l','bot-r'];
 var SEAT_SIDE={
   'top-l':'top','top-r':'top',
@@ -490,7 +490,7 @@ function reassignSeatColors(){
 }
 function getActiveSeats(){return SEAT_POS.filter(function(p){return seatCfg[p]!==null;});}
 function updateStartBtn(){
-  var ok=getActiveSeats().length>=2 && G.artists.length>0;
+  var ok=getActiveSeats().length>=2;
   document.getElementById('start-btn').disabled=!ok;
 }
 
