@@ -232,17 +232,22 @@ body{
 
 /* ── SOLUTION PANEL ── */
 .solution-panel{
-  background:var(--glass);
-  backdrop-filter:blur(8px);
-  border:1px solid var(--glass-b);
-  border-radius:14px;
-  display:none;flex-direction:column;
+  position:absolute;
+  inset:0;
+  background:rgba(7,0,15,.82);
+  backdrop-filter:blur(6px);
+  border-radius:18px;
+  display:none;
+  flex-direction:column;
   align-items:center;
-  gap:8px;padding:14px 12px;
-  width:100%;text-align:center;
+  justify-content:center;
+  gap:12px;
+  padding:20px;
+  text-align:center;
+  z-index:20;
 }
 .solution-panel.show{display:flex}
-.sol-artist{font-size:clamp(22px,5vw,32px);font-weight:900;
+.sol-artist{font-size:clamp(32px,7vw,52px);font-weight:900;line-height:1.1;
   background:linear-gradient(135deg,var(--cyan),var(--pink));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .sol-followers{font-size:13px;color:var(--muted);font-weight:600}
@@ -393,7 +398,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.2.1</div>
+<div class="ver">v1.2.2</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -449,6 +454,12 @@ body{
       <div class="reveal-wrap" id="reveal-wrap" style="flex:1;min-width:0">
         <canvas id="reveal-canvas" style="display:none"></canvas>
         <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
+        <!-- SOLUTION PANEL inside wrap so it rotates with image -->
+        <div class="solution-panel" id="solution-panel">
+          <div class="sol-artist" id="sol-artist"></div>
+          <div class="sol-followers" id="sol-followers"></div>
+          <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
+        </div>
       </div>
       <!-- JUDGE PANEL: right of image, same height -->
       <div class="judge-panel" id="judge-panel" style="width:150px;flex-shrink:0;border-radius:0 14px 14px 0;border-left:none">
@@ -465,13 +476,7 @@ body{
           <button class="btn-wrong"   onclick="judge(false)" style="width:100%;padding:11px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#e60000,#8b0000);color:#fff">✗ Falsch</button>
         </div>
       </div>
-      <!-- SOLUTION PANEL: also right of image -->
-      <div class="solution-panel" id="solution-panel" style="width:150px;flex-shrink:0;border-radius:0 14px 14px 0;border-left:none">
-        <div id="sol-result-badge" class="sol-result"></div>
-        <div class="sol-artist" id="sol-artist"></div>
-        <div class="sol-followers" id="sol-followers"></div>
-        <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
-      </div>
+
     </div>
 
     <!-- RIGHT buzzers -->
@@ -841,12 +846,12 @@ function renderBuzzArena(){
     return '<div class="team-buzz-wrap" id="buzz-btn-'+i+'" '+
       'style="--tcol:'+t.color+';position:relative" '+
       'onclick="onBuzz('+i+')" ontouchstart="event.preventDefault();onBuzz('+i+')">'+
+      '<div class="team-buzz-name" style="'+nameRot+'">'+esc(t.name)+'</div>'+
       '<div class="team-buzz-3d">'+
         '<div class="tbz-outer"></div>'+
         '<div class="tbz-dome" style="background:radial-gradient(circle at 38% 28%,'+lighten(t.color)+' 0%,'+t.color+' 40%,'+darken(t.color)+' 100%)"></div>'+
         '<div class="tbz-shine"></div>'+
       '</div>'+
-      '<div class="team-buzz-name" style="'+nameRot+'">'+esc(t.name)+'</div>'+
     '</div>';
   }
 
@@ -936,8 +941,8 @@ function showSolution(type,playerIdx){
     badge.className='sol-result wrong';
     badge.textContent='✗ Falsch! −1 Punkt';
   } else {
-    badge.className='sol-result timeout';
-    badge.textContent='Zeit abgelaufen — niemand erkannt';
+    badge.className='';
+    badge.textContent='';
   }
 
   document.getElementById('sol-artist').textContent=G.cur.name;
