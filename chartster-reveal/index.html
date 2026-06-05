@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Chartster Reveal</title>
+<title>Paparazzi</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* ── TOKENS (1:1 Chartster) ── */
@@ -306,14 +306,21 @@ body{
 #buzz-arena{
   position:relative;
   width:100%;
-  max-width:700px;
-  display:flex;
-  flex-direction:column;
+  max-width:960px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  grid-template-rows:auto 1fr auto;
+  grid-template-areas:
+    ". top ."
+    "left img right"
+    ". bot .";
+  gap:0;
   align-items:center;
-  gap:8px;
+  justify-items:center;
 }
-.buzz-row{display:flex;gap:12px;justify-content:center;width:100%}
-.buzz-row.top{transform:rotate(180deg)} /* flipped for top-seated teams */
+.buzz-row{display:flex;gap:8px;justify-content:center;}
+.buzz-row.top{grid-area:top;align-self:end;padding-bottom:6px;transform:rotate(180deg);}
+.buzz-row.bot{grid-area:bot;align-self:start;padding-top:6px;}
 .team-buzz-wrap{
   display:flex;flex-direction:column;align-items:center;gap:6px;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
@@ -387,13 +394,13 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.1.1</div>
+<div class="ver">v1.1.3</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
 <div class="card">
-  <div class="game-title">REVEAL</div>
-  <div style="font-size:13px;color:var(--muted);margin-top:-8px">Erkenne den Künstler aus dem verpixelten Bild</div>
+  <div class="game-title">PAPARAZZI</div>
+  <div style="font-size:13px;color:var(--muted);margin-top:-8px">Erkenne den Künstler aus dem verschwommenen Bild</div>
   <div class="sep"></div>
 
   
@@ -432,40 +439,42 @@ body{
   <div class="scoreboard" id="scoreboard"></div>
 
   <div id="buzz-arena">
-    <!-- TOP buzzers (rendered by JS) -->
+    <!-- TOP buzzers -->
     <div class="buzz-row top" id="buzz-row-top"></div>
 
-    <!-- CENTER: image -->
-    <div class="reveal-wrap" id="reveal-wrap" style="width:100%;max-width:520px">
-      <canvas id="reveal-canvas" style="display:none"></canvas>
-      <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
+    <!-- LEFT buzzers -->
+    <div id="buzz-col-left" style="grid-area:left;display:flex;flex-direction:column;gap:8px;padding-right:8px"></div>
+
+    <!-- CENTER: image + judge panel side by side -->
+    <div style="grid-area:img;display:flex;gap:0;align-items:stretch;width:100%">
+      <div class="reveal-wrap" id="reveal-wrap" style="flex:1;min-width:0">
+        <canvas id="reveal-canvas" style="display:none"></canvas>
+        <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
+      </div>
+      <!-- JUDGE PANEL: right of image, same height -->
+      <div class="judge-panel" id="judge-panel" style="width:150px;flex-shrink:0;border-radius:0 14px 14px 0;border-left:none">
+        <div class="judge-who">Gebuzzert:</div>
+        <div class="judge-name" id="judge-name"></div>
+        <button class="btn-reveal" id="btn-reveal" onclick="revealNow()" style="width:100%">🔍 Auflösen</button>
+        <div id="judge-btns" style="display:none;width:100%;gap:8px;flex-direction:column">
+          <button class="btn-correct" onclick="judge(true)" style="width:100%;padding:11px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#00c853,#00962f);color:#fff">✓ Richtig</button>
+          <button class="btn-wrong"   onclick="judge(false)" style="width:100%;padding:11px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#e60000,#8b0000);color:#fff">✗ Falsch</button>
+        </div>
+      </div>
+      <!-- SOLUTION PANEL: also right of image -->
+      <div class="solution-panel" id="solution-panel" style="width:150px;flex-shrink:0;border-radius:0 14px 14px 0;border-left:none">
+        <div id="sol-result-badge" class="sol-result"></div>
+        <div class="sol-artist" id="sol-artist"></div>
+        <div class="sol-followers" id="sol-followers"></div>
+        <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
+      </div>
     </div>
 
-    <!-- BOTTOM buzzers (rendered by JS) -->
-    <div class="buzz-row" id="buzz-row-bot"></div>
+    <!-- RIGHT buzzers -->
+    <div id="buzz-col-right" style="grid-area:right;display:flex;flex-direction:column;gap:8px;padding-left:8px"></div>
 
-    <!-- LEFT/RIGHT buzzers (rendered by JS, absolute) -->
-    <div id="buzz-col-left" style="position:absolute;left:-110px;top:50%;transform:translateY(-50%)"></div>
-    <div id="buzz-col-right" style="position:absolute;right:-110px;top:50%;transform:translateY(-50%)"></div>
-  </div>
-
-  <!-- JUDGE PANEL (below image, shown after buzz+reveal) -->
-  <div class="judge-panel" id="judge-panel">
-    <div class="judge-who">Hat gebuzzert:</div>
-    <div class="judge-name" id="judge-name"></div>
-    <button class="btn-reveal" id="btn-reveal" onclick="revealNow()" style="width:100%">🔍 Auflösen &amp; urteilen</button>
-    <div id="judge-btns" style="display:none;width:100%;gap:10px;flex-direction:row">
-      <button class="btn-correct" onclick="judge(true)" style="flex:1;padding:12px;border-radius:12px;border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#00c853,#00962f);color:#fff">✓ Richtig</button>
-      <button class="btn-wrong"   onclick="judge(false)" style="flex:1;padding:12px;border-radius:12px;border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#e60000,#8b0000);color:#fff">✗ Falsch</button>
-    </div>
-  </div>
-
-  <!-- SOLUTION PANEL -->
-  <div class="solution-panel" id="solution-panel" style="width:100%;max-width:520px">
-    <div id="sol-result-badge" class="sol-result"></div>
-    <div class="sol-artist" id="sol-artist"></div>
-    <div class="sol-followers" id="sol-followers"></div>
-    <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
+    <!-- BOTTOM buzzers -->
+    <div class="buzz-row bot" id="buzz-row-bot"></div>
   </div>
 </div>
 
@@ -814,9 +823,8 @@ function judge(correct){
           var dome=bb.querySelector('.tbz-dome');if(dome)dome.style.boxShadow='';}
       }
     });
-    var avail=G.teams.filter(function(_,i){return !G.buzzedOut.includes(i);});
-    if(avail.length>0){G.running=true;scheduleNext();}
-    else{showSolution('timeout');}
+    // After wrong buzz: round ends, show solution immediately
+    showSolution('timeout');
   }
 }
 
