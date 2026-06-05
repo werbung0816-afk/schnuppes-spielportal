@@ -320,9 +320,7 @@ body{
 }
 .buzz-row{display:flex;gap:8px;width:100%;justify-content:space-between;padding:0 4px;}
 .buzz-row.top{grid-area:top;align-self:end;padding-bottom:6px;}
-.buzz-row.top .team-buzz-wrap{transform:rotate(180deg);}
-.buzz-row.top .team-buzz-wrap:active{transform:rotate(180deg) scale(.93)!important;}
-.buzz-row.top .team-buzz-name{transform:rotate(180deg);}
+
 .buzz-row.bot{grid-area:bot;align-self:start;padding-top:6px;}
 .team-buzz-wrap{
   display:flex;flex-direction:column;align-items:center;gap:6px;
@@ -395,7 +393,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.1.7</div>
+<div class="ver">v1.1.8</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -648,6 +646,7 @@ function startGame(){
   G.startSeatIdx=0;
   renderScoreboard();
   renderBuzzArena();
+  rotateImageToTeam();
   showScreen('game');
   nextArtist();
 }
@@ -709,6 +708,7 @@ function nextArtist(){
   // Rotate clockwise
   G.startSeatIdx=(G.startSeatIdx+1)%Math.max(1,G.teams.length);
   renderBuzzArena();
+  rotateImageToTeam();
   // Reset artist reveal in judge panel
   document.getElementById('judge-artist-wrap').style.display='none';
   document.getElementById('judge-artist-reveal').textContent='';
@@ -764,6 +764,30 @@ function scheduleNext(){
 }
 
 // ════ BUZZ ARENA ════
+function rotateImageToTeam(){
+  // Determine visual side of current starting team after rotation
+  var cwTeams=[];
+  CW_ORDER.forEach(function(pos){
+    G.teams.forEach(function(t,i){if(t.pos===pos) cwTeams.push({team:t,idx:i});});
+  });
+  if(cwTeams.length===0) return;
+  var shift=G.startSeatIdx % cwTeams.length;
+  // The starting team after shift is cwTeams[shift]
+  var startTeam=cwTeams[shift];
+  var activeCWPos=[];
+  CW_ORDER.forEach(function(pos){
+    if(G.teams.some(function(t){return t.pos===pos;})) activeCWPos.push(pos);
+  });
+  var rotatedPos=activeCWPos.slice();
+  for(var r=0;r<shift;r++) rotatedPos.push(rotatedPos.shift());
+  var vSide=SEAT_SIDE[rotatedPos[0]]||'bot';
+  // Rotate image so it faces the starting team
+  var degMap={bot:0, left:90, top:180, right:270};
+  var deg=degMap[vSide]||0;
+  var wrap=document.getElementById('reveal-wrap');
+  if(wrap) wrap.style.transform='rotate('+deg+'deg)';
+}
+
 function renderBuzzArena(){
   // Build ordered list of teams by clockwise position
   var cwTeams=[];
@@ -794,13 +818,10 @@ function renderBuzzArena(){
 
   function buzzerHTML(t,i,side){
     var nameRot='';
-    if(side==='top') nameRot='transform:rotate(180deg);';
-    else if(side==='left') nameRot='transform:rotate(90deg);writing-mode:horizontal-tb;';
-    else if(side==='right') nameRot='transform:rotate(-90deg);writing-mode:horizontal-tb;';
+    if(side==='top')   nameRot='transform:rotate(180deg);display:inline-block;';
+    else if(side==='left')  nameRot='transform:rotate(-90deg);display:inline-block;';
+    else if(side==='right') nameRot='transform:rotate(90deg);display:inline-block;';
     var wrapRot='';
-    if(side==='top') wrapRot='transform:rotate(180deg);';
-    else if(side==='left') wrapRot='transform:rotate(0deg);';
-    else if(side==='right') wrapRot='transform:rotate(0deg);';
     return '<div class="team-buzz-wrap" id="buzz-btn-'+i+'" '+
       'style="--tcol:'+t.color+';position:relative;'+wrapRot+'" '+
       'onclick="onBuzz('+i+')" ontouchstart="event.preventDefault();onBuzz('+i+')">'+
