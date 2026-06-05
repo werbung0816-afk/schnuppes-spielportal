@@ -233,18 +233,20 @@ body{
 /* ── SOLUTION PANEL ── */
 .solution-panel{
   position:absolute;
-  inset:0;
-  background:rgba(7,0,15,.82);
-  backdrop-filter:blur(6px);
-  border-radius:18px;
+  inset:4px;
+  background:rgba(7,0,15,.88);
+  backdrop-filter:blur(8px);
+  border-radius:16px;
   display:none;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:12px;
-  padding:20px;
+  gap:14px;
+  padding:24px;
   text-align:center;
   z-index:20;
+  box-shadow:inset 0 0 40px rgba(83,246,255,.08);
+  border:1px solid rgba(83,246,255,.15);
 }
 .solution-panel.show{display:flex}
 .sol-artist{font-size:clamp(32px,7vw,52px);font-weight:900;line-height:1.1;
@@ -325,6 +327,7 @@ body{
 }
 .buzz-row{display:flex;gap:8px;width:100%;justify-content:space-between;padding:0 4px;}
 .buzz-row.top{grid-area:top;align-self:end;padding-bottom:6px;}
+.buzz-row.top .team-buzz-wrap{flex-direction:column-reverse;} /* buzzer top, name toward image */
 
 .buzz-row.bot{grid-area:bot;align-self:start;padding-top:6px;}
 .team-buzz-wrap{
@@ -333,6 +336,12 @@ body{
   transition:transform .1s;
 }
 .team-buzz-wrap:active{transform:scale(.93)!important}
+/* Left col: name on right (image side), buzzer on left */
+#buzz-col-left .team-buzz-wrap{flex-direction:row-reverse;gap:4px;align-items:center;}
+#buzz-col-left .team-buzz-name{writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;}
+/* Right col: name on left (image side), buzzer on right */
+#buzz-col-right .team-buzz-wrap{flex-direction:row;gap:4px;align-items:center;}
+#buzz-col-right .team-buzz-name{writing-mode:vertical-rl;transform:rotate(0deg);text-align:center;}
 .team-buzz-wrap.buzzed-out{opacity:.25;pointer-events:none}
 .team-buzz-3d{
   width:clamp(64px,12vw,90px);
@@ -418,8 +427,11 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.2.5</div>
+<div class="ver">v1.2.7</div>
 <audio id="preview-audio" preload="none"></audio>
+<div id="spotify-embed-wrap" style="position:fixed;bottom:-200px;left:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1">
+  <iframe id="spotify-embed" style="width:300px;height:80px;border:none" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -468,7 +480,7 @@ body{
     <div class="buzz-row top" id="buzz-row-top"></div>
 
     <!-- LEFT buzzers -->
-    <div id="buzz-col-left" style="grid-area:left;display:flex;flex-direction:column;gap:8px;padding-right:8px"></div>
+    <div id="buzz-col-left" style="grid-area:left;display:flex;flex-direction:column;gap:8px;padding-right:0px"></div>
 
     <!-- CENTER: image + judge panel side by side -->
     <div style="grid-area:img;display:flex;gap:0;align-items:stretch;width:100%">
@@ -506,7 +518,7 @@ body{
     </div>
 
     <!-- RIGHT buzzers -->
-    <div id="buzz-col-right" style="grid-area:right;display:flex;flex-direction:column;gap:8px;padding-left:8px"></div>
+    <div id="buzz-col-right" style="grid-area:right;display:flex;flex-direction:column;gap:8px;padding-left:0px"></div>
 
     <!-- BOTTOM buzzers -->
     <div class="buzz-row bot" id="buzz-row-bot"></div>
@@ -682,10 +694,7 @@ function startGame(){
   renderScoreboard();
   renderBuzzArena();
   rotateImageToTeam();
-  // Unlock audio context via user gesture
-  var audio=document.getElementById('preview-audio');
-  audio.src='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
-  audio.play().then(function(){audio.pause();audio.src='';}).catch(function(){});
+
   showScreen('game');
   nextArtist();
 }
@@ -730,6 +739,8 @@ function nextArtist(){
   // Stop any playing preview
   var audio=document.getElementById('preview-audio');
   if(audio){audio.pause();audio.src='';}
+  var iframe=document.getElementById('spotify-embed');
+  if(iframe) iframe.src='';
   if(G.previewTimer){clearInterval(G.previewTimer);G.previewTimer=null;}
   document.getElementById('preview-overlay').classList.remove('show');
   G.previewing=false;
@@ -794,31 +805,21 @@ function drawStep(stepIdx){
 }
 
 function playPreview(){
-  // Find a song by this artist with a preview URL
-  // G.allSongs holds all loaded songs
+  // Find a song by this artist with a Spotify track ID
   var artistKey=G.cur.name.trim().toLowerCase();
   var matches=(G.allSongs||[]).filter(function(s){
-    return s.a&&s.a.trim().toLowerCase()===artistKey&&s.pr;
+    return s.a&&s.a.trim().toLowerCase()===artistKey&&s.l;
   });
-  var previewUrl=matches.length?matches[Math.floor(Math.random()*matches.length)].pr:null;
+  var trackId=matches.length?matches[Math.floor(Math.random()*matches.length)].l:null;
 
   var overlay=document.getElementById('preview-overlay');
   var cdEl=document.getElementById('preview-cd');
-  var audio=document.getElementById('preview-audio');
 
-  if(previewUrl){
-    audio.src=previewUrl;
-    audio.currentTime=0;
-    var playPromise=audio.play();
-    if(playPromise!==undefined){
-      playPromise.catch(function(){
-        // Autoplay blocked — skip preview, go straight to reveal
-        overlay.classList.remove('show');
-        G.previewing=false;
-        scheduleNext();
-        return;
-      });
-    }
+  if(trackId){
+    // Load Spotify embed with autoplay
+    var iframe=document.getElementById('spotify-embed');
+    iframe.src='https://open.spotify.com/embed/track/'+trackId+'?utm_source=generator&autoplay=1&theme=0';
+
     overlay.classList.add('show');
     var secs=10;
     cdEl.textContent=secs;
@@ -828,8 +829,8 @@ function playPreview(){
       cdEl.textContent=secs;
       if(secs<=0){
         clearInterval(timer);
-        audio.pause();
-        audio.src='';
+        // Stop playback by clearing src
+        iframe.src='';
         overlay.classList.remove('show');
         G.previewing=false;
         scheduleNext();
@@ -837,7 +838,7 @@ function playPreview(){
     },1000);
     G.previewTimer=timer;
   } else {
-    // No preview — start reveal directly
+    // No track found — start reveal directly
     scheduleNext();
   }
 }
