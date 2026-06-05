@@ -412,7 +412,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.3.4</div>
+<div class="ver">v1.3.5</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -504,8 +504,6 @@ body{
 
 <script>
 // ════ AUDIO ════
-
-}
 
 // ════ COLORS + SEAT CONFIG ════
 var COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f1c','#e0ff4f'];
@@ -866,8 +864,7 @@ function renderBuzzArena(){
 function onBuzz(playerIdx){
   if(!G.running) return;
   if(G.buzzedOut.includes(playerIdx)) return;
-  initAudio();playBell();
-  clearTimeout(G.stepTimer);
+    clearTimeout(G.stepTimer);
   G.running=false;
   G.buzzedPlayer=playerIdx;
   // Dim all buttons, highlight buzzer
