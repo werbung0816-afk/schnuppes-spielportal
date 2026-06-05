@@ -395,7 +395,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.1.4</div>
+<div class="ver">v1.1.5</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -457,6 +457,10 @@ body{
         <div class="judge-who">Gebuzzert:</div>
         <div class="judge-name" id="judge-name"></div>
         <button class="btn-reveal" id="btn-reveal" onclick="revealNow()" style="width:100%;display:block">🔍 Auflösen</button>
+        <div id="judge-answer-step" style="display:none;width:100%;text-align:center">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.4">Team nennt<br>seinen Tipp…</div>
+          <button onclick="confirmAnswer()" style="width:100%;padding:11px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));color:var(--cyan);border:1px solid rgba(83,246,255,.4)">Tipp genannt ▶</button>
+        </div>
         <div id="judge-btns" style="display:none;width:100%;gap:8px;flex-direction:column">
           <button class="btn-correct" onclick="judge(true)" style="width:100%;padding:11px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#00c853,#00962f);color:#fff">✓ Richtig</button>
           <button class="btn-wrong"   onclick="judge(false)" style="width:100%;padding:11px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#e60000,#8b0000);color:#fff">✗ Falsch</button>
@@ -788,8 +792,8 @@ function onBuzz(playerIdx){
   // Show judge panel
   document.getElementById('judge-name').innerHTML='<span style="color:'+G.teams[playerIdx].color+'">'+esc(G.teams[playerIdx].name)+'</span>';
   document.getElementById('judge-btns').style.display='none';
+  document.getElementById('judge-answer-step').style.display='none';
   document.getElementById('btn-reveal').style.display='block';
-  // Make sure solution panel is hidden
   document.getElementById('solution-panel').classList.remove('show');
   document.getElementById('judge-panel').classList.add('show');
 }
@@ -798,6 +802,12 @@ function revealNow(){
   drawStep(BLUR_STEPS.length-1);
   document.getElementById('progress-bar').style.width='100%';
   document.getElementById('btn-reveal').style.display='none';
+  // Show intermediate step: team gives answer, then judge
+  document.getElementById('judge-answer-step').style.display='block';
+}
+
+function confirmAnswer(){
+  document.getElementById('judge-answer-step').style.display='none';
   document.getElementById('judge-btns').style.display='flex';
 }
 
