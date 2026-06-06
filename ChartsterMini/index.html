@@ -6,7 +6,7 @@
 <title>Chartster</title>
 
 <!-- ═══ PWA: Standard ═══ -->
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="../chartster/manifest.json">
 <meta name="theme-color" content="#07000f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="application-name" content="Chartster">
@@ -16,35 +16,35 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Chartster">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="../chartster/icons/apple-touch-icon.png">
 <!-- Splash Screens iOS (portrait) -->
 <link rel="apple-touch-startup-image"
   media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)"
-  href="icons/splash-1290x2796.png">
+  href="../chartster/icons/splash-1290x2796.png">
 <link rel="apple-touch-startup-image"
   media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)"
-  href="icons/splash-1179x2556.png">
+  href="../chartster/icons/splash-1179x2556.png">
 <link rel="apple-touch-startup-image"
   media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)"
-  href="icons/splash-1170x2532.png">
+  href="../chartster/icons/splash-1170x2532.png">
 <link rel="apple-touch-startup-image"
   media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
-  href="icons/splash-1125x2436.png">
+  href="../chartster/icons/splash-1125x2436.png">
 <link rel="apple-touch-startup-image"
   media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)"
-  href="icons/splash-828x1792.png">
+  href="../chartster/icons/splash-828x1792.png">
 <link rel="apple-touch-startup-image"
   media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)"
-  href="icons/splash-750x1334.png">
+  href="../chartster/icons/splash-750x1334.png">
 
 <!-- ═══ Favicon ═══ -->
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../chartster/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../chartster/icons/icon-192x192.png">
 
 <!-- ═══ Open Graph (für Share-Vorschauen) ═══ -->
 <meta property="og:title" content="Chartster">
 <meta property="og:description" content="Wer kennt die meisten Hits? Das Musik-Quiz mit den Deutschland Top 100 Charts.">
-<meta property="og:image" content="icons/icon-512x512.png">
+<meta property="og:image" content="../chartster/icons/icon-512x512.png">
 <meta property="og:type" content="website">
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
@@ -90,7 +90,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #table-selector{width:100%;display:flex;flex-direction:column;align-items:center;gap:0}
 .ts-top-row,.ts-bot-row{display:flex;gap:32px;justify-content:center;padding:8px 0}
 .ts-mid-row{display:flex;align-items:center;justify-content:center;width:100%;padding:4px 0}
-#ts-table-body{width:280px;height:132px;flex:none;margin:0 8px;display:flex;align-items:center;justify-content:center;color:transparent;background:url(icons/table.png) center/contain no-repeat;position:relative;filter:drop-shadow(0 4px 24px rgba(143,95,255,.5))}
+#ts-table-body{width:280px;height:132px;flex:none;margin:0 8px;display:flex;align-items:center;justify-content:center;color:transparent;background:url(../chartster/icons/table.png) center/contain no-repeat;position:relative;filter:drop-shadow(0 4px 24px rgba(143,95,255,.5))}
 #ts-table-body::after{content:'';position:absolute;bottom:-10px;left:15%;width:70%;height:10px;background:radial-gradient(ellipse,rgba(143,95,255,.35) 0%,transparent 70%);border-radius:50%;filter:blur(6px)}
 .ts-side{display:flex;align-items:center;justify-content:center;padding:4px 0;flex:1}
 .seat{display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px;}
@@ -434,7 +434,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 <!-- ═══ PWA: Install Banner (Android/Desktop) ═══ -->
 <div id="pwa-banner">
-  <div id="pwa-banner-icon"><img src="icons/icon-192x192.png" alt="Chartster"></div>
+  <div id="pwa-banner-icon"><img src="../chartster/icons/icon-192x192.png" alt="Chartster"></div>
   <div id="pwa-banner-text">
     <strong>📲 Chartster installieren</strong>
     <span>Direkt auf dem Homescreen – immer dabei</span>
@@ -461,8 +461,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 </div>
 
 <div id="confetti"></div>
-<audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
-<audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
+<audio id="snd-slot" src="../chartster/slot%20machine.mp3" preload="auto"></audio>
+<audio id="snd-appl" src="../chartster/applause.mp3" preload="auto"></audio>
 
 <div class="version">v4.0.6-mini</div>
 <div id="hint-toast"></div>
@@ -511,15 +511,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="setup-section">
     <div class="label">Chartjahre</div>
     <div class="filter-wrap" id="flt-wrap">
-      <button class="flt" data-f="70" onclick="toggleFlt(this)"><img src="filter/filter-70er.png" alt="70er">70er</button>
-      <button class="flt" data-f="80" onclick="toggleFlt(this)"><img src="filter/filter-80er.png" alt="80er">80er</button>
-      <button class="flt" data-f="90" onclick="toggleFlt(this)"><img src="filter/filter-90er.png" alt="90er">90er</button>
-      <button class="flt" data-f="00" onclick="toggleFlt(this)"><img src="filter/filter-00er.png" alt="00er">00er</button>
-      <button class="flt" data-f="10" onclick="toggleFlt(this)"><img src="filter/filter-10er.png" alt="10er">10er</button>
-      <button class="flt" data-f="20" onclick="toggleFlt(this)"><img src="filter/filter-20er.png" alt="20er">20er</button>
+      <button class="flt" data-f="70" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-70er.png" alt="70er">70er</button>
+      <button class="flt" data-f="80" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-80er.png" alt="80er">80er</button>
+      <button class="flt" data-f="90" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-90er.png" alt="90er">90er</button>
+      <button class="flt" data-f="00" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-00er.png" alt="00er">00er</button>
+      <button class="flt" data-f="10" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-10er.png" alt="10er">10er</button>
+      <button class="flt" data-f="20" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-20er.png" alt="20er">20er</button>
       <div style="width:100%"></div>
-      <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20">Top 20</button>
-      <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10">Top 10</button>
+      <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-top20.png" alt="Top 20">Top 20</button>
+      <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-top10.png" alt="Top 10">Top 10</button>
     </div>
   </div>
   <div class="sep"></div>
@@ -694,8 +694,8 @@ const CPW=[t=>`${t} haben gewonnen! Legendäre Musikkenntnis!`,t=>`Chapeau, ${t}
 const MEDALS=[{place:'👑 1. PLATZ',coms:['ABSOLUTE MUSIKLEGENDEN!','UNSCHLAGBAR!','DAS WAR EINE SHOW!'],cls:'vgold',cf:500},{place:'🥈 2. PLATZ',coms:['GANZ KNAPP DANEBEN!','SO NAH!'],cls:'vsilver',cf:260},{place:'🥉 3. PLATZ',coms:['STARK GEKÄMPFT!','PODIUM ERREICHT!'],cls:'vbronze',cf:130},{place:'🏅 4. PLATZ',coms:['NÄCHSTE RUNDE!'],cls:'vbronze',cf:60}];
 
 // Audio via HTML elements – most reliable on iOS Safari
-function playApplause(){new Audio('applause.mp3').play().catch(function(e){console.log('applause:',e);});}
-function playSlot(){console.log('playSlot called');new Audio('slot%20machine.mp3').play().catch(function(e){console.log('slot sound error:',e);});}
+function playApplause(){new Audio('../chartster/applause.mp3').play().catch(function(e){console.log('applause:',e);});}
+function playSlot(){console.log('playSlot called');new Audio('../chartster/slot%20machine.mp3').play().catch(function(e){console.log('slot sound error:',e);});}
 function stopSlot(){}
 
 var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],filters:new Set(['all']),phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[],miniGames:false,miniGamesDone:{memory:false,paparazzi:false},pendingMiniGame:null};
