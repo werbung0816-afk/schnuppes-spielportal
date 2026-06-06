@@ -371,6 +371,23 @@ body{
 }
 /* top row buzzers flip upside-down */
 
+/* ── CAMERA FLASH ── */
+#flash-overlay{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:50;border-radius:18px;}
+@keyframes camFlash{0%{opacity:.9}60%{opacity:.3}100%{opacity:0}}
+#flash-overlay.flash{animation:camFlash .55s ease forwards}
+
+/* ── BUZZER SIGNATURE ── */
+@keyframes sigRing{0%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}}
+.buzz-sig-ring{position:absolute;top:50%;left:50%;width:100%;height:100%;border-radius:50%;border:4px solid var(--tcol);pointer-events:none;animation:sigRing .6s ease-out forwards}
+
+/* ── GEAR MENU ── */
+#gear-btn{position:fixed;bottom:44px;right:14px;z-index:400;width:36px;height:36px;border-radius:50%;background:var(--glass);border:1px solid var(--glass-b);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;cursor:pointer;font-size:17px;color:var(--muted);transition:color .2s}
+#gear-btn:hover{color:var(--text)}
+#gear-panel{position:fixed;bottom:86px;right:10px;z-index:400;background:rgba(7,0,15,.92);border:1px solid var(--glass-b);border-radius:14px;backdrop-filter:blur(18px);padding:8px;display:none;flex-direction:column;gap:6px;min-width:170px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+#gear-panel.open{display:flex}
+.gear-item{padding:10px 14px;border-radius:10px;border:none;background:var(--glass);color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;text-align:left;cursor:pointer;transition:background .15s}
+.gear-item:hover{background:var(--glass-b)}
+.gear-item.danger{color:var(--pink)}
 
 /* version */
 .ver{position:fixed;bottom:12px;right:16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);z-index:100}
@@ -381,7 +398,15 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v2.2</div>
+<div class="ver">v2.3</div>
+
+<!-- Zahnrad-Menü (nur im Spiel) -->
+<div id="gear-btn" onclick="toggleGear()">&#9881;</div>
+<div id="gear-panel">
+  <button class="gear-item" onclick="skipArtist()">Bild überspringen (straffrei)</button>
+  <button class="gear-item" onclick="resetRound()">Reset (Runde zurücksetzen)</button>
+  <button class="gear-item danger" onclick="gearRestart()">Neustart</button>
+</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -473,6 +498,8 @@ body{
         <div id="bp-start-overlay" style="position:absolute;left:0;right:0;bottom:0;top:auto;display:none;flex-direction:column;align-items:center;justify-content:flex-end;z-index:25;padding:56px 18px 16px;background:linear-gradient(to bottom,transparent 0%,rgba(7,0,15,.75) 28%,rgba(7,0,15,.94) 55%)">
           <button class="bp-start" onclick="startReveal()">Start</button>
         </div>
+        <!-- Camera-Flash-Overlay -->
+        <div id="flash-overlay"></div>
       </div>
     </div>
 
@@ -582,6 +609,71 @@ var G={
 
 // Clockwise seat order
 var CW_ORDER=['top-l','top-r','right','bot-r','bot-l','left'];
+
+// ════ AUDIO ════
+function playSound(name){
+  try{var a=new Audio('../chartster/'+name+'.mp3');a.volume=0.85;a.play().catch(function(){});}catch(e){}
+}
+
+// ════ CAMERA FLASH ════
+function flashEffect(){
+  var f=document.getElementById('flash-overlay');
+  if(!f) return;
+  f.classList.remove('flash');
+  void f.offsetWidth; // reflow
+  f.classList.add('flash');
+}
+
+// ════ ZAHNRAD-MENÜ ════
+function toggleGear(){
+  document.getElementById('gear-panel').classList.toggle('open');
+}
+
+function skipArtist(){
+  // Bild überspringen ohne Punktabzug
+  document.getElementById('gear-panel').classList.remove('open');
+  nextArtist();
+}
+
+function resetRound(){
+  // Aktuelle Runde zurücksetzen – Bild bleibt, Start-Button erscheint wieder
+  document.getElementById('gear-panel').classList.remove('open');
+  clearTimeout(G.stepTimer);
+  clearInterval(G.patchTimer);
+  G.running=false;
+  G.buzzedPlayer=-1;
+  showPanel(null);
+  var mode=getCurrentMode();
+  var rotWrap=document.getElementById('img-rotate-wrap');
+  var cSize=rotWrap.offsetWidth||280;
+  document.getElementById('patch-canvas').style.display='none';
+  document.getElementById('mosaic-canvas').style.display='none';
+  if(revealImg){revealImg.style.opacity='1';}
+  G.stepIdx=0;
+  if(mode==='blur'){
+    if(revealImg) revealImg.style.filter='blur('+BLUR_STEPS[0]+'px)';
+  } else if(mode==='patch'){
+    var pc=document.getElementById('patch-canvas');
+    pc.width=cSize;pc.height=cSize;pc.style.display='block';
+    var pctx=pc.getContext('2d');pctx.fillStyle='#07000f';pctx.fillRect(0,0,cSize,cSize);
+    G.patchQueue=buildPatchQueue(cSize,PATCH_GRID);G.patchIdx=0;
+  } else if(mode==='mosaic'){
+    var mc=document.getElementById('mosaic-canvas');
+    mc.width=cSize;mc.height=cSize;mc.style.display='block';
+    if(revealImg){revealImg.style.opacity='0';drawMosaicFrame(mc,revealImg,MOSAIC_STEPS[0].px);}
+  }
+  document.getElementById('progress-bar').style.width='0%';
+  document.querySelectorAll('.team-buzz-wrap').forEach(function(b){
+    b.style.pointerEvents='';b.style.opacity='1';b.style.transform='';
+    var d=b.querySelector('.tbz-dome');if(d)d.style.boxShadow='';
+  });
+  showPanel('waiting');
+}
+
+function gearRestart(){
+  document.getElementById('gear-panel').classList.remove('open');
+  resetToLobby();
+}
 
 // ════ BOOT ════
 loadSongs();
@@ -763,6 +855,9 @@ function nextArtist(){
       drawMosaicFrame(mc,img,MOSAIC_STEPS[0].px);
     }
     showPanel('waiting');
+    // Kamera-Sound + Blitzlicht beim Bildwechsel
+    playSound('camera');
+    flashEffect();
   };
   img.onerror=function(){ nextArtist(); };
   img.src=G.cur.img;
@@ -980,10 +1075,22 @@ function onBuzz(playerIdx){
   clearInterval(G.patchTimer);
   G.running=false;
   G.buzzedPlayer=playerIdx;
-  // Dim all buttons, highlight buzzer
-  document.querySelectorAll('.team-buzz-wrap').forEach(function(b){b.style.pointerEvents='none';b.style.opacity='.25';});
+  // Bell-Sound + Signature-Ring
+  playSound('bell');
   var bb=document.getElementById('buzz-btn-'+playerIdx);
-  if(bb){bb.style.opacity='1';bb.style.transform='scale(1.15)';bb.querySelector('.tbz-dome').style.boxShadow='0 0 30px 8px '+G.teams[playerIdx].color;}
+  document.querySelectorAll('.team-buzz-wrap').forEach(function(b){b.style.pointerEvents='none';b.style.opacity='.25';});
+  if(bb){
+    var bw=bb.closest('.team-buzz-wrap');
+    bb.style.opacity='1';bb.style.transform='scale(1.18)';
+    bb.querySelector('.tbz-dome').style.boxShadow='0 0 36px 10px '+G.teams[playerIdx].color;
+    if(bw){bw.style.opacity='1';}
+    // Signature-Ring
+    var ring=document.createElement('div');
+    ring.className='buzz-sig-ring';
+    ring.style.setProperty('--tcol',G.teams[playerIdx].color);
+    bb.closest('.team-buzz-3d').appendChild(ring);
+    setTimeout(function(){if(ring.parentNode)ring.parentNode.removeChild(ring);},650);
+  }
   // Show buzzed panel
   document.getElementById('bp-buzz-name').innerHTML=
     '<span style="color:'+G.teams[playerIdx].color+'">'+esc(G.teams[playerIdx].name)+'</span>'+
@@ -1061,6 +1168,10 @@ function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.flo
 function showScreen(name){
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
   var el=document.getElementById('screen-'+name);if(el)el.classList.add('active');
+  // Zahnrad nur im Spielmodus sichtbar
+  var gb=document.getElementById('gear-btn');
+  if(gb) gb.style.display=(name==='game')?'flex':'none';
+  document.getElementById('gear-panel').classList.remove('open');
 }
 function showHint(msg){
   var el=document.getElementById('hint-toast');
