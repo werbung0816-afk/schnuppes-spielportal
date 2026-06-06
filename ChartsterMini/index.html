@@ -717,7 +717,7 @@ function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.team
 initFirebase();
 
 // ── SONGS ──
-function loadSongs(){fetch('../Chartster/songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);document.getElementById('lobby-status').textContent=`${G.songs.length} Songs`;updateStartBtn();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
+function loadSongs(){fetch('../chartster/songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);document.getElementById('lobby-status').textContent=`${G.songs.length} Songs`;updateStartBtn();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
 function filteredSongs(){var s=G.songs.filter(x=>x.l);if(G.filters.size===0||G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20'))return s;var dec=DECADES.filter(d=>G.filters.has(d));if(dec.length)s=s.filter(x=>dec.some(d=>{if(d==='70')return x.y>=1970&&x.y<1980;if(d==='80')return x.y>=1980&&x.y<1990;if(d==='90')return x.y>=1990&&x.y<2000;if(d==='00')return x.y>=2000&&x.y<2010;if(d==='10')return x.y>=2010&&x.y<2020;if(d==='20')return x.y>=2020;return false;}));if(G.filters.has('top10'))s=s.filter(x=>x.p<=10);else if(G.filters.has('top20'))s=s.filter(x=>x.p<=20);return s;}
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 

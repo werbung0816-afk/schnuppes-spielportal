@@ -72,7 +72,7 @@ body{
 #table-selector{width:100%;display:flex;flex-direction:column;align-items:center;gap:0}
 .ts-top-row,.ts-bot-row{display:flex;gap:32px;justify-content:center;padding:8px 0}
 .ts-mid-row{display:flex;align-items:center;justify-content:center;width:100%;padding:4px 0}
-#ts-table-body{width:220px;height:104px;flex:none;margin:0 8px;display:flex;align-items:center;justify-content:center;color:transparent;background:url(../Chartster/icons/table.png) center/contain no-repeat;position:relative;filter:drop-shadow(0 4px 24px rgba(143,95,255,.5))}
+#ts-table-body{width:220px;height:104px;flex:none;margin:0 8px;display:flex;align-items:center;justify-content:center;color:transparent;background:url(../chartster/icons/table.png) center/contain no-repeat;position:relative;filter:drop-shadow(0 4px 24px rgba(143,95,255,.5))}
 .ts-side{display:flex;align-items:center;justify-content:center;padding:4px 0;flex:1}
 .seat{display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px;cursor:pointer!important}
 .seat-inp{width:92px;background:var(--glass);border:1px solid var(--glass-b);border-radius:8px;padding:6px 8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:12px;outline:none;display:none;text-align:center}
@@ -197,12 +197,12 @@ body{
   <div class="setup-section">
     <div class="label">Chartjahre</div>
     <div class="filter-wrap">
-      <button class="flt" data-f="70" onclick="toggleFlt(this)"><img src="../Chartster/filter/filter-70er.png" alt="70er">70er</button>
-      <button class="flt" data-f="80" onclick="toggleFlt(this)"><img src="../Chartster/filter/filter-80er.png" alt="80er">80er</button>
-      <button class="flt" data-f="90" onclick="toggleFlt(this)"><img src="../Chartster/filter/filter-90er.png" alt="90er">90er</button>
-      <button class="flt" data-f="00" onclick="toggleFlt(this)"><img src="../Chartster/filter/filter-00er.png" alt="00er">00er</button>
-      <button class="flt" data-f="10" onclick="toggleFlt(this)"><img src="../Chartster/filter/filter-10er.png" alt="10er">10er</button>
-      <button class="flt" data-f="20" onclick="toggleFlt(this)"><img src="../Chartster/filter/filter-20er.png" alt="20er">20er</button>
+      <button class="flt" data-f="70" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-70er.png" alt="70er">70er</button>
+      <button class="flt" data-f="80" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-80er.png" alt="80er">80er</button>
+      <button class="flt" data-f="90" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-90er.png" alt="90er">90er</button>
+      <button class="flt" data-f="00" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-00er.png" alt="00er">00er</button>
+      <button class="flt" data-f="10" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-10er.png" alt="10er">10er</button>
+      <button class="flt" data-f="20" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-20er.png" alt="20er">20er</button>
     </div>
     <div id="flt-info"></div>
   </div>
@@ -309,7 +309,7 @@ if(EMBEDDED_MODE){
 
 function loadSongs(){
   document.getElementById('lobby-status').textContent='lädt …';
-  fetch('../Chartster/songs.json')
+  fetch('../chartster/songs.json')
     .then(r=>r.ok?r.json():Promise.reject(r.status))
     .then(data=>{
       var all=Array.isArray(data)?data:(data.songs||[]);
@@ -475,7 +475,7 @@ function renderGrid(){
       '<div class="mc-inner">'+
         '<div class="mc-face mc-back">'+
           '<div class="mc-back-pattern"></div>'+
-          '<img class="mc-back-icon" src="../Chartster/icons/icon-192x192.png" alt="" onerror="this.style.display=\'none\'">'+
+          '<img class="mc-back-icon" src="../chartster/icons/icon-192x192.png" alt="" onerror="this.style.display=\'none\'">'+
         '</div>'+
         front+
         '<div class="mc-match-badge">✓</div>'+
