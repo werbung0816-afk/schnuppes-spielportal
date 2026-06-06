@@ -1108,6 +1108,7 @@ function revealNow(){
 
 function judge(correct){
   var pi=G.buzzedPlayer;
+  playSound('camera');
   if(correct){
     G.scores[pi]++;
     updateScoreboard();
