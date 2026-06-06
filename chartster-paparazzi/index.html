@@ -381,7 +381,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v2.0</div>
+<div class="ver">v2.1</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -438,6 +438,10 @@ body{
         <canvas id="reveal-canvas" style="display:none"></canvas>
         <div id="img-rotate-wrap" style="position:absolute;inset:0;transform-origin:center center;transition:transform 0.6s ease">
           <!-- artist img inserted here dynamically -->
+          <!-- Modus 2: Patch-Canvas (Farb-Overlay über scharfem Bild) -->
+          <canvas id="patch-canvas" style="position:absolute;inset:0;width:100%;height:100%;display:none;z-index:5"></canvas>
+          <!-- Modus 3: Mosaik-Canvas (pixeliertes Bild) -->
+          <canvas id="mosaic-canvas" style="position:absolute;inset:0;width:100%;height:100%;display:none;z-index:5"></canvas>
           <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
           <div id="bottom-panel">
             <!-- State 1: waiting for Start (rotates with image) -->
@@ -533,8 +537,23 @@ function updateStartBtn(){
 
 // ════ PIXELATION STEPS ════
 // 8 steps: block size from very large → 1 (full res)
+// ════ MODUS 1: BLUR ════
 var BLUR_STEPS=[20,16,13,10,8,6,1,0];
-var STEP_INTERVAL=1600; // ms per step
+var STEP_INTERVAL=1600;
+
+// ════ MODUS 2: PATCH-REVEAL ════
+var PATCH_GRID=14;          // 14×14 = 196 Patches à ~29 px
+var PATCH_INTERVAL=200;     // ms zwischen Ticks
+var PATCHES_PER_TICK=4;     // 4 Patches/Tick → 49 Ticks × 200 ms ≈ 9,8 s
+
+// ════ MODUS 3: MOSAIK (zweiphasig) ════
+var MOSAIC_STEPS=[
+  // Phase 1 – 3 s schnell (unkenntlich)
+  {px:40,dur:1000},{px:30,dur:1000},{px:20,dur:1000},
+  // Phase 2 – 9 s langsam (erkennbar)
+  {px:15,dur:1500},{px:11,dur:1500},{px:8,dur:1500},
+  {px:5,dur:1500},{px:3,dur:1500},{px:1,dur:1500},{px:0,dur:0}
+];
 
 // ════ STATE ════
 var G={
@@ -548,12 +567,16 @@ var G={
   img:null,     // loaded Image
   stepIdx:0,
   stepTimer:null,
-  buzzedPlayer:-1,  // who buzzed (-1 = none)
-  buzzedOut:[],     // players out this round (wrong buzz)
+  buzzedPlayer:-1,
+  buzzedOut:[],
   running:false,
-  startSeatIdx:0,   // clockwise rotation: which seat starts next round
+  startSeatIdx:0,
   imgRotateDeg:0,
-  imgRotateScale:1
+  imgRotateScale:1,
+  round:0,
+  patchQueue:[],
+  patchIdx:0,
+  patchTimer:null
 };
 
 // Clockwise seat order
@@ -680,6 +703,15 @@ function showPanel(state){
 
 function nextArtist(){
   showPanel(null);
+  clearTimeout(G.stepTimer);
+  clearInterval(G.patchTimer);
+  G.patchQueue=[];G.patchIdx=0;G.round++;
+
+  // Canvas-Zustand zurücksetzen
+  document.getElementById('patch-canvas').style.display='none';
+  document.getElementById('mosaic-canvas').style.display='none';
+  if(revealImg){revealImg.style.opacity='1';}
+
   // Re-enable all buzz buttons
   document.querySelectorAll('.team-buzz-wrap').forEach(function(b){
     b.classList.remove('buzzed-out');
@@ -699,18 +731,30 @@ function nextArtist(){
   renderBuzzArena();
   rotateImageToTeam();
 
-  // Reset progress
   document.getElementById('progress-bar').style.width='0%';
 
-  // Load image at max blur, then show Start button
+  var mode=getCurrentMode();
   var rotWrap=document.getElementById('img-rotate-wrap');
   if(revealImg){ revealImg.remove(); revealImg=null; }
   var img=document.createElement('img');
   img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:filter 0.6s ease;border-radius:18px;';
-  img.style.filter='blur('+BLUR_STEPS[0]+'px)';
+  img.style.filter=mode==='blur'?'blur('+BLUR_STEPS[0]+'px)':'none';
+  if(mode==='mosaic') img.style.opacity='0';
+
   img.onload=function(){
     revealImg=img;
-    drawStep(0);
+    var cSize=rotWrap.offsetWidth||280;
+    G.stepIdx=0;
+    if(mode==='patch'){
+      var pc=document.getElementById('patch-canvas');
+      pc.width=cSize;pc.height=cSize;pc.style.display='block';
+      var pctx=pc.getContext('2d');pctx.fillStyle='#07000f';pctx.fillRect(0,0,cSize,cSize);
+      G.patchQueue=buildPatchQueue(cSize,PATCH_GRID);G.patchIdx=0;
+    } else if(mode==='mosaic'){
+      var mc=document.getElementById('mosaic-canvas');
+      mc.width=cSize;mc.height=cSize;mc.style.display='block';
+      drawMosaicFrame(mc,img,MOSAIC_STEPS[0].px);
+    }
     showPanel('waiting');
   };
   img.onerror=function(){ nextArtist(); };
@@ -721,39 +765,117 @@ function nextArtist(){
 function startReveal(){
   showPanel(null);
   G.running=true;
-  scheduleNext();
+  var mode=getCurrentMode();
+  if(mode==='patch') startPatchReveal();
+  else scheduleNext();
+}
+
+// ════ MODUS-STEUERUNG ════
+// Reihenfolge: Runden 1-3 Blur, 4-6 Patch, 7-9 Mosaik, dann wiederholen
+function getCurrentMode(){
+  if(G.round<=0) return 'blur';
+  return ['blur','patch','mosaic'][Math.floor((G.round-1)/3)%3];
+}
+
+function buildPatchQueue(canvasSize, grid){
+  var ps=canvasSize/grid, list=[];
+  for(var r=0;r<grid;r++) for(var c=0;c<grid;c++) list.push({x:c*ps,y:r*ps,s:ps});
+  for(var i=list.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=list[i];list[i]=list[j];list[j]=t;}
+  return list;
+}
+
+function drawMosaicFrame(canvas, imgEl, px){
+  var ctx=canvas.getContext('2d');
+  var w=canvas.width, h=canvas.height;
+  ctx.imageSmoothingEnabled=false;
+  if(!imgEl||!imgEl.naturalWidth) return;
+  if(px<=1){ctx.drawImage(imgEl,0,0,w,h);return;}
+  var cols=Math.max(1,Math.round(w/px)), rows=Math.max(1,Math.round(h/px));
+  var off=document.createElement('canvas');off.width=cols;off.height=rows;
+  try{
+    off.getContext('2d').drawImage(imgEl,0,0,cols,rows);
+    ctx.clearRect(0,0,w,h);
+    ctx.drawImage(off,0,0,cols,rows,0,0,w,h);
+  }catch(e){ctx.drawImage(imgEl,0,0,w,h);}
+}
+
+function fullRevealForMode(){
+  var mode=getCurrentMode();
+  if(mode==='blur'){
+    var blur=BLUR_STEPS[BLUR_STEPS.length-1];
+    if(revealImg) revealImg.style.filter=blur>0?'blur('+blur+'px)':'none';
+  } else if(mode==='patch'){
+    clearInterval(G.patchTimer);
+    var pc=document.getElementById('patch-canvas');
+    var pctx=pc.getContext('2d');
+    while(G.patchIdx<G.patchQueue.length){
+      var p=G.patchQueue[G.patchIdx++];
+      pctx.clearRect(p.x,p.y,p.s,p.s);
+    }
+  } else if(mode==='mosaic'){
+    clearTimeout(G.stepTimer);
+    document.getElementById('mosaic-canvas').style.display='none';
+    if(revealImg){revealImg.style.opacity='1';}
+  }
+  document.getElementById('progress-bar').style.width='100%';
 }
 
 // ════ BLUR REVEAL ════
-// Uses an <img> with CSS filter:blur() instead of canvas pixelation
 var revealImg = null;
 
 function drawStep(stepIdx){
-  var steps = BLUR_STEPS;
-  var blur = steps[Math.min(stepIdx, steps.length-1)];
-  if(revealImg){
-    revealImg.style.filter = blur > 0 ? 'blur('+blur+'px)' : 'none';
-    // transform is managed by img-rotate-wrap
+  var mode=getCurrentMode();
+  if(mode==='blur'){
+    var blur=BLUR_STEPS[Math.min(stepIdx,BLUR_STEPS.length-1)];
+    if(revealImg) revealImg.style.filter=blur>0?'blur('+blur+'px)':'none';
+  } else if(mode==='mosaic'){
+    var step=MOSAIC_STEPS[Math.min(stepIdx,MOSAIC_STEPS.length-1)];
+    var mc=document.getElementById('mosaic-canvas');
+    if(step.px<=1){
+      mc.style.display='none';
+      if(revealImg) revealImg.style.opacity='1';
+    } else {
+      drawMosaicFrame(mc,revealImg,step.px);
+    }
   }
 }
 
 function scheduleNext(){
   clearTimeout(G.stepTimer);
   if(!G.running) return;
+  var mode=getCurrentMode();
+  var interval=mode==='mosaic'?MOSAIC_STEPS[G.stepIdx].dur:STEP_INTERVAL;
+  if(interval===0){G.running=false;showSolution('timeout');return;}
   G.stepTimer=setTimeout(function(){
     if(!G.running) return;
     G.stepIdx++;
-    if(G.stepIdx>=BLUR_STEPS.length){
-      // fully revealed — show solution without result badge
-      G.running=false;
-      showSolution('timeout');
-      return;
-    }
+    var done=(mode==='mosaic')?(G.stepIdx>=MOSAIC_STEPS.length):(G.stepIdx>=BLUR_STEPS.length);
+    if(done){G.running=false;showSolution('timeout');return;}
     drawStep(G.stepIdx);
-    var pct=Math.round((G.stepIdx/(BLUR_STEPS.length-1))*100);
-    document.getElementById('progress-bar').style.width=pct+'%';
+    var total=(mode==='mosaic')?MOSAIC_STEPS.length:BLUR_STEPS.length;
+    document.getElementById('progress-bar').style.width=Math.round(G.stepIdx/(total-1)*100)+'%';
     scheduleNext();
-  },STEP_INTERVAL);
+  },interval);
+}
+
+function startPatchReveal(){
+  G.patchTimer=setInterval(function(){
+    if(!G.running){clearInterval(G.patchTimer);return;}
+    var pc=document.getElementById('patch-canvas');
+    var pctx=pc.getContext('2d');
+    for(var i=0;i<PATCHES_PER_TICK;i++){
+      if(G.patchIdx>=G.patchQueue.length){
+        clearInterval(G.patchTimer);
+        G.running=false;
+        showSolution('timeout');
+        return;
+      }
+      var p=G.patchQueue[G.patchIdx++];
+      pctx.clearRect(p.x,p.y,p.s,p.s);
+    }
+    document.getElementById('progress-bar').style.width=
+      Math.round(G.patchIdx/G.patchQueue.length*100)+'%';
+  },PATCH_INTERVAL);
 }
 
 // ════ BUZZ ARENA ════
@@ -848,6 +970,7 @@ function onBuzz(playerIdx){
   if(!G.running) return;
   if(G.buzzedOut.includes(playerIdx)) return;
   clearTimeout(G.stepTimer);
+  clearInterval(G.patchTimer);
   G.running=false;
   G.buzzedPlayer=playerIdx;
   // Dim all buttons, highlight buzzer
@@ -862,10 +985,7 @@ function onBuzz(playerIdx){
 }
 
 function revealNow(){
-  // Fully reveal image
-  drawStep(BLUR_STEPS.length-1);
-  document.getElementById('progress-bar').style.width='100%';
-  // Show artist name + Richtig/Falsch
+  fullRevealForMode();
   document.getElementById('bp-artist').textContent=G.cur.name;
   showPanel('judging');
 }
@@ -881,17 +1001,15 @@ function judge(correct){
     G.scores[pi]=Math.max(-99,G.scores[pi]-1);
     updateScoreboard();
   }
-  // Next artist after short pause
   setTimeout(nextArtist, 800);
   showPanel(null);
 }
 
 function showSolution(type){
-  // Timeout: image fully revealed, nobody buzzed
   G.running=false;
   clearTimeout(G.stepTimer);
-  drawStep(BLUR_STEPS.length-1);
-  document.getElementById('progress-bar').style.width='100%';
+  clearInterval(G.patchTimer);
+  fullRevealForMode();
   document.querySelectorAll('.team-buzz-wrap').forEach(function(b){b.style.pointerEvents='none';b.style.opacity='.25';});
   document.getElementById('bp-to-artist').textContent=G.cur.name;
   showPanel('timeout');
