@@ -398,7 +398,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v2.3</div>
+<div class="ver">v2.4</div>
 
 <!-- Zahnrad-Menü (nur im Spiel) -->
 <div id="gear-btn" onclick="toggleGear()">&#9881;</div>
@@ -1080,16 +1080,18 @@ function onBuzz(playerIdx){
   var bb=document.getElementById('buzz-btn-'+playerIdx);
   document.querySelectorAll('.team-buzz-wrap').forEach(function(b){b.style.pointerEvents='none';b.style.opacity='.25';});
   if(bb){
-    var bw=bb.closest('.team-buzz-wrap');
     bb.style.opacity='1';bb.style.transform='scale(1.18)';
-    bb.querySelector('.tbz-dome').style.boxShadow='0 0 36px 10px '+G.teams[playerIdx].color;
-    if(bw){bw.style.opacity='1';}
+    var dome=bb.querySelector('.tbz-dome');
+    if(dome) dome.style.boxShadow='0 0 36px 10px '+G.teams[playerIdx].color;
     // Signature-Ring
-    var ring=document.createElement('div');
-    ring.className='buzz-sig-ring';
-    ring.style.setProperty('--tcol',G.teams[playerIdx].color);
-    bb.closest('.team-buzz-3d').appendChild(ring);
-    setTimeout(function(){if(ring.parentNode)ring.parentNode.removeChild(ring);},650);
+    var tbz=bb.querySelector('.team-buzz-3d');
+    if(tbz){
+      var ring=document.createElement('div');
+      ring.className='buzz-sig-ring';
+      ring.style.setProperty('--tcol',G.teams[playerIdx].color);
+      tbz.appendChild(ring);
+      setTimeout(function(){if(ring.parentNode)ring.parentNode.removeChild(ring);},650);
+    }
   }
   // Show buzzed panel
   document.getElementById('bp-buzz-name').innerHTML=
