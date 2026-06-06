@@ -915,7 +915,20 @@ function getCorrectPos(y,sorted){for(var i=0;i<sorted.length;i++){if(y<sorted[i]
 function newSongToken(){var team=G.teams[G.cur];if(team.tokens<=0){showHint('Keine Token mehr!');return;}team.tokens--;clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();cardNext();}
 
 // ── SCORING ──
-function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort((a,b)=>a-b);var correctPos=getCorrectPos(G.currentCard.y,sorted);if(type==='year'||type==='both'){team.years.push(G.currentCard.y);team.years.sort((a,b)=>a-b);if(type==='both')team.tokens=Math.min(MAX_TOK,team.tokens+1);spawnConfetti(team.color,90,false);}else{for(var i=0;i<G.teams.length;i++){if(i!==G.cur&&G.bets[i]===correctPos){G.teams[i].years.push(G.currentCard.y);G.teams[i].years.sort((a,b)=>a-b);spawnConfetti(G.teams[i].color,60,false);showHint(`${G.teams[i].name} stehlen die Jahreszahl! 🎉`);break;}}}G.bets={};G.betMode=null;if(team.years.length>=WIN){showVictory();return;}showTransition();}
+function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort((a,b)=>a-b);var correctPos=getCorrectPos(G.currentCard.y,sorted);if(type==='year'||type==='both'){team.years.push(G.currentCard.y);team.years.sort((a,b)=>a-b);if(type==='both')team.tokens=Math.min(MAX_TOK,team.tokens+1);spawnConfetti(team.color,90,false);}else{for(var i=0;i<G.teams.length;i++){if(i!==G.cur&&G.bets[i]===correctPos){G.teams[i].years.push(G.currentCard.y);G.teams[i].years.sort((a,b)=>a-b);spawnConfetti(G.teams[i].color,60,false);showHint(`${G.teams[i].name} stehlen die Jahreszahl! 🎉`);break;}}}G.bets={};G.betMode=null;
+  if(team.years.length>=WIN){showVictory();return;}
+  if(G.miniGames){
+    var memTrigger=WIN===5?3:5;
+    var papTrigger=WIN===5?4:9;
+    var maxCards=Math.max.apply(null,G.teams.map(function(t){return t.years.length;}));
+    if(!G.miniGamesDone.paparazzi&&maxCards>=papTrigger){
+      G.miniGamesDone.paparazzi=true;G.pendingMiniGame='paparazzi';
+    } else if(!G.miniGamesDone.memory&&maxCards>=memTrigger){
+      G.miniGamesDone.memory=true;G.pendingMiniGame='memory';
+    }
+    if(G.pendingMiniGame){var mg=G.pendingMiniGame;G.pendingMiniGame=null;scheduleMiniGame(mg);return;}
+  }
+  showTransition();}
 
 // ── TRANSITION ──
 function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':' r90','right':' r270','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
