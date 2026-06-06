@@ -233,35 +233,41 @@ body{
 /* ── SOLUTION PANEL ── */
 .solution-panel{
   position:absolute;
-  inset:4px;
-  background:rgba(7,0,15,.88);
-  backdrop-filter:blur(8px);
-  border-radius:16px;
+  left:0;right:0;bottom:0;top:auto;
+  background:linear-gradient(to bottom,
+    transparent 0%,
+    rgba(7,0,15,.72) 28%,
+    rgba(7,0,15,.93) 55%
+  );
+  border-radius:0 0 18px 18px;
   display:none;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
-  gap:14px;
-  padding:24px;
+  justify-content:flex-end;
+  gap:10px;
+  padding:64px 20px 18px;
   text-align:center;
   z-index:20;
-  border:1px solid rgba(83,246,255,.15);
 }
 .solution-panel.show{display:flex}
-.sol-artist{font-size:clamp(32px,7vw,52px);font-weight:900;line-height:1.1;
+.sol-artist{
+  font-size:clamp(26px,5vw,44px);font-weight:900;line-height:1.1;
   background:linear-gradient(135deg,var(--cyan),var(--pink));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sol-followers{font-size:13px;color:var(--muted);font-weight:600}
-.sol-result{
-  font-size:18px;font-weight:800;padding:8px 20px;border-radius:10px;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  text-shadow:none;filter:drop-shadow(0 2px 12px rgba(83,246,255,.4));
 }
-.sol-result.correct{color:#00c853;background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.3)}
-.sol-result.wrong  {color:#ff4b4b;background:rgba(200,0,0,.12);border:1px solid rgba(200,0,0,.3)}
-.sol-result.timeout{color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--glass-b)}
+.sol-followers{font-size:12px;color:rgba(240,240,255,.6);font-weight:600;margin-top:-4px}
+.sol-result{
+  font-size:15px;font-weight:800;padding:5px 16px;border-radius:8px;
+}
+.sol-result.correct{color:#00e676;background:rgba(0,200,83,.15);border:1px solid rgba(0,200,83,.35)}
+.sol-result.wrong  {color:#ff5252;background:rgba(200,0,0,.15);border:1px solid rgba(200,0,0,.35)}
+.sol-result.timeout{display:none}
 .sol-next{
-  margin-top:6px;padding:12px 32px;border-radius:12px;border:none;
+  padding:11px 30px;border-radius:12px;border:none;
   font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;
   background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;
+  box-shadow:0 4px 16px rgba(143,95,255,.4);
 }
 .btn-reveal{
   width:100%;padding:12px;border-radius:12px;border:none;
@@ -412,7 +418,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.3.5</div>
+<div class="ver">v1.4</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -597,16 +603,17 @@ function loadSongs(){
         var key=(s.a||'').trim().toLowerCase();
         if(!key) return;
         var inTop20=(s.p&&s.p<=20);
-        var hasImg=!!(s.ca&&s.ca.trim());
+        var hasImg=!!(s.ca&&s.ca.trim())||(s.c&&typeof s.c==='string'&&s.c.trim())||(s.cover&&typeof s.cover==='string'&&s.cover.trim());
+        var imgUrl=(s.ca&&s.ca.trim())||(s.c&&s.c.trim())||(s.cover&&s.cover.trim())||null;
         if(!artistMap[key]){
           artistMap[key]={
             name:(s.a||'').trim(),
-            img:hasImg?s.ca:null,
+            img:hasImg?imgUrl:null,
             followers:s.fo||0,
             inTop20:inTop20
           };
         } else {
-          if(hasImg && !artistMap[key].img) artistMap[key].img=s.ca;
+          if(hasImg && !artistMap[key].img) artistMap[key].img=imgUrl;
           if((s.fo||0)>artistMap[key].followers) artistMap[key].followers=s.fo||0;
           if(inTop20) artistMap[key].inTop20=true;
         }
@@ -934,12 +941,12 @@ function showSolution(type,playerIdx){
   var badge=document.getElementById('sol-result-badge');
   if(type==='correct'){
     badge.className='sol-result correct';
-    badge.textContent='✓ Richtig! +1 Punkt';
+    badge.textContent='+1 Punkt';
   } else if(type==='wrong'){
     badge.className='sol-result wrong';
-    badge.textContent='✗ Falsch! −1 Punkt';
+    badge.textContent='-1 Punkt';
   } else {
-    badge.className='';
+    badge.className='sol-result timeout';
     badge.textContent='';
   }
 
