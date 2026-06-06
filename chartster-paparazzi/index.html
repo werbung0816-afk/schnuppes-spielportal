@@ -1065,6 +1065,12 @@ function renderBuzzArena(){
   document.getElementById('buzz-row-bot').innerHTML=visualRows.bot.map(function(x){return buzzerHTML(x.team,x.idx,'bot');}).join('');
   document.getElementById('buzz-col-left').innerHTML=visualRows.left.map(function(x){return buzzerHTML(x.team,x.idx,'left');}).join('');
   document.getElementById('buzz-col-right').innerHTML=visualRows.right.map(function(x){return buzzerHTML(x.team,x.idx,'right');}).join('');
+
+  // Einzelner Buzzer oben/unten → zentrieren statt außen
+  ['buzz-row-top','buzz-row-bot'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.style.justifyContent=el.children.length===1?'center':'space-around';
+  });
 }
 
 
