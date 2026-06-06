@@ -418,7 +418,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.5</div>
+<div class="ver">v1.6</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -473,10 +473,10 @@ body{
     <div style="grid-area:img;display:flex;gap:0;align-items:stretch;width:100%">
       <div class="reveal-wrap" id="reveal-wrap" style="flex:1;min-width:0">
         <canvas id="reveal-canvas" style="display:none"></canvas>
-        <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
-        <!-- img-rotate-wrap rotates together with solution panel -->
+        <!-- img-rotate-wrap rotates together with solution panel and progress bar -->
         <div id="img-rotate-wrap" style="position:absolute;inset:0;transform-origin:center center;transition:transform 0.6s ease">
           <!-- artist img inserted here dynamically -->
+          <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
           <div class="solution-panel" id="solution-panel">
             <div id="sol-result-badge" class="sol-result"></div>
             <div class="sol-artist" id="sol-artist"></div>
