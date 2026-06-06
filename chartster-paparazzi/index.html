@@ -315,9 +315,10 @@ body{
   transition:transform .1s;
 }
 .team-buzz-wrap:active{transform:scale(.93)!important}
-/* Left col: name between image and buzzer, readable for left-seated player */
-#buzz-col-left .team-buzz-wrap{flex-direction:column;gap:12px;align-items:center;}
-#buzz-col-right .team-buzz-wrap{flex-direction:column;gap:12px;align-items:center;}
+/* Left col: buzzer at screen edge, name between buzzer and image (row-reverse) */
+#buzz-col-left .team-buzz-wrap{flex-direction:row-reverse;gap:10px;align-items:center;}
+/* Right col: name between image and buzzer (row) */
+#buzz-col-right .team-buzz-wrap{flex-direction:row;gap:10px;align-items:center;}
 .team-buzz-wrap.buzzed-out{opacity:.25;pointer-events:none}
 .team-buzz-3d{
   width:clamp(64px,12vw,90px);
@@ -380,7 +381,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.8</div>
+<div class="ver">v1.9</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -439,11 +440,7 @@ body{
           <!-- artist img inserted here dynamically -->
           <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
           <div id="bottom-panel">
-            <!-- State 1: waiting for Start -->
-            <div id="bp-waiting">
-              <button class="bp-start" onclick="startReveal()">Start</button>
-            </div>
-            <!-- State 2: buzzed – team name + BUZZZEERR + Zur Auflösung -->
+            <!-- State 2: buzzed – team name BUZZZEERR + Zur Auflösung -->
             <div id="bp-buzzed">
               <div id="bp-buzz-name" class="bp-team"></div>
               <button class="bp-action" onclick="revealNow()">Zur Auflösung</button>
@@ -462,6 +459,10 @@ body{
               <button class="bp-next" onclick="nextArtist()">Weiter</button>
             </div>
           </div>
+        </div>
+        <!-- Start overlay: fixed center, does NOT rotate with image -->
+        <div id="bp-start-overlay" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:25">
+          <button class="bp-start" onclick="startReveal()">Start</button>
         </div>
       </div>
     </div>
@@ -667,10 +668,15 @@ function updateScoreboard(){
 
 // ════ NEXT ARTIST ════
 function showPanel(state){
-  ['bp-waiting','bp-buzzed','bp-judging','bp-timeout'].forEach(function(id){
+  // Start overlay is NOT inside the rotating wrapper – handle separately
+  var startOvl=document.getElementById('bp-start-overlay');
+  if(startOvl) startOvl.style.display=(state==='waiting')?'flex':'none';
+  // Rotating bottom panel states
+  ['bp-buzzed','bp-judging','bp-timeout'].forEach(function(id){
     document.getElementById(id).classList.toggle('on', id==='bp-'+state);
   });
-  document.getElementById('bottom-panel').classList.toggle('show', !!state);
+  var panel=document.getElementById('bottom-panel');
+  if(panel) panel.classList.toggle('show', state==='buzzed'||state==='judging'||state==='timeout');
 }
 
 function nextArtist(){
@@ -817,6 +823,9 @@ function renderBuzzArena(){
 
   function buzzerHTML(t,i,side){
     var nameRot='';
+    if(side==='top')   nameRot='transform:rotate(180deg)';
+    if(side==='left')  nameRot='transform:rotate(90deg)';
+    if(side==='right') nameRot='transform:rotate(270deg)';
     return '<div class="team-buzz-wrap" id="buzz-btn-'+i+'" '+
       'style="--tcol:'+t.color+';position:relative" '+
       'onclick="onBuzz('+i+')" ontouchstart="event.preventDefault();onBuzz('+i+')">'+
