@@ -380,7 +380,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.7</div>
+<div class="ver">v1.8</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -443,10 +443,9 @@ body{
             <div id="bp-waiting">
               <button class="bp-start" onclick="startReveal()">Start</button>
             </div>
-            <!-- State 2: buzzed – team name + Zur Auflösung -->
+            <!-- State 2: buzzed – team name + BUZZZEERR + Zur Auflösung -->
             <div id="bp-buzzed">
               <div id="bp-buzz-name" class="bp-team"></div>
-              <div class="bp-sub">hat gebuzzert!</div>
               <button class="bp-action" onclick="revealNow()">Zur Auflösung</button>
             </div>
             <!-- State 3: judging – artist name + Richtig / Falsch -->
@@ -848,7 +847,9 @@ function onBuzz(playerIdx){
   var bb=document.getElementById('buzz-btn-'+playerIdx);
   if(bb){bb.style.opacity='1';bb.style.transform='scale(1.15)';bb.querySelector('.tbz-dome').style.boxShadow='0 0 30px 8px '+G.teams[playerIdx].color;}
   // Show buzzed panel
-  document.getElementById('bp-buzz-name').innerHTML='<span style="color:'+G.teams[playerIdx].color+'">'+esc(G.teams[playerIdx].name)+'</span>';
+  document.getElementById('bp-buzz-name').innerHTML=
+    '<span style="color:'+G.teams[playerIdx].color+'">'+esc(G.teams[playerIdx].name)+'</span>'+
+    '<span style="color:rgba(240,240,255,.9)"> BUZZZEERR</span>';
   showPanel('buzzed');
 }
 
@@ -893,7 +894,7 @@ function showVictory(){
   var ranked=G.players
     .map(function(name,i){return{name:name,score:G.scores[i],color:COLORS[i]};})
     .sort(function(a,b){return b.score-a.score;});
-  var medals=['🥇','🥈','🥉','🏅'];
+  var medals=['🥇','🥈','🥉','🏅','5.','6.'];
 
   var rows=ranked.map(function(p,i){
     var win=i===0;
