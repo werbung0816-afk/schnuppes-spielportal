@@ -140,8 +140,8 @@ body{
 
 /* Matched state */
 .mc.matched .mc-cover,.mc.matched .mc-text{opacity:.38}
-.mc-match-badge{position:absolute;inset:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(0,0,0,.25);z-index:5;pointer-events:none;opacity:0;transition:opacity .3s}
-.mc.matched .mc-match-badge{opacity:1}
+.mc-match-badge{position:absolute;inset:0;border-radius:10px;display:none;align-items:center;justify-content:center;font-size:20px;background:rgba(0,0,0,.25);z-index:5;pointer-events:none;transition:opacity .3s}
+.mc.matched .mc-match-badge{display:flex;opacity:1}
 
 /* Wrong shake */
 @keyframes shake{
@@ -588,7 +588,7 @@ function showVictory(){
     .sort(function(a,b){return b.score-a.score;});
 
   var isTie=ranked.length>1&&ranked[0].score===ranked[1].score;
-  var medals=['🥇','🥈','🥉','🏅'];
+  var medals=['🥇','🥈','🥉','🏅','5.','6.'];
 
   var rows=ranked.map(function(p,i){
     var isWinner=i===0&&!isTie;
