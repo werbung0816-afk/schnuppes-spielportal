@@ -381,7 +381,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.9</div>
+<div class="ver">v2.0</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -440,6 +440,10 @@ body{
           <!-- artist img inserted here dynamically -->
           <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
           <div id="bottom-panel">
+            <!-- State 1: waiting for Start (rotates with image) -->
+            <div id="bp-waiting">
+              <button class="bp-start" onclick="startReveal()">Start</button>
+            </div>
             <!-- State 2: buzzed – team name BUZZZEERR + Zur Auflösung -->
             <div id="bp-buzzed">
               <div id="bp-buzz-name" class="bp-team"></div>
@@ -460,8 +464,8 @@ body{
             </div>
           </div>
         </div>
-        <!-- Start overlay: fixed center, does NOT rotate with image -->
-        <div id="bp-start-overlay" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:25">
+        <!-- Start overlay: bottom-anchored, does NOT rotate with image -->
+        <div id="bp-start-overlay" style="position:absolute;left:0;right:0;bottom:0;top:auto;display:none;flex-direction:column;align-items:center;justify-content:flex-end;z-index:25;padding:56px 18px 16px;background:linear-gradient(to bottom,transparent 0%,rgba(7,0,15,.75) 28%,rgba(7,0,15,.94) 55%)">
           <button class="bp-start" onclick="startReveal()">Start</button>
         </div>
       </div>
@@ -668,15 +672,10 @@ function updateScoreboard(){
 
 // ════ NEXT ARTIST ════
 function showPanel(state){
-  // Start overlay is NOT inside the rotating wrapper – handle separately
-  var startOvl=document.getElementById('bp-start-overlay');
-  if(startOvl) startOvl.style.display=(state==='waiting')?'flex':'none';
-  // Rotating bottom panel states
-  ['bp-buzzed','bp-judging','bp-timeout'].forEach(function(id){
+  ['bp-waiting','bp-buzzed','bp-judging','bp-timeout'].forEach(function(id){
     document.getElementById(id).classList.toggle('on', id==='bp-'+state);
   });
-  var panel=document.getElementById('bottom-panel');
-  if(panel) panel.classList.toggle('show', state==='buzzed'||state==='judging'||state==='timeout');
+  document.getElementById('bottom-panel').classList.toggle('show', !!state);
 }
 
 function nextArtist(){
