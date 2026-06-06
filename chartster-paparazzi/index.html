@@ -199,82 +199,56 @@ body{
 .buzzer.inactive{pointer-events:none;opacity:.35}
 .buzzer.inactive::before{animation:none}
 
-/* ── ANSWER PANEL (overlay on image) ── */
-.answer-panel{
-  background:var(--glass);
-  backdrop-filter:blur(8px);
-  border:1px solid var(--glass-b);
-  border-radius:14px;
+/* ── BOTTOM PANEL (unified, inside img-rotate-wrap) ── */
+#bottom-panel{
+  position:absolute;left:0;right:0;bottom:0;top:auto;
+  background:linear-gradient(to bottom,transparent 0%,rgba(7,0,15,.75) 28%,rgba(7,0,15,.94) 55%);
+  padding:56px 18px 16px;
   display:none;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  padding:14px 12px;
-  width:100%;
+  flex-direction:column;align-items:center;gap:10px;
+  text-align:center;z-index:20;
 }
-.answer-panel.show{display:flex}
-.buzzer-who{
-  font-size:13px;font-weight:700;
-  color:var(--muted);text-transform:uppercase;letter-spacing:.1em;
+#bottom-panel.show{display:flex}
+/* sub-states */
+#bp-waiting,#bp-buzzed,#bp-judging,#bp-timeout{
+  display:none;flex-direction:column;align-items:center;gap:8px;width:100%;
 }
-.answer-name{font-size:clamp(20px,5vw,30px);font-weight:900}
-.answer-question{
-  font-size:14px;color:var(--muted);text-align:center;line-height:1.5;
-}
-.answer-btns{display:flex;gap:10px;width:100%}
-.answer-btns button{
-  flex:1;padding:14px;border-radius:12px;
-  font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;
-  border:none;cursor:pointer;transition:all .2s;
-}
-.btn-correct{background:linear-gradient(135deg,#00c853,#00962f);color:#fff;box-shadow:0 4px 16px rgba(0,200,83,.35)}
-.btn-wrong  {background:linear-gradient(135deg,#e60000,#8b0000);color:#fff;box-shadow:0 4px 16px rgba(200,0,0,.35)}
-
-/* ── SOLUTION PANEL ── */
-.solution-panel{
-  position:absolute;
-  left:0;right:0;bottom:0;top:auto;
-  background:linear-gradient(to bottom,
-    transparent 0%,
-    rgba(7,0,15,.72) 28%,
-    rgba(7,0,15,.93) 55%
-  );
-  border-radius:0;
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-end;
-  gap:10px;
-  padding:64px 20px 18px;
-  text-align:center;
-  z-index:20;
-}
-.solution-panel.show{display:flex}
-.sol-artist{
-  font-size:clamp(26px,5vw,44px);font-weight:900;line-height:1.1;
+#bp-waiting.on,#bp-buzzed.on,#bp-judging.on,#bp-timeout.on{display:flex}
+/* team name when buzzed */
+.bp-team{font-size:clamp(20px,4vw,28px);font-weight:900}
+.bp-sub{font-size:13px;color:rgba(240,240,255,.65);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+/* artist name when judging / timeout */
+.bp-artist{
+  font-size:clamp(22px,4.5vw,40px);font-weight:900;line-height:1.1;
   background:linear-gradient(135deg,var(--cyan),var(--pink));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  text-shadow:none;filter:drop-shadow(0 2px 12px rgba(83,246,255,.4));
+  filter:drop-shadow(0 2px 10px rgba(83,246,255,.4));
 }
-.sol-followers{font-size:12px;color:rgba(240,240,255,.6);font-weight:600;margin-top:-4px}
-.sol-result{
-  font-size:15px;font-weight:800;padding:5px 16px;border-radius:8px;
+/* button row */
+.bp-row{display:flex;gap:10px;width:100%}
+/* buttons */
+.bp-btn{
+  flex:1;padding:12px 16px;border-radius:12px;border:none;
+  font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;
 }
-.sol-result.correct{color:#00e676;background:rgba(0,200,83,.15);border:1px solid rgba(0,200,83,.35)}
-.sol-result.wrong  {color:#ff5252;background:rgba(200,0,0,.15);border:1px solid rgba(200,0,0,.35)}
-.sol-result.timeout{display:none}
-.sol-next{
-  padding:11px 30px;border-radius:12px;border:none;
-  font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;
-  background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;
-  box-shadow:0 4px 16px rgba(143,95,255,.4);
+.bp-start{
+  padding:13px 40px;border-radius:12px;border:none;
+  font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;cursor:pointer;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));color:#fff;
+  box-shadow:0 4px 18px rgba(83,246,255,.3);
 }
-.btn-reveal{
-  width:100%;padding:12px;border-radius:12px;border:none;
-  font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;
+.bp-action{
+  padding:12px 32px;border-radius:12px;border:none;
+  font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;
   background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));
   color:var(--cyan);border:1px solid rgba(83,246,255,.4);
-  margin-top:4px;
+}
+.bp-correct{background:linear-gradient(135deg,#00c853,#00962f);color:#fff;box-shadow:0 3px 12px rgba(0,200,83,.35)}
+.bp-wrong  {background:linear-gradient(135deg,#e60000,#8b0000);color:#fff;box-shadow:0 3px 12px rgba(200,0,0,.35)}
+.bp-next{
+  padding:12px 32px;border-radius:12px;border:none;
+  font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;
+  background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;
 }
 
 /* ── VICTORY OVERLAY ── */
@@ -397,18 +371,6 @@ body{
 /* top row buzzers flip upside-down */
 
 
-/* judge panel below image */
-.judge-panel{
-  width:100%;max-width:520px;
-  background:var(--glass);border:1px solid var(--glass-b);
-  border-radius:14px;padding:14px 16px;
-  display:none;flex-direction:column;align-items:center;gap:10px;
-}
-.judge-panel.show{display:flex}
-.judge-who{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
-.judge-name{font-size:20px;font-weight:900}
-
-
 /* version */
 .ver{position:fixed;bottom:12px;right:16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);z-index:100}
 </style>
@@ -418,7 +380,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v1.6</div>
+<div class="ver">v1.7</div>
 
 <!-- ════ LOBBY ════ -->
 <div id="screen-lobby" class="screen active">
@@ -469,39 +431,40 @@ body{
     <!-- LEFT buzzers -->
     <div id="buzz-col-left" style="grid-area:left;display:flex;flex-direction:column;gap:8px;padding-right:0px"></div>
 
-    <!-- CENTER: image + judge panel side by side -->
-    <div style="grid-area:img;display:flex;gap:0;align-items:stretch;width:100%">
-      <div class="reveal-wrap" id="reveal-wrap" style="flex:1;min-width:0">
+    <!-- CENTER: image only, all UI inside rotating wrapper -->
+    <div style="grid-area:img;width:100%">
+      <div class="reveal-wrap" id="reveal-wrap">
         <canvas id="reveal-canvas" style="display:none"></canvas>
-        <!-- img-rotate-wrap rotates together with solution panel and progress bar -->
         <div id="img-rotate-wrap" style="position:absolute;inset:0;transform-origin:center center;transition:transform 0.6s ease">
           <!-- artist img inserted here dynamically -->
           <div class="reveal-progress"><div class="reveal-progress-bar" id="progress-bar"></div></div>
-          <div class="solution-panel" id="solution-panel">
-            <div id="sol-result-badge" class="sol-result"></div>
-            <div class="sol-artist" id="sol-artist"></div>
-            <div class="sol-followers" id="sol-followers"></div>
-            <button class="sol-next" onclick="nextArtist()">Weiter ▶</button>
+          <div id="bottom-panel">
+            <!-- State 1: waiting for Start -->
+            <div id="bp-waiting">
+              <button class="bp-start" onclick="startReveal()">Start</button>
+            </div>
+            <!-- State 2: buzzed – team name + Zur Auflösung -->
+            <div id="bp-buzzed">
+              <div id="bp-buzz-name" class="bp-team"></div>
+              <div class="bp-sub">hat gebuzzert!</div>
+              <button class="bp-action" onclick="revealNow()">Zur Auflösung</button>
+            </div>
+            <!-- State 3: judging – artist name + Richtig / Falsch -->
+            <div id="bp-judging">
+              <div id="bp-artist" class="bp-artist"></div>
+              <div class="bp-row">
+                <button class="bp-btn bp-correct" onclick="judge(true)">Richtig</button>
+                <button class="bp-btn bp-wrong"   onclick="judge(false)">Falsch</button>
+              </div>
+            </div>
+            <!-- State 4: timeout – artist name + Weiter -->
+            <div id="bp-timeout">
+              <div id="bp-to-artist" class="bp-artist"></div>
+              <button class="bp-next" onclick="nextArtist()">Weiter</button>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- JUDGE PANEL: right of image, same height -->
-      <div class="judge-panel" id="judge-panel" style="width:150px;flex-shrink:0;border-radius:0 14px 14px 0;border-left:none">
-        <div class="judge-who">Gebuzzert:</div>
-        <div class="judge-name" id="judge-name"></div>
-        <button class="btn-reveal" id="btn-reveal" onclick="revealNow()" style="width:100%;display:block">🔍 Auflösen</button>
-        <div id="judge-answer-step" style="display:none"></div>
-        <div id="judge-artist-wrap" style="display:none;width:100%;text-align:center;margin:4px 0">
-          <div style="font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Künstler</div>
-          <div id="judge-artist-reveal" style="font-size:15px;font-weight:900;color:var(--cyan);line-height:1.2;word-break:break-word"></div>
-        </div>
-        <div id="judge-btns" style="display:none;width:100%;gap:8px;flex-direction:column">
-          <button class="btn-correct" onclick="judge(true)" style="width:100%;padding:11px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#00c853,#00962f);color:#fff">✓ Richtig</button>
-          <button class="btn-wrong"   onclick="judge(false)" style="width:100%;padding:11px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#e60000,#8b0000);color:#fff">✗ Falsch</button>
-        </div>
-      </div>
-
     </div>
 
     <!-- RIGHT buzzers -->
@@ -704,10 +667,15 @@ function updateScoreboard(){
 }
 
 // ════ NEXT ARTIST ════
+function showPanel(state){
+  ['bp-waiting','bp-buzzed','bp-judging','bp-timeout'].forEach(function(id){
+    document.getElementById(id).classList.toggle('on', id==='bp-'+state);
+  });
+  document.getElementById('bottom-panel').classList.toggle('show', !!state);
+}
+
 function nextArtist(){
-  // Hide panels
-  document.getElementById('judge-panel').classList.remove('show');
-  document.getElementById('solution-panel').classList.remove('show');
+  showPanel(null);
   // Re-enable all buzz buttons
   document.querySelectorAll('.team-buzz-wrap').forEach(function(b){
     b.classList.remove('buzzed-out');
@@ -721,35 +689,35 @@ function nextArtist(){
   G.stepIdx=0;
   G.buzzedPlayer=-1;
   G.buzzedOut=[];
-  G.running=true;
-  // Reset artist reveal in judge panel
-  document.getElementById('judge-artist-wrap').style.display='none';
-  document.getElementById('judge-artist-reveal').textContent='';
+  G.running=false;
   // Rotate clockwise
   G.startSeatIdx=(G.startSeatIdx+1)%Math.max(1,G.teams.length);
   renderBuzzArena();
   rotateImageToTeam();
-  // Reset artist reveal in judge panel
-  document.getElementById('judge-artist-wrap').style.display='none';
-  document.getElementById('judge-artist-reveal').textContent='';
 
   // Reset progress
   document.getElementById('progress-bar').style.width='0%';
 
-  // Load image via CSS blur img element
+  // Load image at max blur, then show Start button
   var rotWrap=document.getElementById('img-rotate-wrap');
   if(revealImg){ revealImg.remove(); revealImg=null; }
   var img=document.createElement('img');
   img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:filter 0.6s ease;border-radius:18px;';
-  img.style.filter='blur(20px)';
+  img.style.filter='blur('+BLUR_STEPS[0]+'px)';
   img.onload=function(){
     revealImg=img;
-    drawStep(0); // max blur
-    scheduleNext();
+    drawStep(0);
+    showPanel('waiting');
   };
   img.onerror=function(){ nextArtist(); };
   img.src=G.cur.img;
-  rotWrap.insertBefore(img, rotWrap.firstChild); // behind solution panel
+  rotWrap.insertBefore(img, rotWrap.firstChild);
+}
+
+function startReveal(){
+  showPanel(null);
+  G.running=true;
+  scheduleNext();
 }
 
 // ════ BLUR REVEAL ════
@@ -872,91 +840,52 @@ function renderBuzzArena(){
 function onBuzz(playerIdx){
   if(!G.running) return;
   if(G.buzzedOut.includes(playerIdx)) return;
-    clearTimeout(G.stepTimer);
+  clearTimeout(G.stepTimer);
   G.running=false;
   G.buzzedPlayer=playerIdx;
   // Dim all buttons, highlight buzzer
   document.querySelectorAll('.team-buzz-wrap').forEach(function(b){b.style.pointerEvents='none';b.style.opacity='.25';});
   var bb=document.getElementById('buzz-btn-'+playerIdx);
   if(bb){bb.style.opacity='1';bb.style.transform='scale(1.15)';bb.querySelector('.tbz-dome').style.boxShadow='0 0 30px 8px '+G.teams[playerIdx].color;}
-  // Show judge panel
-  document.getElementById('judge-name').innerHTML='<span style="color:'+G.teams[playerIdx].color+'">'+esc(G.teams[playerIdx].name)+'</span>';
-  document.getElementById('judge-btns').style.display='none';
-  document.getElementById('judge-answer-step').style.display='none';
-  document.getElementById('judge-artist-wrap').style.display='none';
-  document.getElementById('btn-reveal').style.display='block';
-  document.getElementById('solution-panel').classList.remove('show');
-  document.getElementById('judge-panel').classList.add('show');
+  // Show buzzed panel
+  document.getElementById('bp-buzz-name').innerHTML='<span style="color:'+G.teams[playerIdx].color+'">'+esc(G.teams[playerIdx].name)+'</span>';
+  showPanel('buzzed');
 }
 
 function revealNow(){
+  // Fully reveal image
   drawStep(BLUR_STEPS.length-1);
   document.getElementById('progress-bar').style.width='100%';
-  document.getElementById('btn-reveal').style.display='none';
-  document.getElementById('judge-answer-step').style.display='none';
-  // Show artist name and judge buttons simultaneously
-  document.getElementById('judge-artist-reveal').textContent=G.cur.name;
-  document.getElementById('judge-artist-wrap').style.display='block';
-  document.getElementById('judge-btns').style.display='flex';
+  // Show artist name + Richtig/Falsch
+  document.getElementById('bp-artist').textContent=G.cur.name;
+  showPanel('judging');
 }
-
-
 
 function judge(correct){
   var pi=G.buzzedPlayer;
-  document.getElementById('judge-panel').classList.remove('show');
-
   if(correct){
     G.scores[pi]++;
     updateScoreboard();
     spawnConfetti(G.teams[pi].color,50);
-    showSolution('correct',pi);
-    if(G.scores[pi]>=G.goal) setTimeout(showVictory,1800);
+    if(G.scores[pi]>=G.goal){ showPanel(null); setTimeout(showVictory,600); return; }
   } else {
     G.scores[pi]=Math.max(-99,G.scores[pi]-1);
     updateScoreboard();
-    G.buzzedOut.push(pi);
-    // Re-enable remaining buzz buttons
-    G.teams.forEach(function(_,i){
-      var bb=document.getElementById('buzz-btn-'+i);
-      if(bb){
-        if(G.buzzedOut.includes(i)){bb.classList.add('buzzed-out');}
-        else{bb.style.pointerEvents='';bb.style.opacity='1';bb.style.transform='';
-          var dome=bb.querySelector('.tbz-dome');if(dome)dome.style.boxShadow='';}
-      }
-    });
-    // After wrong buzz: round ends, show solution immediately
-    showSolution('timeout');
   }
+  // Next artist after short pause
+  setTimeout(nextArtist, 800);
+  showPanel(null);
 }
 
-function showSolution(type,playerIdx){
+function showSolution(type){
+  // Timeout: image fully revealed, nobody buzzed
   G.running=false;
   clearTimeout(G.stepTimer);
-
-  // Show full image
   drawStep(BLUR_STEPS.length-1);
   document.getElementById('progress-bar').style.width='100%';
   document.querySelectorAll('.team-buzz-wrap').forEach(function(b){b.style.pointerEvents='none';b.style.opacity='.25';});
-
-  var badge=document.getElementById('sol-result-badge');
-  if(type==='correct'){
-    badge.className='sol-result correct';
-    badge.textContent='+1 Punkt';
-  } else if(type==='wrong'){
-    badge.className='sol-result wrong';
-    badge.textContent='-1 Punkt';
-  } else {
-    badge.className='sol-result timeout';
-    badge.textContent='';
-  }
-
-  document.getElementById('sol-artist').textContent=G.cur.name;
-  var fol=G.cur.followers;
-  document.getElementById('sol-followers').textContent=
-    fol?formatFollowers(fol)+' Follower auf Spotify':'';
-
-  document.getElementById('solution-panel').classList.add('show');
+  document.getElementById('bp-to-artist').textContent=G.cur.name;
+  showPanel('timeout');
 }
 
 // ════ VICTORY ════
