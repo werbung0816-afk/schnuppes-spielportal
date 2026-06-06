@@ -171,11 +171,26 @@ body{
 .vc-pts{font-size:22px;font-weight:900}
 .vc-pts small{font-size:11px;font-weight:400;color:var(--muted)}
 .vfinal-btn{padding:16px 40px;border:none;border-radius:14px;font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--purple),var(--pink));font-family:'Outfit',sans-serif;margin-top:4px}
+
+/* ── SEAT SELECTOR (aus Paparazzi) ── */
+#table-selector{width:100%;display:flex;flex-direction:column;align-items:center;gap:0}
+.ts-top-row,.ts-bot-row{display:flex;gap:32px;justify-content:center;padding:8px 0}
+.ts-mid-row{display:flex;align-items:center;justify-content:center;width:100%;padding:4px 0}
+#ts-table-body{width:220px;height:104px;flex:none;margin:0 8px;display:flex;align-items:center;justify-content:center;color:transparent;background:url(../chartster/icons/table.png) center/contain no-repeat;position:relative;filter:drop-shadow(0 4px 24px rgba(143,95,255,.5))}
+.ts-side{display:flex;align-items:center;justify-content:center;padding:4px 0;flex:1}
+.seat{display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px;cursor:pointer!important}
+.seat-inp{width:92px;background:var(--glass);border:1px solid var(--glass-b);border-radius:8px;padding:6px 8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:12px;outline:none;display:none;text-align:center}
+.seat.active .seat-inp{display:block}
+.ts-side .seat-inp{width:72px}
+.seat-circle{width:48px;height:48px;border-radius:50%;border:2px dashed rgba(83,246,255,.3);display:flex;align-items:center;justify-content:center;transition:all .25s;background:rgba(83,246,255,.04);position:relative;overflow:hidden;color:rgba(83,246,255,.4);box-shadow:0 0 8px rgba(83,246,255,.08)}
+.seat.active .seat-circle{border-style:solid;border-width:2.5px;color:#07000f}
+.seat.active .seat-circle::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.18),transparent 70%)}
 </style>
 </head>
 <body>
 
-<div class="version" style="position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px">v1.0.1</div>
+<div id="hint-toast"></div>
+<div class="version" style="position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px">v1.1.0</div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
 
@@ -188,13 +203,20 @@ body{
   <div class="sep"></div>
 
   <!-- Spieler -->
-  <div class="setup-section">
-    <div class="label">👥 Spieler</div>
-    <div class="player-rows">
-      <div class="player-row"><div class="pdot" style="background:#53f6ff;box-shadow:0 0 7px #53f6ff"></div><input id="p1" type="text" placeholder="Spieler 1" maxlength="18"></div>
-      <div class="player-row"><div class="pdot" style="background:#ff4fd8;box-shadow:0 0 7px #ff4fd8"></div><input id="p2" type="text" placeholder="Spieler 2" maxlength="18"></div>
-      <div class="player-row"><div class="pdot" style="background:#8f5fff;box-shadow:0 0 7px #8f5fff"></div><input id="p3" type="text" placeholder="Spieler 3" maxlength="18"></div>
-      <div class="player-row"><div class="pdot" style="background:#4dff91;box-shadow:0 0 7px #4dff91"></div><input id="p4" type="text" placeholder="Spieler 4" maxlength="18"></div>
+  <div class="label" style="align-self:center">👥 Spieler – Platz am Tisch wählen</div>
+  <div id="table-selector">
+    <div class="ts-top-row">
+      <div class="seat" data-pos="top-l" onclick="toggleSeat('top-l')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div>
+      <div class="seat" data-pos="top-r" onclick="toggleSeat('top-r')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div>
+    </div>
+    <div class="ts-mid-row">
+      <div class="ts-side"><div class="seat" data-pos="left" onclick="toggleSeat('left')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div></div>
+      <div id="ts-table-body"></div>
+      <div class="ts-side"><div class="seat" data-pos="right" onclick="toggleSeat('right')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div></div>
+    </div>
+    <div class="ts-bot-row">
+      <div class="seat" data-pos="bot-l" onclick="toggleSeat('bot-l')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div>
+      <div class="seat" data-pos="bot-r" onclick="toggleSeat('bot-r')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div>
     </div>
   </div>
 
@@ -244,8 +266,14 @@ body{
 
 <script>
 // ════ CONFIG ════
-const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91'];
+const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f1c','#e0ff4f'];
 const DECADES=['70','80','90','00','10','20'];
+
+// ════ SEAT CONFIG ════
+var DEFAULTS=['Spieler 1','Spieler 2','Spieler 3','Spieler 4','Spieler 5','Spieler 6'];
+var MAX_SEATS=6;
+var SEAT_POS=['top-l','top-r','left','right','bot-l','bot-r'];
+var seatCfg={'top-l':null,'top-r':null,'left':null,'right':null,'bot-l':null,'bot-r':null};
 
 // ════ STATE ════
 var G={
@@ -261,6 +289,43 @@ var G={
   locked:false
 };
 
+// ════ SEAT LOGIC (aus Paparazzi) ════
+function toggleSeat(pos){
+  var seat=document.querySelector('.seat[data-pos="'+pos+'"]');
+  if(seatCfg[pos]){
+    seatCfg[pos]=null; seat.classList.remove('active');
+    seat.querySelector('.seat-circle').style.cssText='';
+    var inp=seat.querySelector('.seat-inp'); inp.value=''; inp.style.display='none';
+    reassignSeatColors();
+  } else {
+    var active=getActiveSeats();
+    if(active.length>=MAX_SEATS){showHint('Maximal '+MAX_SEATS+' Spieler!'); return;}
+    var ci=active.length;
+    seatCfg[pos]={name:'',colorIdx:ci};
+    seat.classList.add('active');
+    var circ=seat.querySelector('.seat-circle');
+    circ.style.background=COLORS[ci]; circ.style.borderColor=COLORS[ci];
+    circ.style.borderStyle='solid'; circ.textContent=DEFAULTS[ci].substring(0,2);
+    var inp=seat.querySelector('.seat-inp');
+    inp.style.display='block'; inp.placeholder=DEFAULTS[ci];
+  }
+  updateStartBtn();
+}
+function reassignSeatColors(){
+  getActiveSeats().forEach(function(pos,i){
+    var seat=document.querySelector('.seat[data-pos="'+pos+'"]');
+    seatCfg[pos].colorIdx=i;
+    var circ=seat.querySelector('.seat-circle');
+    circ.style.background=COLORS[i]; circ.style.borderColor=COLORS[i];
+    seat.querySelector('.seat-inp').placeholder=DEFAULTS[i];
+  });
+}
+function getActiveSeats(){return SEAT_POS.filter(function(p){return seatCfg[p]!==null;});}
+function updateStartBtn(){
+  var ok=G.songs.length>0 && getActiveSeats().length>=1;
+  document.getElementById('start-btn').disabled=!ok;
+}
+
 // ════ BOOT ════
 loadSongs();
 
@@ -274,7 +339,7 @@ function loadSongs(){
       // Memory: nur Songs MIT Cover
       G.songs=all.filter(s=>s.c&&s.c.trim()!=='');
       document.getElementById('lobby-status').textContent='';
-      document.getElementById('start-btn').disabled=false;
+      updateStartBtn();
       updateFltInfo();
     })
     .catch(()=>{
@@ -329,6 +394,7 @@ function updateFltInfo(){
     el.textContent=n+' Songs mit Cover verfügbar';
     el.className='';
   }
+  updateStartBtn();
 }
 
 // ════ PAIR SELECTOR ════
@@ -344,12 +410,8 @@ function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.flo
 
 // ════ START ════
 function startGame(){
-  var names=[
-    document.getElementById('p1').value.trim()||'Spieler 1',
-    document.getElementById('p2').value.trim(),
-    document.getElementById('p3').value.trim(),
-    document.getElementById('p4').value.trim()
-  ].filter((n,i)=>i===0||n!=='');
+  var active=getActiveSeats();
+  if(active.length<1){showHint('Mindestens 1 Spieler!'); return;}
 
   var pool=filteredSongs();
   if(pool.length<G.pairs){
@@ -357,8 +419,13 @@ function startGame(){
     return;
   }
 
+  var names=active.map(function(pos,i){
+    var inp=document.querySelector('.seat[data-pos="'+pos+'"] .seat-inp');
+    return inp&&inp.value.trim()?inp.value.trim():DEFAULTS[i];
+  });
+
   G.players=names;
-  G.scores=names.map(()=>0);
+  G.scores=names.map(function(){return 0;});
   G.cur=0;
   G.flipped=[];
   G.matched=new Set();
