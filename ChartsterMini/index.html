@@ -520,8 +520,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
       <div style="width:100%"></div>
       <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-top20.png" alt="Top 20">Top 20</button>
       <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-top10.png" alt="Top 10">Top 10</button>
-      <div style="width:100%;height:8px"></div>
+      <div style="width:100%;height:0"></div>
       <button id="mini-btn" onclick="toggleMiniGames()">mit Minispiel</button>
+      <div style="flex:1"></div>
+      <span id="lobby-status" style="font-size:13px;color:var(--muted);font-weight:600;align-self:center;white-space:nowrap"></span>
     </div>
   </div>
   <div class="sep"></div>
@@ -539,7 +541,6 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
     </a>
   </div>
   <input type="checkbox" id="schnelle5" style="display:none">
-  <div id="lobby-status" style="font-size:13px;color:var(--muted);text-align:center"></div>
 </div>
 </div>
 
@@ -720,14 +721,14 @@ function initFirebase(){
     if(!d||d.screen==='lobby'||!d.host||wasHost)setHost();else setGuest();
   }).catch(()=>setHost());
 }
-function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{document.getElementById('lobby-status').textContent=`${G.songs.length} Songs`;updateStartBtn();}}
+function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();}}
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){if(d.screen==='game'&&d.teams){G.teams=d.teams;G.cur=d.cur||0;G.currentCard=d.card||null;showScreen('game');renderPanels();updateGameUI();}}
 function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.teams,cur:G.cur,card:G.currentCard||null});}
 initFirebase();
 
 // ── SONGS ──
-function loadSongs(){fetch('../chartster/songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);document.getElementById('lobby-status').textContent=`${G.songs.length} Songs`;updateStartBtn();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
+function loadSongs(){fetch('../chartster/songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);updateStartBtn();updateSongCount();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
 function filteredSongs(){var s=G.songs.filter(x=>x.l);if(G.filters.size===0||G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20'))return s;var dec=DECADES.filter(d=>G.filters.has(d));if(dec.length)s=s.filter(x=>dec.some(d=>{if(d==='70')return x.y>=1970&&x.y<1980;if(d==='80')return x.y>=1980&&x.y<1990;if(d==='90')return x.y>=1990&&x.y<2000;if(d==='00')return x.y>=2000&&x.y<2010;if(d==='10')return x.y>=2010&&x.y<2020;if(d==='20')return x.y>=2020;return false;}));if(G.filters.has('top10'))s=s.filter(x=>x.p<=10);else if(G.filters.has('top20'))s=s.filter(x=>x.p<=20);return s;}
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 
@@ -754,9 +755,18 @@ function toggleMiniGames(){
   G.miniGames=btn.classList.contains('on');
 }
 function updateStartBtn(){document.getElementById('start-btn').disabled=!IS_HOST||getActiveSeats().length<2;}
+function updateSongCount(){
+  var el=document.getElementById('lobby-status');if(!el)return;
+  var total=G.songs.length;
+  var filtered=filteredSongs().length;
+  var isAll=G.filters.size===0||G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20');
+  if(total===0){el.textContent='';return;}
+  if(isAll){el.textContent=total+' Songs';}
+  else{el.textContent=filtered+' / '+total+' Songs';}
+}
 
 // ── FILTER ──
-function toggleFlt(btn,isOpt){var f=btn.dataset.f;if(f==='all'){G.filters=new Set();}else if(f==='top10'){G.filters.delete('all');G.filters.delete('top20');G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');}else if(f==='top20'){G.filters.delete('all');G.filters.delete('top10');G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');}else{G.filters.delete('all');G.filters.has(f)?G.filters.delete(f):G.filters.add(f);if(G.filters.size===0)G.filters.add('all');}syncFlt('flt-wrap');syncFlt('opt-filter');if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}}
+function toggleFlt(btn,isOpt){var f=btn.dataset.f;if(f==='all'){G.filters=new Set();}else if(f==='top10'){G.filters.delete('all');G.filters.delete('top20');G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');}else if(f==='top20'){G.filters.delete('all');G.filters.delete('top10');G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');}else{G.filters.delete('all');G.filters.has(f)?G.filters.delete(f):G.filters.add(f);if(G.filters.size===0)G.filters.add('all');}syncFlt('flt-wrap');syncFlt('opt-filter');updateSongCount();if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}}
 function syncFlt(id){var w=document.getElementById(id);if(!w)return;var isAll=G.filters.size===0||G.filters.has('all');w.querySelectorAll('.flt').forEach(b=>{b.classList.toggle('on',G.filters.has(b.dataset.f));b.classList.remove('off');});if(isAll){DECADES.forEach(d=>{var el=w.querySelector(`[data-f="${d}"]`);if(el)el.classList.add('off');});}var t10=w.querySelector('[data-f="top10"]'),t20=w.querySelector('[data-f="top20"]');if(G.filters.has('top10')&&t20)t20.classList.add('off');if(G.filters.has('top20')&&t10)t10.classList.add('off');}
 function buildOptFilter(){var w=document.getElementById('opt-filter');w.innerHTML=document.getElementById('flt-wrap').innerHTML;w.querySelectorAll('.flt').forEach(b=>{b.onclick=function(){toggleFlt(b,true);};});syncFlt('opt-filter');}
 
@@ -956,7 +966,7 @@ function openOpt(){buildOptFilter();document.getElementById('opt-panel').classLi
 function closeOpt(){document.getElementById('opt-panel').classList.remove('show');document.getElementById('opt-confirm').classList.remove('show');}
 function optNewSong(){closeOpt();clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();showHint('Schiedsrichter: Neuer Song! ⚖️');}
 function optResetPrompt(){document.getElementById('opt-confirm').classList.add('show');}
-function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');document.getElementById('lobby-status').textContent=G.songs.length?`${G.songs.length} Songs`:'';document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
+function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');updateSongCount();document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
 
 // ── UTILS ──
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el){el.classList.add('active');G.screen=name;}document.getElementById('opt-fab').style.display=(name==='game')?'flex':'none';}
