@@ -341,6 +341,93 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   background:var(--glass);color:var(--muted);font-family:'Outfit',sans-serif;
   font-size:14px;font-weight:600;!important
 }
+
+/* ── MINI-GAME ANNOUNCE OVERLAY ── */
+#minigame-announce{
+  position:fixed;inset:0;z-index:975;
+  background:rgba(7,0,15,.97);backdrop-filter:blur(10px);
+  display:none;align-items:center;justify-content:center;overflow:hidden;
+}
+#minigame-announce.show{display:flex;}
+
+.mga-bar{
+  position:absolute;top:0;bottom:0;left:-110%;width:110%;
+  background:linear-gradient(135deg,var(--purple) 0%,var(--cyan) 50%,var(--pink) 100%);
+  opacity:.28;
+}
+.mga-bar.animate{animation:mga-sweep 3.2s cubic-bezier(.22,1,.36,1) forwards;}
+@keyframes mga-sweep{
+  0%{left:-110%;}30%{left:0%;}72%{left:0%;}100%{left:110%;}
+}
+#mga-content{
+  position:relative;z-index:5;text-align:center;opacity:0;
+}
+#mga-content.animate{animation:mga-fade 3.2s forwards;}
+@keyframes mga-fade{
+  0%,18%{opacity:0;transform:translateY(18px) scale(.95);}
+  33%,65%{opacity:1;transform:translateY(0) scale(1);}
+  88%,100%{opacity:0;transform:translateY(-10px) scale(1.02);}
+}
+.mga-label{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:12px;}
+.mga-title{font-size:clamp(56px,13vw,100px);font-weight:900;line-height:1;
+  background:linear-gradient(135deg,var(--cyan),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 32px rgba(83,246,255,.5));}
+.mga-sub{font-size:18px;color:var(--muted);margin-top:14px;font-weight:600;}
+
+/* ── MINI-GAME IFRAME OVERLAY ── */
+#minigame-frame-wrap{
+  position:fixed;inset:0;z-index:970;
+  display:none;flex-direction:column;
+  background:var(--bg);
+}
+#minigame-frame-wrap.show{display:flex;}
+#minigame-iframe{width:100%;flex:1;border:none;background:var(--bg);}
+#mga-skip-btn{
+  position:fixed;bottom:18px;right:18px;z-index:972;
+  padding:11px 20px;border-radius:12px;border:1px solid rgba(255,79,216,.35);
+  background:rgba(255,79,216,.10);color:var(--pink);font-family:Outfit,sans-serif;
+  font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;
+}
+#mga-skip-btn:active{background:rgba(255,79,216,.25);}
+
+/* ── MINI-GAME RESULT OVERLAY ── */
+#mini-result-overlay{
+  position:fixed;inset:0;z-index:980;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.92);backdrop-filter:blur(14px);
+  flex-direction:column;padding:24px;
+}
+#mini-result-overlay.show{display:flex;}
+.mr-card{
+  background:var(--glass);border-radius:28px;padding:36px 32px;
+  max-width:440px;width:100%;display:flex;flex-direction:column;
+  align-items:center;gap:18px;text-align:center;
+  animation:zoomIn .5s ease;
+}
+.mr-game-type{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.mr-emoji{font-size:56px;line-height:1;}
+.mr-winner-name{font-size:clamp(36px,8vw,60px);font-weight:900;line-height:1;}
+.mr-reward{font-size:22px;font-weight:700;color:var(--cyan);}
+.mr-tie{font-size:18px;color:var(--muted);}
+.mr-continue-btn{
+  width:100%;padding:18px;border-radius:16px;border:none;
+  background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));
+  color:var(--cyan);border:1px solid rgba(83,246,255,.4);
+  font-family:Outfit,sans-serif;font-size:20px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.mr-continue-btn:active{box-shadow:0 0 32px rgba(83,246,255,.4);}
+
+/* ── MINI-GAMES LOBBY TOGGLE ── */
+#mini-btn{
+  padding:6px 12px;border-radius:12px;border:1px solid var(--glass-b);
+  background:var(--glass);color:var(--muted);font-family:'Outfit',sans-serif;
+  font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:5px;cursor:pointer!important;
+}
+#mini-btn.on{border-color:var(--cyan);color:var(--cyan);background:rgba(83,246,255,.12);
+  box-shadow:0 0 10px rgba(83,246,255,.2);}
 </style>
 </head>
 <body>
@@ -377,7 +464,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.0.6</div>
+<div class="version">v4.0.7</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -433,15 +520,31 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
       <div style="width:100%"></div>
       <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20">Top 20</button>
       <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10">Top 10</button>
+      <div style="width:100%"></div>
+      <div style="width:100%;display:flex;align-items:center">
+        <div style="flex:1"></div>
+        <button id="mini-btn" onclick="toggleMiniGames()">mit Minispiel</button>
+        <div style="flex:1;display:flex;justify-content:flex-end">
+          <span id="lobby-status" style="font-size:13px;color:var(--muted);font-weight:600;white-space:nowrap"></span>
+        </div>
+      </div>
     </div>
   </div>
   <div class="sep"></div>
-  <div style="display:flex;gap:10px">
+  <div style="display:flex;gap:10px;width:100%">
     <button class="btn btn-primary" id="start-btn" onclick="startGame()" disabled style="flex:1">Spiel starten</button>
     <button id="s5-btn" onclick="toggleS5()" style="padding:14px 18px;border-radius:14px;font-family:Outfit,sans-serif;font-size:18px;font-weight:700;border:1px solid rgba(255,79,216,.35);background:rgba(255,79,216,.08);color:var(--muted);white-space:nowrap;flex-shrink:0;transition:all .2s">Schnelle 5</button>
   </div>
+  <div class="sep"></div>
+  <div style="display:flex;gap:10px;width:100%">
+    <a href="memory.html" style="flex:1;text-decoration:none">
+      <button class="btn btn-secondary" style="width:100%;font-size:15px">🃏 Memory</button>
+    </a>
+    <a href="paparazzi.html" style="flex:1;text-decoration:none">
+      <button class="btn btn-secondary" style="width:100%;font-size:15px">📸 Paparazzi</button>
+    </a>
+  </div>
   <input type="checkbox" id="schnelle5" style="display:none">
-  <div id="lobby-status" style="font-size:13px;color:var(--muted);text-align:center"></div>
 </div>
 </div>
 
@@ -526,7 +629,63 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 </div>
 </div>
 
+
+<!-- ════ MINI-GAME ANNOUNCE ════ -->
+<div id="minigame-announce">
+  <div class="mga-bar" id="mga-bar"></div>
+  <div id="mga-content">
+    <div class="mga-label">✨ MINI-SPIEL</div>
+    <div class="mga-title" id="mga-title">Memory</div>
+    <div class="mga-sub" id="mga-sub">Alle Teams spielen gemeinsam!</div>
+  </div>
+</div>
+
+<!-- ════ MINI-GAME IFRAME ════ -->
+<div id="minigame-frame-wrap">
+  <iframe id="minigame-iframe" src="" allow="autoplay"></iframe>
+</div>
+<button id="mga-skip-btn" style="display:none" onclick="skipMiniGame()">⏭ Überspringen</button>
+
+<!-- ════ MINI-GAME RESULT ════ -->
+<div id="mini-result-overlay">
+  <div class="mr-card">
+    <div class="mr-game-type" id="mr-game-type">Memory</div>
+    <div class="mr-emoji" id="mr-emoji">🏆</div>
+    <div class="mr-winner-name" id="mr-winner-name" style="color:var(--cyan)">–</div>
+    <div id="mr-reward-line"></div>
+    <button class="mr-continue-btn" onclick="miniGameReturn()">Weiter →</button>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+
+<!-- ════ MINI-GAME ANNOUNCE ════ -->
+<div id="minigame-announce">
+  <div class="mga-bar" id="mga-bar"></div>
+  <div id="mga-content">
+    <div class="mga-label">✨ MINI-SPIEL</div>
+    <div class="mga-title" id="mga-title">Memory</div>
+    <div class="mga-sub" id="mga-sub">Alle Teams spielen gemeinsam!</div>
+  </div>
+</div>
+
+<!-- ════ MINI-GAME IFRAME ════ -->
+<div id="minigame-frame-wrap">
+  <iframe id="minigame-iframe" src="" allow="autoplay"></iframe>
+</div>
+<button id="mga-skip-btn" style="display:none" onclick="skipMiniGame()">⏭ Überspringen</button>
+
+<!-- ════ MINI-GAME RESULT ════ -->
+<div id="mini-result-overlay">
+  <div class="mr-card">
+    <div class="mr-game-type" id="mr-game-type">Memory</div>
+    <div class="mr-emoji" id="mr-emoji">🏆</div>
+    <div class="mr-winner-name" id="mr-winner-name" style="color:var(--cyan)">–</div>
+    <div id="mr-reward-line"></div>
+    <button class="mr-continue-btn" onclick="miniGameReturn()">Weiter →</button>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 const fbCfg={apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",authDomain:"schnuppes-spielportal.firebaseapp.com",databaseURL:"https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",projectId:"schnuppes-spielportal",storageBucket:"schnuppes-spielportal.firebasestorage.app",messagingSenderId:"1022973500272",appId:"1:1022973500272:web:f9e39d0dfd3c61c3c88db5"};
@@ -554,7 +713,7 @@ function playApplause(){new Audio('applause.mp3').play().catch(function(e){conso
 function playSlot(){console.log('playSlot called');new Audio('slot%20machine.mp3').play().catch(function(e){console.log('slot sound error:',e);});}
 function stopSlot(){}
 
-var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],filters:new Set(['all']),phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[]};
+var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],filters:new Set(['all']),phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[],miniGames:false,miniGamesDone:{memory:false,paparazzi:false},pendingMiniGame:null};
 ['top-l','top-r','left','right','bot-l','bot-r'].forEach(p=>G.seatCfg[p]=null);
 
 // ── FIREBASE ──
@@ -566,14 +725,14 @@ function initFirebase(){
     if(!d||d.screen==='lobby'||!d.host||wasHost)setHost();else setGuest();
   }).catch(()=>setHost());
 }
-function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{document.getElementById('lobby-status').textContent=`${G.songs.length} Songs`;updateStartBtn();}}
+function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();}}
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){if(d.screen==='game'&&d.teams){G.teams=d.teams;G.cur=d.cur||0;G.currentCard=d.card||null;showScreen('game');renderPanels();updateGameUI();}}
 function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.teams,cur:G.cur,card:G.currentCard||null});}
 initFirebase();
 
 // ── SONGS ──
-function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);document.getElementById('lobby-status').textContent=`${G.songs.length} Songs`;updateStartBtn();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
+function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);updateStartBtn();updateSongCount();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
 function filteredSongs(){var s=G.songs.filter(x=>x.l);if(G.filters.size===0||G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20'))return s;var dec=DECADES.filter(d=>G.filters.has(d));if(dec.length)s=s.filter(x=>dec.some(d=>{if(d==='70')return x.y>=1970&&x.y<1980;if(d==='80')return x.y>=1980&&x.y<1990;if(d==='90')return x.y>=1990&&x.y<2000;if(d==='00')return x.y>=2000&&x.y<2010;if(d==='10')return x.y>=2010&&x.y<2020;if(d==='20')return x.y>=2020;return false;}));if(G.filters.has('top10'))s=s.filter(x=>x.p<=10);else if(G.filters.has('top20'))s=s.filter(x=>x.p<=20);return s;}
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 
@@ -594,10 +753,24 @@ function toggleS5(){
   btn.style.color=cb.checked?'var(--pink)':'var(--muted)';
   btn.style.borderColor=cb.checked?'var(--pink)':'rgba(255,79,216,.35)';
 }
+function toggleMiniGames(){
+  var btn=document.getElementById('mini-btn');
+  btn.classList.toggle('on');
+  G.miniGames=btn.classList.contains('on');
+}
 function updateStartBtn(){document.getElementById('start-btn').disabled=!IS_HOST||getActiveSeats().length<2;}
+function updateSongCount(){
+  var el=document.getElementById('lobby-status');if(!el)return;
+  var total=G.songs.length;
+  var filtered=filteredSongs().length;
+  var isAll=G.filters.size===0||G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20');
+  if(total===0){el.textContent='';return;}
+  if(isAll){el.textContent=total+' Songs';}
+  else{el.textContent=filtered+' / '+total+' Songs';}
+}
 
 // ── FILTER ──
-function toggleFlt(btn,isOpt){var f=btn.dataset.f;if(f==='all'){G.filters=new Set();}else if(f==='top10'){G.filters.delete('all');G.filters.delete('top20');G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');}else if(f==='top20'){G.filters.delete('all');G.filters.delete('top10');G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');}else{G.filters.delete('all');G.filters.has(f)?G.filters.delete(f):G.filters.add(f);if(G.filters.size===0)G.filters.add('all');}syncFlt('flt-wrap');syncFlt('opt-filter');if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}}
+function toggleFlt(btn,isOpt){var f=btn.dataset.f;if(f==='all'){G.filters=new Set();}else if(f==='top10'){G.filters.delete('all');G.filters.delete('top20');G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');}else if(f==='top20'){G.filters.delete('all');G.filters.delete('top10');G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');}else{G.filters.delete('all');G.filters.has(f)?G.filters.delete(f):G.filters.add(f);if(G.filters.size===0)G.filters.add('all');}syncFlt('flt-wrap');syncFlt('opt-filter');updateSongCount();if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}}
 function syncFlt(id){var w=document.getElementById(id);if(!w)return;var isAll=G.filters.size===0||G.filters.has('all');w.querySelectorAll('.flt').forEach(b=>{b.classList.toggle('on',G.filters.has(b.dataset.f));b.classList.remove('off');});if(isAll){DECADES.forEach(d=>{var el=w.querySelector(`[data-f="${d}"]`);if(el)el.classList.add('off');});}var t10=w.querySelector('[data-f="top10"]'),t20=w.querySelector('[data-f="top20"]');if(G.filters.has('top10')&&t20)t20.classList.add('off');if(G.filters.has('top20')&&t10)t10.classList.add('off');}
 function buildOptFilter(){var w=document.getElementById('opt-filter');w.innerHTML=document.getElementById('flt-wrap').innerHTML;w.querySelectorAll('.flt').forEach(b=>{b.onclick=function(){toggleFlt(b,true);};});syncFlt('opt-filter');}
 
@@ -611,7 +784,7 @@ function startGame(){
   if(G.songs.length===0){showHint('Songs werden geladen – kurz warten!');return;}
   G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
   var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
-  G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];
+  G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
   try{var el=document.documentElement;if(el.requestFullscreen)el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();}catch(e){}
   showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
 }
@@ -766,7 +939,20 @@ function getCorrectPos(y,sorted){for(var i=0;i<sorted.length;i++){if(y<sorted[i]
 function newSongToken(){var team=G.teams[G.cur];if(team.tokens<=0){showHint('Keine Token mehr!');return;}team.tokens--;clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();cardNext();}
 
 // ── SCORING ──
-function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort((a,b)=>a-b);var correctPos=getCorrectPos(G.currentCard.y,sorted);if(type==='year'||type==='both'){team.years.push(G.currentCard.y);team.years.sort((a,b)=>a-b);if(type==='both')team.tokens=Math.min(MAX_TOK,team.tokens+1);spawnConfetti(team.color,90,false);}else{for(var i=0;i<G.teams.length;i++){if(i!==G.cur&&G.bets[i]===correctPos){G.teams[i].years.push(G.currentCard.y);G.teams[i].years.sort((a,b)=>a-b);spawnConfetti(G.teams[i].color,60,false);showHint(`${G.teams[i].name} stehlen die Jahreszahl! 🎉`);break;}}}G.bets={};G.betMode=null;if(team.years.length>=WIN){showVictory();return;}showTransition();}
+function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort((a,b)=>a-b);var correctPos=getCorrectPos(G.currentCard.y,sorted);if(type==='year'||type==='both'){team.years.push(G.currentCard.y);team.years.sort((a,b)=>a-b);if(type==='both')team.tokens=Math.min(MAX_TOK,team.tokens+1);spawnConfetti(team.color,90,false);}else{for(var i=0;i<G.teams.length;i++){if(i!==G.cur&&G.bets[i]===correctPos){G.teams[i].years.push(G.currentCard.y);G.teams[i].years.sort((a,b)=>a-b);spawnConfetti(G.teams[i].color,60,false);showHint(`${G.teams[i].name} stehlen die Jahreszahl! 🎉`);break;}}}G.bets={};G.betMode=null;
+  if(team.years.length>=WIN){showVictory();return;}
+  if(G.miniGames){
+    var memTrigger=WIN===5?3:5;
+    var papTrigger=WIN===5?4:9;
+    var maxCards=Math.max.apply(null,G.teams.map(function(t){return t.years.length;}));
+    if(!G.miniGamesDone.paparazzi&&maxCards>=papTrigger){
+      G.miniGamesDone.paparazzi=true;G.pendingMiniGame='paparazzi';
+    } else if(!G.miniGamesDone.memory&&maxCards>=memTrigger){
+      G.miniGamesDone.memory=true;G.pendingMiniGame='memory';
+    }
+    if(G.pendingMiniGame){var mg=G.pendingMiniGame;G.pendingMiniGame=null;scheduleMiniGame(mg);return;}
+  }
+  showTransition();}
 
 // ── TRANSITION ──
 function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':' r90','right':' r270','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
@@ -784,7 +970,7 @@ function openOpt(){buildOptFilter();document.getElementById('opt-panel').classLi
 function closeOpt(){document.getElementById('opt-panel').classList.remove('show');document.getElementById('opt-confirm').classList.remove('show');}
 function optNewSong(){closeOpt();clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();showHint('Schiedsrichter: Neuer Song! ⚖️');}
 function optResetPrompt(){document.getElementById('opt-confirm').classList.add('show');}
-function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');document.getElementById('lobby-status').textContent=G.songs.length?`${G.songs.length} Songs`:'';document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
+function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');updateSongCount();document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
 
 // ── UTILS ──
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el){el.classList.add('active');G.screen=name;}document.getElementById('opt-fab').style.display=(name==='game')?'flex':'none';}
@@ -797,6 +983,122 @@ document.addEventListener('touchstart',function(e){var op=document.getElementByI
 </script>
 
 <script>
+
+// ══════════════════════════════════════════════
+//  CHARTSTER MINI – Mini-Spiel Integration
+// ══════════════════════════════════════════════
+
+// ── Schedule and announce a mini-game ──
+function scheduleMiniGame(type){
+  var titles={memory:'Memory',paparazzi:'Paparazzi'};
+  var subs={memory:'Cover meets Songtext – wer findet die Paare?',paparazzi:'Erkenne den Künstler aus dem Bild!'};
+  document.getElementById('mga-title').textContent=titles[type]||type;
+  document.getElementById('mga-sub').textContent=subs[type]||'';
+
+  // Show announce overlay with animation
+  var announce=document.getElementById('minigame-announce');
+  var bar=document.getElementById('mga-bar');
+  var content=document.getElementById('mga-content');
+  bar.classList.remove('animate');content.classList.remove('animate');
+  announce.classList.add('show');
+  void bar.offsetWidth; // reflow
+  bar.classList.add('animate');content.classList.add('animate');
+
+  // After 3.2s open iframe
+  setTimeout(function(){
+    announce.classList.remove('show');
+    bar.classList.remove('animate');content.classList.remove('animate');
+    launchMiniGame(type);
+  },3300);
+}
+
+// ── Build config and launch iframe ──
+function launchMiniGame(type){
+  var tokenReward=WIN===5?1:2;
+  var pairsForMemory=WIN===5?6:8;
+  var goalForPapa=3;
+
+  // Build player list from G.teams
+  var players=G.teams.map(function(t,i){
+    return{name:t.name,color:t.color,origIdx:i};
+  });
+
+  // Store config in sessionStorage for iframe
+  var cfg={
+    players:players,
+    pairs:pairsForMemory,
+    goal:goalForPapa,
+    tokenReward:tokenReward,
+    filters: Array.from(G.filters)
+  };
+  try{sessionStorage.setItem('chartsterMiniConfig',JSON.stringify(cfg));}catch(e){}
+
+  // Show iframe
+  var wrap=document.getElementById('minigame-frame-wrap');
+  var iframe=document.getElementById('minigame-iframe');
+  var src=type==='memory'?'memory.html?embedded=1':'paparazzi.html?embedded=1';
+  iframe.src=src;
+  wrap.classList.add('show');
+  document.getElementById('mga-skip-btn').style.display='block';
+  // store type for result handler
+  wrap.dataset.type=type;
+}
+
+// ── Skip mini-game (no result) ──
+function skipMiniGame(){
+  closeMiniGameFrame();
+  showTransition();
+}
+
+function closeMiniGameFrame(){
+  var wrap=document.getElementById('minigame-frame-wrap');
+  var iframe=document.getElementById('minigame-iframe');
+  wrap.classList.remove('show');
+  iframe.src='';
+  document.getElementById('mga-skip-btn').style.display='none';
+}
+
+// ── Listen for result from iframe ──
+window.addEventListener('message',function(ev){
+  if(!ev.data||ev.data.type!=='miniGameResult') return;
+  closeMiniGameFrame();
+  var tokenReward=WIN===5?1:2;
+  showMiniResult(ev.data,tokenReward);
+});
+
+// ── Show result overlay and award tokens ──
+function showMiniResult(data,tokenReward){
+  var gameLabels={memory:'🃏 Memory',paparazzi:'📸 Paparazzi'};
+  document.getElementById('mr-game-type').textContent=gameLabels[data.gameType]||'Mini-Spiel';
+
+  var rewardLine=document.getElementById('mr-reward-line');
+  if(data.isTie||data.winnerOrigIdx<0){
+    document.getElementById('mr-emoji').textContent='🤝';
+    document.getElementById('mr-winner-name').textContent='Unentschieden!';
+    document.getElementById('mr-winner-name').style.color='var(--muted)';
+    rewardLine.innerHTML='<div class="mr-tie">Kein Bonus-Token</div>';
+  } else {
+    var winnerIdx=data.winnerOrigIdx;
+    var winner=G.teams[winnerIdx];
+    if(!winner){showTransition();return;}
+    // Award tokens
+    winner.tokens=Math.min(MAX_TOK,winner.tokens+tokenReward);
+    document.getElementById('mr-emoji').textContent='🏆';
+    document.getElementById('mr-winner-name').textContent=winner.name;
+    document.getElementById('mr-winner-name').style.color=winner.color;
+    rewardLine.innerHTML='<div class="mr-reward">+'+tokenReward+' Token! 🎉</div>';
+    spawnConfetti(winner.color,100,false);
+  }
+  document.getElementById('mini-result-overlay').classList.add('show');
+}
+
+// ── After result dismissed: continue game ──
+function miniGameReturn(){
+  document.getElementById('mini-result-overlay').classList.remove('show');
+  renderPanels();
+  showTransition();
+}
+
 // ══════════════════════════════════════════════
 //  CHARTSTER PWA – Service Worker & Install
 // ══════════════════════════════════════════════
