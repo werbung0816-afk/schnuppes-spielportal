@@ -567,7 +567,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.3.0</div>
+<div class="version">v4.3.2</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -856,7 +856,21 @@ function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.
 function filteredSongs(){
   var s=G.songs.filter(x=>x.l);
   var content=Array.from(G.filters).filter(f=>f!=='top10'&&f!=='top20');
-  if(content.length>0) s=s.filter(x=>content.includes(x.f));
+  if(content.length>0){
+    s=s.filter(function(x){
+      return content.some(function(f){
+        if(x.f) return x.f===f; // neue songs.json mit f-Feld
+        // Fallback: Jahrzehnt aus Jahr berechnen (alte songs.json)
+        if(f==='70er') return x.y>=1970&&x.y<1980;
+        if(f==='80er') return x.y>=1980&&x.y<1990;
+        if(f==='90er') return x.y>=1990&&x.y<2000;
+        if(f==='00er') return x.y>=2000&&x.y<2010;
+        if(f==='10er') return x.y>=2010&&x.y<2020;
+        if(f==='20er') return x.y>=2020;
+        return false; // Editions ohne f-Feld → kein Match
+      });
+    });
+  }
   if(G.filters.has('top10'))s=s.filter(x=>x.p&&x.p<=10);
   else if(G.filters.has('top20'))s=s.filter(x=>x.p&&x.p<=20);
   return s;
@@ -1442,7 +1456,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=65', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=67', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
