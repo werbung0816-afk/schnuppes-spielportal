@@ -452,8 +452,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .mg-cover-bg{
   position:absolute;inset:0;
   background-size:cover;background-position:center;
-  filter:blur(8px) brightness(.45);
   transform:scale(1.15);
+  animation:papa-focus 16s ease-in-out infinite;
+}
+@keyframes papa-focus{
+  0%,100%{filter:blur(9px) brightness(.45);}
+  50%    {filter:blur(0px) brightness(.50);}
 }
 .mg-overlay{
   position:absolute;inset:0;
