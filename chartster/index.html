@@ -548,7 +548,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.2.1</div>
+<div class="version">v4.2.2</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -1271,7 +1271,7 @@ function buildLobbyBg(){
     var depth=Math.random();
     var size=Math.round(90+depth*130);
     var blur=depth<0.35?(1.2-depth*2).toFixed(1)+'px':'0px';
-    var pos=randPos();
+    var pos=nextCoverPos();
     // Slow fades: 44–70 seconds per cycle
     var fadeDur=Math.round(44+Math.random()*26);
     var fadeDelay=-Math.round(Math.random()*fadeDur);
@@ -1294,7 +1294,7 @@ function buildLobbyBg(){
 
     slot.addEventListener('animationiteration',function(sl,inn){
       return function(){
-        coverPositions=gridPos(4,4);coverPosIdx=0;
+        coverPositions=shuffle(coverPositions);coverPosIdx=0;
         var p=nextCoverPos();
         var d=Math.random();
         var sz=Math.round(90+d*130);
@@ -1317,7 +1317,7 @@ function buildLobbyBg(){
   notes.forEach(function(note,i){
     var slot=document.createElement('div');
     var sz=Math.round(40+Math.random()*55);
-    var pos=randPos();
+    var pos=nextNotePos();
     var dur=Math.round(52+Math.random()*36);
     var delay=-Math.round(Math.random()*dur);
     var col=noteColors[i%noteColors.length];
@@ -1331,7 +1331,7 @@ function buildLobbyBg(){
     slot.textContent=note;
     slot.addEventListener('animationiteration',function(sl){
       return function(){
-        notePositions=gridPos(5,3);notePosIdx=0;
+        notePositions=shuffle(notePositions);notePosIdx=0;
         var p=nextNotePos();
         sl.style.left=p.x+'%';
         sl.style.top=p.y+'%';
@@ -1393,7 +1393,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=56', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=57', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
