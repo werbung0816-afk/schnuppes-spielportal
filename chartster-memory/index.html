@@ -200,7 +200,7 @@ body{
 <body>
 
 <div id="hint-toast"></div>
-<div class="version" style="position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px">v1.1.1</div>
+<div class="version" style="position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px">v1.1.2</div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
 
@@ -216,17 +216,17 @@ body{
   <div class="label" style="align-self:center">👥 Spieler – Platz am Tisch wählen</div>
   <div id="table-selector">
     <div class="ts-top-row">
-      <div class="seat" data-pos="top-l" onclick="toggleSeat('top-l')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div>
-      <div class="seat" data-pos="top-r" onclick="toggleSeat('top-r')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div>
+      <div class="seat" data-pos="top-l" onclick="toggleSeat('top-l')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Team" onclick="event.stopPropagation()"></div>
+      <div class="seat" data-pos="top-r" onclick="toggleSeat('top-r')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Team" onclick="event.stopPropagation()"></div>
     </div>
     <div class="ts-mid-row">
-      <div class="ts-side"><div class="seat" data-pos="left" onclick="toggleSeat('left')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div></div>
+      <div class="ts-side"><div class="seat" data-pos="left" onclick="toggleSeat('left')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Team" onclick="event.stopPropagation()"></div></div>
       <div id="ts-table-body"></div>
-      <div class="ts-side"><div class="seat" data-pos="right" onclick="toggleSeat('right')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div></div>
+      <div class="ts-side"><div class="seat" data-pos="right" onclick="toggleSeat('right')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Team" onclick="event.stopPropagation()"></div></div>
     </div>
     <div class="ts-bot-row">
-      <div class="seat" data-pos="bot-l" onclick="toggleSeat('bot-l')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div>
-      <div class="seat" data-pos="bot-r" onclick="toggleSeat('bot-r')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Spieler" onclick="event.stopPropagation()"></div>
+      <div class="seat" data-pos="bot-l" onclick="toggleSeat('bot-l')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Team" onclick="event.stopPropagation()"></div>
+      <div class="seat" data-pos="bot-r" onclick="toggleSeat('bot-r')"><div class="seat-circle"><svg width="24" height="24" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Team" onclick="event.stopPropagation()"></div>
     </div>
   </div>
 
@@ -291,7 +291,7 @@ const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f1c','#e0ff4f'];
 const DECADES=['70','80','90','00','10','20'];
 
 // ════ SEAT CONFIG ════
-var DEFAULTS=['Spieler 1','Spieler 2','Spieler 3','Spieler 4','Spieler 5','Spieler 6'];
+var DEFAULTS=['Helden','Legenden','Stars','Cracks','Profis','Champs'];
 var MAX_SEATS=6;
 var SEAT_POS=['top-l','top-r','left','right','bot-l','bot-r'];
 var seatCfg={'top-l':null,'top-r':null,'left':null,'right':null,'bot-l':null,'bot-r':null};
