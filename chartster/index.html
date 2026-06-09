@@ -470,6 +470,37 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   font-size:12px;font-weight:700;color:#fff;letter-spacing:.14em;text-transform:uppercase;
   text-shadow:0 2px 8px rgba(0,0,0,.9);
 }
+
+/* ── LOBBY BACKGROUND ── */
+#lobby-bg{
+  position:fixed;inset:0;z-index:0;
+  overflow:hidden;pointer-events:none;
+  display:block;
+}
+.lbg-cover{
+  position:absolute;
+  background-size:cover;background-position:center;
+  border-radius:10px;
+  opacity:0;
+  animation:lbg-fade var(--dur) var(--delay) ease-in-out infinite;
+}
+.lbg-note{
+  position:absolute;
+  color:rgba(255,255,255,.055);
+  line-height:1;
+  user-select:none;
+  opacity:0;
+  animation:lbg-note var(--dur) var(--delay) ease-in-out infinite;
+}
+@keyframes lbg-fade{
+  0%,100%{opacity:0;transform:rotate(var(--rot)) scale(1);}
+  20%,80%{opacity:var(--op);}
+  50%    {opacity:var(--op);transform:rotate(var(--rot)) scale(1.04);}
+}
+@keyframes lbg-note{
+  0%,100%{opacity:0;}
+  30%,70%{opacity:.055;}
+}
 </style>
 </head>
 <body>
@@ -529,6 +560,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 </div>
 
 <!-- ════ LOBBY ════ -->
+<div id="lobby-bg"></div>
 <div id="screen-lobby" class="screen active">
 <div class="card" style="max-width:560px;margin-top:24px">
   <div class="game-title" style="font-size:52px;letter-spacing:2px">CHARTSTER</div>
@@ -1060,7 +1092,7 @@ function optResetPrompt(){document.getElementById('opt-confirm').classList.add('
 function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');updateSongCount();document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
 
 // ── UTILS ──
-function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el){el.classList.add('active');G.screen=name;}document.getElementById('opt-fab').style.display=(name==='game')?'flex':'none';}
+function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el){el.classList.add('active');G.screen=name;}document.getElementById('opt-fab').style.display=(name==='game')?'flex':'none';var lbg=document.getElementById('lobby-bg');if(lbg)lbg.style.display=(name==='lobby')?'block':'none';}
 function showHint(msg){var el=document.getElementById('hint-toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
 function toggleCenter(){var gc=document.getElementById('game-center');var rots=['r0','r90','r180','r270'];var ci=rots.indexOf(gc.className.split(' ').find(c=>c.startsWith('r'))||'r0');gc.className=rots[(ci+1)%4];}
 function updateHole(){var o=document.getElementById('player-outer');var w=o.offsetWidth||412,mob=window.innerWidth<600;document.getElementById('play-hole').setAttribute('cx',mob?w-32:w-28);document.getElementById('play-hole').setAttribute('r',mob?18:22);document.getElementById('play-hole').setAttribute('cy',mob?128:124);}
@@ -1187,7 +1219,56 @@ function miniGameReturn(){
 }
 
 
+
+function buildLobbyBg(){
+  var bg=document.getElementById('lobby-bg');
+  if(!bg) return;
+  bg.innerHTML='';
+  var covers=shuffle(G.songs.filter(function(s){return s.c;})).slice(0,16);
+  var notes=['♩','♪','♫','♬','♭','♮','𝄞','𝄢'];
+
+  covers.forEach(function(song){
+    var el=document.createElement('div');
+    var size=Math.round(90+Math.random()*130);
+    var x=Math.random()*105-3;
+    var y=Math.random()*105-3;
+    var rot=(Math.random()-.5)*22;
+    var dur=Math.round(28+Math.random()*32);
+    var delay=-Math.round(Math.random()*dur);
+    var op=+(0.08+Math.random()*0.08).toFixed(2);
+    el.className='lbg-cover';
+    el.style.cssText=
+      'width:'+size+'px;height:'+size+'px;'+
+      'left:'+x.toFixed(1)+'%;top:'+y.toFixed(1)+'%;'+
+      'background-image:url("'+song.c+'");'+
+      'filter:brightness(.28) saturate(.5);'+
+      '--rot:'+rot.toFixed(1)+'deg;'+
+      '--op:'+op+';'+
+      '--dur:'+dur+'s;'+
+      '--delay:'+delay+'s;';
+    bg.appendChild(el);
+  });
+
+  notes.concat(notes).forEach(function(note,i){
+    var el=document.createElement('div');
+    var size=Math.round(70+Math.random()*110);
+    var x=Math.round(5+Math.random()*88);
+    var y=Math.round(5+Math.random()*88);
+    var dur=Math.round(22+Math.random()*28);
+    var delay=-Math.round(Math.random()*dur);
+    el.className='lbg-note';
+    el.style.cssText=
+      'font-size:'+size+'px;'+
+      'left:'+x+'%;top:'+y+'%;'+
+      '--dur:'+dur+'s;'+
+      '--delay:'+delay+'s;';
+    el.textContent=note;
+    bg.appendChild(el);
+  });
+}
+
 function decorateMiniGameButtons(){
+  buildLobbyBg();
   var covers=G.songs.filter(function(s){return s.c;});
   var artists=G.songs.filter(function(s){return s.ca;});
   if(covers.length===0&&artists.length===0) return;
