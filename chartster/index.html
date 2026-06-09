@@ -482,24 +482,28 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   background-size:cover;background-position:center;
   border-radius:10px;
   opacity:0;
-  animation:lbg-fade var(--dur) var(--delay) ease-in-out infinite;
+  animation-name:lbg-fade;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
 }
 .lbg-note{
   position:absolute;
-  color:rgba(255,255,255,.055);
+  color:rgba(255,255,255,.06);
   line-height:1;
   user-select:none;
   opacity:0;
-  animation:lbg-note var(--dur) var(--delay) ease-in-out infinite;
+  animation-name:lbg-note;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
 }
 @keyframes lbg-fade{
-  0%,100%{opacity:0;transform:rotate(var(--rot)) scale(1);}
-  20%,80%{opacity:var(--op);}
-  50%    {opacity:var(--op);transform:rotate(var(--rot)) scale(1.04);}
+  0%,100%{opacity:0;}
+  25%,75%{opacity:.12;}
+  50%    {opacity:.15;}
 }
 @keyframes lbg-note{
   0%,100%{opacity:0;}
-  30%,70%{opacity:.055;}
+  30%,70%{opacity:.06;}
 }
 </style>
 </head>
@@ -537,7 +541,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.0.8</div>
+<div class="version">v4.0.9</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -1225,31 +1229,30 @@ function buildLobbyBg(){
   if(!bg) return;
   bg.innerHTML='';
   var covers=shuffle(G.songs.filter(function(s){return s.c;})).slice(0,16);
-  var notes=['♩','♪','♫','♬','♭','♮','𝄞','𝄢'];
+  var notes=['♩','♪','♫','♬','♭','♮','♩','♪','♫','♬','♭','♮'];
 
   covers.forEach(function(song){
     var el=document.createElement('div');
     var size=Math.round(90+Math.random()*130);
-    var x=Math.random()*105-3;
-    var y=Math.random()*105-3;
-    var rot=(Math.random()-.5)*22;
+    var x=(Math.random()*105-3).toFixed(1);
+    var y=(Math.random()*105-3).toFixed(1);
+    var rot=((Math.random()-.5)*22).toFixed(1);
     var dur=Math.round(28+Math.random()*32);
     var delay=-Math.round(Math.random()*dur);
-    var op=+(0.08+Math.random()*0.08).toFixed(2);
     el.className='lbg-cover';
-    el.style.cssText=
-      'width:'+size+'px;height:'+size+'px;'+
-      'left:'+x.toFixed(1)+'%;top:'+y.toFixed(1)+'%;'+
-      'background-image:url("'+song.c+'");'+
-      'filter:brightness(.28) saturate(.5);'+
-      '--rot:'+rot.toFixed(1)+'deg;'+
-      '--op:'+op+';'+
-      '--dur:'+dur+'s;'+
-      '--delay:'+delay+'s;';
+    el.style.width=size+'px';
+    el.style.height=size+'px';
+    el.style.left=x+'%';
+    el.style.top=y+'%';
+    el.style.backgroundImage='url("'+song.c+'")';
+    el.style.filter='brightness(.28) saturate(.5)';
+    el.style.transform='rotate('+rot+'deg)';
+    el.style.animationDuration=dur+'s';
+    el.style.animationDelay=delay+'s';
     bg.appendChild(el);
   });
 
-  notes.concat(notes).forEach(function(note,i){
+  notes.forEach(function(note){
     var el=document.createElement('div');
     var size=Math.round(70+Math.random()*110);
     var x=Math.round(5+Math.random()*88);
@@ -1257,11 +1260,11 @@ function buildLobbyBg(){
     var dur=Math.round(22+Math.random()*28);
     var delay=-Math.round(Math.random()*dur);
     el.className='lbg-note';
-    el.style.cssText=
-      'font-size:'+size+'px;'+
-      'left:'+x+'%;top:'+y+'%;'+
-      '--dur:'+dur+'s;'+
-      '--delay:'+delay+'s;';
+    el.style.fontSize=size+'px';
+    el.style.left=x+'%';
+    el.style.top=y+'%';
+    el.style.animationDuration=dur+'s';
+    el.style.animationDelay=delay+'s';
     el.textContent=note;
     bg.appendChild(el);
   });
