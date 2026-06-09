@@ -548,7 +548,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.2.5</div>
+<div class="version">v4.2.6</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -1242,55 +1242,44 @@ function buildLobbyBg(){
   var poolIdx=0;
   function nextCover(){var s=pool[poolIdx%pool.length];poolIdx++;return s;}
 
-  // Random point within a rectangular zone [x1,y1,x2,y2]
-  function zonePt(x1,y1,x2,y2){
-    return[+(x1+Math.random()*(x2-x1)).toFixed(1), +(y1+Math.random()*(y2-y1)).toFixed(1)];
-  }
-  // Build n points across multiple zones ensuring spread
-  function zonedPoints(zones, n){
-    var pts=[];
-    var perZone=Math.ceil(n/zones.length);
-    zones.forEach(function(z){
-      for(var i=0;i<perZone&&pts.length<n;i++){
-        // Simple repulsion: retry if too close to existing point in same zone
-        var best=null, bestDist=0;
-        for(var t=0;t<8;t++){
-          var p=zonePt(z[0],z[1],z[2],z[3]);
-          var minD=999;
-          pts.forEach(function(q){var dx=q[0]-p[0],dy=q[1]-p[1];minD=Math.min(minD,Math.sqrt(dx*dx+dy*dy));});
-          if(minD>bestDist){bestDist=minD;best=p;}
-        }
-        pts.push(best);
-      }
-    });
-    return shuffle(pts).slice(0,n);
-  }
+  // Fixed slot positions: manually defined grid avoiding center (30-70% x, 10-90% y)
+  // Left column: 3 rows × 2 cols = 6 slots
+  // Right column: 3 rows × 2 cols = 6 slots
+  // Top strip: 3 slots across top
+  // Bottom strip: 3 slots across bottom
+  // Total: 18 cover slots
+  function jit(v, range){ return +(v + (Math.random()-.5)*range).toFixed(1); }
 
-  // Cover zones: left strip, right strip, top corners, bottom corners
-  var coverZones=[
-    [2,  5,  27, 45],  // left top
-    [2,  50, 27, 92],  // left bottom
-    [73, 5,  97, 45],  // right top
-    [73, 50, 97, 92],  // right bottom
-    [28, 2,  70, 14],  // top center
-    [28, 86, 70, 98],  // bottom center
+  var coverSlots = [
+    // Left col A (x≈8%)
+    [jit(8,6),  jit(12,8)], [jit(8,6),  jit(42,8)], [jit(8,6),  jit(72,8)],
+    // Left col B (x≈21%)
+    [jit(21,6), jit(27,8)], [jit(21,6), jit(57,8)], [jit(21,6), jit(87,6)],
+    // Right col A (x≈79%)
+    [jit(79,6), jit(12,8)], [jit(79,6), jit(42,8)], [jit(79,6), jit(72,8)],
+    // Right col B (x≈92%)
+    [jit(92,5), jit(27,8)], [jit(92,5), jit(57,8)], [jit(92,5), jit(87,6)],
+    // Top strip (y≈5%)
+    [jit(35,6), jit(5,4)],  [jit(52,6), jit(5,4)],  [jit(66,5), jit(5,4)],
+    // Bottom strip (y≈95%)
+    [jit(35,6), jit(95,4)], [jit(52,6), jit(95,4)], [jit(66,5), jit(95,4)],
   ];
-  var coverPts=zonedPoints(coverZones, 16);
+  coverSlots = shuffle(coverSlots);
 
-  // Note zones: slightly inset from cover zones, also sides
-  var noteZones=[
-    [3,  15, 25, 50],
-    [3,  52, 25, 88],
-    [75, 15, 97, 50],
-    [75, 52, 97, 88],
-    [30, 3,  68, 13],
-    [30, 87, 68, 97],
+  // Note slots: in gaps between cover slots
+  var noteSlots = [
+    [jit(5,4),  jit(32,6)], [jit(5,4),  jit(62,6)],
+    [jit(19,5), jit(10,5)], [jit(19,5), jit(50,6)],
+    [jit(81,5), jit(20,6)], [jit(81,5), jit(60,6)],
+    [jit(95,4), jit(10,5)], [jit(95,4), jit(45,6)],
+    [jit(42,6), jit(92,4)], [jit(60,6), jit(92,4)],
+    [jit(42,6), jit(8,4)],  [jit(60,6), jit(8,4)],
   ];
-  var notePts=zonedPoints(noteZones, 12);
+  noteSlots = shuffle(noteSlots);
 
-  coverPts.forEach(function(pt){
+  coverSlots.forEach(function(pt){
     var depth=Math.random();
-    var size=Math.round(80+depth*100);
+    var size=Math.round(75+depth*95);
     var blur=depth<0.3?(0.8-depth*1.5).toFixed(1)+'px':'0px';
     var rot=((Math.random()-.5)*22).toFixed(1);
     var fadeDur=Math.round(44+Math.random()*26);
@@ -1311,25 +1300,27 @@ function buildLobbyBg(){
     if(blur!=='0px') inner.style.filter='brightness(.65) saturate(.75) blur('+blur+')';
     slot.appendChild(inner);
 
-    slot.addEventListener('animationiteration',function(sl,inn,zns){
+    // On cycle: pick random slot from same approximate area
+    slot.addEventListener('animationiteration',function(sl,inn,ox,oy){
       return function(){
-        var np=zonedPoints(zns,1)[0];
-        var d=Math.random(), sz=Math.round(80+d*100);
+        var nx=jit(ox,8), ny=jit(oy,10);
+        nx=Math.max(2,Math.min(97,nx)); ny=Math.max(2,Math.min(97,ny));
+        var d=Math.random(), sz=Math.round(75+d*95);
         var bl=d<0.3?(0.8-d*1.5).toFixed(1)+'px':'0px';
         sl.style.width=sz+'px'; sl.style.height=sz+'px';
-        sl.style.left=np[0]+'%'; sl.style.top=np[1]+'%';
+        sl.style.left=nx.toFixed(1)+'%'; sl.style.top=ny.toFixed(1)+'%';
         inn.style.transform='rotate('+((Math.random()-.5)*22).toFixed(1)+'deg)';
         inn.style.backgroundImage='url("'+nextCover().c+'")';
         inn.style.filter=bl!=='0px'?'brightness(.65) saturate(.75) blur('+bl+')':'brightness(.65) saturate(.75)';
       };
-    }(slot,inner,coverZones));
+    }(slot,inner,pt[0],pt[1]));
     bg.appendChild(slot);
   });
 
   var noteChars=['♩','♪','♫','♬','♭','♮','♩','♪','♫','♬','♭','♪'];
   var noteColors=['rgba(255,255,255,.40)','rgba(255,255,255,.40)','rgba(255,255,255,.40)','rgba(255,79,216,.30)','rgba(255,79,216,.30)','rgba(255,255,255,.40)'];
-  notePts.forEach(function(pt,i){
-    var sz=Math.round(36+Math.random()*42);
+  noteSlots.forEach(function(pt,i){
+    var sz=Math.round(32+Math.random()*38);
     var dur=Math.round(52+Math.random()*36);
     var delay=-Math.round(Math.random()*dur);
     var slot=document.createElement('div');
@@ -1341,13 +1332,14 @@ function buildLobbyBg(){
     slot.style.animationDuration=dur+'s';
     slot.style.animationDelay=delay+'s';
     slot.textContent=noteChars[i%noteChars.length];
-    slot.addEventListener('animationiteration',function(sl,zns){
+    slot.addEventListener('animationiteration',function(sl,ox,oy){
       return function(){
-        var np=zonedPoints(zns,1)[0];
-        sl.style.left=np[0]+'%'; sl.style.top=np[1]+'%';
-        sl.style.fontSize=Math.round(36+Math.random()*42)+'px';
+        var nx=jit(ox,8), ny=jit(oy,10);
+        nx=Math.max(2,Math.min(97,nx)); ny=Math.max(2,Math.min(97,ny));
+        sl.style.left=nx.toFixed(1)+'%'; sl.style.top=ny.toFixed(1)+'%';
+        sl.style.fontSize=Math.round(32+Math.random()*38)+'px';
       };
-    }(slot,noteZones));
+    }(slot,pt[0],pt[1]));
     bg.appendChild(slot);
   });
 }
@@ -1403,7 +1395,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=60', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=61', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
