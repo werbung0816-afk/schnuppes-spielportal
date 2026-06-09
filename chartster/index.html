@@ -498,12 +498,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 }
 @keyframes lbg-fade{
   0%,100%{opacity:0;}
-  25%,75%{opacity:.12;}
-  50%    {opacity:.15;}
+  20%,80%{opacity:.35;}
+  50%    {opacity:.42;}
 }
 @keyframes lbg-note{
   0%,100%{opacity:0;}
-  30%,70%{opacity:.06;}
+  30%,70%{opacity:.18;}
 }
 </style>
 </head>
@@ -541,7 +541,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.0.9</div>
+<div class="version">v4.1.0</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -1245,7 +1245,7 @@ function buildLobbyBg(){
     el.style.left=x+'%';
     el.style.top=y+'%';
     el.style.backgroundImage='url("'+song.c+'")';
-    el.style.filter='brightness(.28) saturate(.5)';
+    el.style.filter='brightness(.45) saturate(.65)';
     el.style.transform='rotate('+rot+'deg)';
     el.style.animationDuration=dur+'s';
     el.style.animationDelay=delay+'s';
@@ -1321,8 +1321,9 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js', {
-      scope: '/schnuppes-spielportal/chartster/'
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=44', {
+      scope: '/schnuppes-spielportal/chartster/',
+      updateViaCache: 'none'
     }).then(reg => {
       console.log('[PWA] SW registriert, scope:', reg.scope);
 
@@ -1331,10 +1332,8 @@ if ('serviceWorker' in navigator) {
         pwaNewWorker = reg.installing;
         pwaNewWorker?.addEventListener('statechange', () => {
           if (pwaNewWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // Neues Update verfügbar
-            setTimeout(() => {
-              document.getElementById('pwa-update-toast').classList.add('show');
-            }, 1500);
+            // Neues Update → sofort aktivieren
+            pwaNewWorker.postMessage('SKIP_WAITING');
           }
         });
       });
