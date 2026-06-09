@@ -548,7 +548,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.2.0</div>
+<div class="version">v4.2.1</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -1241,11 +1241,30 @@ function buildLobbyBg(){
   var pool=top20.concat(rest);
   var poolIdx=0;
   function nextCover(){var s=pool[poolIdx%pool.length];poolIdx++;return s;}
-  function randPos(){return{
-    x:(Math.random()*105-3).toFixed(1),
-    y:(Math.random()*105-3).toFixed(1),
-    rot:((Math.random()-.5)*22).toFixed(1)
-  };}
+  // Grid-based positioning with jitter for even distribution
+  function gridPos(cols,rows){
+    var cells=[];
+    for(var r=0;r<rows;r++) for(var c=0;c<cols;c++) cells.push([c,r]);
+    cells=shuffle(cells);
+    return cells.map(function(cell){
+      var cw=100/cols, ch=100/rows;
+      return{
+        x:(cell[0]*cw + (0.15+Math.random()*0.70)*cw).toFixed(1),
+        y:(cell[1]*ch + (0.15+Math.random()*0.70)*ch).toFixed(1),
+        rot:((Math.random()-.5)*22).toFixed(1)
+      };
+    });
+  }
+  // Cover positions: 4×4 grid (16 cells), take 14
+  var coverPositions=gridPos(4,4);
+  var coverPosIdx=0;
+  function nextCoverPos(){var p=coverPositions[coverPosIdx%coverPositions.length];coverPosIdx++;return p;}
+  // Note positions: 5×3 grid offset by half cell, take 10
+  var notePositions=gridPos(5,3).map(function(p){
+    return{x:(parseFloat(p.x)+10).toFixed(1),y:(parseFloat(p.y)+16).toFixed(1),rot:p.rot};
+  });
+  var notePosIdx=0;
+  function nextNotePos(){var p=notePositions[notePosIdx%notePositions.length];notePosIdx++;return p;}
 
   var NUM=14;
   for(var i=0;i<NUM;i++){
@@ -1275,7 +1294,8 @@ function buildLobbyBg(){
 
     slot.addEventListener('animationiteration',function(sl,inn){
       return function(){
-        var p=randPos();
+        coverPositions=gridPos(4,4);coverPosIdx=0;
+        var p=nextCoverPos();
         var d=Math.random();
         var sz=Math.round(90+d*130);
         var bl=d<0.35?(1.2-d*2).toFixed(1)+'px':'0px';
@@ -1311,7 +1331,8 @@ function buildLobbyBg(){
     slot.textContent=note;
     slot.addEventListener('animationiteration',function(sl){
       return function(){
-        var p=randPos();
+        notePositions=gridPos(5,3);notePosIdx=0;
+        var p=nextNotePos();
         sl.style.left=p.x+'%';
         sl.style.top=p.y+'%';
         sl.style.fontSize=Math.round(40+Math.random()*55)+'px';
@@ -1372,7 +1393,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=55', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=56', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
