@@ -71,7 +71,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .sep{width:100%;height:1px;background:var(--glass-b)}
 .game-title{font-size:44px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px rgba(83,246,255,.4))}
 .label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:center;width:100%;font-family:'Outfit',sans-serif}
-.btn{width:100%;padding:16px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:18px;font-weight:600;transition:all .2s;border:none;outline:none;-webkit-appearance:none;touch-action:manipulation;user-select:none}
+.btn{width:100%;padding:16px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;border:none;outline:none;-webkit-appearance:none;touch-action:manipulation;user-select:none}
 .btn[disabled]{opacity:.35;pointer-events:none}
 .btn-primary{background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));color:var(--cyan);border:1px solid rgba(83,246,255,.4);box-shadow:0 0 20px rgba(83,246,255,.12)}
 .btn-primary:active{box-shadow:0 0 32px rgba(83,246,255,.4)}
@@ -80,9 +80,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 /* ── LOBBY ── */
 .setup-section{width:100%;display:flex;flex-direction:column;gap:8px}
-.flt{padding:6px 10px;border-radius:12px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px}
+.flt{padding:4px;border-radius:12px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);transition:all .2s;display:inline-flex;align-items:center;justify-content:center;}
 .flt.flt-sm{min-width:48px;padding:8px 6px;font-size:14px;justify-content:center;line-height:1.2;text-align:center}
-.flt img{width:48px;height:48px;border-radius:8px;object-fit:cover}
+.flt img{width:52px;height:52px;border-radius:8px;object-fit:cover;display:block;}
 .flt.on{border-color:var(--purple);color:var(--purple);background:rgba(143,95,255,.12)}
 .flt.off{opacity:.3;pointer-events:none}
 .filter-wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
@@ -462,7 +462,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 }
 .mg-overlay-icon{font-size:22px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.9));}
 .mg-overlay-name{
-  font-size:15px;font-weight:900;color:#fff;letter-spacing:.03em;
+  font-size:12px;font-weight:700;color:#fff;letter-spacing:.14em;text-transform:uppercase;
   text-shadow:0 2px 8px rgba(0,0,0,.9);
 }
 </style>
@@ -548,19 +548,19 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="setup-section">
     <div class="label">Auswahl</div>
     <div class="filter-wrap" id="flt-wrap">
-      <button class="flt" data-f="70er" onclick="toggleFlt(this)"><img src="filter/filter-70er.png" alt="70er">70er</button>
-      <button class="flt" data-f="80er" onclick="toggleFlt(this)"><img src="filter/filter-80er.png" alt="80er">80er</button>
-      <button class="flt" data-f="90er" onclick="toggleFlt(this)"><img src="filter/filter-90er.png" alt="90er">90er</button>
-      <button class="flt" data-f="00er" onclick="toggleFlt(this)"><img src="filter/filter-00er.png" alt="00er">00er</button>
-      <button class="flt" data-f="10er" onclick="toggleFlt(this)"><img src="filter/filter-10er.png" alt="10er">10er</button>
-      <button class="flt" data-f="20er" onclick="toggleFlt(this)"><img src="filter/filter-20er.png" alt="20er">20er</button>
-      <button class="flt" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500">RS-500</button>
-      <button class="flt" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond">Bond</button>
-      <button class="flt" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM">WM</button>
-      <button class="flt" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino">Kino</button>
+      <button class="flt" data-f="70er" onclick="toggleFlt(this)"><img src="filter/filter-70er.png" alt="70er"></button>
+      <button class="flt" data-f="80er" onclick="toggleFlt(this)"><img src="filter/filter-80er.png" alt="80er"></button>
+      <button class="flt" data-f="90er" onclick="toggleFlt(this)"><img src="filter/filter-90er.png" alt="90er"></button>
+      <button class="flt" data-f="00er" onclick="toggleFlt(this)"><img src="filter/filter-00er.png" alt="00er"></button>
+      <button class="flt" data-f="10er" onclick="toggleFlt(this)"><img src="filter/filter-10er.png" alt="10er"></button>
+      <button class="flt" data-f="20er" onclick="toggleFlt(this)"><img src="filter/filter-20er.png" alt="20er"></button>
+      <button class="flt" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500"></button>
+      <button class="flt" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond"></button>
+      <button class="flt" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM"></button>
+      <button class="flt" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino"></button>
       <div style="width:100%"></div>
-      <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20">Top 20</button>
-      <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10">Top 10</button>
+      <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20"></button>
+      <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10"></button>
       <div style="width:100%"></div>
       <div style="width:100%;display:flex;align-items:center">
         <div style="flex:1"></div>
@@ -574,21 +574,19 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="sep"></div>
   <div style="display:flex;gap:10px;width:100%">
     <button class="btn btn-primary" id="start-btn" onclick="startGame()" disabled style="flex:1">Spiel starten</button>
-    <button id="s5-btn" onclick="toggleS5()" style="padding:14px 18px;border-radius:14px;font-family:Outfit,sans-serif;font-size:18px;font-weight:700;border:1px solid rgba(255,79,216,.35);background:rgba(255,79,216,.08);color:var(--muted);white-space:nowrap;flex-shrink:0;transition:all .2s">Schnelle 5</button>
+    <button id="s5-btn" onclick="toggleS5()" style="padding:14px 18px;border-radius:14px;font-family:Outfit,sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(255,79,216,.35);background:rgba(255,79,216,.08);color:var(--muted);white-space:nowrap;flex-shrink:0;transition:all .2s">Schnelle 5</button>
   </div>
   <div class="sep"></div>
   <div class="mg-cards">
     <a href="memory.html" class="mg-card" id="mg-memory">
       <div class="mg-covers" id="mg-mem-covers"></div>
       <div class="mg-overlay">
-        <div class="mg-overlay-icon">🃏</div>
         <div class="mg-overlay-name">Memory</div>
       </div>
     </a>
     <a href="paparazzi.html" class="mg-card" id="mg-paparazzi">
       <div class="mg-cover-bg" id="mg-papa-bg"></div>
       <div class="mg-overlay">
-        <div class="mg-overlay-icon">📸</div>
         <div class="mg-overlay-name">Paparazzi</div>
       </div>
     </a>
@@ -1212,8 +1210,10 @@ function decorateMiniGameButtons(){
   }
 
   setMemory(); setPaparazzi();
-  setInterval(setMemory,4000);
-  setInterval(setPaparazzi,4000);
+  setTimeout(function(){
+    setMemory(); setPaparazzi();
+    setInterval(function(){ setMemory(); setPaparazzi(); }, 120000);
+  }, 30000);
 }
 
 // ══════════════════════════════════════════════
