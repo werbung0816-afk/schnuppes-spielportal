@@ -81,6 +81,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 /* ── LOBBY ── */
 .setup-section{width:100%;display:flex;flex-direction:column;gap:8px}
 .flt{padding:6px 10px;border-radius:12px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px}
+.flt.flt-sm{min-width:48px;padding:8px 6px;font-size:14px;justify-content:center;line-height:1.2;text-align:center}
 .flt img{width:48px;height:48px;border-radius:8px;object-fit:cover}
 .flt.on{border-color:var(--purple);color:var(--purple);background:rgba(143,95,255,.12)}
 .flt.off{opacity:.3;pointer-events:none}
@@ -511,15 +512,23 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="setup-section">
     <div class="label">Chartjahre</div>
     <div class="filter-wrap" id="flt-wrap">
-      <button class="flt" data-f="70" onclick="toggleFlt(this)"><img src="filter/filter-70er.png" alt="70er">70er</button>
-      <button class="flt" data-f="80" onclick="toggleFlt(this)"><img src="filter/filter-80er.png" alt="80er">80er</button>
-      <button class="flt" data-f="90" onclick="toggleFlt(this)"><img src="filter/filter-90er.png" alt="90er">90er</button>
-      <button class="flt" data-f="00" onclick="toggleFlt(this)"><img src="filter/filter-00er.png" alt="00er">00er</button>
-      <button class="flt" data-f="10" onclick="toggleFlt(this)"><img src="filter/filter-10er.png" alt="10er">10er</button>
-      <button class="flt" data-f="20" onclick="toggleFlt(this)"><img src="filter/filter-20er.png" alt="20er">20er</button>
+      <button class="flt flt-sm" data-f="Vor 60er" onclick="toggleFlt(this)">Vor<br>60er</button>
+      <button class="flt flt-sm" data-f="60er" onclick="toggleFlt(this)">60er</button>
+      <button class="flt" data-f="70er" onclick="toggleFlt(this)"><img src="filter/filter-70er.png" alt="70er">70er</button>
+      <button class="flt" data-f="80er" onclick="toggleFlt(this)"><img src="filter/filter-80er.png" alt="80er">80er</button>
+      <button class="flt" data-f="90er" onclick="toggleFlt(this)"><img src="filter/filter-90er.png" alt="90er">90er</button>
+      <button class="flt" data-f="00er" onclick="toggleFlt(this)"><img src="filter/filter-00er.png" alt="00er">00er</button>
+      <button class="flt" data-f="10er" onclick="toggleFlt(this)"><img src="filter/filter-10er.png" alt="10er">10er</button>
+      <button class="flt" data-f="20er" onclick="toggleFlt(this)"><img src="filter/filter-20er.png" alt="20er">20er</button>
       <div style="width:100%"></div>
       <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20">Top 20</button>
       <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10">Top 10</button>
+      <div style="width:100%;height:1px;background:var(--glass-b);margin:4px 0"></div>
+      <div style="width:100%;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:2px 0 4px">Editionen</div>
+      <button class="flt" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500">RS-500</button>
+      <button class="flt" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond">Bond</button>
+      <button class="flt" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM">WM</button>
+      <button class="flt" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino">Kino</button>
       <div style="width:100%"></div>
       <div style="width:100%;display:flex;align-items:center">
         <div style="flex:1"></div>
@@ -696,7 +705,8 @@ var IS_HOST=false,fbListener=null;
 const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ffd84d','#ff6b35'];
 const DEFAULTS=['Helden','Legenden','Stars','Cracks','Profis','Champs'];
 const MAX_TEAMS=6,MAX_TOK=5;var WIN=10;
-const DECADES=['70','80','90','00','10','20'];
+const DECADES=['Vor 60er','60er','70er','80er','90er','00er','10er','20er'];
+const EDITIONS=['RS-500','Bond-Edition','WM-Edition','Popcorn-Edition'];
 // Clockwise from top-left (viewed from above): top→right→bottom→left
 const CW_ORDER=['bot-l','left','top-r','top-l','right','bot-r'];
 const SEAT_DEF={'top-l':{side:'top'},'top-r':{side:'top'},'left':{side:'left'},'right':{side:'right'},'bot-l':{side:'bot'},'bot-r':{side:'bot'}};
@@ -733,7 +743,17 @@ initFirebase();
 
 // ── SONGS ──
 function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);updateStartBtn();updateSongCount();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
-function filteredSongs(){var s=G.songs.filter(x=>x.l);if(G.filters.size===0||G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20'))return s;var dec=DECADES.filter(d=>G.filters.has(d));if(dec.length)s=s.filter(x=>dec.some(d=>{if(d==='70')return x.y>=1970&&x.y<1980;if(d==='80')return x.y>=1980&&x.y<1990;if(d==='90')return x.y>=1990&&x.y<2000;if(d==='00')return x.y>=2000&&x.y<2010;if(d==='10')return x.y>=2010&&x.y<2020;if(d==='20')return x.y>=2020;return false;}));if(G.filters.has('top10'))s=s.filter(x=>x.p<=10);else if(G.filters.has('top20'))s=s.filter(x=>x.p<=20);return s;}
+function filteredSongs(){
+  var s=G.songs.filter(x=>x.l);
+  var posOnly=G.filters.size===0||(Array.from(G.filters).every(f=>f==='top10'||f==='top20'||f==='all'));
+  if(!posOnly){
+    var active=Array.from(G.filters).filter(f=>f!=='top10'&&f!=='top20'&&f!=='all');
+    s=s.filter(x=>active.includes(x.f));
+  }
+  if(G.filters.has('top10'))s=s.filter(x=>x.p&&x.p<=10);
+  else if(G.filters.has('top20'))s=s.filter(x=>x.p&&x.p<=20);
+  return s;
+}
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 
 // ── SEAT SELECTOR ──
@@ -763,15 +783,47 @@ function updateSongCount(){
   var el=document.getElementById('lobby-status');if(!el)return;
   var total=G.songs.length;
   var filtered=filteredSongs().length;
-  var isAll=G.filters.size===0||G.filters.has('all')&&!G.filters.has('top10')&&!G.filters.has('top20');
+  var isAll=G.filters.size===0||Array.from(G.filters).every(f=>f==='all'||f==='top10'||f==='top20');
   if(total===0){el.textContent='';return;}
   if(isAll){el.textContent=total+' Songs';}
   else{el.textContent=filtered+' / '+total+' Songs';}
 }
 
 // ── FILTER ──
-function toggleFlt(btn,isOpt){var f=btn.dataset.f;if(f==='all'){G.filters=new Set();}else if(f==='top10'){G.filters.delete('all');G.filters.delete('top20');G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');}else if(f==='top20'){G.filters.delete('all');G.filters.delete('top10');G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');}else{G.filters.delete('all');G.filters.has(f)?G.filters.delete(f):G.filters.add(f);if(G.filters.size===0)G.filters.add('all');}syncFlt('flt-wrap');syncFlt('opt-filter');updateSongCount();if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}}
-function syncFlt(id){var w=document.getElementById(id);if(!w)return;var isAll=G.filters.size===0||G.filters.has('all');w.querySelectorAll('.flt').forEach(b=>{b.classList.toggle('on',G.filters.has(b.dataset.f));b.classList.remove('off');});if(isAll){DECADES.forEach(d=>{var el=w.querySelector(`[data-f="${d}"]`);if(el)el.classList.add('off');});}var t10=w.querySelector('[data-f="top10"]'),t20=w.querySelector('[data-f="top20"]');if(G.filters.has('top10')&&t20)t20.classList.add('off');if(G.filters.has('top20')&&t10)t10.classList.add('off');}
+function toggleFlt(btn,isOpt){
+  var f=btn.dataset.f;
+  if(f==='all'){
+    G.filters=new Set();
+  } else if(f==='top10'){
+    G.filters.delete('all');G.filters.delete('top20');
+    G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');
+  } else if(f==='top20'){
+    G.filters.delete('all');G.filters.delete('top10');
+    G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');
+  } else {
+    G.filters.delete('all');
+    G.filters.has(f)?G.filters.delete(f):G.filters.add(f);
+    if(G.filters.size===0||Array.from(G.filters).every(f=>f==='top10'||f==='top20'))
+      G.filters.delete('top10')||true; // keep top filters but no crash
+  }
+  syncFlt('flt-wrap');syncFlt('opt-filter');updateSongCount();
+  if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}
+}
+function syncFlt(id){
+  var w=document.getElementById(id);if(!w)return;
+  var hasContent=Array.from(G.filters).some(f=>f!=='top10'&&f!=='top20'&&f!=='all');
+  w.querySelectorAll('.flt').forEach(b=>{
+    b.classList.toggle('on',G.filters.has(b.dataset.f));
+    b.classList.remove('off');
+  });
+  if(!hasContent){
+    DECADES.forEach(d=>{var el=w.querySelector('[data-f="'+d+'"]');if(el)el.classList.add('off');});
+    EDITIONS.forEach(d=>{var el=w.querySelector('[data-f="'+d+'"]');if(el)el.classList.add('off');});
+  }
+  var t10=w.querySelector('[data-f="top10"]'),t20=w.querySelector('[data-f="top20"]');
+  if(G.filters.has('top10')&&t20)t20.classList.add('off');
+  if(G.filters.has('top20')&&t10)t10.classList.add('off');
+}
 function buildOptFilter(){var w=document.getElementById('opt-filter');w.innerHTML=document.getElementById('flt-wrap').innerHTML;w.querySelectorAll('.flt').forEach(b=>{b.onclick=function(){toggleFlt(b,true);};});syncFlt('opt-filter');}
 
 // ── CLOCKWISE ORDER ──
