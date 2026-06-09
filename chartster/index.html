@@ -429,6 +429,40 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 }
 #mini-btn.on{border-color:var(--cyan);color:var(--cyan);background:rgba(83,246,255,.12);
   box-shadow:0 0 10px rgba(83,246,255,.2);}
+
+/* ── MINI-GAME PREVIEW CARDS ── */
+.mg-cards{display:flex;gap:12px;width:100%}
+.mg-card{
+  flex:1;border-radius:16px;overflow:hidden;position:relative;
+  aspect-ratio:3/2;border:1px solid var(--glass-b);
+  text-decoration:none;display:block;
+  transition:transform .2s,box-shadow .2s;
+  background:#07000f;
+}
+.mg-card:active{transform:scale(.97);}
+.mg-card:hover{box-shadow:0 0 24px rgba(83,246,255,.18);}
+.mg-covers{
+  display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
+  width:100%;height:100%;
+}
+.mg-covers img{width:100%;height:100%;object-fit:cover;display:block;}
+.mg-cover-bg{
+  width:100%;height:100%;
+  background-size:cover;background-position:center;
+  filter:blur(10px) brightness(.55);
+  transform:scale(1.12);
+}
+.mg-overlay{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6px;
+  background:linear-gradient(to bottom,rgba(7,0,15,.1),rgba(7,0,15,.65));
+}
+.mg-overlay-icon{font-size:30px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8));}
+.mg-overlay-name{
+  font-size:18px;font-weight:900;color:#fff;letter-spacing:.02em;
+  text-shadow:0 2px 10px rgba(0,0,0,.9);
+}
 </style>
 </head>
 <body>
@@ -510,25 +544,21 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
     </div>
   </div>
   <div class="setup-section">
-    <div class="label">Chartjahre</div>
+    <div class="label">Auswahl</div>
     <div class="filter-wrap" id="flt-wrap">
-      <button class="flt flt-sm" data-f="Vor 60er" onclick="toggleFlt(this)">Vor<br>60er</button>
-      <button class="flt flt-sm" data-f="60er" onclick="toggleFlt(this)">60er</button>
       <button class="flt" data-f="70er" onclick="toggleFlt(this)"><img src="filter/filter-70er.png" alt="70er">70er</button>
       <button class="flt" data-f="80er" onclick="toggleFlt(this)"><img src="filter/filter-80er.png" alt="80er">80er</button>
       <button class="flt" data-f="90er" onclick="toggleFlt(this)"><img src="filter/filter-90er.png" alt="90er">90er</button>
       <button class="flt" data-f="00er" onclick="toggleFlt(this)"><img src="filter/filter-00er.png" alt="00er">00er</button>
       <button class="flt" data-f="10er" onclick="toggleFlt(this)"><img src="filter/filter-10er.png" alt="10er">10er</button>
       <button class="flt" data-f="20er" onclick="toggleFlt(this)"><img src="filter/filter-20er.png" alt="20er">20er</button>
-      <div style="width:100%"></div>
-      <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20">Top 20</button>
-      <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10">Top 10</button>
-      <div style="width:100%;height:1px;background:var(--glass-b);margin:4px 0"></div>
-      <div style="width:100%;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:2px 0 4px">Editionen</div>
       <button class="flt" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500">RS-500</button>
       <button class="flt" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond">Bond</button>
       <button class="flt" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM">WM</button>
       <button class="flt" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino">Kino</button>
+      <div style="width:100%"></div>
+      <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20">Top 20</button>
+      <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10">Top 10</button>
       <div style="width:100%"></div>
       <div style="width:100%;display:flex;align-items:center">
         <div style="flex:1"></div>
@@ -545,12 +575,25 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
     <button id="s5-btn" onclick="toggleS5()" style="padding:14px 18px;border-radius:14px;font-family:Outfit,sans-serif;font-size:18px;font-weight:700;border:1px solid rgba(255,79,216,.35);background:rgba(255,79,216,.08);color:var(--muted);white-space:nowrap;flex-shrink:0;transition:all .2s">Schnelle 5</button>
   </div>
   <div class="sep"></div>
-  <div style="display:flex;gap:10px;width:100%">
-    <a href="memory.html" style="flex:1;text-decoration:none">
-      <button class="btn btn-secondary" style="width:100%;font-size:15px">🃏 Memory</button>
+  <div class="mg-cards">
+    <a href="memory.html" class="mg-card" id="mg-memory">
+      <div class="mg-covers" id="mg-mem-covers">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,rgba(83,246,255,.08),rgba(143,95,255,.08))"></div>
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,rgba(143,95,255,.08),rgba(255,79,216,.08))"></div>
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,rgba(255,79,216,.08),rgba(83,246,255,.08))"></div>
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,rgba(83,246,255,.08),rgba(143,95,255,.08))"></div>
+      </div>
+      <div class="mg-overlay">
+        <div class="mg-overlay-icon">🃏</div>
+        <div class="mg-overlay-name">Memory</div>
+      </div>
     </a>
-    <a href="paparazzi.html" style="flex:1;text-decoration:none">
-      <button class="btn btn-secondary" style="width:100%;font-size:15px">📸 Paparazzi</button>
+    <a href="paparazzi.html" class="mg-card" id="mg-paparazzi">
+      <div class="mg-cover-bg" id="mg-papa-bg"></div>
+      <div class="mg-overlay">
+        <div class="mg-overlay-icon">📸</div>
+        <div class="mg-overlay-name">Paparazzi</div>
+      </div>
     </a>
   </div>
   <input type="checkbox" id="schnelle5" style="display:none">
@@ -705,7 +748,7 @@ var IS_HOST=false,fbListener=null;
 const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ffd84d','#ff6b35'];
 const DEFAULTS=['Helden','Legenden','Stars','Cracks','Profis','Champs'];
 const MAX_TEAMS=6,MAX_TOK=5;var WIN=10;
-const DECADES=['Vor 60er','60er','70er','80er','90er','00er','10er','20er'];
+const DECADES=['70er','80er','90er','00er','10er','20er'];
 const EDITIONS=['RS-500','Bond-Edition','WM-Edition','Popcorn-Edition'];
 // Clockwise from top-left (viewed from above): top→right→bottom→left
 const CW_ORDER=['bot-l','left','top-r','top-l','right','bot-r'];
@@ -723,7 +766,7 @@ function playApplause(){new Audio('applause.mp3').play().catch(function(e){conso
 function playSlot(){console.log('playSlot called');new Audio('slot%20machine.mp3').play().catch(function(e){console.log('slot sound error:',e);});}
 function stopSlot(){}
 
-var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],filters:new Set(['all']),phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[],miniGames:false,miniGamesDone:{memory:false,paparazzi:false},pendingMiniGame:null};
+var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],filters:new Set(),phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[],miniGames:false,miniGamesDone:{memory:false,paparazzi:false},pendingMiniGame:null};
 ['top-l','top-r','left','right','bot-l','bot-r'].forEach(p=>G.seatCfg[p]=null);
 
 // ── FIREBASE ──
@@ -735,7 +778,7 @@ function initFirebase(){
     if(!d||d.screen==='lobby'||!d.host||wasHost)setHost();else setGuest();
   }).catch(()=>setHost());
 }
-function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();}}
+function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();}}
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){if(d.screen==='game'&&d.teams){G.teams=d.teams;G.cur=d.cur||0;G.currentCard=d.card||null;showScreen('game');renderPanels();updateGameUI();}}
 function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.teams,cur:G.cur,card:G.currentCard||null});}
@@ -745,11 +788,8 @@ initFirebase();
 function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);updateStartBtn();updateSongCount();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
 function filteredSongs(){
   var s=G.songs.filter(x=>x.l);
-  var posOnly=G.filters.size===0||(Array.from(G.filters).every(f=>f==='top10'||f==='top20'||f==='all'));
-  if(!posOnly){
-    var active=Array.from(G.filters).filter(f=>f!=='top10'&&f!=='top20'&&f!=='all');
-    s=s.filter(x=>active.includes(x.f));
-  }
+  var content=Array.from(G.filters).filter(f=>f!=='top10'&&f!=='top20');
+  if(content.length>0) s=s.filter(x=>content.includes(x.f));
   if(G.filters.has('top10'))s=s.filter(x=>x.p&&x.p<=10);
   else if(G.filters.has('top20'))s=s.filter(x=>x.p&&x.p<=20);
   return s;
@@ -783,7 +823,7 @@ function updateSongCount(){
   var el=document.getElementById('lobby-status');if(!el)return;
   var total=G.songs.length;
   var filtered=filteredSongs().length;
-  var isAll=G.filters.size===0||Array.from(G.filters).every(f=>f==='all'||f==='top10'||f==='top20');
+  var isAll=Array.from(G.filters).every(f=>f==='top10'||f==='top20')||G.filters.size===0;
   if(total===0){el.textContent='';return;}
   if(isAll){el.textContent=total+' Songs';}
   else{el.textContent=filtered+' / '+total+' Songs';}
@@ -792,34 +832,24 @@ function updateSongCount(){
 // ── FILTER ──
 function toggleFlt(btn,isOpt){
   var f=btn.dataset.f;
-  if(f==='all'){
-    G.filters=new Set();
-  } else if(f==='top10'){
-    G.filters.delete('all');G.filters.delete('top20');
+  if(f==='top10'){
+    G.filters.delete('top20');
     G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');
   } else if(f==='top20'){
-    G.filters.delete('all');G.filters.delete('top10');
+    G.filters.delete('top10');
     G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');
   } else {
-    G.filters.delete('all');
     G.filters.has(f)?G.filters.delete(f):G.filters.add(f);
-    if(G.filters.size===0||Array.from(G.filters).every(f=>f==='top10'||f==='top20'))
-      G.filters.delete('top10')||true; // keep top filters but no crash
   }
   syncFlt('flt-wrap');syncFlt('opt-filter');updateSongCount();
   if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}
 }
 function syncFlt(id){
   var w=document.getElementById(id);if(!w)return;
-  var hasContent=Array.from(G.filters).some(f=>f!=='top10'&&f!=='top20'&&f!=='all');
-  w.querySelectorAll('.flt').forEach(b=>{
-    b.classList.toggle('on',G.filters.has(b.dataset.f));
+  w.querySelectorAll('.flt').forEach(function(b){
+    b.classList.toggle('on', G.filters.has(b.dataset.f));
     b.classList.remove('off');
   });
-  if(!hasContent){
-    DECADES.forEach(d=>{var el=w.querySelector('[data-f="'+d+'"]');if(el)el.classList.add('off');});
-    EDITIONS.forEach(d=>{var el=w.querySelector('[data-f="'+d+'"]');if(el)el.classList.add('off');});
-  }
   var t10=w.querySelector('[data-f="top10"]'),t20=w.querySelector('[data-f="top20"]');
   if(G.filters.has('top10')&&t20)t20.classList.add('off');
   if(G.filters.has('top20')&&t10)t10.classList.add('off');
@@ -1149,6 +1179,26 @@ function miniGameReturn(){
   document.getElementById('mini-result-overlay').classList.remove('show');
   renderPanels();
   showTransition();
+}
+
+
+function decorateMiniGameButtons(){
+  // Memory: 4 random covers as 2x2 grid
+  var covers=G.songs.filter(function(s){return s.c;});
+  var memEl=document.getElementById('mg-mem-covers');
+  if(memEl&&covers.length>=4){
+    var picks=shuffle(covers.slice()).slice(0,4);
+    memEl.innerHTML=picks.map(function(s){
+      return '<img src="'+s.c+'" alt="" loading="lazy" onerror="this.style.display='none'">';
+    }).join('');
+  }
+  // Paparazzi: 1 blurred artist image
+  var artists=G.songs.filter(function(s){return s.ca;});
+  var papaEl=document.getElementById('mg-papa-bg');
+  if(papaEl&&artists.length>0){
+    var pick=shuffle(artists.slice())[0];
+    papaEl.style.backgroundImage='url('+pick.ca+')';
+  }
 }
 
 // ══════════════════════════════════════════════
