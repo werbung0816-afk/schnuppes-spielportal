@@ -39,13 +39,35 @@ body{
 .btn-secondary{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--glass-b)}
 
 /* ── FILTER (1:1 aus Chartster, Pfad relativ zu Chartster) ── */
-.flt{padding:4px;border-radius:12px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);transition:all .2s;display:inline-flex;align-items:center;justify-content:center;}
+.flt{
+  padding:4px;border-radius:12px;
+  border:1px solid rgba(83,246,255,.35);
+  background:rgba(83,246,255,.06);
+  color:var(--muted);
+  display:inline-flex;align-items:center;justify-content:center;
+  animation:flt-idle 2.8s ease-in-out infinite;
+  box-shadow:0 0 8px rgba(83,246,255,.15);
+  transition:border-color .2s,background .2s;
+}
 .flt img{width:52px;height:52px;border-radius:8px;object-fit:cover;display:block;}
 .filter-wrap{display:flex;flex-direction:column;gap:8px;width:100%}
 .flt-row{display:flex;gap:8px;justify-content:center}
+@keyframes flt-idle{
+  0%,100%{box-shadow:0 0 6px rgba(83,246,255,.15);border-color:rgba(83,246,255,.25);}
+  50%    {box-shadow:0 0 18px rgba(83,246,255,.45);border-color:rgba(83,246,255,.65);}
+}
+.flt.on{
+  border-color:var(--purple);
+  background:rgba(143,95,255,.22);
+  animation:flt-active 1.6s ease-in-out infinite;
+}
+@keyframes flt-active{
+  0%,100%{box-shadow:0 0 12px rgba(143,95,255,.4);}
+  50%    {box-shadow:0 0 28px rgba(143,95,255,.85);}
+}
+.flt.off{opacity:.25;pointer-events:none;animation:none;}
 
-.flt.on{border-color:var(--purple);color:var(--purple);background:rgba(143,95,255,.12)}
-.flt.off{opacity:.3;pointer-events:none}
+
 .filter-wrap{display:flex;flex-wrap:wrap;gap:8px}
 
 /* ── HINT TOAST (aus Chartster) ── */
@@ -108,7 +130,7 @@ body{
 
 /* Card flip */
 .mc{width:100%;aspect-ratio:1/1;perspective:600px;position:relative}
-.mc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .38s cubic-bezier(.4,0,.2,1);border-radius:10px}
+.mc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform .38s cubic-bezier(.4,0,.2,1);border-radius:10px}
 .mc.flipped .mc-inner,.mc.matched .mc-inner{transform:rotateY(180deg)}
 .mc-face{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
 
@@ -119,7 +141,7 @@ body{
   display:flex;align-items:center;justify-content:center;
 }
 .mc-back-pattern{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 5px,rgba(143,95,255,.04) 5px,rgba(143,95,255,.04) 6px)}
-.mc-back-icon{position:relative;z-index:1;width:54%;aspect-ratio:1;object-fit:contain;opacity:.55;border-radius:12px}
+.mc-back-icon{position:relative;z-index:1;width:54%;aspect-ratio:1;object-fit:contain;opacity:.55;border-radius:12px;pointer-events:none;}
 
 /* Front – cover */
 .mc-cover{
@@ -143,8 +165,7 @@ body{
 
 /* Matched state */
 .mc.matched .mc-cover,.mc.matched .mc-text{opacity:.38}
-.mc-match-badge{position:absolute;inset:0;border-radius:10px;display:none;align-items:center;justify-content:center;font-size:20px;background:rgba(0,0,0,.25);z-index:5;pointer-events:none;transition:opacity .3s}
-.mc.matched .mc-match-badge{display:flex;opacity:1}
+.mc-match-badge{display:none!important}
 
 /* Wrong shake */
 @keyframes shake{
@@ -301,7 +322,6 @@ body{
 
   <!-- Jahresfilter -->
   <div class="setup-section">
-    <div class="label">Auswahl</div>
     <div class="filter-wrap" id="flt-wrap">
       <div class="flt-row">
         <button class="flt" data-f="70er" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-70er.png" alt="70er"></button>
@@ -760,7 +780,7 @@ function renderGrid(){
           'onerror="this.style.display=\'none\'">'+
         '</div>'+
         front+
-        '<div class="mc-match-badge">✓</div>'+
+        ''+'
       '</div>';
 
     grid.appendChild(el);
