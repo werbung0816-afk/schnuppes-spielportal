@@ -451,7 +451,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 }
 .mg-cover-bg{
   position:absolute;inset:0;
-  background-size:cover;background-position:center;
+  background-size:cover;background-position:center 15%;
   transform:scale(1.15);
   animation:papa-focus 16s ease-in-out infinite;
 }
@@ -488,7 +488,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 }
 .lbg-note{
   position:absolute;
-  color:rgba(255,255,255,.06);
+  color:rgba(255,255,255,1);
   line-height:1;
   user-select:none;
   opacity:0;
@@ -498,12 +498,16 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 }
 @keyframes lbg-fade{
   0%,100%{opacity:0;}
-  20%,80%{opacity:.35;}
-  50%    {opacity:.42;}
+  20%,80%{opacity:.38;}
+  50%    {opacity:.45;}
+}
+@keyframes lbg-drift{
+  0%,100%{margin-top:0px;}
+  50%    {margin-top:-22px;}
 }
 @keyframes lbg-note{
   0%,100%{opacity:0;}
-  30%,70%{opacity:.18;}
+  30%,70%{opacity:.28;}
 }
 </style>
 </head>
@@ -541,7 +545,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.1.0</div>
+<div class="version">v4.1.1</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -1228,36 +1232,53 @@ function buildLobbyBg(){
   var bg=document.getElementById('lobby-bg');
   if(!bg) return;
   bg.innerHTML='';
-  var covers=shuffle(G.songs.filter(function(s){return s.c;})).slice(0,16);
-  var notes=['♩','♪','♫','♬','♭','♮','♩','♪','♫','♬','♭','♮'];
 
-  covers.forEach(function(song){
+  // Pool: Top-20-Songs bevorzugt, dann alle anderen
+  var top20=shuffle(G.songs.filter(function(s){return s.c&&s.p&&s.p<=20;}));
+  var rest=shuffle(G.songs.filter(function(s){return s.c&&(!s.p||s.p>20);}));
+  var pool=top20.concat(rest);
+  var poolIdx=0;
+  function nextCover(){var s=pool[poolIdx%pool.length];poolIdx++;return s;}
+
+  var notes=['♩','♪','♫','♬','♭','♮','♩','♪','♫','♬'];
+  var NUM=14;
+
+  for(var i=0;i<NUM;i++){
     var el=document.createElement('div');
     var size=Math.round(90+Math.random()*130);
     var x=(Math.random()*105-3).toFixed(1);
     var y=(Math.random()*105-3).toFixed(1);
-    var rot=((Math.random()-.5)*22).toFixed(1);
-    var dur=Math.round(28+Math.random()*32);
-    var delay=-Math.round(Math.random()*dur);
+    var rot=((Math.random()-.5)*20).toFixed(1);
+    var fadeDur=Math.round(26+Math.random()*30);
+    var fadeDelay=-Math.round(Math.random()*fadeDur);
+    var driftDur=Math.round(18+Math.random()*22);
+    var driftDelay=-Math.round(Math.random()*driftDur);
     el.className='lbg-cover';
     el.style.width=size+'px';
     el.style.height=size+'px';
     el.style.left=x+'%';
     el.style.top=y+'%';
-    el.style.backgroundImage='url("'+song.c+'")';
-    el.style.filter='brightness(.45) saturate(.65)';
     el.style.transform='rotate('+rot+'deg)';
-    el.style.animationDuration=dur+'s';
-    el.style.animationDelay=delay+'s';
+    el.style.filter='brightness(.45) saturate(.65)';
+    el.style.backgroundImage='url("'+nextCover().c+'")';
+    el.style.animationName='lbg-fade,lbg-drift';
+    el.style.animationDuration=fadeDur+'s,'+driftDur+'s';
+    el.style.animationDelay=fadeDelay+'s,'+driftDelay+'s';
+    el.style.animationTimingFunction='ease-in-out,ease-in-out';
+    el.style.animationIterationCount='infinite,infinite';
+    // Swap cover on each fade cycle (at opacity=0)
+    el.addEventListener('animationiteration',function(e){
+      if(e.animationName==='lbg-fade') this.style.backgroundImage='url("'+nextCover().c+'")';
+    });
     bg.appendChild(el);
-  });
+  }
 
   notes.forEach(function(note){
     var el=document.createElement('div');
-    var size=Math.round(70+Math.random()*110);
+    var size=Math.round(80+Math.random()*120);
     var x=Math.round(5+Math.random()*88);
     var y=Math.round(5+Math.random()*88);
-    var dur=Math.round(22+Math.random()*28);
+    var dur=Math.round(20+Math.random()*25);
     var delay=-Math.round(Math.random()*dur);
     el.className='lbg-note';
     el.style.fontSize=size+'px';
