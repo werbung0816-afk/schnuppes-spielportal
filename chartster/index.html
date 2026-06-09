@@ -548,7 +548,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.1.6</div>
+<div class="version">v4.1.7</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -1250,7 +1250,7 @@ function buildLobbyBg(){
   var NUM=14;
   for(var i=0;i<NUM;i++){
     var depth=Math.random();
-    var size=Math.round(70+depth*120);
+    var size=Math.round(90+depth*130);
     var blur=depth<0.35?(1.2-depth*2).toFixed(1)+'px':'0px';
     var pos=randPos();
     // Slow fades: 44–70 seconds per cycle
@@ -1277,7 +1277,7 @@ function buildLobbyBg(){
       return function(){
         var p=randPos();
         var d=Math.random();
-        var sz=Math.round(70+d*120);
+        var sz=Math.round(90+d*130);
         var bl=d<0.35?(1.2-d*2).toFixed(1)+'px':'0px';
         sl.style.width=sz+'px'; sl.style.height=sz+'px';
         sl.style.left=p.x+'%'; sl.style.top=p.y+'%';
@@ -1285,7 +1285,7 @@ function buildLobbyBg(){
         inn.style.backgroundImage='url("'+nextCover().c+'")';
         inn.style.filter=bl!=='0px'
           ?'brightness(.45) saturate(.65) blur('+bl+')'
-          :'brightness(.45) saturate(.65)';
+          :'brightness(.65) saturate(.75)';
       };
     }(slot, inner));
     bg.appendChild(slot);
@@ -1293,7 +1293,7 @@ function buildLobbyBg(){
 
   // Notes: whisper-subtle, slow
   var notes=['♩','♪','♫','♬','♭','♮','♩','♪','♫','♬'];
-  var noteColors=['rgba(255,255,255,1)','rgba(255,255,255,1)','rgba(255,255,255,1)','rgba(255,79,216,1)','rgba(255,79,216,1)','rgba(255,255,255,1)'];
+  var noteColors=['rgba(255,255,255,.40)','rgba(255,255,255,.40)','rgba(255,255,255,.40)','rgba(255,79,216,.30)','rgba(255,79,216,.30)','rgba(255,255,255,.40)'];
   notes.forEach(function(note,i){
     var slot=document.createElement('div');
     var sz=Math.round(40+Math.random()*55);
