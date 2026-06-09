@@ -548,7 +548,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.2.4</div>
+<div class="version">v4.2.5</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -1242,43 +1242,64 @@ function buildLobbyBg(){
   var poolIdx=0;
   function nextCover(){var s=pool[poolIdx%pool.length];poolIdx++;return s;}
 
-  // Strict grid: divide screen into cells, one element per cell, small jitter only
-  // Covers: 4 cols × 3 rows = 12 cells → use 10
-  // Notes: staggered 5 cols × 2 rows = 10 cells → use 8, placed between cover rows
-  function gridCells(cols, rows, jitter, xOff, yOff){
-    var cw=100/cols, ch=100/rows;
-    var cells=[];
-    for(var r=0;r<rows;r++){
-      for(var c=0;c<cols;c++){
-        var cx = xOff + c*cw + cw*0.5 + (Math.random()-0.5)*cw*jitter;
-        var cy = yOff + r*ch + ch*0.5 + (Math.random()-0.5)*ch*jitter;
-        // Clamp to safe bounds
-        cx = Math.max(5, Math.min(92, cx));
-        cy = Math.max(5, Math.min(92, cy));
-        cells.push([+cx.toFixed(1), +cy.toFixed(1)]);
+  // Random point within a rectangular zone [x1,y1,x2,y2]
+  function zonePt(x1,y1,x2,y2){
+    return[+(x1+Math.random()*(x2-x1)).toFixed(1), +(y1+Math.random()*(y2-y1)).toFixed(1)];
+  }
+  // Build n points across multiple zones ensuring spread
+  function zonedPoints(zones, n){
+    var pts=[];
+    var perZone=Math.ceil(n/zones.length);
+    zones.forEach(function(z){
+      for(var i=0;i<perZone&&pts.length<n;i++){
+        // Simple repulsion: retry if too close to existing point in same zone
+        var best=null, bestDist=0;
+        for(var t=0;t<8;t++){
+          var p=zonePt(z[0],z[1],z[2],z[3]);
+          var minD=999;
+          pts.forEach(function(q){var dx=q[0]-p[0],dy=q[1]-p[1];minD=Math.min(minD,Math.sqrt(dx*dx+dy*dy));});
+          if(minD>bestDist){bestDist=minD;best=p;}
+        }
+        pts.push(best);
       }
-    }
-    return shuffle(cells);
+    });
+    return shuffle(pts).slice(0,n);
   }
 
-  var coverCells = gridCells(4, 3, 0.35, 0, 0).slice(0, 10);
-  // Notes use staggered grid offset by half a cell
-  var noteCells  = gridCells(5, 2, 0.30, 10, 16).slice(0, 8);
+  // Cover zones: left strip, right strip, top corners, bottom corners
+  var coverZones=[
+    [2,  5,  27, 45],  // left top
+    [2,  50, 27, 92],  // left bottom
+    [73, 5,  97, 45],  // right top
+    [73, 50, 97, 92],  // right bottom
+    [28, 2,  70, 14],  // top center
+    [28, 86, 70, 98],  // bottom center
+  ];
+  var coverPts=zonedPoints(coverZones, 16);
 
-  coverCells.forEach(function(pt){
+  // Note zones: slightly inset from cover zones, also sides
+  var noteZones=[
+    [3,  15, 25, 50],
+    [3,  52, 25, 88],
+    [75, 15, 97, 50],
+    [75, 52, 97, 88],
+    [30, 3,  68, 13],
+    [30, 87, 68, 97],
+  ];
+  var notePts=zonedPoints(noteZones, 12);
+
+  coverPts.forEach(function(pt){
     var depth=Math.random();
-    var size=Math.round(75+depth*90);
+    var size=Math.round(80+depth*100);
     var blur=depth<0.3?(0.8-depth*1.5).toFixed(1)+'px':'0px';
-    var rot=((Math.random()-.5)*20).toFixed(1);
+    var rot=((Math.random()-.5)*22).toFixed(1);
     var fadeDur=Math.round(44+Math.random()*26);
     var fadeDelay=-Math.round(Math.random()*fadeDur);
 
     var slot=document.createElement('div');
     slot.className='lbg-slot';
-    slot.style.width=size+'px';
-    slot.style.height=size+'px';
-    slot.style.left=pt[0]+'%';
-    slot.style.top=pt[1]+'%';
+    slot.style.width=size+'px'; slot.style.height=size+'px';
+    slot.style.left=pt[0]+'%'; slot.style.top=pt[1]+'%';
     slot.style.transform='translate(-50%,-50%)';
     slot.style.animationDuration=fadeDur+'s';
     slot.style.animationDelay=fadeDelay+'s';
@@ -1290,47 +1311,43 @@ function buildLobbyBg(){
     if(blur!=='0px') inner.style.filter='brightness(.65) saturate(.75) blur('+blur+')';
     slot.appendChild(inner);
 
-    slot.addEventListener('animationiteration',function(sl,inn){
+    slot.addEventListener('animationiteration',function(sl,inn,zns){
       return function(){
-        var newCells=gridCells(4,3,0.35,0,0);
-        var np=newCells[Math.floor(Math.random()*newCells.length)];
-        var d=Math.random();
-        var sz=Math.round(75+d*90);
+        var np=zonedPoints(zns,1)[0];
+        var d=Math.random(), sz=Math.round(80+d*100);
         var bl=d<0.3?(0.8-d*1.5).toFixed(1)+'px':'0px';
         sl.style.width=sz+'px'; sl.style.height=sz+'px';
         sl.style.left=np[0]+'%'; sl.style.top=np[1]+'%';
-        inn.style.transform='rotate('+((Math.random()-.5)*20).toFixed(1)+'deg)';
+        inn.style.transform='rotate('+((Math.random()-.5)*22).toFixed(1)+'deg)';
         inn.style.backgroundImage='url("'+nextCover().c+'")';
         inn.style.filter=bl!=='0px'?'brightness(.65) saturate(.75) blur('+bl+')':'brightness(.65) saturate(.75)';
       };
-    }(slot,inner));
+    }(slot,inner,coverZones));
     bg.appendChild(slot);
   });
 
-  var noteChars=['♩','♪','♫','♬','♭','♮','♩','♪'];
-  var noteColors=['rgba(255,255,255,.40)','rgba(255,255,255,.40)','rgba(255,255,255,.40)','rgba(255,79,216,.30)','rgba(255,79,216,.30)','rgba(255,255,255,.40)','rgba(255,79,216,.30)','rgba(255,255,255,.40)'];
-  noteCells.forEach(function(pt,i){
-    var sz=Math.round(38+Math.random()*44);
+  var noteChars=['♩','♪','♫','♬','♭','♮','♩','♪','♫','♬','♭','♪'];
+  var noteColors=['rgba(255,255,255,.40)','rgba(255,255,255,.40)','rgba(255,255,255,.40)','rgba(255,79,216,.30)','rgba(255,79,216,.30)','rgba(255,255,255,.40)'];
+  notePts.forEach(function(pt,i){
+    var sz=Math.round(36+Math.random()*42);
     var dur=Math.round(52+Math.random()*36);
     var delay=-Math.round(Math.random()*dur);
     var slot=document.createElement('div');
     slot.className='lbg-note';
     slot.style.fontSize=sz+'px';
-    slot.style.left=pt[0]+'%';
-    slot.style.top=pt[1]+'%';
+    slot.style.left=pt[0]+'%'; slot.style.top=pt[1]+'%';
     slot.style.transform='translate(-50%,-50%)';
     slot.style.color=noteColors[i%noteColors.length];
     slot.style.animationDuration=dur+'s';
     slot.style.animationDelay=delay+'s';
     slot.textContent=noteChars[i%noteChars.length];
-    slot.addEventListener('animationiteration',function(sl){
+    slot.addEventListener('animationiteration',function(sl,zns){
       return function(){
-        var nc=gridCells(5,2,0.30,10,16);
-        var np=nc[Math.floor(Math.random()*nc.length)];
+        var np=zonedPoints(zns,1)[0];
         sl.style.left=np[0]+'%'; sl.style.top=np[1]+'%';
-        sl.style.fontSize=Math.round(38+Math.random()*44)+'px';
+        sl.style.fontSize=Math.round(36+Math.random()*42)+'px';
       };
-    }(slot));
+    }(slot,noteZones));
     bg.appendChild(slot);
   });
 }
@@ -1386,7 +1403,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=59', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=60', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
