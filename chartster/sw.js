@@ -1,5 +1,5 @@
 /**
- * Chartster Service Worker v1.0
+ * Chartster Service Worker v1.1
  * Offline-First Cache Strategy
  * 
  * Strategie:
@@ -9,8 +9,8 @@
  *  - Google Fonts → Cache First
  */
 
-const CACHE_NAME = 'chartster-v34';
-const DATA_CACHE = 'chartster-data-v34';
+const CACHE_NAME = 'chartster-v35';
+const DATA_CACHE = 'chartster-data-v35';
 
 // App Shell – alles was für den Grundbetrieb gebraucht wird
 const SHELL_ASSETS = [
@@ -23,6 +23,12 @@ const SHELL_ASSETS = [
   '/schnuppes-spielportal/chartster/icons/icon-192x192.png',
   '/schnuppes-spielportal/chartster/icons/icon-512x512.png',
   '/schnuppes-spielportal/chartster/icons/apple-touch-icon.png',
+  '/schnuppes-spielportal/chartster/memory.html',
+  '/schnuppes-spielportal/chartster/paparazzi.html',
+  '/schnuppes-spielportal/chartster/filter/filter-rs500.png',
+  '/schnuppes-spielportal/chartster/filter/filter-bondedition.png',
+  '/schnuppes-spielportal/chartster/filter/filter-football.png',
+  '/schnuppes-spielportal/chartster/filter/filter-kino.png',
 ];
 
 const FONT_URLS = [
