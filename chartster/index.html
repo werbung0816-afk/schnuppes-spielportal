@@ -85,7 +85,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .flt img{width:52px;height:52px;border-radius:8px;object-fit:cover;display:block;}
 .flt.on{border-color:var(--purple);color:var(--purple);background:rgba(143,95,255,.12)}
 .flt.off{opacity:.3;pointer-events:none}
-.filter-wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.filter-wrap{display:flex;flex-direction:column;gap:8px;width:100%}
+.flt-row{display:flex;gap:8px;justify-content:center}
 
 /* Table seat selector */
 #table-selector{width:100%;display:flex;flex-direction:column;align-items:center;gap:0}
@@ -548,19 +549,24 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="setup-section">
     <div class="label">Auswahl</div>
     <div class="filter-wrap" id="flt-wrap">
-      <button class="flt" data-f="70er" onclick="toggleFlt(this)"><img src="filter/filter-70er.png" alt="70er"></button>
-      <button class="flt" data-f="80er" onclick="toggleFlt(this)"><img src="filter/filter-80er.png" alt="80er"></button>
-      <button class="flt" data-f="90er" onclick="toggleFlt(this)"><img src="filter/filter-90er.png" alt="90er"></button>
-      <button class="flt" data-f="00er" onclick="toggleFlt(this)"><img src="filter/filter-00er.png" alt="00er"></button>
-      <button class="flt" data-f="10er" onclick="toggleFlt(this)"><img src="filter/filter-10er.png" alt="10er"></button>
-      <button class="flt" data-f="20er" onclick="toggleFlt(this)"><img src="filter/filter-20er.png" alt="20er"></button>
-      <button class="flt" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500"></button>
-      <button class="flt" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond"></button>
-      <button class="flt" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM"></button>
-      <button class="flt" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino"></button>
-      <div style="width:100%"></div>
-      <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20"></button>
-      <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10"></button>
+      <div class="flt-row">
+        <button class="flt" data-f="70er" onclick="toggleFlt(this)"><img src="filter/filter-70er.png" alt="70er"></button>
+        <button class="flt" data-f="80er" onclick="toggleFlt(this)"><img src="filter/filter-80er.png" alt="80er"></button>
+        <button class="flt" data-f="90er" onclick="toggleFlt(this)"><img src="filter/filter-90er.png" alt="90er"></button>
+        <button class="flt" data-f="00er" onclick="toggleFlt(this)"><img src="filter/filter-00er.png" alt="00er"></button>
+        <button class="flt" data-f="10er" onclick="toggleFlt(this)"><img src="filter/filter-10er.png" alt="10er"></button>
+        <button class="flt" data-f="20er" onclick="toggleFlt(this)"><img src="filter/filter-20er.png" alt="20er"></button>
+      </div>
+      <div class="flt-row">
+        <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20"></button>
+        <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10"></button>
+      </div>
+      <div class="flt-row">
+        <button class="flt" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500"></button>
+        <button class="flt" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond"></button>
+        <button class="flt" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM"></button>
+        <button class="flt" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino"></button>
+      </div>
       <div style="width:100%"></div>
       <div style="width:100%;display:flex;align-items:center">
         <div style="flex:1"></div>
