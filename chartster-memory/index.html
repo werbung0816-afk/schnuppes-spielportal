@@ -27,7 +27,7 @@ body{
 
 /* ── BASE (aus Chartster) ── */
 .screen{display:none;min-height:100vh;padding:16px;align-items:center;justify-content:center;flex-direction:column}
-.screen.active{display:flex}
+.screen.active{display:flex;will-change:transform}
 .card{width:100%;max-width:560px;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:28px 22px 22px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative}
 .sep{width:100%;height:1px;background:var(--glass-b)}
 .game-title{font-size:44px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px rgba(83,246,255,.4))}
@@ -45,6 +45,10 @@ body{
 .flt.off{opacity:.3;pointer-events:none}
 .filter-wrap{display:flex;flex-direction:column;gap:8px;width:100%}
 .flt-row{display:flex;gap:8px;justify-content:center}
+.flt img{width:48px;height:48px;border-radius:8px;object-fit:cover}
+.flt.on{border-color:var(--purple);color:var(--purple);background:rgba(143,95,255,.12)}
+.flt.off{opacity:.3;pointer-events:none}
+.filter-wrap{display:flex;flex-wrap:wrap;gap:8px}
 
 /* ── HINT TOAST (aus Chartster) ── */
 #hint-toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(255,79,216,.18);border:1px solid rgba(255,79,216,.4);color:var(--pink);padding:11px 20px;border-radius:12px;font-size:16px;font-weight:600;z-index:900;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;white-space:nowrap;max-width:90vw}
@@ -186,6 +190,7 @@ body{
 .seat-circle{width:48px;height:48px;border-radius:50%;border:2px dashed rgba(83,246,255,.3);display:flex;align-items:center;justify-content:center;transition:all .25s;background:rgba(83,246,255,.04);position:relative;overflow:hidden;color:rgba(83,246,255,.4);box-shadow:0 0 8px rgba(83,246,255,.08)}
 .seat.active .seat-circle{border-style:solid;border-width:2.5px;color:#07000f}
 .seat.active .seat-circle::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.18),transparent 70%)}
+
 /* ── LOBBY BACKGROUND ── */
 #lobby-bg{
   position:fixed;inset:0;z-index:0;
@@ -237,26 +242,6 @@ body{
   animation-timing-function:ease-in-out;
   animation-iteration-count:infinite;
 }
-@keyframes lbg-emerge{
-  0%,100%{opacity:0;transform:scale(.70);}
-  22%,78%{opacity:.40;transform:scale(1.0);}
-  50%    {opacity:.45;transform:scale(1.03);}
-}
-@keyframes lbg-note-emerge{
-  0%,100%{opacity:0;transform:scale(.82);}
-  25%,75%{opacity:.35;transform:scale(1.0);}
-  50%    {opacity:.40;transform:scale(1.01);}
-}
-
-/* ── LOBBY DOTS ── */
-.lbg-dot{
-  position:absolute;
-  border-radius:50%;
-  transform:translate(-50%,-50%) scale(1);
-  opacity:0;
-  animation-timing-function:ease-in-out;
-  animation-iteration-count:infinite;
-}
 @keyframes lbg-dot-pulse{
   0%,100%{opacity:0;transform:translate(-50%,-50%) scale(.6);}
   40%,60%{opacity:.65;transform:translate(-50%,-50%) scale(1.4);}
@@ -264,27 +249,21 @@ body{
 }
 @keyframes lbg-dot-fade{
   0%,100%{opacity:0;transform:translate(-50%,-50%) scale(1);}
-
+  35%,65%{opacity:.65;transform:translate(-50%,-50%) scale(1);}
+}
+@keyframes papa-focus{
+  0%,100%{filter:blur(9px) brightness(.45);}
 /* ── CROSS-NAV CARDS ── */
 .nav-cards{display:flex;gap:10px;width:100%;margin-top:4px}
-.nav-card{
-  flex:1;border-radius:14px;overflow:hidden;position:relative;
-  height:64px;border:1px solid var(--glass-b);
-  text-decoration:none;display:block;
-  transition:transform .2s,box-shadow .2s;background:var(--bg);
-}
+.nav-card{flex:1;border-radius:14px;overflow:hidden;position:relative;height:64px;border:1px solid var(--glass-b);text-decoration:none;display:block;transition:transform .2s,box-shadow .2s;background:var(--bg);}
 .nav-card:active{transform:scale(.97);}
 .nav-card:hover{box-shadow:0 0 18px rgba(83,246,255,.18);}
 .nav-covers{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;}
 .nav-covers img{width:100%;height:100%;object-fit:cover;display:block;}
-.nav-cover-bg{position:absolute;inset:0;background-size:cover;background-position:center 30%;
-  filter:blur(8px) brightness(.45);transform:scale(1.1);
-  animation:papa-focus 16s ease-in-out infinite;}
-.nav-overlay{position:absolute;inset:0;display:flex;flex-direction:row;
-  align-items:center;justify-content:center;gap:8px;
-  background:linear-gradient(to right,rgba(7,0,15,.55),rgba(7,0,15,.3),rgba(7,0,15,.55));}
-.nav-overlay-name{font-size:12px;font-weight:700;color:#fff;letter-spacing:.14em;
-  text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.9);}</style>
+.nav-cover-bg{position:absolute;inset:0;background-size:cover;background-position:center 30%;filter:blur(8px) brightness(.45);transform:scale(1.1);animation:papa-focus 16s ease-in-out infinite;}
+.nav-overlay{position:absolute;inset:0;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;background:linear-gradient(to right,rgba(7,0,15,.55),rgba(7,0,15,.3),rgba(7,0,15,.55));}
+.nav-overlay-name{font-size:12px;font-weight:700;color:#fff;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.9);}
+</style>
 </head>
 <body>
 
@@ -361,17 +340,6 @@ body{
   </div>
 
   <button class="btn btn-primary" id="start-btn" onclick="startGame()" disabled>Spiel starten</button>
-  <div class="sep"></div>
-  <div class="nav-cards">
-    <a href="../chartster/paparazzi.html" class="nav-card" id="nav-paparazzi">
-      <div class="nav-cover-bg" id="nav-paparazzi-bg"></div>
-      <div class="nav-overlay"><div class="nav-overlay-name">📸 Paparazzi</div></div>
-    </a>
-    <a href="../chartster/index.html" class="nav-card" id="nav-chartster">
-      <div class="nav-covers" id="nav-chartster-covers"></div>
-      <div class="nav-overlay"><div class="nav-overlay-name">🎵 Chartster</div></div>
-    </a>
-  </div>
   <div id="lobby-status" style="font-size:13px;color:var(--muted);text-align:center;min-height:18px"></div>
 
 </div>
@@ -562,7 +530,7 @@ function buildLobbyBg(){
     bg.appendChild(slot);
   });
 
-  // Dots: 40 pulsing/fading particles across entire screen
+  // Dots: 42 pulsing/fading particles
   var dotColors=[
     'rgba(83,246,255,1)','rgba(83,246,255,1)','rgba(83,246,255,1)',
     'rgba(255,79,216,1)','rgba(255,79,216,1)',
@@ -592,31 +560,27 @@ function buildLobbyBg(){
 }
 
 
-
 function decorateNavButtons(){
   var covers=G.songs.filter(function(s){return s.c;});
   var artists=G.songs.filter(function(s){return s.ca;});
   covers=shuffle(covers.slice()); artists=shuffle(artists.slice());
-  // Chartster: 4 cover strip
   var chartEl=document.getElementById('nav-chartster-covers');
   if(chartEl&&covers.length>=4){
-    var picks=covers.slice(0,4);
-    chartEl.innerHTML=picks.map(function(s){return'<img src="'+s.c+'" alt="" loading="lazy">';}).join('');
+    chartEl.innerHTML=covers.slice(0,4).map(function(s){return'<img src="'+s.c+'" alt="" loading="lazy">';}).join('');
   }
-  // Paparazzi: blurred artist
   var papaEl=document.getElementById('nav-paparazzi-bg');
   if(papaEl&&artists.length>0) papaEl.style.backgroundImage='url("'+artists[0].ca+'")';
-  // Cycle every 30s then 2min
   setTimeout(function(){
-    if(covers.length>=4&&chartEl){var p=shuffle(covers.slice()).slice(0,4);chartEl.innerHTML=p.map(function(s){return'<img src="'+s.c+'" alt="">';}).join('');}
-    if(artists.length>0&&papaEl) papaEl.style.backgroundImage='url("'+shuffle(artists.slice())[0].ca+'")';
+    covers=shuffle(covers.slice()); artists=shuffle(artists.slice());
+    if(chartEl&&covers.length>=4) chartEl.innerHTML=covers.slice(0,4).map(function(s){return'<img src="'+s.c+'" alt="">';}).join('');
+    if(papaEl&&artists.length>0) papaEl.style.backgroundImage='url("'+shuffle(artists.slice())[0].ca+'")';
     setInterval(function(){
-      if(covers.length>=4&&chartEl){var p=shuffle(covers.slice()).slice(0,4);chartEl.innerHTML=p.map(function(s){return'<img src="'+s.c+'" alt="">';}).join('');}
-      if(artists.length>0&&papaEl) papaEl.style.backgroundImage='url("'+shuffle(artists.slice())[0].ca+'")';
+      covers=shuffle(covers.slice()); artists=shuffle(artists.slice());
+      if(chartEl&&covers.length>=4) chartEl.innerHTML=covers.slice(0,4).map(function(s){return'<img src="'+s.c+'" alt="">';}).join('');
+      if(papaEl&&artists.length>0) papaEl.style.backgroundImage='url("'+artists[0].ca+'")';
     },120000);
   },30000);
 }
-
 
 function loadSongs(){
   document.getElementById('lobby-status').textContent='lädt …';
@@ -639,14 +603,12 @@ function loadSongs(){
 // ════ FILTER LOGIC (aus Chartster übernommen) ════
 function toggleFlt(btn){
   var f=btn.dataset.f;
-  if(f==='top10'){
-    G.filters.delete('top20');
-    G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');
-  } else if(f==='top20'){
-    G.filters.delete('top10');
-    G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');
-  } else {
-    G.filters.has(f)?G.filters.delete(f):G.filters.add(f);
+  if(btn.classList.contains('on')){
+    btn.classList.remove('on');
+    G.filters.delete(f);
+  }else{
+    btn.classList.add('on');
+    G.filters.add(f);
   }
   updateFltInfo();
 }
