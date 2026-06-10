@@ -284,7 +284,7 @@ body{
 <body>
 
 <div id="hint-toast"></div>
-<div class="version" style="position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px">v1.3.0</div>
+<div class="version" style="position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px">v1.3.1</div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
 
@@ -329,8 +329,8 @@ body{
         <button class="flt" data-f="20er" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-20er.png" alt="20er"></button>
       </div>
       <div class="flt-row">
-        <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-top20.png" alt="Top 20"></button>
-        <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-top10.png" alt="Top 10"></button>
+        <button class="flt off" data-f="top20" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-top20.png" alt="Top 20"></button>
+        <button class="flt off" data-f="top10" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-top10.png" alt="Top 10"></button>
       </div>
       <div class="flt-row">
         <button class="flt" data-f="RS-500" onclick="toggleFlt(this)"><img src="../chartster/filter/filter-rs500.png" alt="RS-500"></button>
@@ -392,7 +392,8 @@ var seatCfg={'top-l':null,'top-r':null,'left':null,'right':null,'bot-l':null,'bo
 // ════ STATE ════
 var G={
   songs:[],          // all songs with cover
-  excluded:new Set(), // deselected filters (exclusion model)
+  excluded:new Set(),
+  topFilter:null, // deselected filters (exclusion model)
   pairs:10,
   players:[],
   scores:[],
@@ -610,31 +611,44 @@ function loadSongs(){
 // ════ FILTER LOGIC (aus Chartster übernommen) ════
 function toggleFlt(btn){
   var f=btn.dataset.f;
-  if(G.excluded.has(f)){
-    G.excluded.delete(f);
-    btn.classList.remove('off');
+  if(f==='top20'||f==='top10'){
+    var other=f==='top20'?'top10':'top20';
+    if(G.topFilter===f){
+      G.topFilter=null;
+      btn.classList.add('off');
+    } else {
+      G.topFilter=f;
+      btn.classList.remove('off');
+      document.querySelectorAll('.flt[data-f="'+other+'"]').forEach(function(b){b.classList.add('off');});
+    }
   } else {
-    G.excluded.add(f);
-    btn.classList.add('off');
+    G.excluded.has(f)?G.excluded.delete(f):G.excluded.add(f);
+    btn.classList.toggle('off', G.excluded.has(f));
   }
   updateFltInfo();
 }
 
 function filteredSongs(){
   var s=G.songs.slice();
-  if(G.excluded.size===0) return s;
-  return s.filter(function(x){
-    return !Array.from(G.excluded).some(function(f){
-      if(x.f) return x.f===f;
-      if(f==='70er') return x.y>=1970&&x.y<1980;
-      if(f==='80er') return x.y>=1980&&x.y<1990;
-      if(f==='90er') return x.y>=1990&&x.y<2000;
-      if(f==='00er') return x.y>=2000&&x.y<2010;
-      if(f==='10er') return x.y>=2010&&x.y<2020;
-      if(f==='20er') return x.y>=2020;
-      return false;
+  if(G.excluded.size===0&&!G.topFilter) return s;
+  if(G.excluded.size>0) s=s.filter(function(x){return !x.legacy;});
+  if(G.excluded.size>0){
+    s=s.filter(function(x){
+      return !Array.from(G.excluded).some(function(f){
+        if(x.f) return x.f===f;
+        if(f==='70er'||f==='70') return x.y>=1970&&x.y<1980;
+        if(f==='80er'||f==='80') return x.y>=1980&&x.y<1990;
+        if(f==='90er'||f==='90') return x.y>=1990&&x.y<2000;
+        if(f==='00er'||f==='00') return x.y>=2000&&x.y<2010;
+        if(f==='10er'||f==='10') return x.y>=2010&&x.y<2020;
+        if(f==='20er'||f==='20') return x.y>=2020;
+        return false;
+      });
     });
-  });
+  }
+  if(G.topFilter==='top10') s=s.filter(function(x){return x.p&&x.p<=10;});
+  else if(G.topFilter==='top20') s=s.filter(function(x){return x.p&&x.p<=20;});
+  return s;
 }
 
 function updateFltInfo(){
@@ -642,7 +656,7 @@ function updateFltInfo(){
   var el=document.getElementById('flt-info');
   if(!el) return;
   var need=G.pairs;
-  if(G.excluded.size===0){
+  if(G.excluded.size===0&&!G.topFilter){
     el.textContent=n+' Songs verfügbar';
     el.className='';
   } else if(n<need){
