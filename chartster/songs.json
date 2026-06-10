@@ -25651,6 +25651,7 @@
     "a": "Rocco Granata",
     "t": "Marina",
     "l": "3pFT1UfjSdKwjIS0tWg7ka",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273ca6ba6d90b7ef36f2d8f717b",
     "al": "20 Hits",
     "r": "1988-01-01",
@@ -25664,6 +25665,7 @@
     "a": "Jan und Kjeld",
     "t": "Banjo Boy",
     "l": "1kGROXihBToYLr0e8xluur",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273146cead2976f91d6e01fa16c",
     "al": "50 Schlager Party - und Fetenhits, Vol. 1 (Deutsche Partyschlager - Klassiker)",
     "r": "2015-04-10",
@@ -25677,6 +25679,7 @@
     "a": "Freddy",
     "t": "Unter fremden Sternen (fährt ein weißes Schiff nach Hongkong)",
     "l": "2VyY5ccrHiVzfp5TmID0qA",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273fabdc7711570846b046ac1f3",
     "al": "Heimweh, die Gitarre und das Meer",
     "r": "1991-09-01",
@@ -25690,6 +25693,7 @@
     "a": "Lale Andersen",
     "t": "Ein Schiff wird kommen",
     "l": "4jllSZTfLEJDqvwYv6Crrk",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273e4a12c861000ffc27fc44aa0",
     "al": "Das Beste von Lale Andersen",
     "r": "1996-07-04",
@@ -25703,6 +25707,7 @@
     "a": "Lolita",
     "t": "Seemann, deine Heimat ist das Meer",
     "l": "1x8SNZOPOU4pe278VvkAAL",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273cac8796e303ecbbd11d5d062",
     "al": "Heimweh",
     "r": "2004-01-01",
@@ -25716,6 +25721,7 @@
     "a": "Elvis Presley",
     "t": "It's Now Or Never",
     "l": "1XunTmhOcj3xwh4b8P3isX",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27353f941c094e3f95ff33034da",
     "al": "Elvis 30 #1 Hits",
     "r": "2002-09-24",
@@ -25728,7 +25734,8 @@
     "p": 7,
     "a": "Heidi Brühl",
     "t": "Wir wollen niemals auseinandergehn",
-    "l": "7I58rchFLrSOjSslgQTIKz"
+    "l": "7I58rchFLrSOjSslgQTIKz",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25736,7 +25743,8 @@
     "p": 8,
     "a": "Freddy",
     "t": "Melodie der Nacht",
-    "l": "5v6mF7EfcsiMgwMEKeUz4E"
+    "l": "5v6mF7EfcsiMgwMEKeUz4E",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25744,7 +25752,8 @@
     "p": 9,
     "a": "René Carol",
     "t": "Kein Land kann schöner sein",
-    "l": "3PhA46f3wgdVFx5AMHWyyL"
+    "l": "3PhA46f3wgdVFx5AMHWyyL",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25752,7 +25761,8 @@
     "p": 10,
     "a": "Vico Torriani",
     "t": "Kalkutta liegt am Ganges",
-    "l": "14NNLxV0FOeKy6tiG32t4L"
+    "l": "14NNLxV0FOeKy6tiG32t4L",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25760,7 +25770,8 @@
     "p": 11,
     "a": "Edith Piaf",
     "t": "Milord",
-    "l": "18efeGygYyi4nx3haDMdAa"
+    "l": "18efeGygYyi4nx3haDMdAa",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25768,7 +25779,8 @@
     "p": 12,
     "a": "Connie Francis",
     "t": "Die Liebe ist ein seltsames Spiel",
-    "l": "1KJzHI1ZSBr3p7rE6s71oy"
+    "l": "1KJzHI1ZSBr3p7rE6s71oy",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25776,7 +25788,8 @@
     "p": 13,
     "a": "Das Hellberg Duo",
     "t": "Hohe Tannen",
-    "l": "1PBKmjOgoZZIWrBknwCNts"
+    "l": "1PBKmjOgoZZIWrBknwCNts",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25784,7 +25797,8 @@
     "p": 14,
     "a": "Leo Leandros",
     "t": "Mustafa",
-    "l": "06kOibe9InO7KKIoNVGCiG"
+    "l": "06kOibe9InO7KKIoNVGCiG",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25792,7 +25806,8 @@
     "p": 15,
     "a": "Peter Kraus",
     "t": "Va bene",
-    "l": "0NBMLyIFLKmZQbjMhoeRpQ"
+    "l": "0NBMLyIFLKmZQbjMhoeRpQ",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25800,7 +25815,8 @@
     "p": 16,
     "a": "Jimmy Makulis",
     "t": "Gitarren klingen leise durch die Nacht",
-    "l": "2Rdisul7yRhIqo7mxjCAbx"
+    "l": "2Rdisul7yRhIqo7mxjCAbx",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25808,7 +25824,8 @@
     "p": 17,
     "a": "Die Mainzer Hofsänger",
     "t": "So ein Tag so wunderschön wie heute",
-    "l": "4qNwnM0vVDmnS1YHVSMfiu"
+    "l": "4qNwnM0vVDmnS1YHVSMfiu",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25816,7 +25833,8 @@
     "p": 18,
     "a": "Ted Herold",
     "t": "Moonlight",
-    "l": "6GZfrH6WN0cIEZLYJhYyx2"
+    "l": "6GZfrH6WN0cIEZLYJhYyx2",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25824,7 +25842,8 @@
     "p": 19,
     "a": "Club Honolulu",
     "t": "Itsy Bitsy Teenie Weenie Honolulu Strand Bikini",
-    "l": "5hUlx3RF8wtjZNBsqoXi1r"
+    "l": "5hUlx3RF8wtjZNBsqoXi1r",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25832,7 +25851,8 @@
     "p": 20,
     "a": "Peter Alexander",
     "t": "Ich zähle täglich meine Sorgen",
-    "l": "5NTOxcN09ESuWbsN4xcvUC"
+    "l": "5NTOxcN09ESuWbsN4xcvUC",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25840,7 +25860,8 @@
     "p": 21,
     "a": "Papa Bue's Viking Jazzband",
     "t": "Schlafe mein Prinzchen",
-    "l": "0SwvN8SQBx728qJDqjByPl"
+    "l": "0SwvN8SQBx728qJDqjByPl",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25848,7 +25869,8 @@
     "p": 22,
     "a": "Bert Kaempfert und sein Orchester",
     "t": "Wunderland bei Nacht",
-    "l": "3GmCx7F6e688E6shbgls2l"
+    "l": "3GmCx7F6e688E6shbgls2l",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25857,6 +25879,7 @@
     "a": "Ralf Bendix und die kleine Elisabeth",
     "t": "Babysitter-Boogie",
     "l": "2qSeSaDKDssEuHw5CnZjQB",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27302504faf250bdd322fa44a5b",
     "al": "Mega 50 - Die 60er Jahre",
     "r": "2010-01-01",
@@ -25870,6 +25893,7 @@
     "a": "Billy Vaughn",
     "t": "Wheels",
     "l": "2RVrL0fZ7O0mwdyWlwjyLW",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27391b6969280e46abb4b63ae7a",
     "al": "Orange Blossom Special And Wheels",
     "r": "1961-01-01",
@@ -25883,6 +25907,7 @@
     "a": "Gus Backus",
     "t": "Da sprach der alte Häuptling",
     "l": "1C0tAkrpNoV86SO7M1KsDZ",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273b8f4f63cc79bffcb6ef603c9",
     "al": "Schlagerjuwelen - Seine großen Erfolge",
     "r": "2007-01-01",
@@ -25896,6 +25921,7 @@
     "a": "Nana Mouskouri",
     "t": "Weiße Rosen aus Athen",
     "l": "1dhjer579Kbkv1WAb8kZP5",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273a7695d32c1b35fc41443d946",
     "al": "Weisse Rosen aus Athen",
     "r": "1963-01-01",
@@ -25909,6 +25935,7 @@
     "a": "Die Blue Diamonds",
     "t": "Ramona",
     "l": "35Uzwsuco6VG2OB1M6wRyy",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27314b1e9e7c246a3f0595e55c8",
     "al": "Die ultimative Schlager Box - Die größten Schlagerhits aller Zeiten (Teil 9 / 10: Best of Schlager - Deutsche Top 10 Hits)",
     "r": "2015-07-24",
@@ -25921,7 +25948,8 @@
     "p": 7,
     "a": "Freddy",
     "t": "La Paloma",
-    "l": "4Rl9e7CD7Gj7cfTWRS2HIr"
+    "l": "4Rl9e7CD7Gj7cfTWRS2HIr",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25929,7 +25957,8 @@
     "p": 8,
     "a": "Jan und Kjeld",
     "t": "Hello Mary Lou",
-    "l": "2WcGvzYTUJJwKixUVev6yP"
+    "l": "2WcGvzYTUJJwKixUVev6yP",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25937,7 +25966,8 @@
     "p": 9,
     "a": "Elvis Presley",
     "t": "Wooden Heart (muss i denn...)",
-    "l": "5QWQ9ChSbNDTSx1iZp961C"
+    "l": "5QWQ9ChSbNDTSx1iZp961C",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25945,7 +25975,8 @@
     "p": 10,
     "a": "Ivo Robić",
     "t": "Mit 17 fängt das Leben erst an",
-    "l": "65tomV0eb9z1PYs44zvtLq"
+    "l": "65tomV0eb9z1PYs44zvtLq",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25953,7 +25984,8 @@
     "p": 11,
     "a": "Gerhard Wendland",
     "t": "Tanze mit mir in den Morgen",
-    "l": "4TFOBUQ9Vfm1nCfG07eedq"
+    "l": "4TFOBUQ9Vfm1nCfG07eedq",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25961,7 +25993,8 @@
     "p": 12,
     "a": "Connie Francis",
     "t": "Schöner fremder Mann",
-    "l": "04wj9qvEst5Q0MIkVGWxAw"
+    "l": "04wj9qvEst5Q0MIkVGWxAw",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25969,7 +26002,8 @@
     "p": 13,
     "a": "Bill Ramsey",
     "t": "Zuckerpuppe (aus der Bauchtanz-Truppe)",
-    "l": "6LS2Di4Qf8hBUPxk5HZFgo"
+    "l": "6LS2Di4Qf8hBUPxk5HZFgo",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25977,7 +26011,8 @@
     "p": 14,
     "a": "Los Machucambos",
     "t": "Pepito",
-    "l": "6KgvfWahRokIwLobaClaNR"
+    "l": "6KgvfWahRokIwLobaClaNR",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25985,7 +26020,8 @@
     "p": 15,
     "a": "Gus Backus",
     "t": "Der Mann im Mond",
-    "l": "6xkcirvWdsf2E9TYSp3Yni"
+    "l": "6xkcirvWdsf2E9TYSp3Yni",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -25993,7 +26029,8 @@
     "p": 16,
     "a": "Willy Hagara",
     "t": "Pepe",
-    "l": "6v7Qb0Nb5g2LxFO0FPaNWM"
+    "l": "6v7Qb0Nb5g2LxFO0FPaNWM",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26001,7 +26038,8 @@
     "p": 17,
     "a": "Elvis Presley",
     "t": "Are You Lonesome To-Night?",
-    "l": "4xUqqie4bBKufHtlMuZS3k"
+    "l": "4xUqqie4bBKufHtlMuZS3k",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26009,7 +26047,8 @@
     "p": 18,
     "a": "Monika und Peter",
     "t": "Drei weiße Birken",
-    "l": "6LPGH9ar3pVVNoh44FFNPs"
+    "l": "6LPGH9ar3pVVNoh44FFNPs",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26017,7 +26056,8 @@
     "p": 19,
     "a": "Der flotte Franz und seine Bierbrummer",
     "t": "So leben wir...! (Gute alte Bekannte) 1. Teil",
-    "l": "1bwTk2fjEDMDlZ53ffWhiq"
+    "l": "1bwTk2fjEDMDlZ53ffWhiq",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26025,7 +26065,8 @@
     "p": 20,
     "a": "Conny",
     "t": "Midi-Midinette",
-    "l": "6IxXmIVVg5NgMg9EJlaF07"
+    "l": "6IxXmIVVg5NgMg9EJlaF07",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26033,7 +26074,8 @@
     "p": 21,
     "a": "Ping Ping",
     "t": "Sucu Sucu",
-    "l": "30DhDPOftFkbVS4U9M24EY"
+    "l": "30DhDPOftFkbVS4U9M24EY",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26041,7 +26083,8 @@
     "p": 22,
     "a": "Peter Beil",
     "t": "Corinna, Corinna",
-    "l": "6Zjh3XRsndoiTBISlKW9Rp"
+    "l": "6Zjh3XRsndoiTBISlKW9Rp",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26049,7 +26092,8 @@
     "p": 23,
     "a": "Caterina Valente",
     "t": "Der Sheriff von Arkansas ist 'ne Lady",
-    "l": "4jccNsDtxsIHFZ2ZW2Kp82"
+    "l": "4jccNsDtxsIHFZ2ZW2Kp82",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26057,7 +26101,8 @@
     "p": 24,
     "a": "Willy Millowitsch",
     "t": "Schnaps, das war sein letztes Wort",
-    "l": "5fY1cimPkXg4fgiYQlHjrJ"
+    "l": "5fY1cimPkXg4fgiYQlHjrJ",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26065,7 +26110,8 @@
     "p": 25,
     "a": "Old Merry Tale Jazzband",
     "t": "Am Sonntag will mein Süßer mit mir segeln gehn",
-    "l": "3vVlnGDP7D7E5e86qcQKcJ"
+    "l": "3vVlnGDP7D7E5e86qcQKcJ",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26073,7 +26119,8 @@
     "p": 26,
     "a": "Peter Kraus",
     "t": "Schwarze Rose, Rosemarie",
-    "l": "4n6915N6sg936ivNmxJZUH"
+    "l": "4n6915N6sg936ivNmxJZUH",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26081,7 +26128,8 @@
     "p": 27,
     "a": "Gerd Böttcher",
     "t": "Adieu, leb wohl, Goodbye",
-    "l": "1XrIbUsTncrCCLgCTUMImG"
+    "l": "1XrIbUsTncrCCLgCTUMImG",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26089,7 +26137,8 @@
     "p": 28,
     "a": "Siw Malmkvist",
     "t": "Danke für die Blumen",
-    "l": "6xLuL2asrlBoy2odCvbqOi"
+    "l": "6xLuL2asrlBoy2odCvbqOi",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26097,7 +26146,8 @@
     "p": 29,
     "a": "Nina und Jimmy",
     "t": "Weites Land",
-    "l": "5ZTVHcyCsh1Ve8okjqzqaF"
+    "l": "5ZTVHcyCsh1Ve8okjqzqaF",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26105,7 +26155,8 @@
     "p": 30,
     "a": "Jørgen Ingmann",
     "t": "Apache",
-    "l": "0FKNRNN2mcY9dBjenoxbeY"
+    "l": "0FKNRNN2mcY9dBjenoxbeY",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26113,7 +26164,8 @@
     "p": 31,
     "a": "Die Blue Diamonds",
     "t": "Wie damals in Paris",
-    "l": "5k69HnmzaaWP7dRRHG1LiF"
+    "l": "5k69HnmzaaWP7dRRHG1LiF",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26121,7 +26173,8 @@
     "p": 32,
     "a": "Lou van Burg",
     "t": "Freunde fürs Leben",
-    "l": "1FBmwRfrWy2fl5ulzfvvGd"
+    "l": "1FBmwRfrWy2fl5ulzfvvGd",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26130,6 +26183,7 @@
     "a": "Bob Moore und sein Orchester",
     "t": "Mexico",
     "l": "7KkRdt5G4MsF1Dm0QobdRZ",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27332c2808dfe7f9a59a2fcbedc",
     "al": "MILLIES",
     "r": "2019-08-29",
@@ -26143,6 +26197,7 @@
     "a": "Pat Boone",
     "t": "Speedy Gonzales",
     "l": "3TmnUIbelFiDzrhZqavHU0",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273d45a035dd41e95e048e5e2a8",
     "al": "Pat Boone's Greatest Hits (Reissue)",
     "r": "1993-01-01",
@@ -26156,6 +26211,7 @@
     "a": "Mina",
     "t": "Heißer Sand",
     "l": "0p2Qzeu7GrioJwpRgr2HfU",
+    "legacy": true,
     "al": "Grandi Successi",
     "r": "2019-10-21",
     "is": "DETL61903792",
@@ -26168,6 +26224,7 @@
     "a": "Conny Froboess",
     "t": "Zwei kleine Italiener",
     "l": "2v3TG35plidR486Cltpgxs",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273ce882dddc9ad55dec864f28e",
     "al": "Conny's Party",
     "r": "1992",
@@ -26181,6 +26238,7 @@
     "a": "Nana Mouskouri",
     "t": "Einmal weht der Südwind wieder",
     "l": "3l6PEGhQ5JcJijJL2104Ix",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273a7695d32c1b35fc41443d946",
     "al": "Weisse Rosen aus Athen",
     "r": "1963-01-01",
@@ -26193,7 +26251,8 @@
     "p": 7,
     "a": "Caterina & Silvio",
     "t": "The Peppermint-Twist",
-    "l": "2yNBOZBNn1GGNLDwP6pdpN"
+    "l": "2yNBOZBNn1GGNLDwP6pdpN",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26201,7 +26260,8 @@
     "p": 8,
     "a": "Freddy",
     "t": "Alo Ahe",
-    "l": "6VZZ8llz7ClbwEjk6rbODU"
+    "l": "6VZZ8llz7ClbwEjk6rbODU",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26209,7 +26269,8 @@
     "p": 9,
     "a": "The Waikiki's",
     "t": "Hawai Tattoo",
-    "l": "6hPqV5q5hBMT7SXMXQJXV8"
+    "l": "6hPqV5q5hBMT7SXMXQJXV8",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26217,7 +26278,8 @@
     "p": 10,
     "a": "Gus Backus",
     "t": "Sauerkraut-Polka",
-    "l": "1Svkz5tr4nvWlKDCgjfS7e"
+    "l": "1Svkz5tr4nvWlKDCgjfS7e",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26225,7 +26287,8 @@
     "p": 11,
     "a": "Joey Dee and The Starliters",
     "t": "Ya Ya",
-    "l": "3X4qjUHBawMxoly9JaGfL6"
+    "l": "3X4qjUHBawMxoly9JaGfL6",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26233,7 +26296,8 @@
     "p": 12,
     "a": "Carmela Corren",
     "t": "Eine Rose aus Santa Monica",
-    "l": "5UiSvcjiH3plWcCvK6NJD5"
+    "l": "5UiSvcjiH3plWcCvK6NJD5",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26241,7 +26305,8 @@
     "p": 13,
     "a": "Gerd Böttcher",
     "t": "Geld wie Heu",
-    "l": "47vmWZbQ1o1GrDsv0iGUM0"
+    "l": "47vmWZbQ1o1GrDsv0iGUM0",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26249,7 +26314,8 @@
     "p": 14,
     "a": "Peter Hinnen",
     "t": "Auf meiner Ranch bin ich König",
-    "l": "30zIkg39xePDu5dk7SPpNW"
+    "l": "30zIkg39xePDu5dk7SPpNW",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26257,7 +26323,8 @@
     "p": 15,
     "a": "Gerhard Wendland",
     "t": "Schläfst du schon?",
-    "l": "42PU2kcqvYjEPCycU7GKzm"
+    "l": "42PU2kcqvYjEPCycU7GKzm",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26265,7 +26332,8 @@
     "p": 16,
     "a": "Petula Clark",
     "t": "Monsieur",
-    "l": "0oZcv4HSNMBUSrgNxEnmFS"
+    "l": "0oZcv4HSNMBUSrgNxEnmFS",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26273,7 +26341,8 @@
     "p": 17,
     "a": "Nana Mouskouri",
     "t": "Am Horizont irgendwo",
-    "l": "1UJi6VsPb1zObJaHXeNziv"
+    "l": "1UJi6VsPb1zObJaHXeNziv",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26281,7 +26350,8 @@
     "p": 18,
     "a": "Günter Kallmann-Chor / Orchester Werner Twardy",
     "t": "Elisabeth Serenade",
-    "l": "6gj5wCuqrWZrwF9EuKGOv7"
+    "l": "6gj5wCuqrWZrwF9EuKGOv7",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26289,7 +26359,8 @@
     "p": 19,
     "a": "Caterina Valente & Silvio Francesco",
     "t": "Quando quando",
-    "l": "5qTRIUUbJdx8QEWSF47KZg"
+    "l": "5qTRIUUbJdx8QEWSF47KZg",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26297,7 +26368,8 @@
     "p": 20,
     "a": "Peppino di Capri",
     "t": "St. Tropez Twist",
-    "l": "2x4YxJL14rMyEcctkXdF8Z"
+    "l": "2x4YxJL14rMyEcctkXdF8Z",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26305,7 +26377,8 @@
     "p": 21,
     "a": "Connie Francis",
     "t": "Paradiso",
-    "l": "2LE4UEgG4qSBdl3SNwtXrc"
+    "l": "2LE4UEgG4qSBdl3SNwtXrc",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26313,7 +26386,8 @@
     "p": 22,
     "a": "Elvis Presley",
     "t": "Good Luck Charm",
-    "l": "19gotedXtqeE8dWju6WURW"
+    "l": "19gotedXtqeE8dWju6WURW",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26321,7 +26395,8 @@
     "p": 23,
     "a": "Conny",
     "t": "Lady Sunshine und Mr. Moon",
-    "l": "2p4WA7NvAIRWLkHvQKODlc"
+    "l": "2p4WA7NvAIRWLkHvQKODlc",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26329,7 +26404,8 @@
     "p": 24,
     "a": "Will Brandes und die kleine Elisabeth",
     "t": "Baby-Twist",
-    "l": "3PUcweqNkWUgR9fRMXCSwC"
+    "l": "3PUcweqNkWUgR9fRMXCSwC",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26337,7 +26413,8 @@
     "p": 25,
     "a": "Die Blue Diamonds",
     "t": "Blaues Boot der Sehnsucht",
-    "l": "4C8iXoykvCWsGOM9x2NotD"
+    "l": "4C8iXoykvCWsGOM9x2NotD",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26345,7 +26422,8 @@
     "p": 26,
     "a": "Gerd Böttcher",
     "t": "Ein Dutzend and're Männer",
-    "l": "2NE4AgSIVsTjBPH2eTKmSl"
+    "l": "2NE4AgSIVsTjBPH2eTKmSl",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26353,7 +26431,8 @@
     "p": 27,
     "a": "Mr. Acker Bilk with The Leon Young String Chorale",
     "t": "Stranger On The Shore",
-    "l": "061pN2sHhLNI3vAPIHVn2R"
+    "l": "061pN2sHhLNI3vAPIHVn2R",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26361,7 +26440,8 @@
     "p": 28,
     "a": "Chris Howland",
     "t": "Hämmerchen-Polka",
-    "l": "5k6Ywyg7Z74Up6MNkxGHHB"
+    "l": "5k6Ywyg7Z74Up6MNkxGHHB",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26370,6 +26450,7 @@
     "a": "Freddy",
     "t": "Junge, komm bald wieder",
     "l": "4agMrs0Xv2x24I6jme8x8d",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273930c8dd0203987fcfd74bd16",
     "al": "Freddy, die Gitarre und das Meer",
     "r": "1987-01-01",
@@ -26383,6 +26464,7 @@
     "a": "Manuela",
     "t": "Schuld war nur der Bossa Nova",
     "l": "1CvxZLhcpg33Wk892MJRUC",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273b221409f146a10a41c352791",
     "al": "Jive Manuela",
     "r": "1994-04-05",
@@ -26396,6 +26478,7 @@
     "a": "Billy Mo",
     "t": "Ich kauf' mir lieber einen Tirolerhut",
     "l": "1v207ZF2NQmkp1bp6ehphg",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273fa5b0d63123211cc62a41579",
     "al": "O’zapft is! - Die schönsten Volksfest-Hits der 50er & 60er Jahre",
     "r": "2016-08-07",
@@ -26409,6 +26492,7 @@
     "a": "Connie Francis",
     "t": "Barcarole in der Nacht",
     "l": "3q4x6vBWYXNTCPwd8bzliG",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273f35c3326d29c0395c0946189",
     "al": "Sings German Favorites",
     "r": "1964-01-01",
@@ -26422,6 +26506,7 @@
     "a": "Gitte",
     "t": "Ich will 'nen Cowboy als Mann",
     "l": "1UGoPlmTSw058fvCMzdEC8",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273816c40cb33694f1b02cbb5fc",
     "al": "Den Komplette Popboks Vol. 2",
     "r": "2006-05-01",
@@ -26435,6 +26520,7 @@
     "a": "Renate und Werner Leismann",
     "t": "Gaucho Mexicano",
     "l": "56RTuYzRmpOaLlB6lNJxyc",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2735469b70a5e492f877829a304",
     "al": "Wir sehen uns wieder",
     "r": "2006-03-03",
@@ -26447,7 +26533,8 @@
     "p": 7,
     "a": "Die Tahiti-Tamourés",
     "t": "Wini-Wini",
-    "l": "2NLOe1cJU8sJvc6ys67WHO"
+    "l": "2NLOe1cJU8sJvc6ys67WHO",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26455,7 +26542,8 @@
     "p": 8,
     "a": "Peter Alexander",
     "t": "Wenn erst der Abend kommt",
-    "l": "6EPp4F9dQa33zXP0bUoPuI"
+    "l": "6EPp4F9dQa33zXP0bUoPuI",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26463,7 +26551,8 @@
     "p": 9,
     "a": "Gitte & Rex Gildo",
     "t": "Vom Stadtpark die Laternen",
-    "l": "2ZSuDeejvXecDxuQuUGCHI"
+    "l": "2ZSuDeejvXecDxuQuUGCHI",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26471,7 +26560,8 @@
     "p": 10,
     "a": "Peter Hinnen",
     "t": "Siebentausend Rinder",
-    "l": "4u5ESVCB3rZW4dkvFwl05B"
+    "l": "4u5ESVCB3rZW4dkvFwl05B",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26479,7 +26569,8 @@
     "p": 11,
     "a": "Rocco Granata",
     "t": "Buona notte bambino",
-    "l": "7sAG7eQMlinCASYKQkDPD2"
+    "l": "7sAG7eQMlinCASYKQkDPD2",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26487,7 +26578,8 @@
     "p": 12,
     "a": "Gerd Böttcher",
     "t": "Für Gaby tu' ich alles",
-    "l": "1Gf5aOpHSF5qSx8dRvInx6"
+    "l": "1Gf5aOpHSF5qSx8dRvInx6",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26495,7 +26587,8 @@
     "p": 13,
     "a": "Freddy",
     "t": "Laß mich noch einmal in die Ferne",
-    "l": "0s9Su9HEdOfEBz5YArKSTm"
+    "l": "0s9Su9HEdOfEBz5YArKSTm",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26503,7 +26596,8 @@
     "p": 14,
     "a": "Die Blue Diamonds",
     "t": "Sukiyaki",
-    "l": "3pM1xguFeGBFb8CT1ZqBQX"
+    "l": "3pM1xguFeGBFb8CT1ZqBQX",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26512,6 +26606,7 @@
     "a": "Petula Clark",
     "t": "Casanova",
     "l": "77IHiPUpHRklyUkqtZGo0d",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273aa3ff9621a6cb3b1494deccc",
     "al": "Alone (Remastered)",
     "r": "2022-03-28",
@@ -26524,7 +26619,8 @@
     "p": 16,
     "a": "Rex Gildo",
     "t": "Zwei blaue Vergissmeinnicht",
-    "l": "4PPa4OqxaonEdu0vTPLahr"
+    "l": "4PPa4OqxaonEdu0vTPLahr",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26532,7 +26628,8 @@
     "p": 17,
     "a": "Manuela",
     "t": "Ich geh' noch zur Schule",
-    "l": "6rk9wcfwShaE3OGuvbUJQ3"
+    "l": "6rk9wcfwShaE3OGuvbUJQ3",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26540,7 +26637,8 @@
     "p": 18,
     "a": "Elvis Presley",
     "t": "(You're The) Devil In Disguise",
-    "l": "0D1pEisM3QkiacGXJe5dmd"
+    "l": "0D1pEisM3QkiacGXJe5dmd",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26548,7 +26646,8 @@
     "p": 19,
     "a": "Elvis Presley",
     "t": "Kiss Me Quick",
-    "l": "2CAXzfk8tLXCi3rWjAJUNp"
+    "l": "2CAXzfk8tLXCi3rWjAJUNp",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26556,7 +26655,8 @@
     "p": 20,
     "a": "Cliff Richard",
     "t": "Rote Lippen soll man küssen",
-    "l": "2z0ObRjCedb9HKxquvvpPO"
+    "l": "2z0ObRjCedb9HKxquvvpPO",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26564,7 +26664,8 @@
     "p": 21,
     "a": "Jacqueline Boyer",
     "t": "Mitsou",
-    "l": "3UK8WibOTgjtizyx6Mwekk"
+    "l": "3UK8WibOTgjtizyx6Mwekk",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26572,7 +26673,8 @@
     "p": 22,
     "a": "Medium Terzett",
     "t": "Der Schatz im Silbersee",
-    "l": "2JKjx7pKOUg09dTkdNNgHH"
+    "l": "2JKjx7pKOUg09dTkdNNgHH",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26580,7 +26682,8 @@
     "p": 23,
     "a": "Nana Mouskouri",
     "t": "Rote Korallen",
-    "l": "2BTUEoGqnL0bGbrkPtQl1X"
+    "l": "2BTUEoGqnL0bGbrkPtQl1X",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26588,7 +26691,8 @@
     "p": 24,
     "a": "Marlene Dietrich",
     "t": "Sag mir wo die Blumen sind",
-    "l": "6Fhnh8rmzLcfpOmq7xa0Qr"
+    "l": "6Fhnh8rmzLcfpOmq7xa0Qr",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26597,6 +26701,7 @@
     "a": "Siw Malmkvist",
     "t": "Liebeskummer lohnt sich nicht",
     "l": "5wfSJoeeGeyovIOYHyqi2O",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27383c00a16c9a8c8eeea9d6593",
     "al": "Liebeskummer lohnt sich nicht",
     "r": "1983",
@@ -26610,6 +26715,7 @@
     "a": "Bernd Spier",
     "t": "Das kannst du mir nicht verbieten",
     "l": "4clhnfXxJk4QBnxz5J5iqA",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273ac43e6c68d2d67d2a03e4bfa",
     "al": "Schlager-Genuss",
     "r": "2014-08-12",
@@ -26623,6 +26729,7 @@
     "a": "Ronny",
     "t": "Oh My Darling Caroline",
     "l": "7CbCLHNK5e2IVjLwtZFoik",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27356bb30ef553772772fa37e4d",
     "al": "Oh My Darling Caroline und andere Western- und Folk-Songs (Remastered)",
     "r": "1964-08-21",
@@ -26636,6 +26743,7 @@
     "a": "The Beatles",
     "t": "I Want To Hold Your Hand",
     "l": "5Qe7NHxeLAn8KoLTNLSdwe",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2735ef4660298ae29ee18799fc2",
     "al": "The Beatles 1962 - 1966 (Remastered)",
     "r": "1973-04-01",
@@ -26649,6 +26757,7 @@
     "a": "Freddy",
     "t": "Gib mir dein Wort",
     "l": "288j7xnAwXx5bJpPqnpnkv",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273a7dfec8b7dd2f71040de2d78",
     "al": "Freddy und das Lied der Prärie",
     "r": "1964-01-01",
@@ -26662,6 +26771,7 @@
     "a": "Drafi Deutscher And His Magics",
     "t": "Shake Hands",
     "l": "79xqy8w6JtDhjd5QdQ7gFH",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27331daaccea63b920a226e59ca",
     "al": "Best of Deutscher Hit Mix, Vol. 9 (Karaoke Version)",
     "r": "2012-01-01",
@@ -26673,7 +26783,8 @@
     "p": 7,
     "a": "Marika Kilius",
     "t": "Wenn die Cowboys träumen",
-    "l": "5KVjudfEC4rnaERCGvmAav"
+    "l": "5KVjudfEC4rnaERCGvmAav",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26681,7 +26792,8 @@
     "p": 8,
     "a": "Cliff Richard",
     "t": "Sag \"No\" zu ihm",
-    "l": "1fMRCGWx23CpjauG0Dh4Bx"
+    "l": "1fMRCGWx23CpjauG0Dh4Bx",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26689,7 +26801,8 @@
     "p": 9,
     "a": "Sœur Sourire",
     "t": "Dominique",
-    "l": "76G41wBgGkynvmqiIhgCig"
+    "l": "76G41wBgGkynvmqiIhgCig",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26697,7 +26810,8 @@
     "p": 10,
     "a": "Trini Lopez",
     "t": "A-me-ri-ca",
-    "l": "0PSPuZSZMk8efucxlF4Gq2"
+    "l": "0PSPuZSZMk8efucxlF4Gq2",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26705,7 +26819,8 @@
     "p": 11,
     "a": "Gigliola Cinquetti",
     "t": "Non ho l'età",
-    "l": "07rZol7bEXJSUHIcwah0eq"
+    "l": "07rZol7bEXJSUHIcwah0eq",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26713,7 +26828,8 @@
     "p": 12,
     "a": "Manuela und ihre 5 Dops",
     "t": "Schwimmen lernt man im See",
-    "l": "0JLFeIKRDzMD7jQiiR8lXD"
+    "l": "0JLFeIKRDzMD7jQiiR8lXD",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26721,7 +26837,8 @@
     "p": 13,
     "a": "Conny Froboess",
     "t": "Drei Musketiere",
-    "l": "4ZNPvAJu4mhlSXZBIMU6p4"
+    "l": "4ZNPvAJu4mhlSXZBIMU6p4",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26729,7 +26846,8 @@
     "p": 14,
     "a": "Peter Lauch und die Regenpfeifer",
     "t": "Das kommt vom Rudern das kommt vom Segeln",
-    "l": "2T01s8r86uK68jN9IHMhvq"
+    "l": "2T01s8r86uK68jN9IHMhvq",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26737,7 +26855,8 @@
     "p": 15,
     "a": "Sacha Distel",
     "t": "Der Platz neben mir",
-    "l": "1iMwIQYYymhW77ipAn4XXV"
+    "l": "1iMwIQYYymhW77ipAn4XXV",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26745,7 +26864,8 @@
     "p": 16,
     "a": "Suzie",
     "t": "Du, du, du gehst vorbei",
-    "l": "2iEGDMAK6c34SAsmrH9TJl"
+    "l": "2iEGDMAK6c34SAsmrH9TJl",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26753,7 +26873,8 @@
     "p": 17,
     "a": "Millie",
     "t": "My Boy Lollipop",
-    "l": "189KhJSO3hr65OvptuWuxd"
+    "l": "189KhJSO3hr65OvptuWuxd",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26761,7 +26882,8 @@
     "p": 18,
     "a": "Jörgen Ingmann",
     "t": "Drina-Marsch",
-    "l": "709W93OAZ2BqaPRvDa1zXl"
+    "l": "709W93OAZ2BqaPRvDa1zXl",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26769,7 +26891,8 @@
     "p": 19,
     "a": "Johnny Rivers",
     "t": "Memphis Tennessee",
-    "l": "2bfzJkaDLFrqpYv6FUy1De"
+    "l": "2bfzJkaDLFrqpYv6FUy1De",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26777,7 +26900,8 @@
     "p": 20,
     "a": "Martin Lauer",
     "t": "Sein bestes Pferd",
-    "l": "2nQplqzm6OZFgJLYosQcEn"
+    "l": "2nQplqzm6OZFgJLYosQcEn",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26785,7 +26909,8 @@
     "p": 21,
     "a": "Paul Anka",
     "t": "Zwei Mädchen aus Germany (Weißwürscht, Knödel, Sauerkraut)",
-    "l": "4ImlIOgbZtZbhY9AUSHpGm"
+    "l": "4ImlIOgbZtZbhY9AUSHpGm",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26793,7 +26918,8 @@
     "p": 22,
     "a": "Tony Sheridan And The Beat Brothers",
     "t": "Skinny Minny",
-    "l": "2alNxYdkV55WKhhG55gzPf"
+    "l": "2alNxYdkV55WKhhG55gzPf",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26801,7 +26927,8 @@
     "p": 23,
     "a": "Hans-Jürgen Bäumler",
     "t": "Wunderschönes fremdes Mädchen",
-    "l": "6DlPUHiOzRQNxG7Jbv7W2C"
+    "l": "6DlPUHiOzRQNxG7Jbv7W2C",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26809,7 +26936,8 @@
     "p": 24,
     "a": "Ronny",
     "t": "Kein Gold im Blue River",
-    "l": "0KBKmspnDFEJ40wQhEkiYb"
+    "l": "0KBKmspnDFEJ40wQhEkiYb",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26817,7 +26945,8 @@
     "p": 25,
     "a": "Gitte & Rex Gildo",
     "t": "Jetzt dreht die Welt sich nur um dich",
-    "l": "3UaM2JugXFYARQeMVVWpgw"
+    "l": "3UaM2JugXFYARQeMVVWpgw",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26825,7 +26954,8 @@
     "p": 26,
     "a": "The Beatles",
     "t": "A Hard Day's Night",
-    "l": "5J2CHimS7dWYMImCHkEFaJ"
+    "l": "5J2CHimS7dWYMImCHkEFaJ",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26833,7 +26963,8 @@
     "p": 27,
     "a": "Freddy",
     "t": "Vergangen vergessen vorüber",
-    "l": "0GHA5obdGsXXnZU519hy8z"
+    "l": "0GHA5obdGsXXnZU519hy8z",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26841,7 +26972,8 @@
     "p": 28,
     "a": "Roy Orbison",
     "t": "Oh, Pretty Woman",
-    "l": "48i055G1OT5KxGGftwFxWy"
+    "l": "48i055G1OT5KxGGftwFxWy",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26850,6 +26982,7 @@
     "a": "Nini Rosso",
     "t": "Il silenzio - Abschiedsmelodie",
     "l": "7IWLLvgCEy5jVnX4sy32OH",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2731b5942e1defa082676394174",
     "al": "Ossigeno",
     "r": "1993-03-08",
@@ -26863,6 +26996,7 @@
     "a": "Petula Clark",
     "t": "Downtown",
     "l": "6S55C80YzjhSrCRRd1p80b",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27351c5bc666e98ec2ec7dd303c",
     "al": "The Ultimate Petula Clark",
     "r": "2003-04-14",
@@ -26876,6 +27010,7 @@
     "a": "Bernd Spier",
     "t": "Das war mein schönster Tanz",
     "l": "2BHfvwa7gxhN7h0rxQMubR",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27321ef909413f193b5f08f7cff",
     "al": "Die besten deutschen Teenager-Hits der 50er und 60er",
     "r": "2016-05-13",
@@ -26888,6 +27023,7 @@
     "a": "Sam The Sham And The Pharaohs",
     "t": "Wooly Bully",
     "l": "4GNmvOYZW11lGzcZm0FKGY",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273009bb3b8a5b27dd004eb9031",
     "al": "Wooly Bully",
     "r": "1965-06-01",
@@ -26901,6 +27037,7 @@
     "a": "Wanda Jackson",
     "t": "Santo Domingo",
     "l": "757G3fxURaYdvqGTRfycZC",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273cafc31192225364277a9d96f",
     "al": "Made In Germany (Expanded Edition)",
     "r": "2021-08-13",
@@ -26914,6 +27051,7 @@
     "a": "Die Five Tops",
     "t": "Rag Doll",
     "l": "2BGh0lRjj7HouRLeoZqLFB",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2737a55f7bf388eeca5ead1111d",
     "al": "Frag doch nur dein Herz",
     "r": "2022-08-05",
@@ -26926,7 +27064,8 @@
     "p": 7,
     "a": "France Gall",
     "t": "Poupée de cire, poupée de son",
-    "l": "5kLCC1MMxOACV632KrSAS3"
+    "l": "5kLCC1MMxOACV632KrSAS3",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26934,7 +27073,8 @@
     "p": 8,
     "a": "Roy Black",
     "t": "Du bist nicht allein",
-    "l": "2ukIzpSbG2dZorsz9rOu5p"
+    "l": "2ukIzpSbG2dZorsz9rOu5p",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26942,7 +27082,8 @@
     "p": 9,
     "a": "Casey Jones & The Governors",
     "t": "Don't Ha Ha",
-    "l": "20toycGlGhM6JT6ezhQTpH"
+    "l": "20toycGlGhM6JT6ezhQTpH",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26950,7 +27091,8 @@
     "p": 10,
     "a": "Peggy March",
     "t": "Mit 17 hat man noch Träume",
-    "l": "17V9Hldsed4MOv9uhPu2lz"
+    "l": "17V9Hldsed4MOv9uhPu2lz",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26958,7 +27100,8 @@
     "p": 11,
     "a": "Drafi Deutscher And His Magics",
     "t": "Heute male ich dein Bild, Cindy Lou",
-    "l": "6S0Y6EQoeWX8sh3iydAUN5"
+    "l": "6S0Y6EQoeWX8sh3iydAUN5",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26966,7 +27109,8 @@
     "p": 12,
     "a": "Ronny",
     "t": "Kleine Annabell",
-    "l": "55rYhUqW04sNFMZbHy2Bwr"
+    "l": "55rYhUqW04sNFMZbHy2Bwr",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26974,7 +27118,8 @@
     "p": 13,
     "a": "The Beatles",
     "t": "Help!",
-    "l": "7DD7eSuYSC5xk2ArU62esN"
+    "l": "7DD7eSuYSC5xk2ArU62esN",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26982,7 +27127,8 @@
     "p": 14,
     "a": "Peter Alexander",
     "t": "Schenk' mir ein Bild von dir",
-    "l": "3eZlEhHu9WekhGd8pcsYc1"
+    "l": "3eZlEhHu9WekhGd8pcsYc1",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26990,7 +27136,8 @@
     "p": 15,
     "a": "Cliff Richard",
     "t": "Das ist die Frage aller Fragen",
-    "l": "2pDX4xE6hqdxcWN4T1zfei"
+    "l": "2pDX4xE6hqdxcWN4T1zfei",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -26998,7 +27145,8 @@
     "p": 16,
     "a": "The Rolling Stones",
     "t": "(I Can't Get No) Satisfaction",
-    "l": "2PzU4IB8Dr6mxV3lHuaG34"
+    "l": "2PzU4IB8Dr6mxV3lHuaG34",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27006,7 +27154,8 @@
     "p": 17,
     "a": "Drafi Deutscher And His Magics",
     "t": "Cinderella Baby",
-    "l": "5fJ8kh5tPo0LIXrdtUP9XY"
+    "l": "5fJ8kh5tPo0LIXrdtUP9XY",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27014,7 +27163,8 @@
     "p": 18,
     "a": "Jörgen Ingmann",
     "t": "Zorba",
-    "l": "0JVV0lnq1yzjmaHIVaYJn0"
+    "l": "0JVV0lnq1yzjmaHIVaYJn0",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27022,7 +27172,8 @@
     "p": 19,
     "a": "Freddy",
     "t": "5000 Meilen von zu Haus'",
-    "l": "49JLSX8Kkxdwb6aMV5LBhD"
+    "l": "49JLSX8Kkxdwb6aMV5LBhD",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27030,7 +27181,8 @@
     "p": 21,
     "a": "The Byrds",
     "t": "Mr. Tambourine Man",
-    "l": "2HCaIYjkvWSZzaSKUoOh3d"
+    "l": "2HCaIYjkvWSZzaSKUoOh3d",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27038,7 +27190,8 @@
     "p": 22,
     "a": "The Renegades",
     "t": "Cadillac",
-    "l": "3hVNlGaOpKvSyhOs0y78BE"
+    "l": "3hVNlGaOpKvSyhOs0y78BE",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27046,7 +27199,8 @@
     "p": 24,
     "a": "Françoise Hardy",
     "t": "Frag' den Abendwind",
-    "l": "4JfyOchQ18ivVMSMAme4fV"
+    "l": "4JfyOchQ18ivVMSMAme4fV",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27054,7 +27208,8 @@
     "p": 25,
     "a": "Martin Lauer",
     "t": "Taxi nach Texas",
-    "l": "47LoG1xV1A5BOiLTsra6QK"
+    "l": "47LoG1xV1A5BOiLTsra6QK",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27062,7 +27217,8 @@
     "p": 26,
     "a": "The Supremes",
     "t": "Stop! In The Name Of Love",
-    "l": "52FlwUMMDnTK8TGkCag9Jd"
+    "l": "52FlwUMMDnTK8TGkCag9Jd",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27070,7 +27226,8 @@
     "p": 27,
     "a": "Manuela und die 5 Dops",
     "t": "Küsse unterm Regenbogen",
-    "l": "7Mzrue5J0mXj54l9KOdqy9"
+    "l": "7Mzrue5J0mXj54l9KOdqy9",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27078,7 +27235,8 @@
     "p": 28,
     "a": "Peppino di Capri",
     "t": "Melancholie",
-    "l": "6qnQkIIFPFyTAhoyIFBrcR"
+    "l": "6qnQkIIFPFyTAhoyIFBrcR",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27086,7 +27244,8 @@
     "p": 29,
     "a": "Radi Radenkovic",
     "t": "Bin i Radi - bin i König",
-    "l": "1yFMdwenCMd8KJVXroxKAK"
+    "l": "1yFMdwenCMd8KJVXroxKAK",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27094,7 +27253,8 @@
     "p": 31,
     "a": "Udo Jürgens",
     "t": "Sag' ihr, ich laß' sie grüssen",
-    "l": "7I78cAUVH0zu8brBM9cR4M"
+    "l": "7I78cAUVH0zu8brBM9cR4M",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27102,7 +27262,8 @@
     "p": 32,
     "a": "Peter Alexander",
     "t": "Fräulein Wunderbar",
-    "l": "4KWhJyqer8f1OHK2GWY0pi"
+    "l": "4KWhJyqer8f1OHK2GWY0pi",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27110,7 +27271,8 @@
     "p": 33,
     "a": "Peggy March",
     "t": "Good Bye, Good Bye, Good Bye",
-    "l": "5eIWjrnasbZOTFyuKXAkaY"
+    "l": "5eIWjrnasbZOTFyuKXAkaY",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27118,7 +27280,8 @@
     "p": 34,
     "a": "Cliff Richard & The Shadows",
     "t": "Es war keine so wunderbar wie du",
-    "l": "3urMKABBoY91urBRL49bRW"
+    "l": "3urMKABBoY91urBRL49bRW",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27126,7 +27289,8 @@
     "p": 35,
     "a": "The Beatles",
     "t": "I Feel Fine",
-    "l": "4gxs9En3aoaOm2J5wNMMm9"
+    "l": "4gxs9En3aoaOm2J5wNMMm9",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27134,7 +27298,8 @@
     "p": 37,
     "a": "The Rolling Stones",
     "t": "The Last Time",
-    "l": "5l7bd81MKwsV99RwJWi8pk"
+    "l": "5l7bd81MKwsV99RwJWi8pk",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27142,7 +27307,8 @@
     "p": 38,
     "a": "Siw Malmkvist",
     "t": "Küsse nie nach Mitternacht",
-    "l": "1JdNWFiBnFtFoBhCxKL39M"
+    "l": "1JdNWFiBnFtFoBhCxKL39M",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27151,6 +27317,7 @@
     "a": "Jürgen Bäumler",
     "t": "Sorry Little Baby",
     "l": "5lDGcqDnoIEzbhb9Jeka1C",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2732c1cf5576a9020a191c8d20f",
     "al": "Lonestar Luchador",
     "r": "2023-07-28",
@@ -27163,7 +27330,8 @@
     "p": 40,
     "a": "Pierre Brice",
     "t": "Ich steh' allein",
-    "l": "1pVf6YeOCrfkMKIVTqrkGG"
+    "l": "1pVf6YeOCrfkMKIVTqrkGG",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27172,6 +27340,7 @@
     "a": "Frank Sinatra",
     "t": "Strangers In The Night",
     "l": "74VR3AkGPhbYXnxcOYa16x",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27350bb7ca1fe7e98df87ce41d9",
     "al": "Strangers In The Night (Expanded Edition)",
     "r": "1966-05",
@@ -27185,6 +27354,7 @@
     "a": "Freddy",
     "t": "Hundert Mann und ein Befehl",
     "l": "3EXmn5KC3ZVsNr5nCqzrmP",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273e65ced3c54e11bae84d2c088",
     "al": "Glanzlichter",
     "r": "2015-02-23",
@@ -27198,6 +27368,7 @@
     "a": "Nancy Sinatra",
     "t": "These Boots Are Made For Walkin'",
     "l": "2PneNdtypG6XcgmWmGd9FI",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27382d92aad3ac1d915434b29d5",
     "al": "Boots",
     "r": "1966-03-15",
@@ -27211,6 +27382,7 @@
     "a": "The Mamas & The Papas",
     "t": "Monday Monday",
     "l": "3EFb1qDgIqf9MegIryKtDj",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27308181b9f840a06e7a071cf72",
     "al": "If You Can Believe Your Eyes & Ears",
     "r": "1966-03",
@@ -27224,6 +27396,7 @@
     "a": "Chris Andrews",
     "t": "Yesterday Man",
     "l": "4uCibZQ4lF8I9O4va2Jlma",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2733c685907dbe4edcd32530f71",
     "al": "Yesterday Man (New Recording)",
     "r": "1992-10-23",
@@ -27237,6 +27410,7 @@
     "a": "The Beach Boys",
     "t": "Barbara Ann",
     "l": "2KOt2JrCB720UxIbyzweQo",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273af188836621942122e3832f5",
     "al": "Spirit Of America",
     "r": "1975-04-14",
@@ -27249,7 +27423,8 @@
     "p": 7,
     "a": "The Beatles",
     "t": "Michelle",
-    "l": "5By7Pzgl6TMuVJG168VWzS"
+    "l": "5By7Pzgl6TMuVJG168VWzS",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27257,7 +27432,8 @@
     "p": 8,
     "a": "Roy Black",
     "t": "Leg dein Herz in meine Hände",
-    "l": "1wL1hoV323jmYwqHaOTkmP"
+    "l": "1wL1hoV323jmYwqHaOTkmP",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27265,7 +27441,8 @@
     "p": 9,
     "a": "The Beach Boys",
     "t": "Sloop John B",
-    "l": "72fAewq2UVWSf3RjtqICdS"
+    "l": "72fAewq2UVWSf3RjtqICdS",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27273,7 +27450,8 @@
     "p": 10,
     "a": "Roy Black",
     "t": "Ganz in Weiss",
-    "l": "6EbtwJ2vOScM1SJgIx8xjy"
+    "l": "6EbtwJ2vOScM1SJgIx8xjy",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27281,7 +27459,8 @@
     "p": 11,
     "a": "Graham Bonney",
     "t": "Super Girl",
-    "l": "7lSKoHYCT1w4pvoqEcs2ku"
+    "l": "7lSKoHYCT1w4pvoqEcs2ku",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27289,7 +27468,8 @@
     "p": 12,
     "a": "Udo Jürgens",
     "t": "Siebzehn Jahr, blondes Haar",
-    "l": "6RTEzkbTQCivNPX5ShoJVv"
+    "l": "6RTEzkbTQCivNPX5ShoJVv",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27297,7 +27477,8 @@
     "p": 13,
     "a": "Chris Andrews",
     "t": "To Whom It Concerns",
-    "l": "2qa91ISRDyp4qSv5Guviam"
+    "l": "2qa91ISRDyp4qSv5Guviam",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27305,7 +27486,8 @@
     "p": 15,
     "a": "Dave Dee, Dozy, Beaky, Mick & Tich",
     "t": "Hold Tight!",
-    "l": "5ixQCurcV2gKLqJGMeLvpz"
+    "l": "5ixQCurcV2gKLqJGMeLvpz",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27313,7 +27495,8 @@
     "p": 16,
     "a": "Tommy James And The Shondells",
     "t": "Hanky Panky",
-    "l": "3uqEiaO6MUoM89nLSIs05c"
+    "l": "3uqEiaO6MUoM89nLSIs05c",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27321,7 +27504,8 @@
     "p": 17,
     "a": "The Troggs",
     "t": "Wild Thing",
-    "l": "7jGzYUZ2Bgg8BDfYlQRfn8"
+    "l": "7jGzYUZ2Bgg8BDfYlQRfn8",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27329,7 +27513,8 @@
     "p": 18,
     "a": "The Beatles",
     "t": "Yellow Submarine",
-    "l": "1tdltVUBkiBCW1C3yB4zyD"
+    "l": "1tdltVUBkiBCW1C3yB4zyD",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27337,7 +27522,8 @@
     "p": 19,
     "a": "Marion",
     "t": "Er ist wieder da",
-    "l": "23Sj9OYKVMkoB302JvIxEg"
+    "l": "23Sj9OYKVMkoB302JvIxEg",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27345,7 +27531,8 @@
     "p": 20,
     "a": "Udo Jürgens",
     "t": "Merci Cherie",
-    "l": "1KHSnWFJ5a988kM1Kz2daX"
+    "l": "1KHSnWFJ5a988kM1Kz2daX",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27353,7 +27540,8 @@
     "p": 21,
     "a": "Dave Dee, Dozy, Beaky, Mick & Tich",
     "t": "Hideaway",
-    "l": "3Y51mILfUPnsAxh1XUUArY"
+    "l": "3Y51mILfUPnsAxh1XUUArY",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27361,7 +27549,8 @@
     "p": 22,
     "a": "The Walker Brothers",
     "t": "The Sun Ain't Gonna Shine Anymore",
-    "l": "63wdqRslGFbxzMbvLo6UXj"
+    "l": "63wdqRslGFbxzMbvLo6UXj",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27369,7 +27558,8 @@
     "p": 23,
     "a": "Al Martino",
     "t": "Spanish Eyes",
-    "l": "55Z0KHofKqhOMIOygAVXxm"
+    "l": "55Z0KHofKqhOMIOygAVXxm",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27377,7 +27567,8 @@
     "p": 24,
     "a": "The Beatles",
     "t": "We Can Work It Out",
-    "l": "1hTUFqJuQAMjXVGwUPWDqi"
+    "l": "1hTUFqJuQAMjXVGwUPWDqi",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27385,7 +27576,8 @@
     "p": 25,
     "a": "André Brasseur",
     "t": "Early Bird",
-    "l": "2nuNNuvt8P0tOY01q9zspN"
+    "l": "2nuNNuvt8P0tOY01q9zspN",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27393,7 +27585,8 @@
     "p": 26,
     "a": "The Troggs",
     "t": "With A Girl Like You",
-    "l": "3VGBUfN2EOVHJ4Y92yIh2f"
+    "l": "3VGBUfN2EOVHJ4Y92yIh2f",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27401,7 +27594,8 @@
     "p": 27,
     "a": "The Beatles",
     "t": "Paperback Writer",
-    "l": "3OtsmzTZs50ahEnHKVvozC"
+    "l": "3OtsmzTZs50ahEnHKVvozC",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27409,7 +27603,8 @@
     "p": 28,
     "a": "The Rolling Stones",
     "t": "Paint It, Black",
-    "l": "63T7DJ1AFDD6Bn8VzG6JE8"
+    "l": "63T7DJ1AFDD6Bn8VzG6JE8",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27417,7 +27612,8 @@
     "p": 29,
     "a": "Drafi Deutscher And His Magics",
     "t": "Nimm mich so wie ich bin",
-    "l": "1wsscPYyvsWhCmcDfaW6BJ"
+    "l": "1wsscPYyvsWhCmcDfaW6BJ",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27425,7 +27621,8 @@
     "p": 30,
     "a": "The Rolling Stones",
     "t": "Get Off Of My Cloud",
-    "l": "263Iuyk08ks1v6FIudUIGD"
+    "l": "263Iuyk08ks1v6FIudUIGD",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27433,7 +27630,8 @@
     "p": 31,
     "a": "Suzie",
     "t": "Ich will immer nur dich",
-    "l": "1UZs9dauJnxrqYxMIzxnwC"
+    "l": "1UZs9dauJnxrqYxMIzxnwC",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27441,7 +27639,8 @@
     "p": 32,
     "a": "The Spencer Davis Group",
     "t": "Keep On Running",
-    "l": "4gIBVzdQutBd809V7cxyhg"
+    "l": "4gIBVzdQutBd809V7cxyhg",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27449,7 +27648,8 @@
     "p": 33,
     "a": "The Kinks",
     "t": "Sunny Afternoon",
-    "l": "09Plbz3Ja2gxU9xCsqA5KY"
+    "l": "09Plbz3Ja2gxU9xCsqA5KY",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27457,7 +27657,8 @@
     "p": 34,
     "a": "The Peels",
     "t": "Juanita Banana",
-    "l": "4aHueicFyTxORTrQFEV9mn"
+    "l": "4aHueicFyTxORTrQFEV9mn",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27465,7 +27666,8 @@
     "p": 35,
     "a": "Simon & Garfunkel",
     "t": "The Sounds Of Silence",
-    "l": "3CepTOU9Y7FezTt0CF3lCw"
+    "l": "3CepTOU9Y7FezTt0CF3lCw",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27473,7 +27675,8 @@
     "p": 36,
     "a": "Ross McManus & The Joe Loss Blue Beats",
     "t": "Patsy Girl",
-    "l": "1TZv3bujNaYz646eezRE91"
+    "l": "1TZv3bujNaYz646eezRE91",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27481,7 +27684,8 @@
     "p": 37,
     "a": "The Rolling Stones",
     "t": "19th Nervous Breakdown",
-    "l": "0or66mTUdzoj6FiJmbZTw0"
+    "l": "0or66mTUdzoj6FiJmbZTw0",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27489,7 +27693,8 @@
     "p": 38,
     "a": "The Spencer Davis Group",
     "t": "Somebody Help Me",
-    "l": "7MNCEECpRUaWjOyLtOxpsz"
+    "l": "7MNCEECpRUaWjOyLtOxpsz",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27497,7 +27702,8 @@
     "p": 39,
     "a": "Wencke Myhre",
     "t": "Beiss nicht gleich in jeden Apfel",
-    "l": "3ZLiONVoHO12NBbMI1F9OH"
+    "l": "3ZLiONVoHO12NBbMI1F9OH",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27505,7 +27711,8 @@
     "p": 40,
     "a": "The Lovin' Spoonful",
     "t": "Summer In The City",
-    "l": "7AzFID6u1b3zIWbd9pb8Dk"
+    "l": "7AzFID6u1b3zIWbd9pb8Dk",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27513,7 +27720,8 @@
     "p": 41,
     "a": "Ronny",
     "t": "Eine kleine Träne",
-    "l": "6ShIKVfvmELK4aAGaXMRON"
+    "l": "6ShIKVfvmELK4aAGaXMRON",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27522,6 +27730,7 @@
     "a": "Dave Dee, Dozy, Beaky, Mick & Tich",
     "t": "Bend It",
     "l": "5QiLMbkYocbcJeAc5QP948",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273e67dc67dcf25c0c46efa7e6e",
     "al": "Dave Dee Dozy Beaky Mick & Tich",
     "r": "2006-02-27",
@@ -27534,6 +27743,7 @@
     "a": "Heidi Brühl",
     "t": "Hundert Mann und ein Befehl",
     "l": "5VYV4YonTtEa4HmfW3bsQm",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2735f8d7f0e33d0b08e72858f5b",
     "al": "Schlager-Hits Vol. 2",
     "r": "2022-07-15",
@@ -27546,6 +27756,7 @@
     "a": "Udo Jürgens",
     "t": "Sag mir wie",
     "l": "5bjjK0nSX8AXvEF4JMZMmP",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273d8d03dd035102326e59e3425",
     "al": "Merci, Udo!",
     "r": "2016-03-23",
@@ -27558,6 +27769,7 @@
     "a": "The Beatles",
     "t": "Nowhere Man",
     "l": "5SUlhldQJtOhUr2GzH5RI7",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273ed801e58a9ababdea6ac7ce4",
     "al": "Rubber Soul (Remastered 2009)",
     "r": "1965-12-03",
@@ -27570,6 +27782,7 @@
     "a": "Cliff Richard & The Shadows",
     "t": "Du bist mein erster Gedanke",
     "l": "0BLcxrF85vmKtFLgsH2qvi",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273a3d5d45924d9617980af3955",
     "al": "Russisch Roulette (Deluxe)",
     "r": "2014-11-28",
@@ -27582,6 +27795,7 @@
     "a": "Sonny & Cher",
     "t": "Little Man",
     "l": "1WLidmnJgWxGyupQ3jgdGd",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273c66163333c231d69b1fd09e3",
     "al": "In Case You're In Love",
     "r": "1967",
@@ -27594,6 +27808,7 @@
     "a": "The Kinks",
     "t": "Dedicated Follower Of Fashion",
     "l": "00cXVWYtUXL9OVcwbA2UiD",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273de707ac88d639bafc29649ff",
     "al": "The Kink Kontroversy (Deluxe)",
     "r": "1965-11-26",
@@ -27606,6 +27821,7 @@
     "a": "The Rattles",
     "t": "Come On And Sing",
     "l": "48l48IsrZ4I4niDTrQ3Kql",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273d43646ad12fd8432ba42915e",
     "al": "Live",
     "r": "2011-09-16",
@@ -27618,6 +27834,7 @@
     "a": "Maurice Jarre",
     "t": "Lara's Theme",
     "l": "64DF980QUr0onW8r9TWZtZ",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2737078494b77fb8431ae9f5cbe",
     "al": "La Vie Est Belle",
     "r": "2000-01-01",
@@ -27631,6 +27848,7 @@
     "a": "Sandie Shaw",
     "t": "Puppet On A String",
     "l": "7f5w4aiYgVZrp9w4bNaBLu",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273192804c12b1cfa78f0b51ff6",
     "al": "Love Me, Please Love Me (Deluxe Edition)",
     "r": "1967-01-01",
@@ -27644,6 +27862,7 @@
     "a": "Roy Black",
     "t": "Frag nur dein Herz",
     "l": "7GETAd5Aop3zLYlWcZ0kqj",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273ace015e0236283b11dc325b1",
     "al": "Roy Black",
     "r": "1966-01-01",
@@ -27657,6 +27876,7 @@
     "a": "Roy Black",
     "t": "Meine Liebe zu dir",
     "l": "7lMN9To1BkoMu555648Svn",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273038c21fc378a57b9e1a959be",
     "al": "Gestern - Heute",
     "r": "1977-01-01",
@@ -27670,6 +27890,7 @@
     "a": "David Garrick",
     "t": "Dear Mrs. Applebee",
     "l": "5A4aAipcocirfcRKWRwGL8",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273440728cc82d7ec82dfb455b4",
     "al": "The Pye Anthology",
     "r": "2001-01-02",
@@ -27683,6 +27904,7 @@
     "a": "Ronny",
     "t": "Laß die Sonne wieder scheinen",
     "l": "3yqdSDt2LkjZApZP5Pv0Xh",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27326984194d209446baad65bee",
     "al": "Die grossen Erfolge",
     "r": "1967-05-16",
@@ -27695,7 +27917,8 @@
     "p": 7,
     "a": "Whistling Jack Smith",
     "t": "I Was Kaiser Bill's Batman",
-    "l": "26fbE2unExzQVLFO73EgzV"
+    "l": "26fbE2unExzQVLFO73EgzV",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27703,7 +27926,8 @@
     "p": 8,
     "a": "The Monkees",
     "t": "I'm A Believer",
-    "l": "3G7tRC24Uh09Hmp1KZ7LQ2"
+    "l": "3G7tRC24Uh09Hmp1KZ7LQ2",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27711,7 +27935,8 @@
     "p": 9,
     "a": "The Rolling Stones",
     "t": "Let's Spend The Night Together",
-    "l": "1QLr0zOu6fv5hLEHOwdr21"
+    "l": "1QLr0zOu6fv5hLEHOwdr21",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27719,7 +27944,8 @@
     "p": 10,
     "a": "Herman's Hermits",
     "t": "No Milk Today",
-    "l": "02Y0CtzmhTLjTOg0cWvAhq"
+    "l": "02Y0CtzmhTLjTOg0cWvAhq",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27727,7 +27953,8 @@
     "p": 11,
     "a": "Manfred Mann",
     "t": "Ha! Ha! Said The Clown",
-    "l": "3dyPIukaUYkLNyR0XmsT8s"
+    "l": "3dyPIukaUYkLNyR0XmsT8s",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27735,7 +27962,8 @@
     "p": 12,
     "a": "Peter Alexander",
     "t": "Moderne Romanzen",
-    "l": "0Vc43T6i7S7ItY56IrFGJ2"
+    "l": "0Vc43T6i7S7ItY56IrFGJ2",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27743,7 +27971,8 @@
     "p": 13,
     "a": "Dave Dee, Dozy, Beaky, Mick & Tich",
     "t": "Okay!",
-    "l": "0eUzrA6zBU5nwMTqxAX07v"
+    "l": "0eUzrA6zBU5nwMTqxAX07v",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27751,7 +27980,8 @@
     "p": 14,
     "a": "Scott McKenzie",
     "t": "San Francisco (Be Sure To Wear Some Flowers In Your Hair)",
-    "l": "77qBwefBIdzymXNCuAI8YX"
+    "l": "77qBwefBIdzymXNCuAI8YX",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27759,7 +27989,8 @@
     "p": 15,
     "a": "Peter Alexander",
     "t": "Spanisch war die Nacht",
-    "l": "1eeRb9waePIR46R4yMkAgo"
+    "l": "1eeRb9waePIR46R4yMkAgo",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27767,7 +27998,8 @@
     "p": 16,
     "a": "The Beatles",
     "t": "All You Need Is Love",
-    "l": "68BTFws92cRztMS1oQ7Ewj"
+    "l": "68BTFws92cRztMS1oQ7Ewj",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27775,7 +28007,8 @@
     "p": 17,
     "a": "Procol Harum",
     "t": "A Whiter Shade Of Pale",
-    "l": "7DsQgIwg23u9gooCxkRTu3"
+    "l": "7DsQgIwg23u9gooCxkRTu3",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27783,7 +28016,8 @@
     "p": 18,
     "a": "Nancy & Frank Sinatra",
     "t": "Somethin' Stupid",
-    "l": "4feXcsElKIVsGwkbnTHAfV"
+    "l": "4feXcsElKIVsGwkbnTHAfV",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27791,7 +28025,8 @@
     "p": 19,
     "a": "The Beatles",
     "t": "Penny Lane",
-    "l": "1h04XMpzGzmAudoI6VHBgA"
+    "l": "1h04XMpzGzmAudoI6VHBgA",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27799,7 +28034,8 @@
     "p": 20,
     "a": "Peggy March",
     "t": "Memories Of Heidelberg",
-    "l": "6kW9XUliaOM3kGtVRcw52N"
+    "l": "6kW9XUliaOM3kGtVRcw52N",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27807,7 +28043,8 @@
     "p": 21,
     "a": "Dave Dee, Dozy, Beaky, Mick & Tich",
     "t": "Save Me",
-    "l": "5OJY8vQGCc6ZAjllvPxeVn"
+    "l": "5OJY8vQGCc6ZAjllvPxeVn",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27815,7 +28052,8 @@
     "p": 22,
     "a": "Tom Jones",
     "t": "Green, Green Grass Of Home",
-    "l": "5BFWQXNGPYadZxNKxY1UfU"
+    "l": "5BFWQXNGPYadZxNKxY1UfU",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27823,7 +28061,8 @@
     "p": 23,
     "a": "The Kinks",
     "t": "Dandy",
-    "l": "5meJK8uYdLnFOinTy9aRuz"
+    "l": "5meJK8uYdLnFOinTy9aRuz",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27831,7 +28070,8 @@
     "p": 24,
     "a": "Dave Davies",
     "t": "Death Of A Clown",
-    "l": "71tHuwbbAnhEnbJiDHy5b6"
+    "l": "71tHuwbbAnhEnbJiDHy5b6",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27839,7 +28079,8 @@
     "p": 25,
     "a": "Peter Alexander",
     "t": "Verbotene Träume",
-    "l": "7sfJO2wP8oRGpIrR0UOGdQ"
+    "l": "7sfJO2wP8oRGpIrR0UOGdQ",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27847,7 +28088,8 @@
     "p": 26,
     "a": "Freddy",
     "t": "Morgen beginnt die Welt",
-    "l": "2Y5higawQRgd8D8YeC4jDo"
+    "l": "2Y5higawQRgd8D8YeC4jDo",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27855,7 +28097,8 @@
     "p": 27,
     "a": "The Who",
     "t": "Happy Jack",
-    "l": "4EQL3I68WEw20icaY5y6Cy"
+    "l": "4EQL3I68WEw20icaY5y6Cy",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27863,7 +28106,8 @@
     "p": 30,
     "a": "Anna-Lena",
     "t": "Dein Herz, das muß aus Gold sein",
-    "l": "0af7X05Y9iu6lM3WyVecWy"
+    "l": "0af7X05Y9iu6lM3WyVecWy",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27871,7 +28115,8 @@
     "p": 31,
     "a": "Udo Jürgens",
     "t": "Immer wieder geht die Sonne auf",
-    "l": "4NE71zloHC3tV0YZAo1HXr"
+    "l": "4NE71zloHC3tV0YZAo1HXr",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27879,7 +28124,8 @@
     "p": 32,
     "a": "The Hollies",
     "t": "Carrie Anne",
-    "l": "794fEMvS4YXOcVSrC5I2vy"
+    "l": "794fEMvS4YXOcVSrC5I2vy",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27887,7 +28133,8 @@
     "p": 33,
     "a": "The Kinks",
     "t": "Waterloo Sunset",
-    "l": "3G0EALIIp5DAeIERxXBHmo"
+    "l": "3G0EALIIp5DAeIERxXBHmo",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27895,7 +28142,8 @@
     "p": 34,
     "a": "The Creation",
     "t": "Painter Man",
-    "l": "7KvrsELrHdJnVn1eawhR0e"
+    "l": "7KvrsELrHdJnVn1eawhR0e",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27903,7 +28151,8 @@
     "p": 35,
     "a": "Nancy Sinatra & Lee Hazlewood",
     "t": "Jackson",
-    "l": "3qBpDQkqa9VPuxa7oRIeff"
+    "l": "3qBpDQkqa9VPuxa7oRIeff",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27911,7 +28160,8 @@
     "p": 36,
     "a": "The Smoke",
     "t": "My Friend Jack",
-    "l": "6eYh3A7TE8cIwKFGK5vLTj"
+    "l": "6eYh3A7TE8cIwKFGK5vLTj",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27919,7 +28169,8 @@
     "p": 37,
     "a": "Peggy March",
     "t": "Romeo und Julia",
-    "l": "0ePqdaee9sIjSeHWCd3S8O"
+    "l": "0ePqdaee9sIjSeHWCd3S8O",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27927,7 +28178,8 @@
     "p": 38,
     "a": "Ronny",
     "t": "Adios, My Darling",
-    "l": "4H4klhhi2ZxHqLh258y0b7"
+    "l": "4H4klhhi2ZxHqLh258y0b7",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27935,7 +28187,8 @@
     "p": 39,
     "a": "Manuela",
     "t": "Monsieur Dupont",
-    "l": "6sd831h8rHDAFgZzjphez8"
+    "l": "6sd831h8rHDAFgZzjphez8",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27943,7 +28196,8 @@
     "p": 40,
     "a": "Adriano Celentano",
     "t": "Una festa sui prati",
-    "l": "2CKrrPcaq6RGX3I3vNKNJ2"
+    "l": "2CKrrPcaq6RGX3I3vNKNJ2",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27951,7 +28205,8 @@
     "p": 41,
     "a": "The Lords",
     "t": "Glory Land",
-    "l": "1HbJ1BMh9cJIa4xL91wdBx"
+    "l": "1HbJ1BMh9cJIa4xL91wdBx",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -27960,6 +28215,7 @@
     "a": "Nini Rosso",
     "t": "La Montanara",
     "l": "4IiiFWnLXLAWBCQ6N55t18",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27387e9ae94a989ebeff15c31d0",
     "al": "Nini Rosso - Magic Trumpet, Vol. 2",
     "r": "2017-12-22",
@@ -27972,6 +28228,7 @@
     "a": "The Hollies",
     "t": "On A Carousel",
     "l": "6X0u7ka7KTxBmO6kmDrXmO",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273ed8d557962acca74da5160f4",
     "al": "The Air That I Breathe - The Very Best of the Hollies",
     "r": "1993-03-22",
@@ -27984,6 +28241,7 @@
     "a": "The Tremeloes",
     "t": "Silence Is Golden",
     "l": "1JOahj0KDKXLRRATAK2S4e",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2733820b3418d723fc4b0e7e995",
     "al": "Love Songs",
     "r": "1997-05-20",
@@ -27996,6 +28254,7 @@
     "a": "Graham Bonney",
     "t": "Das Girl mit dem La-La-La",
     "l": "25TiTWLlpDHuXecBvTVxGt",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2730eba6f6226bc4fb14ca2edc5",
     "al": "Hey, Super Girl... Hey, Hey!! The Very Best Of",
     "r": "2002-01-01",
@@ -28008,6 +28267,7 @@
     "a": "New Vaudeville Band",
     "t": "Winchester Cathedral",
     "l": "496FioxJlqnl97q57PPo9d",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27378d4faac054bcf78fcf94e84",
     "al": "Summer Of Love",
     "r": "2020-09-11",
@@ -28020,6 +28280,7 @@
     "a": "Ronny",
     "t": "Dunja, du",
     "l": "1Obwss5ApEdNpMobzBxgbx",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27326984194d209446baad65bee",
     "al": "Die grossen Erfolge",
     "r": "1967-05-16",
@@ -28032,6 +28293,7 @@
     "a": "The Equals",
     "t": "Baby, Come Back",
     "l": "6zlJXSjlMD0usP9nnPVigY",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273f487e05077e8237f7127dc6c",
     "al": "All the Hits Plus More",
     "r": "2019-07-14",
@@ -28044,6 +28306,7 @@
     "a": "The Beach Boys",
     "t": "Good Vibrations",
     "l": "5t9KYe0Fhd5cW6UYT4qP8f",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273fb9dac3244b8486758058a81",
     "al": "Smiley Smile (Remastered)",
     "r": "1967-09-18",
@@ -28056,6 +28319,7 @@
     "a": "Siw Malmkvist",
     "t": "Frech geküßt ist halb gewonnen",
     "l": "7LGRWvLKZGWsxx2lySRfC1",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273933c16df954c153efcf82ae3",
     "al": "Frech geküsst ist halb gewonnen - Die großen Erfolge",
     "r": "2011-01-01",
@@ -28068,6 +28332,7 @@
     "a": "Heintje",
     "t": "Mama",
     "l": "1QTi1rZx1VOWcM4T2wD49V",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273aa2e0b015acbe361563cc303",
     "al": "Mama",
     "r": "1968",
@@ -28081,6 +28346,7 @@
     "a": "Heintje",
     "t": "Du sollst nicht weinen",
     "l": "7ucyvAOZW5Gx0F74Qs5VA0",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273dd6808775d056b8710fca90e",
     "al": "Seine größten Erfolge",
     "r": "2016-03-11",
@@ -28094,6 +28360,7 @@
     "a": "Tom Jones",
     "t": "Delilah",
     "l": "2v8B8d17Xxu9uLU5sNiHSL",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273aca45b9b634ffaa918c191a4",
     "al": "Delilah",
     "r": "1968-01-01",
@@ -28107,6 +28374,7 @@
     "a": "Peter Alexander",
     "t": "Der letzte Walzer",
     "l": "74CGZLcorfbOjMi02pz6xm",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273c90a34d02d90c14b0c97fe7a",
     "al": "Schlager-Rendezvous mit Peter Alexander, Vol. 1",
     "r": "1967-04-10",
@@ -28120,6 +28388,7 @@
     "a": "Peter Alexander",
     "t": "Delilah",
     "l": "4lHT8DtjZqMMDUX96vUgTs",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273bba3953bf0b05db5d9889965",
     "al": "Ein Abend mit Dir",
     "r": "1985-03-08",
@@ -28133,6 +28402,7 @@
     "a": "Tom Jones",
     "t": "Help Yourself",
     "l": "6L8CWcj8KIdz5SMhinN4CO",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b2736168a09c3fdc2e00d00689bd",
     "al": "The Best Of ... Tom Jones",
     "r": "1997-10-13",
@@ -28145,7 +28415,8 @@
     "p": 7,
     "a": "Udo Jürgens",
     "t": "Cotton Fields",
-    "l": "0oMBx5MjA3Cjf6IuRFfxzR"
+    "l": "0oMBx5MjA3Cjf6IuRFfxzR",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28153,7 +28424,8 @@
     "p": 8,
     "a": "Roy Black",
     "t": "Bleib bei mir",
-    "l": "729sjfqaj9wchmnjwGWq9T"
+    "l": "729sjfqaj9wchmnjwGWq9T",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28161,7 +28433,8 @@
     "p": 9,
     "a": "Dorthe",
     "t": "Sind Sie der Graf von Luxemburg?",
-    "l": "2jvPETfvUp63D05WMRR5lV"
+    "l": "2jvPETfvUp63D05WMRR5lV",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28169,7 +28442,8 @@
     "p": 10,
     "a": "Heintje",
     "t": "Heidschi Bumbeidschi",
-    "l": "5UXOADvTAmLHYJVApg0UtV"
+    "l": "5UXOADvTAmLHYJVApg0UtV",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28177,7 +28451,8 @@
     "p": 11,
     "a": "Bee Gees",
     "t": "World",
-    "l": "1KK070iuoUVsOuHRKu3zh9"
+    "l": "1KK070iuoUVsOuHRKu3zh9",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28185,7 +28460,8 @@
     "p": 12,
     "a": "Manfred Mann",
     "t": "Mighty Quinn",
-    "l": "3TshLzRt3kBME3Q5OOFBNE"
+    "l": "3TshLzRt3kBME3Q5OOFBNE",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28193,7 +28469,8 @@
     "p": 13,
     "a": "Rita Pavone",
     "t": "Arrivederci Hans",
-    "l": "63rKpaCWeSfCbixNCKkjSe"
+    "l": "63rKpaCWeSfCbixNCKkjSe",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28201,7 +28478,8 @@
     "p": 14,
     "a": "Udo Jürgens",
     "t": "Mathilda",
-    "l": "1kTnH27Gi9STq8iGzTXAuV"
+    "l": "1kTnH27Gi9STq8iGzTXAuV",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28209,7 +28487,8 @@
     "p": 15,
     "a": "Peter Alexander",
     "t": "Komm und bedien dich",
-    "l": "0p0wus0D6XzfYyKCZpYCkN"
+    "l": "0p0wus0D6XzfYyKCZpYCkN",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28217,7 +28496,8 @@
     "p": 16,
     "a": "Small Faces",
     "t": "Lazy Sunday",
-    "l": "4MhNUVL2T1tPinrRXJ4gGB"
+    "l": "4MhNUVL2T1tPinrRXJ4gGB",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28225,7 +28505,8 @@
     "p": 17,
     "a": "Tommy James And The Shondells",
     "t": "Mony Mony",
-    "l": "23xk9Rf7oIHVUU1JvmXYFn"
+    "l": "23xk9Rf7oIHVUU1JvmXYFn",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28233,7 +28514,8 @@
     "p": 18,
     "a": "The Beatles",
     "t": "Hello, Good Bye",
-    "l": "0hqjsgWRfMBf2s8xsvRq1M"
+    "l": "0hqjsgWRfMBf2s8xsvRq1M",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28241,7 +28523,8 @@
     "p": 19,
     "a": "John Fred & His Playboy Band",
     "t": "Judy In Disguise (With Glasses)",
-    "l": "5qXx9cIbDIJqOWWqYEfixH"
+    "l": "5qXx9cIbDIJqOWWqYEfixH",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28249,7 +28532,8 @@
     "p": 20,
     "a": "Mary Hopkin",
     "t": "Those Were The Days",
-    "l": "6QOg1CWFpLAsIK7I54JX4G"
+    "l": "6QOg1CWFpLAsIK7I54JX4G",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28257,7 +28541,8 @@
     "p": 21,
     "a": "Ohio Express",
     "t": "Yummy Yummy Yummy",
-    "l": "6WvbMOjKf5y3CAHn4ubwlp"
+    "l": "6WvbMOjKf5y3CAHn4ubwlp",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28265,7 +28550,8 @@
     "p": 22,
     "a": "Roland W.",
     "t": "Monja",
-    "l": "010EcOb7ruiQ4qdiTmXnLG"
+    "l": "010EcOb7ruiQ4qdiTmXnLG",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28273,7 +28559,8 @@
     "p": 23,
     "a": "Bee Gees",
     "t": "Massachusetts",
-    "l": "2R30N7DHSavVqORsbMApqV"
+    "l": "2R30N7DHSavVqORsbMApqV",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28281,7 +28568,8 @@
     "p": 24,
     "a": "The Rolling Stones",
     "t": "Jumpin' Jack Flash",
-    "l": "1uBsu3PbD2909UBIfEMLvK"
+    "l": "1uBsu3PbD2909UBIfEMLvK",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28289,7 +28577,8 @@
     "p": 25,
     "a": "The Beatles",
     "t": "Hey Jude",
-    "l": "1eT2CjXwFXNx6oY5ydvzKU"
+    "l": "1eT2CjXwFXNx6oY5ydvzKU",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28297,7 +28586,8 @@
     "p": 26,
     "a": "The Union Gap feat. Gary Puckett",
     "t": "Young Girl",
-    "l": "6s10XyfYy0X2vQrPAnJ2lh"
+    "l": "6s10XyfYy0X2vQrPAnJ2lh",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28305,7 +28595,8 @@
     "p": 27,
     "a": "The Monkees",
     "t": "Daydream Believer",
-    "l": "7uEcCGtM1FBBGIhPozhJjv"
+    "l": "7uEcCGtM1FBBGIhPozhJjv",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28313,7 +28604,8 @@
     "p": 28,
     "a": "Bee Gees",
     "t": "Words",
-    "l": "07PIhdmyYIw8dMeDMsx9FU"
+    "l": "07PIhdmyYIw8dMeDMsx9FU",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28321,7 +28613,8 @@
     "p": 29,
     "a": "The Beatles",
     "t": "Lady Madonna",
-    "l": "1fSHw7Gt4ha9kJew9a0a55"
+    "l": "1fSHw7Gt4ha9kJew9a0a55",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28329,7 +28622,8 @@
     "p": 30,
     "a": "Cliff Richard",
     "t": "Congratulations",
-    "l": "1SOAN58QwnQABl2SND1wMh"
+    "l": "1SOAN58QwnQABl2SND1wMh",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28337,7 +28631,8 @@
     "p": 31,
     "a": "Adamo",
     "t": "Es geht eine Träne auf Reisen",
-    "l": "2zYvgICPhr3kAIKtVIaWAi"
+    "l": "2zYvgICPhr3kAIKtVIaWAi",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28345,7 +28640,8 @@
     "p": 32,
     "a": "Alexandra",
     "t": "Sehnsucht",
-    "l": "2bEUcx7UxrxMPaw9ie3Rvq"
+    "l": "2bEUcx7UxrxMPaw9ie3Rvq",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28353,7 +28649,8 @@
     "p": 33,
     "a": "The Crazy World Of Arthur Brown",
     "t": "Fire",
-    "l": "1wVBq2SkE1AOKoaOxUVvDC"
+    "l": "1wVBq2SkE1AOKoaOxUVvDC",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28361,7 +28658,8 @@
     "p": 34,
     "a": "Dave Dee, Dozy, Beaky, Mick & Tich",
     "t": "The Legend Of Xanadu",
-    "l": "4DYp1pEg6ebDJkChzvxjOi"
+    "l": "4DYp1pEg6ebDJkChzvxjOi",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28369,7 +28667,8 @@
     "p": 35,
     "a": "1910 Fruitgum Co.",
     "t": "Simon Says",
-    "l": "2TdhHtNXvGwbVSkZSQ5Olt"
+    "l": "2TdhHtNXvGwbVSkZSQ5Olt",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28377,7 +28676,8 @@
     "p": 36,
     "a": "Esther & Abi Ofarim",
     "t": "Morning Of My Life",
-    "l": "0GbFgMS0Qf7wOrWKKxfLUL"
+    "l": "0GbFgMS0Qf7wOrWKKxfLUL",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28385,7 +28685,8 @@
     "p": 37,
     "a": "Engelbert",
     "t": "A Man Without Love",
-    "l": "0oUBuOO4g9P4lREqfqR5nq"
+    "l": "0oUBuOO4g9P4lREqfqR5nq",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28393,7 +28694,8 @@
     "p": 40,
     "a": "Bee Gees",
     "t": "Jumbo",
-    "l": "1bAhMCb5E2jSLHG3uJX50N"
+    "l": "1bAhMCb5E2jSLHG3uJX50N",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28402,6 +28704,7 @@
     "a": "The Beach Boys",
     "t": "Do It Again",
     "l": "0vhCcrN8ULryq1KuEEYlm2",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27300342f9f40e80ee0440c954d",
     "al": "20/20 (Remastered)",
     "r": "1969-02-10",
@@ -28414,6 +28717,7 @@
     "a": "Graham Bonney und die Jay Five",
     "t": "Siebenmeilenstiefel",
     "l": "5WIK8KuxlEWbrQcRDEpHXV",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27345c1de303dc10613d92dfd67",
     "al": "Apocalyptic Endgame",
     "r": "2021-11-17",
@@ -28426,6 +28730,7 @@
     "a": "Dave Dee, Dozy, Beaky, Mick & Tich",
     "t": "Zabadak",
     "l": "1FPmEIIIhzo6lSUXPoxVuS",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273bdfd941b38d27b6ddc3e7cd0",
     "al": "If No-One Sang",
     "r": "1968-05-31",
@@ -28438,6 +28743,7 @@
     "a": "The Rolling Stones",
     "t": "2000 Light Years From Home",
     "l": "4EPtqZQeTpMTAzFey8wCIa",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27363a1d46bf691ebd45e3cb393",
     "al": "Their Satanic Majesties Request (50th Anniversary Special Edition / Remastered)",
     "r": "1967-12-08",
@@ -28450,6 +28756,7 @@
     "a": "Small Faces",
     "t": "Tin Soldier",
     "l": "5OwSlMCeO12Skgcz80AdfG",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273db117bc2a85a8dc49249a78b",
     "al": "Small Faces - Deluxe Edition (2012 Remaster)",
     "r": "1967-12-31",
@@ -28462,6 +28769,7 @@
     "a": "Freddy",
     "t": "Seemann, weit bist du gefahren",
     "l": "2kQil1NH8mVesAntljlrOL",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273ea8cfeaf9f43ae319142fd6a",
     "al": "Freddy Auf Hoher See",
     "r": "2000-01-01",
@@ -28474,6 +28782,7 @@
     "a": "Renate Kern",
     "t": "Lieber mal weinen im Glück",
     "l": "1nEpXYb5aYemYrXOmdixkP",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27300aec95653c001a4648af475",
     "al": "Lieber mal weinen im Glück (Originale)",
     "r": "1968-01-01",
@@ -28486,6 +28795,7 @@
     "a": "Siw Malmkvist",
     "t": "Harlekin",
     "l": "4fDafrRQxYMDXLxZ8O0ZeE",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27383c00a16c9a8c8eeea9d6593",
     "al": "Liebeskummer lohnt sich nicht",
     "r": "1983",
@@ -28498,6 +28808,7 @@
     "a": "Esther & Abi Ofarim",
     "t": "Cinderella Rockefella",
     "l": "0XOYh266PYgM8mlf4kSs5L",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273efe38caf1195029855dabf60",
     "al": "Die Ofarim-Story",
     "r": "1992-01-01",
@@ -28510,6 +28821,7 @@
     "a": "Barry Ryan",
     "t": "Eloise",
     "l": "6z9XVXX8AXxVunhocuLTMe",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273ec892df826353cfe3727ef53",
     "al": "The Very Best Of Barry Ryan",
     "r": "1992-01-01",
@@ -28523,6 +28835,7 @@
     "a": "The Edwin Hawkins Singers",
     "t": "Oh, Happy Day",
     "l": "34yIb7hw5SuR80au1BHTtt",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b27334fedb7a05536d8f8da0c0b2",
     "al": "Oh Happy Day: The Best Of The Edwin Hawkins Singers",
     "r": "2001-08-07",
@@ -28536,6 +28849,7 @@
     "a": "Sir Douglas Quintet",
     "t": "Mendocino",
     "l": "229NClBYlLJlBhM6yGGwoi",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273b23298399a8b86de084b5588",
     "al": "Mendocino",
     "r": "1969-01-01",
@@ -28549,6 +28863,7 @@
     "a": "Roy Black",
     "t": "Das Mädchen Carina",
     "l": "3lr9IYIhu90YYJKuqBC6f3",
+    "legacy": true,
     "c": "https://i.scdn.co/image/ab67616d0000b273bd06b9d0ef3b84eac1aca2a9",
     "al": "Ich Denk An Dich",
     "r": "1968-01-01",
@@ -28561,7 +28876,8 @@
     "p": 7,
     "a": "Roy Black",
     "t": "Ich denk' an dich",
-    "l": "3N3KtyPsqe5g0mWnrvDb80"
+    "l": "3N3KtyPsqe5g0mWnrvDb80",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28569,7 +28885,8 @@
     "p": 8,
     "a": "Chris Andrews",
     "t": "Pretty Belinda",
-    "l": "1XMaCb2dtzJ79evyclfhaA"
+    "l": "1XMaCb2dtzJ79evyclfhaA",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28577,7 +28894,8 @@
     "p": 9,
     "a": "Elvis Presley",
     "t": "In The Ghetto",
-    "l": "7KWoeBqSdZHEloYKVxssfG"
+    "l": "7KWoeBqSdZHEloYKVxssfG",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28585,7 +28903,8 @@
     "p": 10,
     "a": "Michael Holm",
     "t": "Mendocino",
-    "l": "7lBO5RpWhr6yPUwWkXHsWf"
+    "l": "7lBO5RpWhr6yPUwWkXHsWf",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28593,7 +28912,8 @@
     "p": 11,
     "a": "Peter Alexander",
     "t": "Liebesleid",
-    "l": "0ZWtrktbiX16in5cgcJDY9"
+    "l": "0ZWtrktbiX16in5cgcJDY9",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28601,7 +28921,8 @@
     "p": 12,
     "a": "Tommy Roe",
     "t": "Dizzy",
-    "l": "5LvIl1VHaqtCJJXwrB8QR9"
+    "l": "5LvIl1VHaqtCJJXwrB8QR9",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28609,7 +28930,8 @@
     "p": 13,
     "a": "Tommy James And The Shondells",
     "t": "Crimson And Clover",
-    "l": "0I4yYE831a8SW8QIx6bz4x"
+    "l": "0I4yYE831a8SW8QIx6bz4x",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28617,7 +28939,8 @@
     "p": 14,
     "a": "Christian Anders",
     "t": "Geh' nicht vorbei",
-    "l": "4fdQWOyYuKVnaktGcVNQNO"
+    "l": "4fdQWOyYuKVnaktGcVNQNO",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28625,7 +28948,8 @@
     "p": 15,
     "a": "Zager & Evans",
     "t": "In The Year 2525",
-    "l": "5UVsbUV0Kh033cqsZ5sLQi"
+    "l": "5UVsbUV0Kh033cqsZ5sLQi",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28633,7 +28957,8 @@
     "p": 16,
     "a": "The Tremeloes",
     "t": "My Little Lady",
-    "l": "3eBVpZdlDGcm9yZyO0UgLM"
+    "l": "3eBVpZdlDGcm9yZyO0UgLM",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28641,7 +28966,8 @@
     "p": 17,
     "a": "The Rolling Stones",
     "t": "Honky Tonk Women",
-    "l": "3fnPv1LRMxENr63afVhaz1"
+    "l": "3fnPv1LRMxENr63afVhaz1",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28649,7 +28975,8 @@
     "p": 18,
     "a": "Jane Birkin avec Serge Gainsbourg",
     "t": "Je t'aime... moi non plus",
-    "l": "2LPBFw8Isxm4LScQJ4WDfp"
+    "l": "2LPBFw8Isxm4LScQJ4WDfp",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28657,7 +28984,8 @@
     "p": 19,
     "a": "The Beatles",
     "t": "The Ballad Of John And Yoko",
-    "l": "1F7s27lLKshLPt9TPCgMDL"
+    "l": "1F7s27lLKshLPt9TPCgMDL",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28665,7 +28993,8 @@
     "p": 20,
     "a": "Desmond Dekker And The Aces",
     "t": "Israelites",
-    "l": "6zsH33Xbm0gAtBTx9R2vP0"
+    "l": "6zsH33Xbm0gAtBTx9R2vP0",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28673,7 +29002,8 @@
     "p": 21,
     "a": "Creedence Clearwater Revival",
     "t": "Proud Mary",
-    "l": "6pxWv6GV35VGmcPf5dh6CH"
+    "l": "6pxWv6GV35VGmcPf5dh6CH",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28681,7 +29011,8 @@
     "p": 22,
     "a": "Donovan",
     "t": "Atlantis",
-    "l": "0kcEK7YuNNfE7jiTnXS1cm"
+    "l": "0kcEK7YuNNfE7jiTnXS1cm",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28689,7 +29020,8 @@
     "p": 23,
     "a": "Heintje",
     "t": "Ich sing' ein Lied für dich",
-    "l": "7n1gmhAnKUykD5PujSGuWJ"
+    "l": "7n1gmhAnKUykD5PujSGuWJ",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28697,7 +29029,8 @@
     "p": 24,
     "a": "Mireille Mathieu",
     "t": "Hinter den Kulissen von Paris",
-    "l": "5fZoqY3eW5f57slEA6mt2G"
+    "l": "5fZoqY3eW5f57slEA6mt2G",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28705,7 +29038,8 @@
     "p": 25,
     "a": "Barry Ryan",
     "t": "Love Is Love",
-    "l": "3vslRuSOP0WC6jfPzKxitf"
+    "l": "3vslRuSOP0WC6jfPzKxitf",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28713,7 +29047,8 @@
     "p": 26,
     "a": "The Beatles with Billy Preston",
     "t": "Get Back",
-    "l": "1g9G2cZiAYqkAASTOcTQ3j"
+    "l": "1g9G2cZiAYqkAASTOcTQ3j",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28721,7 +29056,8 @@
     "p": 27,
     "a": "Wencke Myhre",
     "t": "Er steht im Tor",
-    "l": "6Xpd2qTFOFdJMp8A2Y3QwX"
+    "l": "6Xpd2qTFOFdJMp8A2Y3QwX",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28729,7 +29065,8 @@
     "p": 29,
     "a": "Bee Gees",
     "t": "First Of May",
-    "l": "5SFsenqWlLzPW2YZgGhUhl"
+    "l": "5SFsenqWlLzPW2YZgGhUhl",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28737,7 +29074,8 @@
     "p": 30,
     "a": "Ohio Express",
     "t": "Chewy Chewy",
-    "l": "1CgEzRUP0Y6XkdOM3CSygW"
+    "l": "1CgEzRUP0Y6XkdOM3CSygW",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28745,7 +29083,8 @@
     "p": 31,
     "a": "Udo Jürgens",
     "t": "Es wird Nacht, Señorita",
-    "l": "06JjR4s95iGhzLTjMMsOMF"
+    "l": "06JjR4s95iGhzLTjMMsOMF",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28753,7 +29092,8 @@
     "p": 32,
     "a": "Robin Gibb",
     "t": "Saved By The Bell",
-    "l": "53Eecy0GYOdrqVZjt7aGUb"
+    "l": "53Eecy0GYOdrqVZjt7aGUb",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28761,7 +29101,8 @@
     "p": 33,
     "a": "Plastic Ono Band",
     "t": "Give Peace A Chance",
-    "l": "6q8NB0oydzU0grR8dQhl9N"
+    "l": "6q8NB0oydzU0grR8dQhl9N",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28769,7 +29110,8 @@
     "p": 34,
     "a": "Manfred Mann",
     "t": "Fox On The Run",
-    "l": "0oxQWfkZuJW8L7uiItwsB0"
+    "l": "0oxQWfkZuJW8L7uiItwsB0",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28777,7 +29119,8 @@
     "p": 35,
     "a": "The Beatles",
     "t": "Ob-La-Di, Ob-La-Da",
-    "l": "1gFNm7cXfG1vSMcxPpSxec"
+    "l": "1gFNm7cXfG1vSMcxPpSxec",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28785,7 +29128,8 @@
     "p": 37,
     "a": "The 5th Dimension",
     "t": "Aquarius / Let The Sunshine In",
-    "l": "0HZlND4giwzgolBpaNIRGV"
+    "l": "0HZlND4giwzgolBpaNIRGV",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28793,7 +29137,8 @@
     "p": 38,
     "a": "Rex Gildo",
     "t": "Dondolo",
-    "l": "7bCEaiAJKaOk6L4ZJn0KiL"
+    "l": "7bCEaiAJKaOk6L4ZJn0KiL",
+    "legacy": true
   },
   {
     "f": "60er",
@@ -28801,7 +29146,8 @@
     "p": 40,
     "a": "Karel Gott",
     "t": "Schiwago Melodie (Weißt du wohin?)",
-    "l": "6FLbRRhCeaqJqwSPSir1fB"
+    "l": "6FLbRRhCeaqJqwSPSir1fB",
+    "legacy": true
   },
   {
     "f": "70er",
