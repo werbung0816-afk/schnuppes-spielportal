@@ -853,7 +853,8 @@ function playApplause(){new Audio('applause.mp3').play().catch(function(e){conso
 function playSlot(){console.log('playSlot called');new Audio('slot%20machine.mp3').play().catch(function(e){console.log('slot sound error:',e);});}
 function stopSlot(){}
 
-var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],filters:new Set(),phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[],miniGames:false,miniGamesDone:{memory:false,paparazzi:false},pendingMiniGame:null};
+var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(),
+  topFilter:null,phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[],miniGames:false,miniGamesDone:{memory:false,paparazzi:false},pendingMiniGame:null};
 ['top-l','top-r','left','right','bot-l','bot-r'].forEach(p=>G.seatCfg[p]=null);
 
 // ── FIREBASE ──
@@ -875,10 +876,12 @@ initFirebase();
 function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);updateStartBtn();updateSongCount();decorateMiniGameButtons();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
 function filteredSongs(){
   var s=G.songs.filter(x=>x.l);
-  var content=Array.from(G.filters).filter(f=>f!=='top10'&&f!=='top20');
-  if(content.length>0){
+  // Legacy-Songs nur wenn etwas abgewählt
+  if(G.excluded.size>0) s=s.filter(function(x){return !x.legacy;});
+  // Ausschluss-Modell für Jahrzehnte/Editionen
+  if(G.excluded.size>0){
     s=s.filter(function(x){
-      return content.some(function(f){
+      return !Array.from(G.excluded).some(function(f){
         if(x.f) return x.f===f;
         if(f==='70er') return x.y>=1970&&x.y<1980;
         if(f==='80er') return x.y>=1980&&x.y<1990;
@@ -890,10 +893,9 @@ function filteredSongs(){
       });
     });
   }
-  // Legacy-Songs nur ohne aktiven Filter
-  if(content.length>0) s=s.filter(function(x){return !x.legacy;});
-  if(G.filters.has('top10'))s=s.filter(x=>x.p&&x.p<=10);
-  else if(G.filters.has('top20'))s=s.filter(x=>x.p&&x.p<=20);
+  // Top10/20: positiver Filter
+  if(G.topFilter==='top10') s=s.filter(x=>x.p&&x.p<=10);
+  else if(G.topFilter==='top20') s=s.filter(x=>x.p&&x.p<=20);
   return s;
 }
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
@@ -925,7 +927,7 @@ function updateSongCount(){
   var el=document.getElementById('lobby-status');if(!el)return;
   var total=G.songs.length;
   var filtered=filteredSongs().length;
-  var isAll=Array.from(G.filters).every(f=>f==='top10'||f==='top20')||G.filters.size===0;
+  var isAll=G.excluded.size===0&&!G.topFilter;
   if(total===0){el.textContent='';return;}
   if(isAll){el.textContent=total+' Songs';}
   else{el.textContent=filtered+' / '+total+' Songs';}
@@ -934,14 +936,27 @@ function updateSongCount(){
 // ── FILTER ──
 function toggleFlt(btn,isOpt){
   var f=btn.dataset.f;
-  if(f==='top10'){
-    G.filters.delete('top20');
-    G.filters.has('top10')?G.filters.delete('top10'):G.filters.add('top10');
-  } else if(f==='top20'){
-    G.filters.delete('top10');
-    G.filters.has('top20')?G.filters.delete('top20'):G.filters.add('top20');
+  if(f==='top10'||f==='top20'){
+    // Top10/20: positiver Filter (Inklusion), bleibt Auswahlmodell
+    var other=f==='top10'?'top20':'top10';
+    if(G.excluded.has(f)||G.topFilter===f){
+      G.topFilter=null;
+      btn.classList.remove('on');
+    } else {
+      G.topFilter=f;
+      btn.classList.add('on');
+      // Anderen deaktivieren
+      document.querySelectorAll('.flt[data-f="'+other+'"]').forEach(function(b){b.classList.remove('on');});
+    }
   } else {
-    G.filters.has(f)?G.filters.delete(f):G.filters.add(f);
+    // Jahrzehnte/Editionen: Ausschluss-Modell
+    if(G.excluded.has(f)){
+      G.excluded.delete(f);
+      btn.classList.remove('off');
+    } else {
+      G.excluded.add(f);
+      btn.classList.add('off');
+    }
   }
   syncFlt('flt-wrap');syncFlt('opt-filter');updateSongCount();
   if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}
@@ -949,12 +964,15 @@ function toggleFlt(btn,isOpt){
 function syncFlt(id){
   var w=document.getElementById(id);if(!w)return;
   w.querySelectorAll('.flt').forEach(function(b){
-    b.classList.toggle('on', G.filters.has(b.dataset.f));
-    b.classList.remove('off');
+    var f=b.dataset.f;
+    if(f==='top10'||f==='top20'){
+      b.classList.toggle('on', G.topFilter===f);
+      b.classList.remove('off');
+    } else {
+      b.classList.toggle('off', G.excluded.has(f));
+      b.classList.remove('on');
+    }
   });
-  var t10=w.querySelector('[data-f="top10"]'),t20=w.querySelector('[data-f="top20"]');
-  if(G.filters.has('top10')&&t20)t20.classList.add('off');
-  if(G.filters.has('top20')&&t10)t10.classList.add('off');
 }
 function buildOptFilter(){var w=document.getElementById('opt-filter');w.innerHTML=document.getElementById('flt-wrap').innerHTML;w.querySelectorAll('.flt').forEach(b=>{b.onclick=function(){toggleFlt(b,true);};});syncFlt('opt-filter');}
 
@@ -1213,14 +1231,14 @@ function launchMiniGame(type){
     pairs:pairsForMemory,
     goal:goalForPapa,
     tokenReward:tokenReward,
-    filters: Array.from(G.filters)
+    filters: Array.from(G.excluded)
   };
   try{sessionStorage.setItem('chartsterMiniConfig',JSON.stringify(cfg));}catch(e){}
 
   // Show iframe
   var wrap=document.getElementById('minigame-frame-wrap');
   var iframe=document.getElementById('minigame-iframe');
-  var src=type==='memory'?'memory.html?embedded=1':'paparazzi.html?embedded=1';
+  var src=type==='memory'?'../chartster-memory/index.html?embedded=1':'../chartster-paparazzi/index.html?embedded=1';
   iframe.src=src;
   wrap.classList.add('show');
   document.getElementById('mga-skip-btn').style.display='block';
@@ -1477,7 +1495,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=76', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=78', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
