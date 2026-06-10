@@ -391,7 +391,19 @@ body{
 
 /* version */
 .ver{position:fixed;bottom:12px;right:16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);z-index:100}
-.flt{padding:4px;border-radius:12px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);transition:all .2s;display:inline-flex;align-items:center;justify-content:center;}
+.flt{
+  padding:4px;border-radius:12px;
+  border:1px solid rgba(83,246,255,.4);
+  background:rgba(83,246,255,.07);
+  display:inline-flex;align-items:center;justify-content:center;
+  animation:flt-idle 2.8s ease-in-out infinite;
+  transition:opacity .2s;
+}
+@keyframes flt-idle{
+  0%,100%{box-shadow:0 0 6px rgba(83,246,255,.2);border-color:rgba(83,246,255,.3);}
+  50%    {box-shadow:0 0 20px rgba(83,246,255,.6);border-color:rgba(83,246,255,.8);}
+}
+.flt.off{opacity:.22;animation:none;border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.03);box-shadow:none;}
 .flt img{width:52px;height:52px;border-radius:8px;object-fit:cover;display:block;}
 .flt.on{border-color:var(--purple);color:var(--purple);background:rgba(143,95,255,.12)}
 .flt.off{opacity:.3;pointer-events:none}
@@ -460,6 +472,8 @@ body{
 }
 @keyframes papa-focus{
   0%,100%{filter:blur(9px) brightness(.45);}
+  50%    {filter:blur(0px) brightness(.50);}
+}
 /* ── CROSS-NAV CARDS ── */
 .nav-cards{display:flex;gap:10px;width:100%;margin-top:4px}
 .nav-card{flex:1;border-radius:14px;overflow:hidden;position:relative;height:64px;border:1px solid var(--glass-b);text-decoration:none;display:block;transition:transform .2s,box-shadow .2s;background:var(--bg);}
@@ -477,7 +491,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v2.5.0</div>
+<div class="ver">v2.6.0</div>
 
 <!-- Zahnrad-Menü (nur im Spiel) -->
 <div id="gear-btn" onclick="toggleGear()">&#9881;</div>
@@ -1062,6 +1076,79 @@ function decorateNavButtons(){
   },30000);
 }
 
+var G_excluded = new Set();
+var G_topFilter = null;
+var G_allSongs = [];
+
+function toggleFlt(btn){
+  var f=btn.dataset.f;
+  if(f==='top20'||f==='top10'){
+    var other=f==='top20'?'top10':'top20';
+    if(G_topFilter===f){
+      G_topFilter=null;
+      btn.classList.add('off');
+    } else {
+      G_topFilter=f;
+      btn.classList.remove('off');
+      document.querySelectorAll('.flt[data-f="'+other+'"]').forEach(function(b){b.classList.add('off');});
+    }
+  } else {
+    G_excluded.has(f)?G_excluded.delete(f):G_excluded.add(f);
+    btn.classList.toggle('off', G_excluded.has(f));
+  }
+  rebuildPool();
+}
+
+function decadeFromYear(y){
+  if(!y) return '';
+  if(y>=1970&&y<1980) return '70er'; if(y>=1980&&y<1990) return '80er';
+  if(y>=1990&&y<2000) return '90er'; if(y>=2000&&y<2010) return '00er';
+  if(y>=2010&&y<2020) return '10er'; if(y>=2020) return '20er';
+  return '';
+}
+
+function rebuildPool(){
+  var all=G_allSongs;
+  var artistMap={};
+  all.forEach(function(s){
+    var key=(s.a||'').trim().toLowerCase();
+    if(!key) return;
+    // Legacy
+    if(s.legacy && G_excluded.size>0) return;
+    // Ausschluss
+    if(G_excluded.size>0){
+      var ex=Array.from(G_excluded).some(function(f){
+        if(s.f) return s.f===f;
+        if(f==='70er') return s.y>=1970&&s.y<1980;
+        if(f==='80er') return s.y>=1980&&s.y<1990;
+        if(f==='90er') return s.y>=1990&&s.y<2000;
+        if(f==='00er') return s.y>=2000&&s.y<2010;
+        if(f==='10er') return s.y>=2010&&s.y<2020;
+        if(f==='20er') return s.y>=2020;
+        return false;
+      });
+      if(ex) return;
+    }
+    // Top-Filter
+    if(G_topFilter==='top10'&&(!s.p||s.p>10)) return;
+    if(G_topFilter==='top20'&&(!s.p||s.p>20)) return;
+    var hasImg=!!(s.ca&&s.ca.trim());
+    var inTop20=(s.p&&s.p<=20);
+    if(!artistMap[key]){
+      artistMap[key]={name:(s.a||'').trim(),img:hasImg?s.ca.trim():null,followers:s.fo||0,inTop20:inTop20};
+    } else {
+      if(hasImg&&!artistMap[key].img) artistMap[key].img=s.ca.trim();
+      if((s.fo||0)>artistMap[key].followers) artistMap[key].followers=s.fo||0;
+      if(inTop20) artistMap[key].inTop20=true;
+    }
+  });
+  var pool=Object.values(artistMap).filter(function(a){return !!a.img&&a.inTop20;});
+  G.artists=shuffle(pool);
+  var el=document.getElementById('lobby-status');
+  if(el) el.textContent=G.artists.length+' Künstler verfügbar';
+  updateStartBtn();
+}
+
 function loadSongs(){
   document.getElementById('lobby-status').textContent='lädt …';
   fetch('../chartster/songs.json')
@@ -1090,6 +1177,7 @@ function loadSongs(){
         }
       });
       // Nur Künstler MIT Bild UND mindestens einmal in Top 20
+      G_allSongs=all;
       var pool=Object.values(artistMap).filter(function(a){ return !!a.img && a.inTop20; });
       G.artists=shuffle(pool);
 
