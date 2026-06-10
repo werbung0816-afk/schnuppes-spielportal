@@ -197,7 +197,7 @@ button:active{transform:translateY(0)}
 /* ── Win Overlay ── */
 #overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:rgba(5,1,20,.9);z-index:9999;backdrop-filter:blur(12px);text-align:center;padding:20px}
 #overlayEmoji{font-size:clamp(46px,12vw,76px);animation:emojiSpin .6s ease-out .2s both}
-#overlayName{font-size:clamp(34px,10vw,82px);font-weight:900;line-height:.92;animation:nameIn .5s cubic-bezier(.175,.885,.32,1.275) both}
+#overlayName{font-size:clamp(34px,10vw,82px);font-weight:900;line-height:1.1;padding-bottom:4px;animation:nameIn .5s cubic-bezier(.175,.885,.32,1.275) both}
 .overlay-p1 #overlayName{background:linear-gradient(90deg,#53f6ff,#8f5fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .overlay-p2 #overlayName{background:linear-gradient(90deg,#ff4fd8,#ff9b54);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .overlay-draw #overlayName{background:linear-gradient(90deg,#5eff9b,#53f6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -591,6 +591,10 @@ async function makeMove(row, col){
   else if(nb.every(c=>c!=='.')) { status='finished'; result='draw'; }
 
   await db.ref(ROOM).update({ board:bStr, current:next, status, result, winLine:wlStr });
+  // Optimistisches lokales Update: verhindert, dass kiMove feuert
+  // bevor Firebase-Listener current aktualisiert hat
+  board[idx] = player;
+  current = next;
   if(kiMode && status==='playing') setTimeout(kiMove, 650);
 }
 
