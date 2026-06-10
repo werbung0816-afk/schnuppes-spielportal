@@ -392,7 +392,7 @@ var seatCfg={'top-l':null,'top-r':null,'left':null,'right':null,'bot-l':null,'bo
 // ════ STATE ════
 var G={
   songs:[],          // all songs with cover
-  filters:new Set(), // active decade/chart filters
+  excluded:new Set(), // deselected filters (exclusion model)
   pairs:10,
   players:[],
   scores:[],
