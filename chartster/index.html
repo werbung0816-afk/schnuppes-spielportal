@@ -587,7 +587,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.4.5</div>
+<div class="version">v4.4.6</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -644,8 +644,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
         <button class="flt" data-f="20er" onclick="toggleFlt(this)"><img src="filter/filter-20er.png" alt="20er"></button>
       </div>
       <div class="flt-row">
-        <button class="flt" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20"></button>
-        <button class="flt" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10"></button>
+        <button class="flt off" data-f="top20" onclick="toggleFlt(this)"><img src="filter/filter-top20.png" alt="Top 20"></button>
+        <button class="flt off" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10"></button>
       </div>
       <div class="flt-row">
         <button class="flt" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500"></button>
@@ -876,25 +876,28 @@ initFirebase();
 function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);updateStartBtn();updateSongCount();decorateMiniGameButtons();}).catch(()=>{document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';});}
 function filteredSongs(){
   var s=G.songs.filter(x=>x.l);
-  if(G.excluded.size===0) return s;
+  if(G.excluded.size===0&&!G.topFilter) return s;
   // Legacy-Songs nur wenn etwas abgewählt
-  s=s.filter(function(x){return !x.legacy;});
-  // Ausschluss-Modell für alle Filter
-  return s.filter(function(x){
-    if(G.excluded.has('top10')&&x.p&&x.p<=10) return false;
-    if(G.excluded.has('top20')&&x.p&&x.p<=20) return false;
-    return !Array.from(G.excluded).some(function(f){
-      if(f==='top10'||f==='top20') return false;
-      if(x.f) return x.f===f;
-      if(f==='70er') return x.y>=1970&&x.y<1980;
-      if(f==='80er') return x.y>=1980&&x.y<1990;
-      if(f==='90er') return x.y>=1990&&x.y<2000;
-      if(f==='00er') return x.y>=2000&&x.y<2010;
-      if(f==='10er') return x.y>=2010&&x.y<2020;
-      if(f==='20er') return x.y>=2020;
-      return false;
+  if(G.excluded.size>0) s=s.filter(function(x){return !x.legacy;});
+  // Ausschluss: Jahrzehnte + Editionen
+  if(G.excluded.size>0){
+    s=s.filter(function(x){
+      return !Array.from(G.excluded).some(function(f){
+        if(x.f) return x.f===f;
+        if(f==='70er') return x.y>=1970&&x.y<1980;
+        if(f==='80er') return x.y>=1980&&x.y<1990;
+        if(f==='90er') return x.y>=1990&&x.y<2000;
+        if(f==='00er') return x.y>=2000&&x.y<2010;
+        if(f==='10er') return x.y>=2010&&x.y<2020;
+        if(f==='20er') return x.y>=2020;
+        return false;
+      });
     });
-  });
+  }
+  // Positiver Filter: Top20 oder Top10 einschränken
+  if(G.topFilter==='top10') s=s.filter(function(x){return x.p&&x.p<=10;});
+  else if(G.topFilter==='top20') s=s.filter(function(x){return x.p&&x.p<=20;});
+  return s;
 }
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 
@@ -925,7 +928,7 @@ function updateSongCount(){
   var el=document.getElementById('lobby-status');if(!el)return;
   var total=G.songs.length;
   var filtered=filteredSongs().length;
-  var isAll=G.excluded.size===0;
+  var isAll=G.excluded.size===0&&!G.topFilter;
   if(total===0){el.textContent='';return;}
   if(isAll){el.textContent=total+' Songs';}
   else{el.textContent=filtered+' / '+total+' Songs';}
@@ -934,12 +937,27 @@ function updateSongCount(){
 // ── FILTER ──
 function toggleFlt(btn,isOpt){
   var f=btn.dataset.f;
-  if(G.excluded.has(f)){
-    G.excluded.delete(f);
-    btn.classList.remove('off');
+  if(f==='top20'||f==='top10'){
+    // Positiver Filter: aus=keine Einschränkung, ein=nur Top X
+    var other=f==='top20'?'top10':'top20';
+    if(G.topFilter===f){
+      G.topFilter=null;
+      btn.classList.add('off');
+    } else {
+      G.topFilter=f;
+      btn.classList.remove('off');
+      // Anderen deaktivieren
+      document.querySelectorAll('.flt[data-f="'+other+'"]').forEach(function(b){b.classList.add('off');});
+    }
   } else {
-    G.excluded.add(f);
-    btn.classList.add('off');
+    // Ausschluss-Modell für Jahrzehnte/Editionen
+    if(G.excluded.has(f)){
+      G.excluded.delete(f);
+      btn.classList.remove('off');
+    } else {
+      G.excluded.add(f);
+      btn.classList.add('off');
+    }
   }
   syncFlt('flt-wrap');syncFlt('opt-filter');updateSongCount();
   if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}
@@ -947,8 +965,12 @@ function toggleFlt(btn,isOpt){
 function syncFlt(id){
   var w=document.getElementById(id);if(!w)return;
   w.querySelectorAll('.flt').forEach(function(b){
-    b.classList.toggle('off', G.excluded.has(b.dataset.f));
-    b.classList.remove('on');
+    var f=b.dataset.f;
+    if(f==='top20'||f==='top10'){
+      b.classList.toggle('off', G.topFilter!==f);
+    } else {
+      b.classList.toggle('off', G.excluded.has(f));
+    }
   });
 }
 function buildOptFilter(){var w=document.getElementById('opt-filter');w.innerHTML=document.getElementById('flt-wrap').innerHTML;w.querySelectorAll('.flt').forEach(b=>{b.onclick=function(){toggleFlt(b,true);};});syncFlt('opt-filter');}
@@ -1472,7 +1494,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=81', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=82', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
