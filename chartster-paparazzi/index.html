@@ -28,7 +28,7 @@ body{
 .screen.active{display:flex;will-change:transform}
 
 /* ── SHARED ── */
-.card{width:100%;max-width:560px;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:28px 22px 22px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.card{width:100%;max-width:900px;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:clamp(20px,4vw,40px) clamp(16px,4vw,48px) clamp(16px,3vw,32px);display:flex;flex-direction:column;align-items:center;gap:16px}
 .sep{width:100%;height:1px;background:var(--glass-b)}
 .game-title{font-size:40px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px rgba(83,246,255,.4))}
 .label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;align-self:flex-start}
@@ -491,7 +491,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v2.6.1</div>
+<div class="ver">v2.6.2</div>
 
 <!-- Zahnrad-Menü (nur im Spiel) -->
 <div id="gear-btn" onclick="toggleGear()">&#9881;</div>
