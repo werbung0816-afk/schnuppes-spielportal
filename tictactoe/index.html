@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Schnuppes Tic Tac Toe</title>
+<title>Tic Tac Toe</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -129,7 +129,7 @@ button:active{ transform:translateY(0); }
 ══════════════════════════════ */
 #overlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; flex-direction:column; gap:14px; background:rgba(5,1,20,.9); z-index:9999; backdrop-filter:blur(12px); text-align:center; padding:20px; }
 #overlayEmoji{ font-size:clamp(46px,12vw,76px); animation:emojiSpin .6s ease-out .2s both; }
-#overlayName{ font-size:clamp(40px,11vw,90px); font-weight:900; line-height:.92; animation:nameIn .5s cubic-bezier(.175,.885,.32,1.275) both; }
+#overlayName{ font-size:clamp(40px,11vw,90px); font-weight:900; line-height:1.1; padding-bottom:4px; animation:nameIn .5s cubic-bezier(.175,.885,.32,1.275) both; }
 .overlay-x #overlayName{ background:linear-gradient(90deg,#53f6ff,#8f5fff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 .overlay-o #overlayName{ background:linear-gradient(90deg,#ff4fd8,#ff9b54); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 .overlay-draw #overlayName{ background:linear-gradient(90deg,#5eff9b,#53f6ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
@@ -144,7 +144,7 @@ button:active{ transform:translateY(0); }
 <!-- ── Setup ── -->
 <div id="setup">
   <div class="setup-box">
-    <h2>🎮 Schnuppes Tic Tac Toe</h2>
+    <h2>🎮 Tic Tac Toe</h2>
     <div class="setup-field">
       <label>Dein Name</label>
       <input type="text" id="myName" placeholder="Name eingeben…" maxlength="14">
@@ -181,7 +181,7 @@ button:active{ transform:translateY(0); }
 
 <!-- ── Logo ── -->
 <div class="logo">
-  <div class="schnuppes">Schnuppes</div>
+  <div class="schnuppes"></div>
   <h1>Tic Tac Toe</h1>
   <div class="sub">Das klassische Zweipersonen-Duell</div>
 </div>
