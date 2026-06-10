@@ -28,11 +28,11 @@ body{
 /* ── BASE (aus Chartster) ── */
 .screen{display:none;min-height:100vh;padding:16px;align-items:center;justify-content:center;flex-direction:column}
 .screen.active{display:flex;will-change:transform}
-.card{width:100%;max-width:560px;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:28px 22px 22px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative}
+.card{width:100%;max-width:900px;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:clamp(20px,4vw,40px) clamp(16px,4vw,48px) clamp(16px,3vw,32px);display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2vw,20px);position:relative}
 .sep{width:100%;height:1px;background:var(--glass-b)}
 .game-title{font-size:44px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px rgba(83,246,255,.4))}
 .label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.btn{width:100%;padding:16px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;border:none;outline:none;-webkit-appearance:none;touch-action:manipulation;user-select:none}
+.btn{width:100%;padding:clamp(14px,2vw,20px);border-radius:14px;font-family:'Outfit',sans-serif;font-size:clamp(14px,2vw,18px);font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;border:none;outline:none;-webkit-appearance:none;touch-action:manipulation;user-select:none}
 .btn[disabled]{opacity:.35;pointer-events:none}
 .btn-primary{background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));color:var(--cyan);border:1px solid rgba(83,246,255,.4);box-shadow:0 0 20px rgba(83,246,255,.12)}
 .btn-primary:active{box-shadow:0 0 32px rgba(83,246,255,.4)}
@@ -41,31 +41,26 @@ body{
 /* ── FILTER (1:1 aus Chartster, Pfad relativ zu Chartster) ── */
 .flt{
   padding:4px;border-radius:12px;
-  border:1px solid rgba(83,246,255,.35);
-  background:rgba(83,246,255,.06);
-  color:var(--muted);
+  border:1px solid rgba(83,246,255,.4);
+  background:rgba(83,246,255,.07);
   display:inline-flex;align-items:center;justify-content:center;
   animation:flt-idle 2.8s ease-in-out infinite;
-  box-shadow:0 0 8px rgba(83,246,255,.15);
-  transition:border-color .2s,background .2s;
+  transition:opacity .2s;
 }
-.flt img{width:52px;height:52px;border-radius:8px;object-fit:cover;display:block;}
+.flt img{width:clamp(48px,7vw,72px);height:clamp(48px,7vw,72px);border-radius:8px;object-fit:cover;display:block;}
 .filter-wrap{display:flex;flex-direction:column;gap:8px;width:100%}
 .flt-row{display:flex;gap:8px;justify-content:center}
 @keyframes flt-idle{
-  0%,100%{box-shadow:0 0 6px rgba(83,246,255,.15);border-color:rgba(83,246,255,.25);}
-  50%    {box-shadow:0 0 18px rgba(83,246,255,.45);border-color:rgba(83,246,255,.65);}
+  0%,100%{box-shadow:0 0 6px rgba(83,246,255,.2);border-color:rgba(83,246,255,.3);}
+  50%    {box-shadow:0 0 20px rgba(83,246,255,.6);border-color:rgba(83,246,255,.8);}
 }
-.flt.on{
-  border-color:var(--purple);
-  background:rgba(143,95,255,.22);
-  animation:flt-active 1.6s ease-in-out infinite;
+.flt.off{
+  opacity:.22;
+  animation:none;
+  border-color:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+  box-shadow:none;
 }
-@keyframes flt-active{
-  0%,100%{box-shadow:0 0 12px rgba(143,95,255,.4);}
-  50%    {box-shadow:0 0 28px rgba(143,95,255,.85);}
-}
-.flt.off{opacity:.25;pointer-events:none;animation:none;}
 
 
 .filter-wrap{display:flex;flex-wrap:wrap;gap:8px}
@@ -92,7 +87,7 @@ body{
 /* Pair selector */
 .pair-sel{display:flex;gap:8px;width:100%}
 .pair-btn{flex:1;background:var(--glass);border:1px solid var(--glass-b);border-radius:12px;padding:14px 8px;font-family:'Outfit',sans-serif;color:var(--muted);transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:2px}
-.pair-btn .pn{font-size:28px;font-weight:900;line-height:1}
+.pair-btn .pn{font-size:clamp(24px,4vw,36px);font-weight:900;line-height:1}
 .pair-btn .pl{font-size:10px;letter-spacing:.04em}
 .pair-btn.on{border-color:var(--pink);color:var(--pink);background:rgba(255,79,216,.08)}
 
@@ -200,13 +195,13 @@ body{
 #table-selector{width:100%;display:flex;flex-direction:column;align-items:center;gap:0}
 .ts-top-row,.ts-bot-row{display:flex;gap:32px;justify-content:center;padding:8px 0}
 .ts-mid-row{display:flex;align-items:center;justify-content:center;width:100%;padding:4px 0}
-#ts-table-body{width:220px;height:104px;flex:none;margin:0 8px;display:flex;align-items:center;justify-content:center;color:transparent;background:url(../chartster/icons/table.png) center/contain no-repeat;position:relative;filter:drop-shadow(0 4px 24px rgba(143,95,255,.5))}
+#ts-table-body{width:clamp(200px,28vw,300px);height:clamp(96px,13vw,140px);flex:none;margin:0 8px;display:flex;align-items:center;justify-content:center;color:transparent;background:url(../chartster/icons/table.png) center/contain no-repeat;position:relative;filter:drop-shadow(0 4px 24px rgba(143,95,255,.5))}
 .ts-side{display:flex;align-items:center;justify-content:center;padding:4px 0;flex:1}
 .seat{display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px;cursor:pointer!important}
 .seat-inp{width:92px;background:var(--glass);border:1px solid var(--glass-b);border-radius:8px;padding:6px 8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:12px;outline:none;display:none;text-align:center}
 .seat.active .seat-inp{display:block}
 .ts-side .seat-inp{width:72px}
-.seat-circle{width:48px;height:48px;border-radius:50%;border:2px dashed rgba(83,246,255,.3);display:flex;align-items:center;justify-content:center;transition:all .25s;background:rgba(83,246,255,.04);position:relative;overflow:hidden;color:rgba(83,246,255,.4);box-shadow:0 0 8px rgba(83,246,255,.08)}
+.seat-circle{width:clamp(44px,6vw,64px);height:clamp(44px,6vw,64px);border-radius:50%;border:2px dashed rgba(83,246,255,.3);display:flex;align-items:center;justify-content:center;transition:all .25s;background:rgba(83,246,255,.04);position:relative;overflow:hidden;color:rgba(83,246,255,.4);box-shadow:0 0 8px rgba(83,246,255,.08)}
 .seat.active .seat-circle{border-style:solid;border-width:2.5px;color:#07000f}
 .seat.active .seat-circle::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.18),transparent 70%)}
 
@@ -289,7 +284,7 @@ body{
 <body>
 
 <div id="hint-toast"></div>
-<div class="version" style="position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px">v1.2.0</div>
+<div class="version" style="position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px">v1.3.0</div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
 
@@ -441,8 +436,7 @@ function reassignSeatColors(){
 }
 function getActiveSeats(){return SEAT_POS.filter(function(p){return seatCfg[p]!==null;});}
 function updateStartBtn(){
-  var ok=G.songs.length>0 && getActiveSeats().length>=1;
-  document.getElementById('start-btn').disabled=!ok;
+  updateFltInfo();
 }
 
 // ════ BOOT ════
@@ -453,7 +447,9 @@ function buildLobbyBg(){
   if(!bg) return;
   bg.innerHTML='';
 
-  var top20=shuffle(G.songs.filter(function(s){return s.c&&s.p&&s.p<=20;}));
+  // Neueste Top-20 Songs bevorzugt
+  var top20=G.songs.filter(function(s){return s.c&&s.p&&s.p<=20;})
+    .sort(function(a,b){return (b.y||0)-(a.y||0);});
   var rest=shuffle(G.songs.filter(function(s){return s.c&&(!s.p||s.p>20);}));
   var pool=top20.concat(rest);
   var poolIdx=0;
@@ -614,53 +610,50 @@ function loadSongs(){
 // ════ FILTER LOGIC (aus Chartster übernommen) ════
 function toggleFlt(btn){
   var f=btn.dataset.f;
-  if(btn.classList.contains('on')){
-    btn.classList.remove('on');
-    G.filters.delete(f);
-  }else{
-    btn.classList.add('on');
-    G.filters.add(f);
+  if(G.excluded.has(f)){
+    G.excluded.delete(f);
+    btn.classList.remove('off');
+  } else {
+    G.excluded.add(f);
+    btn.classList.add('off');
   }
   updateFltInfo();
 }
 
 function filteredSongs(){
   var s=G.songs.slice();
-  var content=Array.from(G.filters).filter(function(f){return f!=='top10'&&f!=='top20';});
-  if(content.length>0){
-    s=s.filter(function(x){
-      return content.some(function(f){
-        if(x.f) return x.f===f;
-        if(f==='70er'||f==='70') return x.y>=1970&&x.y<1980;
-        if(f==='80er'||f==='80') return x.y>=1980&&x.y<1990;
-        if(f==='90er'||f==='90') return x.y>=1990&&x.y<2000;
-        if(f==='00er'||f==='00') return x.y>=2000&&x.y<2010;
-        if(f==='10er'||f==='10') return x.y>=2010&&x.y<2020;
-        if(f==='20er'||f==='20') return x.y>=2020;
-        return false;
-      });
+  if(G.excluded.size===0) return s;
+  return s.filter(function(x){
+    return !Array.from(G.excluded).some(function(f){
+      if(x.f) return x.f===f;
+      if(f==='70er') return x.y>=1970&&x.y<1980;
+      if(f==='80er') return x.y>=1980&&x.y<1990;
+      if(f==='90er') return x.y>=1990&&x.y<2000;
+      if(f==='00er') return x.y>=2000&&x.y<2010;
+      if(f==='10er') return x.y>=2010&&x.y<2020;
+      if(f==='20er') return x.y>=2020;
+      return false;
     });
-  }
-  if(G.filters.has('top10'))s=s.filter(function(x){return x.p&&x.p<=10;});
-  else if(G.filters.has('top20'))s=s.filter(function(x){return x.p&&x.p<=20;});
-  return s;
+  });
 }
 
 function updateFltInfo(){
   var n=filteredSongs().length;
   var el=document.getElementById('flt-info');
+  if(!el) return;
   var need=G.pairs;
-  if(G.filters.size===0){
-    el.textContent='';
+  if(G.excluded.size===0){
+    el.textContent=n+' Songs verfügbar';
     el.className='';
   } else if(n<need){
-    el.textContent='⚠ Nur '+n+' Songs mit Cover in diesem Filter – mindestens '+need+' benötigt';
+    el.textContent='⚠ Nur '+n+' Songs – mindestens '+need+' benötigt';
     el.className='warn';
   } else {
-    el.textContent=n+' Songs mit Cover verfügbar';
+    el.textContent=n+' Songs verfügbar';
     el.className='';
   }
-  updateStartBtn();
+  var ok=n>=need && getActiveSeats().length>=1;
+  document.getElementById('start-btn').disabled=!ok;
 }
 
 // ════ PAIR SELECTOR ════
