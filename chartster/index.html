@@ -67,7 +67,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   min-height:100vh;color:var(--text)}
 
 /* ── BASE ── */
-.card{width:100%;max-width:560px;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:28px 22px 22px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative}
+.card{width:100%;max-width:900px;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:clamp(20px,4vw,40px) clamp(16px,4vw,48px) clamp(16px,3vw,32px);display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2vw,20px);position:relative}
 .sep{width:100%;height:1px;background:var(--glass-b)}
 .game-title{font-size:44px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px rgba(83,246,255,.4))}
 .label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:center;width:100%;font-family:'Outfit',sans-serif}
@@ -80,11 +80,31 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 /* ── LOBBY ── */
 .setup-section{width:100%;display:flex;flex-direction:column;gap:8px}
-.flt{padding:4px;border-radius:12px;border:1px solid var(--glass-b);background:var(--glass);color:var(--muted);transition:all .2s;display:inline-flex;align-items:center;justify-content:center;}
+.flt{
+  padding:4px;border-radius:12px;
+  border:1px solid rgba(83,246,255,.4);
+  background:rgba(83,246,255,.07);
+  color:var(--muted);
+  display:inline-flex;align-items:center;justify-content:center;
+  animation:flt-idle 2.8s ease-in-out infinite;
+  transition:opacity .2s;
+}
+@keyframes flt-idle{
+  0%,100%{box-shadow:0 0 6px rgba(83,246,255,.2);border-color:rgba(83,246,255,.3);}
+  50%    {box-shadow:0 0 20px rgba(83,246,255,.6);border-color:rgba(83,246,255,.8);}
+}
+.flt.on{
+  border-color:var(--purple);
+  background:rgba(143,95,255,.22);
+  animation:flt-active 1.6s ease-in-out infinite;
+}
+@keyframes flt-active{
+  0%,100%{box-shadow:0 0 12px rgba(143,95,255,.4);}
+  50%    {box-shadow:0 0 28px rgba(143,95,255,.85);}
+}
 .flt.flt-sm{min-width:48px;padding:8px 6px;font-size:14px;justify-content:center;line-height:1.2;text-align:center}
-.flt img{width:52px;height:52px;border-radius:8px;object-fit:cover;display:block;}
-.flt.on{border-color:var(--purple);color:var(--purple);background:rgba(143,95,255,.12)}
-.flt.off{opacity:.3;pointer-events:none}
+.flt img{width:clamp(48px,6vw,68px);height:clamp(48px,6vw,68px);border-radius:8px;object-fit:cover;display:block;}
+.flt.off{opacity:.22;animation:none;border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.03);box-shadow:none;}
 .filter-wrap{display:flex;flex-direction:column;gap:8px;width:100%}
 .flt-row{display:flex;gap:8px;justify-content:center}
 
@@ -870,6 +890,8 @@ function filteredSongs(){
       });
     });
   }
+  // Legacy-Songs nur ohne aktiven Filter
+  if(content.length>0) s=s.filter(function(x){return !x.legacy;});
   if(G.filters.has('top10'))s=s.filter(x=>x.p&&x.p<=10);
   else if(G.filters.has('top20'))s=s.filter(x=>x.p&&x.p<=20);
   return s;
@@ -1455,7 +1477,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=72', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=75', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
