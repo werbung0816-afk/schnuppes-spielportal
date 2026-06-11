@@ -80,6 +80,8 @@ body{
   position:relative;
   flex:1;
   min-width:0;
+  max-width:min(55vh,55vw);
+  max-height:min(55vh,55vw);
   aspect-ratio:1/1;
   border-radius:20px;
   overflow:hidden;
@@ -399,7 +401,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v2.4.1-mini</div>
+<div class="ver">v2.6.3-mini</div>
 
 <!-- Zahnrad-Menü (nur im Spiel) -->
 <div id="gear-btn" onclick="toggleGear()">&#9881;</div>
@@ -836,11 +838,12 @@ function nextArtist(){
   clearTimeout(G.stepTimer);
   clearInterval(G.patchTimer);
   G.patchQueue=[];G.patchIdx=0;G.round++;
+  if(G.round>9){ showPanel(null); setTimeout(showVictory,600); return; }
 
   // Modus-Anzeige aktualisieren
   var modeLabels={blur:'Modus 1 — Blur',patch:'Modus 2 — Patch',mosaic:'Modus 3 — Mosaik'};
   var modeEl=document.getElementById('mode-indicator');
-  if(modeEl) modeEl.textContent=modeLabels[getCurrentMode()]||'';
+  if(modeEl) modeEl.textContent=(modeLabels[getCurrentMode()]||'')+(G.round?' — Künstler '+G.round+'/9':'');
 
   // Canvas-Zustand zurücksetzen
   document.getElementById('patch-canvas').style.display='none';
@@ -1155,7 +1158,7 @@ function judge(correct){
     G.scores[pi]++;
     updateScoreboard();
     spawnConfetti(G.teams[pi].color,50);
-    if(G.scores[pi]>=G.goal){ showPanel(null); setTimeout(showVictory,600); return; }
+    // Kein Sofortgewinn — nach 9 Künstlern Schluss
   } else {
     G.scores[pi]=Math.max(-99,G.scores[pi]-1);
     updateScoreboard();
@@ -1209,6 +1212,7 @@ function showVictory(){
       window.parent.postMessage({
         type:'miniGameResult',
         gameType:'paparazzi',
+        tokenReward:1,
         winnerOrigIdx: winner ? winner.origIdx : -1,
         winnerName: winner ? winner.name : null,
         winnerColor: winner ? winner.color : null,

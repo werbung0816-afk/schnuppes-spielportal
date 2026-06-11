@@ -675,10 +675,10 @@ function buildLobbyBg(){
 
   // 85% neueste + bestplatzierte Songs, 15% zufälliger Rest
   var withCover=G.songs.filter(function(s){return s.c;});
-  var ranked=withCover.filter(function(s){return s.p&&s.p<=20;})
+  var ranked=withCover.filter(function(s){return s.p&&s.p<=10&&s.y>=2005;})
     .sort(function(a,b){
-      if(b.y!==a.y) return (b.y||0)-(a.y||0); // neueste zuerst
-      return (a.p||99)-(b.p||99);              // bei gleichem Jahr: beste Platzierung
+      if(b.y!==a.y) return (b.y||0)-(a.y||0);
+      return (a.p||99)-(b.p||99);
     });
   var unranked=shuffle(withCover.filter(function(s){return !s.p||s.p>20;}));
   // 85% beste/neueste (ranked, geordnet) + 15% zufälliger Rest
