@@ -147,9 +147,81 @@ body{
 .vfinal-btn{padding:16px 40px;border:none;border-radius:14px;font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--purple),var(--pink));font-family:'Outfit',sans-serif;margin-top:4px}
 
 .version{position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px}
+
+/* ── LOBBY BACKGROUND ── */
+#lobby-bg{
+  position:fixed;inset:0;z-index:0;
+  overflow:hidden;pointer-events:none;
+  display:block;
+  perspective:900px;
+}
+.lbg-slot{
+  position:absolute;
+  opacity:0;
+  z-index:2;
+  animation-name:lbg-emerge;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+}
+.lbg-cover{
+  width:100%;height:100%;
+  background-size:cover;background-position:center;
+  border-radius:10px;
+  filter:brightness(.65) saturate(.75);
+}
+.lbg-note{
+  position:absolute;
+  line-height:1;
+  user-select:none;
+  opacity:0;
+  z-index:1;
+  animation-name:lbg-note-emerge;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+}
+@keyframes lbg-emerge{
+  0%,100%{opacity:0;transform:scale(.70);}
+  22%,78%{opacity:.40;transform:scale(1.0);}
+  50%    {opacity:.45;transform:scale(1.03);}
+}
+@keyframes lbg-note-emerge{
+  0%,100%{opacity:0;transform:scale(.82);}
+  25%,75%{opacity:.35;transform:scale(1.0);}
+  50%    {opacity:.40;transform:scale(1.01);}
+}
+
+/* ── LOBBY DOTS ── */
+.lbg-dot{
+  position:absolute;
+  border-radius:50%;
+  transform:translate(-50%,-50%) scale(1);
+  opacity:0;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+}
+@keyframes lbg-dot-pulse{
+  0%,100%{opacity:0;transform:translate(-50%,-50%) scale(.6);}
+  40%,60%{opacity:.65;transform:translate(-50%,-50%) scale(1.4);}
+  50%    {opacity:.65;transform:translate(-50%,-50%) scale(1);}
+}
+@keyframes lbg-dot-fade{
+  0%,100%{opacity:0;transform:translate(-50%,-50%) scale(1);}
+  35%,65%{opacity:.65;transform:translate(-50%,-50%) scale(1);}
+}
+/* ── LOBBY DOTS ── */
+.lbg-dot{
+  position:absolute;
+  border-radius:50%;
+  transform:translate(-50%,-50%) scale(1);
+  opacity:0;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+}
+
 </style>
 </head>
 <body>
+<div id="lobby-bg"></div>
 
 <div id="hint-toast"></div>
 <div class="version">v1.1.1</div>
@@ -314,6 +386,7 @@ function loadSongs(){
     .then(data=>{
       var all=Array.isArray(data)?data:(data.songs||[]);
       G.songs=all.filter(s=>s.c&&s.c.trim()!=='');
+buildLobbyBg();
       document.getElementById('lobby-status').textContent='';
       updateStartBtn();
       updateFltInfo();
@@ -594,6 +667,157 @@ function spawnConfetti(color,count){
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el)el.classList.add('active');}
 function showHint(msg){var el=document.getElementById('hint-toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
 function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function buildLobbyBg(){
+  var bg=document.getElementById('lobby-bg');
+  if(!bg) return;
+  bg.innerHTML='';
+
+  // 85% neueste + bestplatzierte Songs, 15% zufälliger Rest
+  var withCover=G.songs.filter(function(s){return s.c;});
+  var ranked=withCover.filter(function(s){return s.p&&s.p<=20;})
+    .sort(function(a,b){
+      if(b.y!==a.y) return (b.y||0)-(a.y||0); // neueste zuerst
+      return (a.p||99)-(b.p||99);              // bei gleichem Jahr: beste Platzierung
+    });
+  var unranked=shuffle(withCover.filter(function(s){return !s.p||s.p>20;}));
+  // 85% beste/neueste (ranked, geordnet) + 15% zufälliger Rest
+  var topPool = ranked.slice(0, Math.ceil(ranked.length));
+  var restPool = shuffle(unranked);
+  var pool = topPool.concat(restPool);
+  var poolIdx=0;
+  function nextCover(){var s=pool[poolIdx%pool.length];poolIdx++;return s;}
+
+  // Fixed slot positions: manually defined grid avoiding center (30-70% x, 10-90% y)
+  // Left column: 3 rows × 2 cols = 6 slots
+  // Right column: 3 rows × 2 cols = 6 slots
+  // Top strip: 3 slots across top
+  // Bottom strip: 3 slots across bottom
+  // Total: 18 cover slots
+  function jit(v, range){ return +(v + (Math.random()-.5)*range).toFixed(1); }
+
+  var coverSlots = [
+    // Left col A (x≈8%)
+    [jit(8,6),  jit(12,8)], [jit(8,6),  jit(42,8)], [jit(8,6),  jit(72,8)],
+    // Left col B (x≈21%)
+    [jit(21,6), jit(27,8)], [jit(21,6), jit(57,8)], [jit(21,6), jit(87,6)],
+    // Right col A (x≈79%)
+    [jit(79,6), jit(12,8)], [jit(79,6), jit(42,8)], [jit(79,6), jit(72,8)],
+    // Right col B (x≈92%)
+    [jit(92,5), jit(27,8)], [jit(92,5), jit(57,8)], [jit(92,5), jit(87,6)],
+    // Top strip (y≈5%)
+    [jit(35,6), jit(5,4)],  [jit(52,6), jit(5,4)],  [jit(66,5), jit(5,4)],
+    // Bottom strip (y≈95%)
+    [jit(35,6), jit(95,4)], [jit(52,6), jit(95,4)], [jit(66,5), jit(95,4)],
+  ];
+  coverSlots = shuffle(coverSlots);
+
+  // Note slots: in gaps between cover slots
+  var noteSlots = [
+    [jit(5,4),  jit(32,6)], [jit(5,4),  jit(62,6)],
+    [jit(19,5), jit(10,5)], [jit(19,5), jit(50,6)],
+    [jit(81,5), jit(20,6)], [jit(81,5), jit(60,6)],
+    [jit(95,4), jit(10,5)], [jit(95,4), jit(45,6)],
+    [jit(42,6), jit(92,4)], [jit(60,6), jit(92,4)],
+    [jit(42,6), jit(8,4)],  [jit(60,6), jit(8,4)],
+  ];
+  noteSlots = shuffle(noteSlots);
+
+  coverSlots.forEach(function(pt){
+    var depth=Math.random();
+    var size=Math.round(75+depth*95);
+    var blur=depth<0.3?(0.8-depth*1.5).toFixed(1)+'px':'0px';
+    var rot=((Math.random()-.5)*22).toFixed(1);
+    var fadeDur=Math.round(44+Math.random()*26);
+    var fadeDelay=-Math.round(Math.random()*fadeDur);
+
+    var slot=document.createElement('div');
+    slot.className='lbg-slot';
+    slot.style.width=size+'px'; slot.style.height=size+'px';
+    slot.style.left=pt[0]+'%'; slot.style.top=pt[1]+'%';
+    slot.style.transform='translate(-50%,-50%)';
+    slot.style.animationDuration=fadeDur+'s';
+    slot.style.animationDelay=fadeDelay+'s';
+
+    var inner=document.createElement('div');
+    inner.className='lbg-cover';
+    inner.style.transform='rotate('+rot+'deg)';
+    inner.style.backgroundImage='url("'+nextCover().c+'")';
+    if(blur!=='0px') inner.style.filter='brightness(.65) saturate(.75) blur('+blur+')';
+    slot.appendChild(inner);
+
+    // On cycle: pick random slot from same approximate area
+    slot.addEventListener('animationiteration',function(sl,inn,ox,oy){
+      return function(){
+        var nx=jit(ox,8), ny=jit(oy,10);
+        nx=Math.max(2,Math.min(97,nx)); ny=Math.max(2,Math.min(97,ny));
+        var d=Math.random(), sz=Math.round(75+d*95);
+        var bl=d<0.3?(0.8-d*1.5).toFixed(1)+'px':'0px';
+        sl.style.width=sz+'px'; sl.style.height=sz+'px';
+        sl.style.left=nx.toFixed(1)+'%'; sl.style.top=ny.toFixed(1)+'%';
+        inn.style.transform='rotate('+((Math.random()-.5)*22).toFixed(1)+'deg)';
+        inn.style.backgroundImage='url("'+nextCover().c+'")';
+        inn.style.filter=bl!=='0px'?'brightness(.65) saturate(.75) blur('+bl+')':'brightness(.65) saturate(.75)';
+      };
+    }(slot,inner,pt[0],pt[1]));
+    bg.appendChild(slot);
+  });
+
+  var noteChars=['♩','♪','♫','♬','♭','♮','♩','♪','♫','♬','♭','♪'];
+  var noteColors=['rgba(255,255,255,.40)','rgba(255,255,255,.40)','rgba(255,255,255,.40)','rgba(255,79,216,.30)','rgba(255,79,216,.30)','rgba(255,255,255,.40)'];
+  noteSlots.forEach(function(pt,i){
+    var sz=Math.round(32+Math.random()*38);
+    var dur=Math.round(52+Math.random()*36);
+    var delay=-Math.round(Math.random()*dur);
+    var slot=document.createElement('div');
+    slot.className='lbg-note';
+    slot.style.fontSize=sz+'px';
+    slot.style.left=pt[0]+'%'; slot.style.top=pt[1]+'%';
+    slot.style.transform='translate(-50%,-50%)';
+    slot.style.color=noteColors[i%noteColors.length];
+    slot.style.animationDuration=dur+'s';
+    slot.style.animationDelay=delay+'s';
+    slot.textContent=noteChars[i%noteChars.length];
+    slot.addEventListener('animationiteration',function(sl,ox,oy){
+      return function(){
+        var nx=jit(ox,8), ny=jit(oy,10);
+        nx=Math.max(2,Math.min(97,nx)); ny=Math.max(2,Math.min(97,ny));
+        sl.style.left=nx.toFixed(1)+'%'; sl.style.top=ny.toFixed(1)+'%';
+        sl.style.fontSize=Math.round(32+Math.random()*38)+'px';
+      };
+    }(slot,pt[0],pt[1]));
+    bg.appendChild(slot);
+  });
+
+  // Dots: 42 pulsing/fading particles
+  var dotColors=[
+    'rgba(83,246,255,1)','rgba(83,246,255,1)','rgba(83,246,255,1)',
+    'rgba(255,79,216,1)','rgba(255,79,216,1)',
+    'rgba(143,95,255,1)',
+    'rgba(255,255,255,1)','rgba(255,255,255,1)',
+  ];
+  for(var d=0;d<42;d++){
+    var dot=document.createElement('div');
+    dot.className='lbg-dot';
+    var sz=+(1.5+Math.random()*5).toFixed(1);
+    var col=dotColors[Math.floor(Math.random()*dotColors.length)];
+    var isPulse=Math.random()>.45;
+    var dur=+(6+Math.random()*14).toFixed(1);
+    var delay=-(Math.random()*dur).toFixed(1);
+    var glow=sz>4?'0 0 '+(sz*3)+'px '+col:'none';
+    dot.style.width=sz+'px'; dot.style.height=sz+'px';
+    dot.style.left=(2+Math.random()*96).toFixed(1)+'%';
+    dot.style.top=(2+Math.random()*96).toFixed(1)+'%';
+    dot.style.background=col;
+    dot.style.boxShadow=glow;
+    dot.style.zIndex='0';
+    dot.style.animationName=isPulse?'lbg-dot-pulse':'lbg-dot-fade';
+    dot.style.animationDuration=dur+'s';
+    dot.style.animationDelay=delay+'s';
+    bg.appendChild(dot);
+  }
+}
+
 </script>
 </body>
 </html>
