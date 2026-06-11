@@ -491,7 +491,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v2.6.2</div>
+<div class="ver">v2.6.3</div>
 
 <!-- Zahnrad-Menü (nur im Spiel) -->
 <div id="gear-btn" onclick="toggleGear()">&#9881;</div>
@@ -800,7 +800,8 @@ function buildLobbyBg(){
   bg.innerHTML='';
 
   var allSongs=(G.artists||[]).map(function(a){return{c:a.img,ca:a.img,p:a.inTop20?1:99};}).filter(function(s){return s.c;});
-  var top20=shuffle(allSongs.filter(function(s){return s.p<=10;}));
+  // 85% Top-Künstler zuerst (geordnet), 15% Rest zufällig
+  var top20=allSongs.filter(function(s){return s.p<=10;});
   var rest=shuffle(allSongs.filter(function(s){return s.p>10;}));
   var pool=top20.concat(rest);
   var poolIdx=0;
@@ -943,7 +944,8 @@ function buildLobbyBg(){
   bg.innerHTML='';
 
   var allSongs=(G.artists||[]).map(function(a){return{c:a.img,ca:a.img,p:a.inTop20?1:99};}).filter(function(s){return s.c;});
-  var top20=shuffle(allSongs.filter(function(s){return s.p<=10;}));
+  // 85% Top-Künstler zuerst (geordnet), 15% Rest zufällig
+  var top20=allSongs.filter(function(s){return s.p<=10;});
   var rest=shuffle(allSongs.filter(function(s){return s.p>10;}));
   var pool=top20.concat(rest);
   var poolIdx=0;
