@@ -733,8 +733,12 @@ function startWithAI(){
       const prevRoles={};
       if(prev?.players) for(const [id,p] of Object.entries(prev.players)) if(p.role) prevRoles[id]=p.role;
       const prevScores2={};
+      const prevFinished = prev?.phase === 'ended';
       if(prev?.players) for(const [id,p] of Object.entries(prev.players)) prevScores2[id]=p.score||0;
-      const game=buildGame(allP, Object.keys(prevRoles).length?prevRoles:null, prevScores2, prev?.roundNum||0);
+      const game=buildGame(allP,
+        (prevFinished && Object.keys(prevRoles).length) ? prevRoles : null,
+        prevFinished ? prevScores2 : null,
+        prevFinished ? (prev?.roundNum||0) : 0);
       if(game.needsExchange){
         game.phase='exchange';
         ROOM.set(game).then(()=>runExchange());
@@ -884,7 +888,7 @@ function renderGame(s){
   const myHand=me?.hand||[];
   document.getElementById('myCount').textContent=myHand.length;
   const scEl=document.getElementById('myScore');
-  if(scEl) scEl.textContent=me?.score!=null?`${me.score} Pkt`:'';
+  if(scEl) scEl.textContent=(me?.score!=null&&s.roundNum>1)?`${me.score} Pkt`:'';
   selCards=selCards.filter(sel=>myHand.some(c=>c.id===sel.id));
   renderMyHand(myHand);
 
@@ -959,8 +963,9 @@ function renderOppList(containerId, ids, s){
     div.className=`opp${isActive?' turn':''}${done?' done':''}`;
     const cnt=p.hand?.length||0;
     const mini=Array(Math.min(cnt,12)).fill('<div class="mini"></div>').join('');
-    const rb=p.role?`<div class="rbadge ${ROLE_CLS[p.role]}">${ROLE_LBL[p.role]}</div>`:'';
-    const sc=p.score!=null?`<span style="color:#53f6ff;font-weight:700">${p.score} Pkt</span>`:'';
+    const showRole = p.role && (s.roundNum > 1 || s.phase === 'ended');
+    const rb=showRole?`<div class="rbadge ${ROLE_CLS[p.role]}">${ROLE_LBL[p.role]}</div>`:'';
+    const sc=p.score!=null&&s.roundNum>1?`<span style="color:#53f6ff;font-weight:700">${p.score} Pkt</span>`:'';
     div.innerHTML=`<div class="opp-name" style="display:flex;justify-content:space-between;align-items:center">${esc(p.name)}${sc}</div>${rb}<div style="font-size:12px;color:rgba(255,255,255,.35);margin-top:3px">${cnt} Karte(n)${isActive?' ✦':''}</div><div class="mini-cards">${mini}</div>`;
     el.appendChild(div);
   });
