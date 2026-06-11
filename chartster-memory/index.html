@@ -284,7 +284,7 @@ body{
 <body>
 
 <div id="hint-toast"></div>
-<div class="version" style="position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px">v1.3.1</div>
+<div class="version" style="position:fixed;bottom:12px;right:16px;font-size:14px;font-weight:700;color:rgba(255,255,255,.5);z-index:100;background:rgba(0,0,0,.4);padding:4px 10px;border-radius:8px">v1.3.2</div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
 
@@ -449,9 +449,14 @@ function buildLobbyBg(){
   bg.innerHTML='';
 
   // Neueste Top-20 Songs bevorzugt
-  var top20=G.songs.filter(function(s){return s.c&&s.p&&s.p<=20;})
-    .sort(function(a,b){return (b.y||0)-(a.y||0);});
-  var rest=shuffle(G.songs.filter(function(s){return s.c&&(!s.p||s.p>20);}));
+  // 85% neueste + bestplatzierte Top-20-Songs, 15% Rest zufällig
+  var withCover=G.songs.filter(function(s){return s.c;});
+  var top20=withCover.filter(function(s){return s.p&&s.p<=20;})
+    .sort(function(a,b){
+      if(b.y!==a.y) return (b.y||0)-(a.y||0);
+      return (a.p||99)-(b.p||99);
+    });
+  var rest=shuffle(withCover.filter(function(s){return !s.p||s.p>20;}));
   var pool=top20.concat(rest);
   var poolIdx=0;
   function nextCover(){var s=pool[poolIdx%pool.length];poolIdx++;return s;}
