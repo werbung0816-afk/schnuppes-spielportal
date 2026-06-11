@@ -587,7 +587,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.4.6</div>
+<div class="version">v4.4.7</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -1237,7 +1237,7 @@ function launchMiniGame(type){
   // Show iframe
   var wrap=document.getElementById('minigame-frame-wrap');
   var iframe=document.getElementById('minigame-iframe');
-  var src=type==='memory'?'../chartster-memory/index.html?embedded=1':'../chartster-paparazzi/index.html?embedded=1';
+  var src=type==='memory'?'chartster_memory.html?embedded=1':'chartster_paparazzi.html?embedded=1';
   iframe.src=src;
   wrap.classList.add('show');
   document.getElementById('mga-skip-btn').style.display='block';
@@ -1307,9 +1307,17 @@ function buildLobbyBg(){
   if(!bg) return;
   bg.innerHTML='';
 
-  var top20=shuffle(G.songs.filter(function(s){return s.c&&s.p&&s.p<=20;}));
-  var rest=shuffle(G.songs.filter(function(s){return s.c&&(!s.p||s.p>20);}));
-  var pool=top20.concat(rest);
+  // 85% neueste + bestplatzierte Songs, 15% zufälliger Rest
+  var withCover=G.songs.filter(function(s){return s.c;});
+  var ranked=withCover.filter(function(s){return s.p&&s.p<=20;})
+    .sort(function(a,b){
+      if(b.y!==a.y) return (b.y||0)-(a.y||0); // neueste zuerst
+      return (a.p||99)-(b.p||99);              // bei gleichem Jahr: beste Platzierung
+    });
+  var unranked=shuffle(withCover.filter(function(s){return !s.p||s.p>20;}));
+  var take=Math.ceil(withCover.length*0.85);
+  var pool=ranked.concat(unranked).slice(0,take);
+  pool=shuffle(pool.slice(0,take).concat(unranked.slice(0,Math.floor(withCover.length*0.15))));
   var poolIdx=0;
   function nextCover(){var s=pool[poolIdx%pool.length];poolIdx++;return s;}
 
@@ -1494,7 +1502,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=82', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=83', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
