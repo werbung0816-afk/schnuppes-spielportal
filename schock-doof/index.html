@@ -1,1 +1,1079 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#060e03">
+<title>Ingo's Schock Doof</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   INGO'S SCHOCK DOOF — v2.0  (single-file, GitHub Pages)
+   Design-System destilliert aus dem Schnuppes-Spielportal
+   ============================================================ */
+:root{
+  --bg:#060e03;
+  --bg2:#0c160a;
+  --g:rgba(232,224,208,1);   /* cremeweiß */
+  --g-dim:rgba(232,224,208,.62);
+  --gold:#d4af37;
+  --gold-soft:rgba(212,175,55,.18);
+  --cyan:#00e5ff;
+  --pink:#ff4d8d;
+  --danger:#e74c3c;
+  --success:#2ecc71;
+  --glass:rgba(255,255,255,.04);
+  --glass-2:rgba(255,255,255,.06);
+  --r:14px;
+  --shadow:0 10px 40px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%}
+body{
+  background:
+    radial-gradient(1200px 700px at 50% -10%, #15280f 0%, transparent 60%),
+    radial-gradient(900px 600px at 100% 110%, #1a0f1f 0%, transparent 55%),
+    var(--bg);
+  color:var(--g);
+  font-family:'Outfit',system-ui,sans-serif;
+  min-height:100dvh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.serif,.label{font-family:'Cinzel',serif}
+.label{letter-spacing:.06em;text-transform:uppercase}
 
+/* ---------- Layout ---------- */
+.wrap{max-width:760px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px 28px;min-height:100dvh;display:flex;flex-direction:column}
+.screen{display:none;animation:fade .35s ease}
+.screen.active{display:flex;flex-direction:column;flex:1}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- Header / Brand ---------- */
+.brand{display:flex;align-items:center;justify-content:center;gap:.6rem;flex-direction:column;text-align:center;margin:8px 0 18px}
+.brand .crest{font-size:2.4rem;filter:drop-shadow(0 4px 10px rgba(212,175,55,.4))}
+.brand h1{margin:.1em 0 0;font-size:clamp(1.6rem,7vw,2.6rem);font-weight:900;line-height:1;
+  background:linear-gradient(180deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.02em}
+.brand .sub{font-size:.72rem;color:var(--g-dim);letter-spacing:.34em;text-transform:uppercase;margin-top:.5rem}
+.ver{display:inline-block;font-size:.62rem;color:var(--gold);border:1px solid var(--gold-soft);border-radius:999px;padding:2px 9px;letter-spacing:.18em;margin-top:.6rem}
+
+/* ---------- Cards / glass ---------- */
+.card{background:var(--glass);border:1px solid var(--gold-soft);border-radius:var(--r);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:16px;margin-bottom:14px}
+.card h2{margin:0 0 .7rem;font-size:.84rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+
+/* ---------- Buttons ---------- */
+button{font-family:inherit;cursor:pointer;border:none;color:var(--g);background:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:15px 16px;border-radius:12px;font-weight:600;font-size:1rem;
+  background:linear-gradient(180deg,rgba(212,175,55,.95),rgba(176,141,30,.95));color:#1a1405;box-shadow:0 6px 18px rgba(212,175,55,.28);transition:transform .12s,filter .12s;letter-spacing:.02em}
+.btn:active{transform:translateY(1px) scale(.99);filter:brightness(1.05)}
+.btn.ghost{background:var(--glass-2);color:var(--g);border:1px solid var(--gold-soft);box-shadow:none}
+.btn.cyan{background:linear-gradient(180deg,#27e8ff,#00b8d4);color:#04181c;box-shadow:0 6px 18px rgba(0,229,255,.25)}
+.btn.danger{background:linear-gradient(180deg,#ff6b5e,#d6392c);color:#fff;box-shadow:0 6px 18px rgba(231,76,60,.3)}
+.btn:disabled{opacity:.4;filter:grayscale(.4);pointer-events:none}
+.btn.sm{width:auto;padding:9px 14px;font-size:.84rem}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+
+/* ---------- Lobby player rows ---------- */
+.pl-row{display:flex;align-items:center;gap:10px;background:var(--glass-2);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px;margin-bottom:9px}
+.pl-row input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--gold-soft);color:var(--g);font-size:1rem;font-family:inherit;padding:6px 2px;min-width:0}
+.pl-row input:focus{outline:none;border-bottom-color:var(--gold)}
+.pl-seat{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:'Cinzel';font-weight:700;background:var(--gold-soft);color:var(--gold);font-size:.8rem;flex:0 0 auto}
+.toggle{flex:0 0 auto;display:flex;background:rgba(0,0,0,.3);border-radius:999px;padding:3px;font-size:.74rem;font-weight:600}
+.toggle b{padding:5px 10px;border-radius:999px;color:var(--g-dim);transition:.15s}
+.toggle b.on{background:var(--gold);color:#1a1405}
+.x-btn{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:rgba(231,76,60,.14);color:#ff8c82;font-size:1.1rem;line-height:1}
+.mode-pick{display:flex;gap:10px}
+.mode-pick .opt{flex:1;text-align:center;padding:13px 8px;border-radius:12px;border:1px solid var(--gold-soft);background:var(--glass-2);cursor:pointer;transition:.15s}
+.mode-pick .opt.on{border-color:var(--gold);background:rgba(212,175,55,.14);box-shadow:0 0 0 1px var(--gold) inset}
+.mode-pick .opt .t{font-family:'Cinzel';font-weight:700;font-size:.92rem}
+.mode-pick .opt .d{font-size:.68rem;color:var(--g-dim);margin-top:3px}
+
+/* ---------- Game header / phase ---------- */
+.ghead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.ghead .mini{font-size:.62rem;color:var(--g-dim);letter-spacing:.14em;text-transform:uppercase}
+.phase-banner{text-align:center;margin:2px 0 14px}
+.phase-banner .ph{font-family:'Cinzel';font-weight:900;font-size:clamp(1.2rem,5vw,1.7rem);background:linear-gradient(180deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.chip{display:inline-flex;align-items:center;gap:.4rem;font-family:'Cinzel';font-weight:600;font-size:.74rem;letter-spacing:.1em;color:var(--cyan);border:1px solid rgba(0,229,255,.3);border-radius:999px;padding:5px 12px;background:rgba(0,229,255,.06);user-select:none;-webkit-user-select:none}
+.chip.round{cursor:pointer}
+.icon-btn{width:38px;height:38px;flex:0 0 auto;border-radius:10px;background:var(--glass-2);border:1px solid var(--gold-soft);display:grid;place-items:center;font-size:1.05rem;color:var(--g)}
+
+/* ---------- Kaiserrunde pill ---------- */
+.kaiser-pill{display:none;align-items:center;justify-content:center;gap:.5rem;margin:0 0 12px;padding:10px 14px;border-radius:12px;
+  font-family:'Cinzel';font-weight:700;font-size:.86rem;color:#1a1405;
+  background:linear-gradient(90deg,#ffd86b,#d4af37,#ffd86b);background-size:200% 100%;
+  box-shadow:0 0 0 1px rgba(212,175,55,.5),0 8px 24px rgba(212,175,55,.35);
+  animation:kaiserPulse 1.6s ease-in-out infinite, kaiserShine 3s linear infinite}
+.kaiser-pill.show{display:flex}
+@keyframes kaiserPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@keyframes kaiserShine{to{background-position:200% 0}}
+
+/* ---------- Player cards ---------- */
+.players{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.pc{position:relative;background:var(--glass);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:11px 11px 12px;transition:.2s}
+.pc.turn{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 22px rgba(0,229,255,.18)}
+.pc.loser{border-color:rgba(231,76,60,.5)}
+.pc .nm{display:flex;align-items:center;gap:.4rem;font-weight:600;font-size:.92rem}
+.pc .nm .ai{font-size:.58rem;color:var(--g-dim);border:1px solid var(--gold-soft);border-radius:5px;padding:1px 5px;letter-spacing:.08em}
+.pc .marker{font-size:.85rem}
+.lids{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
+.lid{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(212,175,55,.4);transition:.2s}
+.lid.f{background:radial-gradient(circle at 35% 30%,#ffe28a,#b8901f);border-color:#b8901f;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.pc .cnt{position:absolute;top:9px;right:10px;font-family:'Cinzel';font-weight:700;font-size:.92rem;color:var(--gold)}
+.pc .combo{margin-top:9px;font-family:'Cinzel';font-weight:700;font-size:.72rem;letter-spacing:.05em;color:var(--cyan);min-height:1em;opacity:0;transition:.25s}
+.pc .combo.show{opacity:1}
+.pc .minidice{display:flex;gap:3px;margin-top:7px}
+.pc .md{width:14px;height:14px;border-radius:3px;background:#f2ead8;color:#1a1405;font-size:9px;font-weight:700;display:grid;place-items:center}
+
+/* ---------- Dice arena ---------- */
+.arena{background:var(--bg2);border:1px solid var(--gold-soft);border-radius:16px;padding:18px 14px;margin-bottom:14px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.arena .who{font-family:'Cinzel';font-weight:700;font-size:1.05rem;color:var(--g)}
+.arena .throws{font-size:.7rem;color:var(--g-dim);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+.dice{display:flex;justify-content:center;gap:9px;margin:16px 0 8px;flex-wrap:wrap}
+.die{width:clamp(46px,13vw,58px);height:clamp(46px,13vw,58px);border-radius:13px;background:linear-gradient(155deg,#fbf6ea,#ded3bb);position:relative;cursor:pointer;
+  box-shadow:0 5px 12px rgba(0,0,0,.45),inset 0 -3px 6px rgba(0,0,0,.12),inset 0 2px 3px rgba(255,255,255,.7);transition:transform .15s,box-shadow .15s}
+.die.kept{transform:translateY(-7px) scale(1.02);box-shadow:0 10px 18px rgba(0,229,255,.35),0 0 0 2px var(--cyan),inset 0 -3px 6px rgba(0,0,0,.12)}
+.die.rolling{animation:tumble .5s ease}
+@keyframes tumble{0%{transform:rotate(0) scale(1)}25%{transform:rotate(-18deg) scale(.92)}50%{transform:rotate(14deg) scale(1.05)}75%{transform:rotate(-8deg) scale(.97)}100%{transform:rotate(0) scale(1)}}
+.die .pips{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:18%}
+.die .pip{width:9px;height:9px;border-radius:50%;background:#2a2114;align-self:center;justify-self:center;box-shadow:inset 0 1px 1px rgba(0,0,0,.4)}
+/* pip placement helpers via nth positions set in JS by grid-area */
+.combo-big{min-height:1.6em;font-family:'Cinzel';font-weight:900;font-size:clamp(1.1rem,5.5vw,1.7rem);letter-spacing:.03em;color:var(--gold);margin-top:6px;opacity:0;transform:scale(.8)}
+.combo-big.pop{animation:pop .5s cubic-bezier(.2,1.4,.4,1) forwards}
+@keyframes pop{to{opacity:1;transform:scale(1)}}
+.keep-hint{font-size:.66rem;color:var(--g-dim);letter-spacing:.08em;margin-top:2px}
+
+/* ---------- Modal ---------- */
+.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(3,7,2,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:18px}
+.modal-bg.open{display:flex;animation:fade .25s}
+.modal{width:100%;max-width:460px;max-height:88dvh;overflow:auto;background:linear-gradient(180deg,#11200c,#0a130a);border:1px solid var(--gold-soft);border-radius:18px;padding:22px 20px;box-shadow:var(--shadow)}
+.modal h2{font-family:'Cinzel';margin:0 0 12px;font-size:1.3rem;color:var(--gold);text-align:center;font-weight:900}
+.modal h3{font-family:'Cinzel';color:var(--cyan);font-size:.92rem;margin:16px 0 6px;letter-spacing:.04em}
+.modal p,.modal li{font-size:.9rem;line-height:1.55;color:var(--g)}
+.modal .sub{color:var(--g-dim);font-size:.82rem}
+.summary-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.summary-row:last-child{border-bottom:none}
+.summary-row .nm{font-weight:600}
+.summary-row .cb{font-family:'Cinzel';font-size:.78rem;color:var(--g-dim);text-align:right}
+.summary-row.win{color:var(--success)}
+.summary-row.lose{color:#ff8c82}
+.mini-d{display:inline-flex;gap:3px;vertical-align:middle}
+.mini-d span{width:16px;height:16px;border-radius:4px;background:#f2ead8;color:#1a1405;font-size:10px;font-weight:700;display:inline-grid;place-items:center}
+
+/* ---------- Biersammler ---------- */
+.bier-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.9rem}
+.bier-row:last-child{border-bottom:none}
+.bier-row .amt{font-family:'Cinzel';font-weight:700;color:var(--gold)}
+.bier-tot{margin-top:10px;text-align:right;font-family:'Cinzel';font-weight:700;color:var(--gold)}
+
+/* ---------- Toast ---------- */
+#toasts{position:fixed;left:0;right:0;bottom:max(18px,env(safe-area-inset-bottom));z-index:400;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 14px}
+.toast{background:rgba(12,22,10,.96);border:1px solid var(--gold-soft);color:var(--g);border-radius:12px;padding:11px 16px;font-size:.88rem;max-width:420px;box-shadow:var(--shadow);animation:toastIn .3s ease;display:flex;gap:.5rem;align-items:center}
+.toast.ok{border-color:rgba(46,204,113,.4)}
+.toast.warn{border-color:rgba(231,76,60,.45)}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ---------- Confetti ---------- */
+#confetti{position:fixed;inset:0;z-index:500;pointer-events:none;overflow:hidden}
+.conf{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:confFall linear forwards}
+@keyframes confFall{to{transform:translateY(108vh) rotate(720deg);opacity:.9}}
+
+.foot{text-align:center;color:var(--g-dim);font-size:.66rem;letter-spacing:.1em;margin-top:auto;padding-top:14px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold-soft),transparent);margin:14px 0}
+small.help{display:block;color:var(--g-dim);font-size:.74rem;margin-top:6px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div id="toasts"></div>
+<div id="confetti"></div>
+
+<div class="wrap">
+
+  <!-- ============ LOBBY ============ -->
+  <section id="lobby" class="screen active">
+    <div class="brand">
+      <div class="crest">🎲</div>
+      <h1>Ingo's Schock Doof</h1>
+      <div class="sub">Würfeln · Decken · Saufen</div>
+      <span class="ver" id="lobbyVer">v2.0</span>
+    </div>
+
+    <div class="card">
+      <h2>Spieler <span class="sub" style="text-transform:none;letter-spacing:0">(2–6)</span></h2>
+      <div id="plList"></div>
+      <button class="btn ghost sm" id="addPl" style="width:100%;margin-top:4px">＋ Spieler hinzufügen</button>
+    </div>
+
+    <div class="card">
+      <h2>Spielmodus</h2>
+      <div class="mode-pick" id="modePick">
+        <div class="opt on" data-mode="normal"><div class="t">Normal</div><div class="d">Hälfte 1 → 2 → Finale</div></div>
+        <div class="opt" data-mode="schnelle5"><div class="t">Schnelle 5</div><div class="d">5 Deckel · direkt</div></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="startBtn">Spiel starten</button>
+      <button class="btn ghost" id="rulesBtn" style="flex:0 0 auto;width:auto;padding:15px 18px">Regeln</button>
+    </div>
+
+    <div class="card" id="bierCardLobby" style="margin-top:14px">
+      <h2>🍺 Biersammler</h2>
+      <div id="bierLobby"></div>
+    </div>
+
+    <div class="foot">Schnuppes Spielportal · <span id="footVer">v2.0</span></div>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section id="game" class="screen">
+    <div class="ghead">
+      <button class="icon-btn" id="homeBtn" title="Zur Lobby">⌂</button>
+      <div style="text-align:center">
+        <div class="mini">Ingo's Schock Doof</div>
+        <div class="mini" id="gameVer" style="color:var(--gold)">v2.0</div>
+      </div>
+      <button class="icon-btn" id="recoverBtn" title="Feststecken beheben">↺</button>
+    </div>
+
+    <div class="kaiser-pill" id="kaiserPill">👑 KAISERRUNDE — letztes Spiel!</div>
+
+    <div class="phase-banner">
+      <div class="ph" id="phaseLabel">Hälfte 1</div>
+      <div style="margin-top:8px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+        <span class="chip round" id="roundChip">Runde 1</span>
+        <span class="chip" id="middleChip" style="color:var(--gold);border-color:var(--gold-soft);background:rgba(212,175,55,.06)">Mitte: 13</span>
+      </div>
+    </div>
+
+    <div class="players" id="playersBox"></div>
+
+    <div class="arena">
+      <div class="who" id="arenaWho">—</div>
+      <div class="throws" id="arenaThrows">Wurf 0 / 3</div>
+      <div class="dice" id="diceBox"></div>
+      <div class="keep-hint" id="keepHint">Würfel antippen = behalten</div>
+      <div class="combo-big" id="comboBig"></div>
+    </div>
+
+    <div id="controls"></div>
+
+    <div class="divider"></div>
+    <button class="btn ghost sm" id="kaiserBtn" style="width:100%">👑 Kaiserrunde ankündigen</button>
+    <small class="help" id="kaiserHelp">Aktuelles Spiel wird zu Ende gespielt, danach noch ein komplettes Spiel — dann Abrechnung.</small>
+  </section>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<script>
+/* ============================================================
+   INGO'S SCHOCK DOOF — v2.0
+   Vollständige Spiellogik. Multiplayer = MP_STUB (selbst einbauen).
+   ============================================================ */
+const VERSION='v2.0';
+const $=id=>document.getElementById(id);
+document.querySelectorAll('#lobbyVer,#footVer,#gameVer').forEach(e=>e.textContent=VERSION);
+
+/* ---------- Helpers ---------- */
+function vibe(ms){ try{ if('vibrate' in navigator) navigator.vibrate(ms);}catch(e){} }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function toast(msg,type){
+  const t=document.createElement('div');
+  t.className='toast'+(type?(' '+type):'');
+  t.textContent=msg;
+  $('toasts').appendChild(t);
+  setTimeout(()=>{ t.style.transition='opacity .4s,transform .4s'; t.style.opacity='0'; t.style.transform='translateY(10px)'; setTimeout(()=>t.remove(),420); },3000);
+}
+function openModal(html){ $('modalBody').innerHTML=html; $('modalBg').classList.add('open'); }
+function closeModal(){ $('modalBg').classList.remove('open'); }
+$('modalBg').addEventListener('click',e=>{ if(e.target===$('modalBg')) closeModal(); });
+
+/* ============================================================
+   WÜRFEL-WAHRSCHEINLICHKEIT (1 seltener)
+   ============================================================ */
+function rollDie(){
+  const r=Math.random()*100;
+  if(r<15)return 1; if(r<32)return 2; if(r<49)return 3;
+  if(r<66)return 4; if(r<83)return 5; return 6;
+}
+
+/* pip-Positionen im 3x3-Grid (col row) */
+const PIP_POS={
+  1:[[2,2]],
+  2:[[1,1],[3,3]],
+  3:[[1,1],[2,2],[3,3]],
+  4:[[1,1],[3,1],[1,3],[3,3]],
+  5:[[1,1],[3,1],[2,2],[1,3],[3,3]],
+  6:[[1,1],[3,1],[1,2],[3,2],[1,3],[3,3]]
+};
+function diePips(val){
+  const pos=PIP_POS[val]||[];
+  return '<div class="pips">'+pos.map(p=>`<span class="pip" style="grid-column:${p[0]};grid-row:${p[1]}"></span>`).join('')+'</div>';
+}
+
+/* ============================================================
+   KOMBINATIONS-BEWERTUNG
+   Liefert {type,label,rank,deckel}. rank: höher = besser.
+   ============================================================ */
+function evaluateHand(dice, throwsUsed){
+  const c=[0,0,0,0,0,0,0]; dice.forEach(d=>c[d]++);
+  const allSame = c.some(x=>x===5);
+  const sorted=[...dice].sort((a,b)=>a-b).join('');
+  const isStraight = sorted==='12345' || sorted==='23456';
+
+  // SCHOCK-OUT (1-1-1-1-1 im 1. Wurf) wird vorher als Event behandelt,
+  // hier zur Sicherheit auch abgebildet:
+  if(c[1]===5 && throwsUsed===1) return {type:'SCHOCKOUT',label:'SCHOCK-OUT',rank:1000,deckel:0};
+
+  if(allSame){
+    const v=c.indexOf(5);
+    if(throwsUsed===1) return {type:'SCHOCK',label:'SCHOCK',rank:900+v,deckel:2};   // 1. Wurf → Schock, doppelt
+    return {type:'GENERAL',label:'GENERAL',rank:800+v,deckel:1};
+  }
+  if(isStraight){
+    const high = sorted==='23456'?6:5;
+    return {type:'STRASSE',label:'STRASSE',rank:700+high,deckel:1};
+  }
+  // Full House: Drilling + Paar
+  const drill=c.findIndex(x=>x===3);
+  const pairs=[]; for(let v=6;v>=1;v--) if(c[v]===2) pairs.push(v);
+  if(drill>0 && pairs.length===1){
+    return {type:'FULLHOUSE',label:'FULL HOUSE',rank:600+drill*10+pairs[0],deckel:1};
+  }
+  if(drill>0){
+    return {type:'DRILLING',label:'DRILLING '+drill,rank:500+drill*10,deckel:1};
+  }
+  if(pairs.length===2){
+    return {type:'ZWEIPAARE',label:'ZWEI PAARE',rank:400+pairs[0]*10+pairs[1],deckel:1};
+  }
+  if(pairs.length===1){
+    return {type:'PAAR',label:'PAAR '+pairs[0],rank:300+pairs[0]*10,deckel:1};
+  }
+  // Schock Doof: alles verschieden, keine Kombi → schlechtestes Ergebnis
+  const sum=dice.reduce((a,b)=>a+b,0);
+  return {type:'DOOF',label:'SCHOCK DOOF',rank:100+sum,deckel:1};
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let TOTAL_LIDS=13;
+let G=null;        // Spielzustand
+let SZ=null;       // Biersammler-Zustand (Firebase-Stub)
+let recoveryTimer=null;
+const IS_HOST=true; // MP_STUB: in MP echten Host bestimmen; nur Host pusht State.
+
+function freshG(players, mode){
+  TOTAL_LIDS = (mode==='schnelle5') ? 5 : 13;
+  return {
+    mode,                       // 'normal' | 'schnelle5'
+    phase:'laden',              // laden|rolling|summary|halfend|gameover|kaiserover
+    half: mode==='schnelle5' ? 'q' : 1,   // 1|2|'finale'  ('q' = Schnelle 5)
+    round:1,
+    players: players.map(p=>({name:p.name,isAI:p.isAI})),
+    lids: players.map(()=>0),
+    playerStates: [],
+    middleLids: TOTAL_LIDS,
+    starter:0,
+    turnOrder:[], turnPtr:0,
+    active: players.map((_,i)=>i),
+    marker:null,                // Halbzeit-1-Verlierer
+    halfLosers:[null,null],
+    finalists:null,
+    gameLoser:null,
+    schockBonus:false,          // letzte Runde Schock → Verlierer zahlt doppelt
+    kaiserrunde:false,
+    kaiserrundeBy:null,
+    kaiserGamesPlayed:0,        // abgeschlossene Spiele seit Ankündigung
+    sessionStart:Date.now(),
+    ts:Date.now()
+  };
+}
+
+/* ============================================================
+   BIERSAMMLER  (Firebase-persistiert → MP_STUB; lokal in-memory)
+   ============================================================ */
+function normalizeSzState(st){
+  if(!st) return {players:[],settled:{},games:[]};
+  if(!st.settled) st.settled={};
+  if(!st.games)   st.games=[];
+  if(!st.players) st.players=[];
+  return st;
+}
+function loadBiersammler(){
+  // MP_STUB: szState aus Firebase laden (Node 'biersammler'), dann normalizeSzState.
+  // Bewusst KEIN localStorage (Anti-Pattern: geht bei Cache-Leerung verloren).
+  SZ = normalizeSzState(SZ);
+}
+function saveBiersammler(){
+  // MP_STUB: SZ nach Firebase schreiben (Node 'biersammler').
+}
+function recordLoss(name){
+  SZ=normalizeSzState(SZ);
+  SZ.settled[name]=(SZ.settled[name]||0)+1;
+  SZ.games.push({loser:name,ts:Date.now()});
+  saveBiersammler();
+}
+function bierTotalEuro(){ let n=0; for(const k in SZ.settled) n+=SZ.settled[k]; return (n*0.5); }
+
+function renderBierInto(elId){
+  SZ=normalizeSzState(SZ);
+  const el=$(elId); if(!el) return;
+  const names=Object.keys(SZ.settled);
+  if(!names.length){ el.innerHTML='<div class="sub" style="font-size:.82rem">Noch keine Niederlagen erfasst. 0,50 € pro verlorenem Spiel.</div>'; return; }
+  let h='';
+  names.sort((a,b)=>SZ.settled[b]-SZ.settled[a]).forEach(n=>{
+    const losses=SZ.settled[n];
+    h+=`<div class="bier-row"><span>${n} <span class="sub">· ${losses}×</span></span><span class="amt">${(losses*0.5).toFixed(2)} €</span></div>`;
+  });
+  h+=`<div class="bier-tot">Gesamt: ${bierTotalEuro().toFixed(2)} €</div>`;
+  el.innerHTML=h;
+}
+
+/* ============================================================
+   LOBBY
+   ============================================================ */
+let lobbyPlayers=[{name:'Du',isAI:false},{name:'KI Bea',isAI:true},{name:'KI Ingo',isAI:true}];
+let lobbyMode='normal';
+
+function renderLobby(){
+  const box=$('plList'); box.innerHTML='';
+  lobbyPlayers.forEach((p,i)=>{
+    const row=document.createElement('div'); row.className='pl-row';
+    row.innerHTML=`
+      <span class="pl-seat">${i+1}</span>
+      <input value="${p.name.replace(/"/g,'&quot;')}" maxlength="14" data-i="${i}">
+      <div class="toggle" data-i="${i}">
+        <b class="${!p.isAI?'on':''}" data-h="1">Mensch</b>
+        <b class="${p.isAI?'on':''}" data-h="0">KI</b>
+      </div>
+      ${lobbyPlayers.length>2?`<button class="x-btn" data-del="${i}">×</button>`:''}`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{ lobbyPlayers[+e.target.dataset.i].name=e.target.value; }));
+  box.querySelectorAll('.toggle b').forEach(b=>b.addEventListener('click',e=>{
+    const tog=e.target.closest('.toggle'); const i=+tog.dataset.i;
+    lobbyPlayers[i].isAI = e.target.dataset.h==='0'; renderLobby();
+  }));
+  box.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',e=>{ lobbyPlayers.splice(+e.target.dataset.del,1); renderLobby(); }));
+  $('addPl').style.display = lobbyPlayers.length>=6?'none':'block';
+  renderBierInto('bierLobby');
+}
+$('addPl').addEventListener('click',()=>{ if(lobbyPlayers.length<6){ lobbyPlayers.push({name:'KI '+String.fromCharCode(65+lobbyPlayers.length),isAI:true}); renderLobby(); }});
+$('modePick').querySelectorAll('.opt').forEach(o=>o.addEventListener('click',()=>{
+  $('modePick').querySelectorAll('.opt').forEach(x=>x.classList.remove('on'));
+  o.classList.add('on'); lobbyMode=o.dataset.mode;
+}));
+$('rulesBtn').addEventListener('click',()=>showTutorial(false));
+$('startBtn').addEventListener('click',startGame);
+
+/* ============================================================
+   SPIELSTART + LADEN
+   ============================================================ */
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+
+async function startGame(){
+  const humans=lobbyPlayers.filter(p=>!p.isAI).length;
+  if(lobbyPlayers.length<2){ toast('Mindestens 2 Spieler nötig.','warn'); return; }
+  lobbyPlayers.forEach((p,i)=>{ if(!p.name.trim()) p.name=(p.isAI?'KI ':'Spieler ')+(i+1); });
+  G=freshG(lobbyPlayers, lobbyMode);
+  loadBiersammler();
+  showScreen('game');
+  updateKaiserPill();
+  startRecoveryWatch();
+  await runLaden();
+}
+
+async function runLaden(){
+  G.phase='laden';
+  $('phaseLabel').textContent='Laden';
+  $('roundChip').textContent='Wer beginnt?';
+  $('playersBox').innerHTML='';
+  $('controls').innerHTML='';
+  $('arenaWho').textContent='Laden — höchste Zahl beginnt';
+  $('arenaThrows').textContent='Jeder ein Würfel';
+  $('comboBig').className='combo-big'; $('comboBig').textContent='';
+  $('keepHint').style.display='none';
+  renderPlayers();
+
+  let rolls, best, winners;
+  do{
+    rolls=G.active.map(()=>0);
+    // animierter Einzelwurf pro Spieler
+    for(let k=0;k<G.active.length;k++){
+      const idx=G.active[k];
+      $('diceBox').innerHTML=`<div class="die rolling">${diePips(rollDie())}</div>`;
+      await sleep(260);
+      rolls[k]=rollDie();
+      $('diceBox').innerHTML=`<div class="die">${diePips(rolls[k])}</div>`;
+      $('arenaWho').textContent=`${G.players[idx].name}: ${rolls[k]}`;
+      vibe(12);
+      await sleep(380);
+    }
+    best=Math.max(...rolls);
+    winners=G.active.filter((_,k)=>rolls[k]===best);
+  } while(winners.length>1); // Gleichstand → neu
+
+  G.starter=winners[0];
+  toast(`${G.players[G.starter].name} beginnt!`,'ok');
+  $('keepHint').style.display='';
+  await sleep(500);
+  beginRound(true);
+}
+
+/* ============================================================
+   RUNDE
+   ============================================================ */
+function buildTurnOrder(){
+  const pool = (G.half==='finale') ? G.finalists.slice() : G.active.slice();
+  // ab starter, in Sitzreihenfolge
+  const start = pool.includes(G.starter) ? G.starter : pool[0];
+  const order=[]; const si=pool.indexOf(start);
+  for(let i=0;i<pool.length;i++) order.push(pool[(si+i)%pool.length]);
+  return order;
+}
+function beginRound(first){
+  G.phase='rolling';
+  G.turnOrder=buildTurnOrder();
+  G.turnPtr=0;
+  G.playerStates=G.players.map(()=>({dice:[0,0,0,0,0],kept:[false,false,false,false,false],throws:0,done:false,combo:null}));
+  G.ts=Date.now();
+  // MP_STUB: if(IS_HOST) MP.pushState(G)  — vollen State pushen; Gäste lesen nur.
+  renderAll();
+  startTurn();
+}
+function curIdx(){ return G.turnOrder[G.turnPtr]; }
+
+function startTurn(){
+  const idx=curIdx();
+  renderPlayers();
+  const st=G.playerStates[idx];
+  $('arenaWho').textContent=G.players[idx].name+(G.players[idx].isAI?' (KI)':' — du bist dran');
+  $('arenaThrows').textContent=`Wurf ${st.throws} / 3`;
+  $('comboBig').className='combo-big'; $('comboBig').textContent='';
+  renderDice();
+  if(G.players[idx].isAI){ $('keepHint').style.display='none'; aiTurn(); }
+  else { $('keepHint').style.display=''; renderControls(); }
+}
+
+function renderControls(){
+  const idx=curIdx(); const st=G.playerStates[idx];
+  let h='';
+  if(st.throws===0){
+    h=`<button class="btn cyan" id="rollBtn">🎲 Würfeln</button>`;
+  } else if(st.throws<3){
+    h=`<div class="row">
+         <button class="btn cyan" id="rollBtn">Nochmal (${st.throws}/3)</button>
+         <button class="btn ghost" id="doneBtn">Behalten & fertig</button>
+       </div>`;
+  } else {
+    h=`<button class="btn" id="doneBtn">Zug beenden</button>`;
+  }
+  $('controls').innerHTML=h;
+  const rb=$('rollBtn'); if(rb) rb.addEventListener('click',humanRoll);
+  const db=$('doneBtn'); if(db) db.addEventListener('click',()=>finishTurn(idx));
+}
+
+async function humanRoll(){
+  const idx=curIdx(); const st=G.playerStates[idx];
+  $('controls').innerHTML='';
+  await animateRoll(idx);
+  // SCHOCK-OUT prüfen (1-1-1-1-1 im 1. Wurf)
+  if(st.throws===1 && st.dice.every(d=>d===1)){ return schockOut(idx); }
+  if(st.throws>=3) finishTurn(idx);
+  else { renderControls(); renderDice(); }
+}
+
+async function animateRoll(idx){
+  const st=G.playerStates[idx];
+  const dieEls=[...$('diceBox').children];
+  dieEls.forEach((el,i)=>{ if(!st.kept[i]) el.classList.add('rolling'); });
+  vibe([10,30,10]);
+  // Flicker
+  for(let f=0;f<6;f++){
+    dieEls.forEach((el,i)=>{ if(!st.kept[i]) el.innerHTML=diePips(rollDie()); });
+    await sleep(70);
+  }
+  for(let i=0;i<5;i++){ if(!st.kept[i]) st.dice[i]=rollDie(); }
+  st.throws++;
+  renderDice();
+  $('arenaThrows').textContent=`Wurf ${st.throws} / 3`;
+}
+
+function renderDice(){
+  const idx=curIdx(); const st=G.playerStates[idx];
+  const human=!G.players[idx].isAI;
+  $('diceBox').innerHTML=st.dice.map((d,i)=>
+    `<div class="die${st.kept[i]?' kept':''}" data-i="${i}">${diePips(d||1)}</div>`).join('');
+  if(human && st.throws>0 && st.throws<3){
+    [...$('diceBox').children].forEach(el=>el.addEventListener('click',()=>{
+      const i=+el.dataset.i; st.kept[i]=!st.kept[i]; vibe(8); renderDice();
+    }));
+  }
+}
+
+function finishTurn(idx){
+  const st=G.playerStates[idx];
+  if(st.throws===0){ toast('Erst würfeln!','warn'); return; }
+  st.done=true;
+  st.combo=evaluateHand(st.dice, st.throws);
+  vibe(20);
+  // Große Kombi-Anzeige
+  const cb=$('comboBig'); cb.textContent=st.combo.label; cb.className='combo-big pop';
+  renderPlayers();
+  setTimeout(advanceTurn, G.players[idx].isAI?650:900);
+}
+
+function advanceTurn(){
+  // nächsten nicht-fertigen Spieler suchen
+  G.turnPtr++;
+  while(G.turnPtr<G.turnOrder.length && G.playerStates[G.turnOrder[G.turnPtr]].done) G.turnPtr++;
+  if(G.turnPtr>=G.turnOrder.length){ resolveRound(); return; }
+  startTurn();
+}
+
+/* ---------- KI ---------- */
+async function aiTurn(){
+  const idx=curIdx(); const st=G.playerStates[idx];
+  $('controls').innerHTML='';
+  await sleep(450);
+  while(st.throws<3 && !st.done){
+    await animateRoll(idx);
+    if(st.throws===1 && st.dice.every(d=>d===1)){ return schockOut(idx); }
+    aiDecideKeep(idx);
+    renderDice();
+    // weiterwürfeln? wenn schon alle behalten / 5-gleich → stop
+    const keepAll=st.kept.every(k=>k);
+    const allSame=st.dice.every(d=>d===st.dice[0]);
+    if(keepAll||allSame) break;
+    if(st.throws>=3) break;
+    // 25% Restzufall: trotzdem aufhören
+    if(st.throws===2 && Math.random()<.35) break;
+    await sleep(520);
+  }
+  finishTurn(idx);
+}
+function aiDecideKeep(idx){
+  const st=G.playerStates[idx];
+  const c=[0,0,0,0,0,0,0]; st.dice.forEach(d=>c[d]++);
+  // häufigsten Wert finden
+  let bestV=1; for(let v=2;v<=6;v++) if(c[v]>c[bestV]||(c[v]===c[bestV]&&v>bestV)) bestV=v;
+  const maxC=c[bestV];
+  st.kept=st.dice.map(()=>false);
+  if(maxC>=2){
+    // Pasch/Drilling halten
+    st.dice.forEach((d,i)=>{ if(d===bestV) st.kept[i]=true; });
+    // bei Drilling+ zusätzlich höchsten Einzelwürfel ggf. halten (Full-House-Chance)
+  } else {
+    // kein Paar → höchsten halten (Richtung gute Einzelwertung)
+    let hi=0,hiI=0; st.dice.forEach((d,i)=>{ if(d>hi){hi=d;hiI=i;} });
+    if(hi>=5) st.kept[hiI]=true;
+  }
+}
+
+/* ============================================================
+   SCHOCK-OUT  (1-1-1-1-1 im 1. Wurf)
+   Würfelnder scheidet aus, alle anderen zahlen 1 Deckel.
+   ============================================================ */
+function schockOut(idx){
+  vibe([40,40,80]);
+  const st=G.playerStates[idx];
+  st.done=true; st.combo={type:'SCHOCKOUT',label:'SCHOCK-OUT'};
+  const others=G.turnOrder.filter(i=>i!==idx);
+  others.forEach(i=>giveLid(i,1,idx));
+  const cb=$('comboBig'); cb.textContent='SCHOCK-OUT!'; cb.className='combo-big pop'; cb.style.color='var(--pink)';
+  renderAll();
+  showSummary({
+    title:'💥 Schock-Out!',
+    subtitle:`${G.players[idx].name} würfelt fünf Einsen – alle anderen kassieren 1 Deckel.`,
+    rows:G.turnOrder.map(i=>({idx:i,combo:i===idx?'SCHOCK-OUT (raus)':'+1 Deckel',win:i===idx,lose:i!==idx,dice:i===idx?st.dice:null})),
+    loser:null,
+    next:()=>{ cb.style.color=''; afterRound(idx); }
+  });
+}
+
+/* ============================================================
+   RUNDE AUSWERTEN
+   ============================================================ */
+function giveLid(toIdx,n,fromIdx){
+  for(let k=0;k<n;k++){
+    if(G.middleLids>0){ G.middleLids--; }
+    else if(fromIdx!=null && G.lids[fromIdx]>0){ G.lids[fromIdx]--; }
+    else { /* nichts mehr zu holen */ }
+    G.lids[toIdx]++;
+    if(G.lids[toIdx]>=TOTAL_LIDS){ G.lids[toIdx]=TOTAL_LIDS; break; }
+  }
+}
+
+function resolveRound(){
+  G.phase='summary';
+  const ids=G.turnOrder;
+  // Bewertung sicherstellen
+  ids.forEach(i=>{ const st=G.playerStates[i]; if(!st.combo) st.combo=evaluateHand(st.dice,st.throws||1); });
+  // bester & schlechtester
+  let win=ids[0], lose=ids[0];
+  ids.forEach(i=>{
+    if(G.playerStates[i].combo.rank>G.playerStates[win].combo.rank) win=i;
+    if(G.playerStates[i].combo.rank<G.playerStates[lose].combo.rank) lose=i;
+  });
+  let deckel=G.playerStates[win].combo.deckel||1;
+  // Schock-Bonus (Verlierer zahlt doppelt) wenn Gewinner einen Schock hatte
+  if(G.playerStates[win].combo.type==='SCHOCK') deckel=2;
+  giveLid(lose,deckel,win);
+  vibe(30);
+
+  const rows=ids.map(i=>({
+    idx:i, combo:G.playerStates[i].combo.label, win:i===win, lose:i===lose, dice:G.playerStates[i].dice
+  }));
+  renderAll();
+  showSummary({
+    title:`Runde ${G.round}`,
+    subtitle:`${G.players[win].name} gewinnt · ${G.players[lose].name} kassiert ${deckel} Deckel`,
+    rows, loser:lose,
+    next:()=>afterRound(lose)
+  });
+}
+
+function showSummary(opt){
+  let h=`<h2>${opt.title}</h2>`;
+  if(opt.subtitle) h+=`<p class="sub" style="text-align:center;margin-top:-4px">${opt.subtitle}</p>`;
+  h+='<div style="margin:14px 0">';
+  opt.rows.forEach(r=>{
+    const dice=r.dice?('<span class="mini-d">'+r.dice.map(d=>`<span>${d}</span>`).join('')+'</span>'):'';
+    h+=`<div class="summary-row ${r.win?'win':''}${r.lose?'lose':''}">
+          <span class="nm">${r.win?'👑 ':''}${r.lose?'💀 ':''}${G.players[r.idx].name}</span>
+          <span class="cb">${dice} ${r.combo}</span>
+        </div>`;
+  });
+  h+='</div>';
+  h+=`<button class="btn" id="sumNext">Weiter</button>`;
+  openModal(h);
+  $('sumNext').addEventListener('click',()=>{ closeModal(); opt.next&&opt.next(); });
+}
+
+/* ---------- Nach der Runde ---------- */
+function afterRound(roundLoser){
+  // Halbzeit-/Spielende prüfen
+  if(checkHalfEnd()) return;
+  // nächste Runde: Verlierer beginnt
+  G.starter=roundLoser;
+  G.round++;
+  beginRound(false);
+}
+
+/* ============================================================
+   HALBZEIT / SPIEL-ENDE
+   ============================================================ */
+function leaderIdx(){ // Spieler mit >=TOTAL_LIDS
+  for(const i of (G.half==='finale'?G.finalists:G.active)) if(G.lids[i]>=TOTAL_LIDS) return i;
+  return -1;
+}
+function checkHalfEnd(){
+  const li=leaderIdx();
+  if(li<0) return false;
+
+  if(G.mode==='schnelle5'){
+    G.gameLoser=li; onGameComplete(li); return true;
+  }
+  if(G.half===1){
+    G.half=2; G.halfLosers[0]=li; G.marker=li;
+    resetLids(); G.starter=li; G.round=1;
+    G.phase='halfend';
+    showPhaseModal('Hälfte 1 beendet', `${G.players[li].name} verliert Hälfte 1 und bekommt den Marker 🔖 — beginnt Hälfte 2.`, ()=>beginRound(false));
+    return true;
+  }
+  if(G.half===2){
+    G.halfLosers[1]=li;
+    // Kalt erwischt: gleicher Spieler verliert beide Hälften
+    if(G.halfLosers[0]===G.halfLosers[1]){
+      G.gameLoser=li; G.phase='gameover';
+      onGameComplete(li, `${G.players[li].name} verliert beide Hälften — kalt erwischt! Kein Finale.`);
+      return true;
+    }
+    // Finale: beide Halbzeit-Verlierer
+    G.finalists=[G.halfLosers[0],G.halfLosers[1]];
+    G.half='finale'; resetLids(); G.starter=G.halfLosers[1]; G.round=1;
+    G.phase='halfend';
+    showPhaseModal('Finale!', `${G.players[G.finalists[0]].name} gegen ${G.players[G.finalists[1]].name} — wer zuerst 13 Deckel hat, verliert.`, ()=>beginRound(false));
+    return true;
+  }
+  if(G.half==='finale'){
+    G.gameLoser=li; G.phase='gameover'; onGameComplete(li); return true;
+  }
+  return false;
+}
+function resetLids(){ G.lids=G.players.map(()=>0); G.middleLids=TOTAL_LIDS; }
+
+function showPhaseModal(title,text,next){
+  // handlePhaseChange-Äquivalent. MP_STUB: auf allen Clients via State-Sync auslösen.
+  openModal(`<h2>${title}</h2><p style="text-align:center">${text}</p><button class="btn" id="phNext">Weiter</button>`);
+  $('phNext').addEventListener('click',()=>{ closeModal(); next&&next(); });
+}
+
+/* ============================================================
+   KOMPLETTES SPIEL BEENDET
+   ============================================================ */
+function onGameComplete(loserIdx, extraText){
+  const humans=G.players.filter(p=>!p.isAI).length;
+  const loserIsHuman=!G.players[loserIdx].isAI;
+  // Biersammler nur: >=2 Menschen, Verlierer ist Mensch
+  if(humans>=2 && loserIsHuman) recordLoss(G.players[loserIdx].name);
+
+  if(G.kaiserrunde){
+    G.kaiserGamesPlayed++;
+    if(G.kaiserGamesPlayed===1){
+      // laufendes Spiel beendet → jetzt DIE Kaiserrunde (ein weiteres komplettes Spiel)
+      updateKaiserPill();
+      showGameOver(loserIdx, extraText, true, ()=>startNextGame());
+      return;
+    }
+    if(G.kaiserGamesPlayed>=2){
+      // Kaiserrunde gespielt → Session-Ende + Konfetti + Abrechnung
+      G.phase='kaiserover';
+      showKaiserOver(loserIdx);
+      return;
+    }
+  }
+  showGameOver(loserIdx, extraText, false, ()=>startNextGame());
+}
+
+function showGameOver(loserIdx,extraText,isKaiserHandoff,onNext){
+  vibe([60,40,60,40,120]);
+  let h=`<h2>🎲 Spiel beendet</h2>`;
+  h+=`<p style="text-align:center;font-size:1.05rem"><b style="color:#ff8c82;font-family:'Cinzel'">${G.players[loserIdx].name}</b> verliert das Spiel.</p>`;
+  if(extraText) h+=`<p class="sub" style="text-align:center">${extraText}</p>`;
+  if(isKaiserHandoff) h+=`<p style="text-align:center;color:var(--gold);font-family:'Cinzel'">👑 Jetzt folgt die Kaiserrunde — das allerletzte Spiel!</p>`;
+  h+='<h3>🍺 Biersammler — Sitzung</h3><div id="goBier"></div>';
+  h+=`<div style="margin-top:16px">${isKaiserHandoff?'<button class="btn" id="goNext">Kaiserrunde starten 👑</button>':'<button class="btn" id="goNext">Neues Spiel</button>'}</div>`;
+  if(!isKaiserHandoff && !G.kaiserrunde) h+=`<button class="btn ghost sm" id="goHome" style="width:100%;margin-top:8px">Zur Lobby</button>`;
+  openModal(h);
+  renderBierInto('goBier');
+  $('goNext').addEventListener('click',()=>{ closeModal(); onNext&&onNext(); });
+  const gh=$('goHome'); if(gh) gh.addEventListener('click',()=>{ closeModal(); goLobby(); });
+}
+
+function showKaiserOver(loserIdx){
+  vibe([80,40,80,40,80,40,200]);
+  confetti();
+  let h=`<h2>👑 Kaiserrunde beendet!</h2>`;
+  h+=`<p style="text-align:center"><b style="color:#ff8c82;font-family:'Cinzel'">${G.players[loserIdx].name}</b> verliert die Kaiserrunde.</p>`;
+  h+='<h3>🍺 Biersammler — Abrechnung</h3><div id="koBier"></div>';
+  h+=`<p class="sub" style="text-align:center;margin-top:12px">Angekündigt von ${G.kaiserrundeBy||'—'}.</p>`;
+  h+=`<button class="btn" id="koNew" style="margin-top:10px">Neues Spiel</button>`;
+  h+=`<button class="btn ghost sm" id="koHome" style="width:100%;margin-top:8px">Zur Lobby</button>`;
+  openModal(h);
+  renderBierInto('koBier');
+  $('koNew').addEventListener('click',()=>{ closeModal(); G.kaiserrunde=false; G.kaiserGamesPlayed=0; G.kaiserrundeBy=null; updateKaiserPill(); startNextGame(); });
+  $('koHome').addEventListener('click',()=>{ closeModal(); goLobby(); });
+}
+
+function startNextGame(){
+  // komplettes neues Spiel, gleiche Spieler/Modus; Kaiser-Flag bleibt erhalten falls aktiv
+  const keepKaiser=G.kaiserrunde, by=G.kaiserrundeBy, played=G.kaiserGamesPlayed;
+  G=freshG(G.players.map(p=>({name:p.name,isAI:p.isAI})), G.mode);
+  G.kaiserrunde=keepKaiser; G.kaiserrundeBy=by; G.kaiserGamesPlayed=played;
+  updateKaiserPill();
+  runLaden();
+}
+function goLobby(){
+  stopRecoveryWatch();
+  showScreen('lobby'); renderLobby();
+}
+
+/* ============================================================
+   KAISERRUNDE
+   ============================================================ */
+$('kaiserBtn').addEventListener('click',()=>{
+  if(G.kaiserrunde){ toast('Kaiserrunde läuft bereits.','warn'); return; }
+  // MP_STUB: Gast schreibt 'kaiserrequest' Child-Node; HOST verarbeitet & pusht State.
+  G.kaiserrunde=true;
+  G.kaiserrundeBy=G.players.find(p=>!p.isAI)?.name || G.players[0].name;
+  G.kaiserGamesPlayed=0;
+  updateKaiserPill();
+  toast('👑 Kaiserrunde angekündigt! Dieses Spiel zu Ende, dann noch eins.','ok');
+});
+function updateKaiserPill(){
+  const pill=$('kaiserPill');
+  if(G && G.kaiserrunde){
+    pill.classList.add('show');
+    pill.textContent = (G.kaiserGamesPlayed>=1) ? '👑 KAISERRUNDE — letztes Spiel!' : '👑 Kaiserrunde angekündigt — dieses Spiel läuft noch';
+  } else pill.classList.remove('show');
+  $('kaiserBtn').style.display = (G && G.kaiserrunde)?'none':'';
+  $('kaiserHelp').style.display = (G && G.kaiserrunde)?'none':'';
+}
+
+/* ============================================================
+   STUCK-GAME AUTO-RECOVERY
+   ============================================================ */
+function startRecoveryWatch(){
+  stopRecoveryWatch();
+  // MP_STUB: nur HOST läuft diesen Watcher.
+  if(!IS_HOST) return;
+  recoveryTimer=setInterval(()=>{
+    if(!G) return;
+    const li=leaderIdx();
+    if(li>=0 && (G.phase==='rolling'||G.phase==='laden')){
+      const handled=checkHalfEnd();
+      if(handled) toast('Feststeckender Zustand erkannt & behoben.','ok');
+    }
+  },4000);
+}
+function stopRecoveryWatch(){ if(recoveryTimer){ clearInterval(recoveryTimer); recoveryTimer=null; } }
+$('recoverBtn').addEventListener('click',()=>{
+  const li=leaderIdx();
+  if(li>=0){ if(checkHalfEnd()) toast('Feststeckenden Zustand behoben.','ok'); }
+  else toast('Alles in Ordnung – kein feststeckender Zustand.','ok');
+});
+
+/* ============================================================
+   SIMULATION  (Runden-Chip 800ms lang drücken)
+   ============================================================ */
+(function setupSim(){
+  const chip=$('roundChip'); let t=null;
+  const start=()=>{ t=setTimeout(()=>{ simulateEnd(); t=null; },800); };
+  const cancel=()=>{ if(t){ clearTimeout(t); t=null; } };
+  chip.addEventListener('pointerdown',start);
+  chip.addEventListener('pointerup',cancel);
+  chip.addEventListener('pointerleave',cancel);
+  chip.addEventListener('pointercancel',cancel);
+})();
+function simulateEnd(){
+  if(!G||G.phase==='gameover'||G.phase==='kaiserover'){ return; }
+  const pool=(G.half==='finale')?G.finalists:G.active;
+  const li=pool[Math.floor(Math.random()*pool.length)];
+  G.lids[li]=TOTAL_LIDS;
+  closeModal();
+  vibe(40);
+  toast('⚙️ Spielende simuliert.','warn');
+  renderAll();
+  checkHalfEnd();
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderAll(){ renderPhase(); renderPlayers(); }
+function renderPhase(){
+  let label='Hälfte 1';
+  if(G.mode==='schnelle5') label='Schnelle 5';
+  else if(G.half===1) label='Hälfte 1';
+  else if(G.half===2) label='Hälfte 2';
+  else if(G.half==='finale') label='Finale';
+  $('phaseLabel').textContent=label;
+  $('roundChip').textContent='Runde '+G.round;
+  $('middleChip').textContent='Mitte: '+G.middleLids;
+}
+function renderPlayers(){
+  const box=$('playersBox'); box.innerHTML='';
+  G.players.forEach((p,i)=>{
+    if(G.half==='finale' && !G.finalists.includes(i)) return; // Finale: nur Finalisten
+    const isTurn=(G.phase==='rolling'||G.phase==='laden') && curIdxSafe()===i;
+    const lidsHtml=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<G.lids[i]?' f':''}"></span>`).join('');
+    const st=G.playerStates[i];
+    const comboLabel=(st&&st.done&&st.combo)?st.combo.label:'';
+    const mini=(st&&st.done&&st.dice&&st.dice[0])?('<div class="minidice">'+st.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'):'';
+    const card=document.createElement('div');
+    card.className='pc'+(isTurn?' turn':'')+(G.lids[i]>=TOTAL_LIDS?' loser':'');
+    card.innerHTML=`
+      <div class="cnt">${G.lids[i]}</div>
+      <div class="nm">${G.marker===i?'<span class="marker" title="Marker">🔖</span>':''}${p.name} ${p.isAI?'<span class="ai">KI</span>':''}</div>
+      <div class="lids">${lidsHtml}</div>
+      ${mini}
+      <div class="combo${comboLabel?' show':''}">${comboLabel}</div>`;
+    box.appendChild(card);
+  });
+}
+function curIdxSafe(){ return (G.turnOrder&&G.turnOrder.length)?G.turnOrder[G.turnPtr]:-1; }
+
+/* ---------- Home ---------- */
+$('homeBtn').addEventListener('click',()=>{
+  openModal(`<h2>Zur Lobby?</h2><p style="text-align:center">Das laufende Spiel wird verworfen. Biersammler-Daten bleiben erhalten.</p>
+    <div class="row" style="margin-top:14px"><button class="btn ghost" id="stay">Bleiben</button><button class="btn danger" id="leave">Verlassen</button></div>`);
+  $('stay').addEventListener('click',closeModal);
+  $('leave').addEventListener('click',()=>{ closeModal(); goLobby(); });
+});
+
+/* ============================================================
+   ONBOARDING / TUTORIAL
+   ============================================================ */
+function showTutorial(firstTime){
+  const h=`
+    <h2>🎲 So geht Schock Doof</h2>
+    <p>Jeder hat <b>3 Würfe</b> pro Runde. Nach jedem Wurf darfst du beliebige Würfel <b>antippen = behalten</b>. Erst am Ende wird deine Kombination bewertet.</p>
+    <h3>Ziel</h3>
+    <p>Der <b>schlechteste</b> Wurf jeder Runde kassiert Deckel aus der Mitte. Wer zuerst <b>${TOTAL_LIDS||13} Deckel</b> hat, verliert.</p>
+    <h3>Kombinationen (stark → schwach)</h3>
+    <p style="line-height:1.7">
+      <b>Schock</b> – 5 Gleiche im 1. Wurf (Verlierer zahlt doppelt)<br>
+      <b>General</b> – 5 Gleiche (nicht 1. Wurf)<br>
+      <b>Straße</b> – 1-2-3-4-5 oder 2-3-4-5-6<br>
+      <b>Schock-Out</b> – fünf Einsen im 1. Wurf: alle anderen zahlen, du bist raus<br>
+      <b>Full House</b> · <b>Drilling</b> · <b>Zwei Paare</b> · <b>Paar</b><br>
+      <b>Schock Doof</b> – alles verschieden, nichts geht (schlechtestes Ergebnis)
+    </p>
+    <h3>Ablauf</h3>
+    <p>Hälfte 1 → Hälfte 2 → Finale der beiden Halbzeit-Verlierer. Wer <b>beide</b> Hälften verliert, ist <i>kalt erwischt</i> und verliert direkt.</p>
+    <h3>👑 Kaiserrunde</h3>
+    <p>Jeder kann sie ankündigen: das laufende Spiel endet normal, dann gibt's noch <b>ein</b> komplettes Spiel — danach die Biersammler-Abrechnung.</p>
+    <p class="sub">Tipp: Runden-Chip 0,8s gedrückt halten simuliert ein Spielende (zum Testen).</p>
+    <button class="btn" id="tutOk" style="margin-top:8px">${firstTime?'Los geht\'s!':'Verstanden'}</button>`;
+  openModal(h);
+  $('tutOk').addEventListener('click',()=>{ closeModal(); try{localStorage.setItem('sd_tut_seen','1');}catch(e){} });
+}
+
+/* ============================================================
+   KONFETTI
+   ============================================================ */
+function confetti(){
+  const box=$('confetti'); if(!box) return;
+  const colors=['#d4af37','#00e5ff','#ff4d8d','#2ecc71','#fff'];
+  for(let i=0;i<90;i++){
+    const c=document.createElement('div'); c.className='conf';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=colors[i%colors.length];
+    c.style.animationDuration=(2.2+Math.random()*1.8)+'s';
+    c.style.animationDelay=(Math.random()*0.6)+'s';
+    c.style.transform='rotate('+(Math.random()*360)+'deg)';
+    box.appendChild(c);
+    setTimeout(()=>c.remove(),4200);
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+SZ=normalizeSzState(null);
+renderLobby();
+let seen=false; try{ seen=localStorage.getItem('sd_tut_seen')==='1'; }catch(e){}
+if(!seen) setTimeout(()=>showTutorial(true),400);
+
+/* ============================================================
+   MP_STUB — MULTIPLAYER-EINBAU (Übersicht)
+   ------------------------------------------------------------
+   1) Firebase init mit deiner Config (oben im Briefing).
+   2) HOST-Bestimmung: ersten verbundenen Client als Host markieren.
+   3) STATE-PUSH: nur HOST schreibt G nach Firebase (Node 'state').
+      - vor jedem Push: G.ts=Date.now()
+      - Stellen mit "MP_STUB: pushState" markiert (beginRound).
+   4) STATE-READ: Gäste hören auf 'state':
+      - if(raw.ts >= G.ts){ G=raw; renderAll(); handlePhaseChange(); }
+      - NIE alten State übernehmen (ts-Guard).
+   5) GAST-REQUESTS via Child-Nodes (eigener Listener):
+      - 'kaiserrequest', 'roll', 'keep', 'done' → HOST verarbeitet,
+        verändert G, pusht offiziellen State. Gäste pushen NIE vollen State.
+   6) BIERSAMMLER: loadBiersammler()/saveBiersammler() an Firebase-Node
+      'biersammler' hängen (persistent, kein localStorage).
+   7) PHASENWECHSEL: showPhaseModal/handlePhaseChange auf allen Clients
+      aus dem gesyncten State ableiten.
+   8) Boolean false in Arrays vor Firebase guarden (sonst gedroppt).
+   ============================================================ */
+</script>
+</body>
+</html>
