@@ -40,7 +40,7 @@ body{
 
 /* ---------- Header / Logo ---------- */
 .brand{display:flex;align-items:center;gap:14px;justify-content:center;margin:6px 0 18px;text-align:left}
-.brand .ph{width:clamp(54px,15vw,76px);height:clamp(54px,15vw,76px);border-radius:50%;object-fit:cover;
+.brand .ph{width:clamp(54px,15vw,76px);height:clamp(54px,15vw,76px);border-radius:50%;object-fit:cover;object-position:50% 16%;
   border:3px solid var(--gold);box-shadow:0 0 22px rgba(255,207,92,.45),0 6px 16px rgba(0,0,0,.5);background:#1c1238}
 .brand .tt{line-height:.92}
 .brand .tt .sup{font-size:clamp(.6rem,2.6vw,.8rem);letter-spacing:.34em;color:var(--pink-soft);font-weight:600}
@@ -116,15 +116,16 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .arena{background:rgba(10,12,38,.6);border:1px solid var(--line);border-radius:22px;padding:16px 14px;margin-bottom:14px;text-align:center}
 .arena .who{font-weight:800;font-size:1.05rem}
 .arena .thr{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:2px}
-.cup{width:120px;height:170px;margin:12px auto 6px;position:relative;clip-path:polygon(18% 0%,82% 0%,100% 100%,0% 100%);
+.cup{width:128px;height:160px;margin:12px auto 4px;position:relative;clip-path:polygon(16% 0%,84% 0%,100% 100%,0% 100%);
   background:
-    repeating-linear-gradient(to right,transparent 0,transparent 30px,rgba(180,80,255,.07) 30px,rgba(180,80,255,.07) 31px),
-    linear-gradient(160deg,#291b4c,#1c1238 48%,#0e0a20);
-  box-shadow:inset 18px 0 30px rgba(200,150,255,.06),inset -5px 0 18px rgba(0,0,0,.3),inset 0 10px 18px rgba(0,0,0,.4);transition:transform .1s}
+    repeating-linear-gradient(118deg,rgba(60,30,10,.10) 0 2px,transparent 2px 10px),
+    linear-gradient(160deg,#cfa873,#b07f4e 46%,#8a5e34);
+  box-shadow:inset 14px 0 26px rgba(255,235,200,.20),inset -10px 0 22px rgba(60,30,10,.42),inset 0 -14px 22px rgba(60,30,10,.38),0 8px 18px rgba(0,0,0,.45);transition:transform .1s}
 .cup.shake{animation:shake .5s ease}
 @keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-9deg) translateY(-4px)}40%{transform:rotate(8deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(4deg)}}
-.cup:before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:62%;height:15px;border-radius:50%;
-  background:linear-gradient(to bottom,#2e2050,#1c1440);box-shadow:inset 0 3px 8px rgba(0,0,0,.6);border:2px dashed rgba(255,79,216,.6)}
+.cup:before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:64%;height:15px;border-radius:50%;
+  background:linear-gradient(to bottom,#7c5230,#5e3c20);box-shadow:inset 0 3px 8px rgba(0,0,0,.55);border:2px dashed rgba(255,240,210,.75)}
+.cup-name{position:absolute;left:0;right:0;top:44%;text-align:center;font-weight:800;font-size:.78rem;color:#3a2410;letter-spacing:.04em;text-shadow:0 1px 0 rgba(255,240,210,.55);pointer-events:none}
 .dice{display:flex;justify-content:center;gap:12px;margin:10px 0}
 .die{width:clamp(52px,15vw,64px);height:clamp(52px,15vw,64px);border-radius:14px;background:linear-gradient(155deg,#fdfbff,#e3d8f5);position:relative;cursor:pointer;
   box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 -3px 6px rgba(120,90,160,.18),inset 0 2px 3px rgba(255,255,255,.8);transition:transform .15s,box-shadow .15s}
@@ -134,6 +135,8 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .die .pips{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:20%}
 .die .pip{width:9px;height:9px;border-radius:50%;background:#2a1846;align-self:center;justify-self:center;box-shadow:inset 0 1px 1px rgba(0,0,0,.4)}
 .die.one .pip{background:#e23b5d}
+.die.back{cursor:default;background:linear-gradient(160deg,#9a6a3c,#5e3c20);box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 -3px 6px rgba(0,0,0,.28),inset 0 2px 3px rgba(255,235,200,.25)}
+.die.back:after{content:'';position:absolute;inset:0;border-radius:14px;background:repeating-linear-gradient(45deg,rgba(255,240,210,.07) 0 6px,transparent 6px 12px)}
 .combo-big{min-height:1.5em;font-weight:900;font-size:clamp(1.05rem,5.5vw,1.6rem);margin-top:4px;opacity:0;transform:scale(.85)}
 .combo-big.pop{animation:pop .5s cubic-bezier(.2,1.4,.4,1) forwards}
 @keyframes pop{to{opacity:1;transform:scale(1)}}
@@ -180,6 +183,24 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .divider{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:14px 0}
 .help{display:block;color:rgba(255,255,255,.5);font-size:.72rem;margin-top:6px;line-height:1.5;text-align:center}
 .foot{text-align:center;color:rgba(255,255,255,.4);font-size:.66rem;letter-spacing:.1em;margin-top:8px}
+
+/* Cursor im Spiel unauffällig (kein Hand-/Text-Cursor), Auswahl aus */
+body{-webkit-user-select:none;user-select:none}
+.field{-webkit-user-select:text;user-select:text}
+#game,#game *{cursor:default}
+
+/* Mitte-Anzeige (groß) */
+.middle-box{display:inline-flex;align-items:center;gap:.55rem;margin-top:6px;padding:7px 18px;border-radius:16px;border:1px solid rgba(255,207,92,.35);background:rgba(255,207,92,.08)}
+.middle-box .lbl{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.middle-box .num{font-size:1.7rem;font-weight:900;color:var(--gold);line-height:1}
+
+/* Kaiserrunde als dezentes Kontrollkästchen, pulsiert bei Aktivität */
+.kaiser-wrap{text-align:center;margin-top:10px}
+.kaiser-toggle{display:inline-flex;align-items:center;gap:.5rem;padding:8px 15px;border-radius:13px;font-size:.84rem;font-weight:600;color:rgba(255,255,255,.7);border:1px solid var(--line);background:var(--panel-2)}
+.kaiser-toggle .box{width:16px;height:16px;border-radius:5px;border:1.5px solid rgba(255,207,92,.55);display:inline-grid;place-items:center;font-size:.7rem;color:#231a05}
+.kaiser-toggle.on{color:var(--gold);border-color:var(--gold);animation:kp 1.4s ease-in-out infinite}
+.kaiser-toggle.on .box{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.kaiser-toggle.on .box:after{content:'✓'}
 
 /* ---------- Responsive ---------- */
 @media(min-width:701px){
@@ -245,8 +266,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
     <div class="phase">
       <div class="ph grad" id="phaseLabel">Hälfte 1</div>
       <div class="chips">
-        <span class="chip r" id="roundChip">Runde 1</span>
-        <span class="chip m" id="middleChip">Mitte: 13</span>
+        <span class="middle-box" id="middleBox"><span class="lbl">🍺 Mitte</span><span class="num" id="middleNum">13</span></span>
       </div>
     </div>
 
@@ -255,7 +275,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
     <div class="arena">
       <div class="who" id="who">—</div>
       <div class="thr" id="thr">Wurf 0 / 3</div>
-      <div class="cup" id="cup"></div>
+      <div class="cup" id="cup"><div class="cup-name" id="cupName"></div></div>
       <div class="dice" id="dice"></div>
       <div class="hint" id="hint">Würfel antippen = behalten</div>
       <div class="combo-big" id="comboBig"></div>
@@ -264,8 +284,9 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
     <div id="controls"></div>
 
     <div class="divider"></div>
-    <button class="btn gold sm" id="kaiserBtn" style="width:100%">👑 Kaiserrunde ankündigen</button>
-    <small class="help" id="kaiserHelp">Aktuelles Spiel zu Ende, dann noch ein komplettes Spiel — dann Abrechnung.</small>
+    <div class="kaiser-wrap">
+      <span class="kaiser-toggle" id="kaiserToggle"><span class="box"></span><span>👑 Kaiserrunde</span></span>
+    </div>
   </section>
 </div>
 
@@ -337,7 +358,7 @@ function sortKey(ps){ return ps.combo.rank*1000 - (ps.throwNum||1)*100 - (ps.ord
    STATE
    ============================================================ */
 let G=null, SZ={settled:{},games:[]}, recoveryTimer=null;
-const AI_POOL=['Bärbel','Heinz','Nici','Marco','Leni','Mia','Nele','Dani','Finn'];
+const AI_POOL=['Micha','Holly','JP','Sebs','Gonzo','Hannes','Oli','Joschi'];
 const IS_HOST=true; // MP_STUB: echten Host bestimmen; nur Host pusht State.
 
 function freshG(players){
@@ -378,9 +399,13 @@ function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.class
 function startGame(){
   const myName=($('nameInput').value||'Spieler').trim();
   // MP_STUB: hier kommen die menschlichen Mitspieler aus dem Raum. Lokal: 1 Mensch + KI.
+  const humanNames=[myName.toLowerCase()];
   const players=[{name:myName,isAI:false}];
-  const pool=AI_POOL.filter(n=>n.toLowerCase()!==myName.toLowerCase()).sort(()=>Math.random()-.5);
-  for(let i=1;i<lobbyCount;i++) players.push({name:pool[i-1]||('KI '+i),isAI:true});
+  const aiNames=[];
+  if(!humanNames.includes('ingo')) aiNames.push('Ingo');        // erste KI immer Ingo
+  const pool=AI_POOL.filter(n=>!humanNames.includes(n.toLowerCase())).sort(()=>Math.random()-.5);
+  for(const n of pool){ if(aiNames.length>=lobbyCount-1) break; aiNames.push(n); }
+  for(let i=1;i<lobbyCount;i++) players.push({name:aiNames[i-1]||('KI '+i),isAI:true});
   G=freshG(players); loadBier();
   showScreen('game'); updateKaiser(); startRecovery();
   runLaden();
@@ -390,13 +415,14 @@ function startGame(){
    LADEN — höchste Zahl beginnt
    ============================================================ */
 async function runLaden(){
-  G.phase='laden'; $('phaseLabel').textContent='Laden'; $('roundChip').textContent='Wer beginnt?';
+  G.phase='laden'; $('phaseLabel').textContent='Laden';
   $('hint').style.display='none'; $('controls').innerHTML=''; $('comboBig').className='combo-big'; $('comboBig').textContent='';
   renderPlayers();
   let order, best, winners;
   do{
     order=participants(); const rolls=[];
     for(const idx of order){
+      $('cupName').textContent=G.players[idx].name;
       $('cup').classList.add('shake'); playDice();
       $('dice').innerHTML=`<div class="die roll">${pips(rollDie())}</div>`;
       await sleep(260); const v=rollDie(); rolls.push(v);
@@ -426,6 +452,7 @@ function cur(){ return G.turnOrder[G.turnPtr]; }
 function startTurn(){
   const idx=cur(), ps=G.playerStates[idx];
   renderPlayers();
+  $('cupName').textContent=G.players[idx].name;
   $('who').textContent=G.players[idx].name+(G.players[idx].isAI?' (KI)':' — du bist dran ✦');
   $('thr').textContent=`Wurf ${ps.throwNum} / ${THROWS}`;
   $('comboBig').className='combo-big'; $('comboBig').textContent='';
@@ -460,32 +487,48 @@ async function humanRoll(){ const idx=cur(); $('controls').innerHTML=''; await a
   if(ps.throwNum>=THROWS) finishTurn(idx,false); else { renderControls(); renderDice(); } }
 
 async function animRoll(idx){
-  const ps=G.playerStates[idx]; const els=[...$('dice').children];
+  const ps=G.playerStates[idx]; const me=!G.players[idx].isAI;
   $('cup').classList.add('shake'); playDice(); vibe([10,30,10]);
-  els.forEach((el,i)=>{ if(!ps.kept[i]) el.classList.add('roll'); });
-  for(let f=0;f<5;f++){ els.forEach((el,i)=>{ if(!ps.kept[i]) el.innerHTML=pips(rollDie()); }); await sleep(70); }
+  if(me){
+    // Würfel-Elemente sicherstellen (auch beim 1. Wurf, da dann noch versteckt)
+    $('dice').innerHTML=ps.dice.map((d,i)=>`<div class="die${ps.kept[i]?' kept':''}" data-i="${i}">${pips(d)}</div>`).join('');
+    const els=[...$('dice').children];
+    els.forEach((el,i)=>{ if(!ps.kept[i]) el.classList.add('roll'); });
+    for(let f=0;f<5;f++){ els.forEach((el)=>{ const i=Number(el.dataset.i); if(!ps.kept[i]) el.innerHTML=pips(rollDie()); }); await sleep(70); }
+  } else { await sleep(440); }   // KI: nur Becher schütteln, Würfel bleiben verdeckt
   for(let i=0;i<3;i++){ if(!ps.kept[i]) ps.dice[i]=rollDie(); }
   ps.throwNum++; $('cup').classList.remove('shake'); renderDice(); $('thr').textContent=`Wurf ${ps.throwNum} / ${THROWS}`;
 }
 function renderDice(){
-  const idx=cur(), ps=G.playerStates[idx], human=!G.players[idx].isAI;
-  $('dice').innerHTML=ps.dice.map((d,i)=>`<div class="die${d===1?' one':''}${ps.kept[i]?' kept':''}" data-i="${i}">${pips(d)}</div>`).join('');
-  if(human && ps.throwNum>0 && ps.throwNum<THROWS && !ps.mustRoll){
-    [...$('dice').children].forEach(el=>el.addEventListener('click',()=>{ const i=+el.dataset.i; ps.kept[i]=!ps.kept[i]; vibe(8); renderDice(); }));
+  const idx=cur(), ps=G.playerStates[idx];
+  const me=!G.players[idx].isAI;   // MP_STUB: in MP -> cur()===MP.myIdx
+  if(ps.throwNum===0){ $('dice').innerHTML=''; return; }   // noch im Becher versteckt
+  $('dice').innerHTML=ps.dice.map((d,i)=>{
+    const reveal = me || ps.kept[i];   // eigene Würfel immer; fremde nur das Rausgelegte
+    if(!reveal) return `<div class="die back"></div>`;
+    return `<div class="die${d===1?' one':''}${ps.kept[i]?' kept':''}" data-i="${i}">${pips(d)}</div>`;
+  }).join('');
+  if(me && ps.throwNum>0 && ps.throwNum<THROWS && !ps.mustRoll){
+    [...$('dice').children].forEach(el=>{ if(el.dataset.i!=null) el.addEventListener('click',()=>{ const i=+el.dataset.i; ps.kept[i]=!ps.kept[i]; vibe(8); renderDice(); }); });
   }
 }
 
-/* ---------- Drehen: zwei (nicht behaltene) 6en → erste wird 1 (behalten), zweite neu ---------- */
-function canDrehen(ps){ if(ps.throwNum<1 || ps.throwNum>=THROWS) return false;
-  return ps.dice.filter((d,i)=>!ps.kept[i]&&d===6).length>=2; }
+/* ---------- Drehen: zwei 6en (egal ob behalten) → eine wird zur behaltenen 1, die andere zurück in den Becher ---------- */
+function canDrehen(ps){ if(ps.throwNum<1 || ps.throwNum>=THROWS) return false;   // mind. 1 Wurf muss noch möglich sein
+  return ps.dice.filter(d=>d===6).length>=2; }
 function doDrehen(idx){ const ps=G.playerStates[idx]; if(!canDrehen(ps))return; let conv=0;
-  for(let i=0;i<3&&conv<2;i++){ if(!ps.kept[i]&&ps.dice[i]===6){ if(conv===0){ ps.dice[i]=1; ps.kept[i]=true; } conv++; } }
+  for(let i=0;i<3&&conv<2;i++){ if(ps.dice[i]===6){
+    if(conv===0){ ps.dice[i]=1; ps.kept[i]=true; }   // erste 6 → behaltene 1
+    else { ps.kept[i]=false; }                        // zweite 6 → zurück in den Becher (neu würfeln)
+    conv++; } }
   ps.mustRoll=true; vibe(20); toast('Gedreht — eine 6 wird zur 1, du musst nochmal würfeln.','ok'); }
 
 function finishTurn(idx,concealed){
   const ps=G.playerStates[idx]; if(ps.throwNum===0){ toast('Erst würfeln!','warn'); return; }
   if(ps.mustRoll){ toast('Nach dem Drehen musst du erst würfeln.','warn'); return; }
-  ps.done=true; ps.concealed=!!concealed; ps.combo=evalDice(ps.dice,ps.throwNum); vibe(20);
+  ps.done=true; ps.combo=evalDice(ps.dice,ps.throwNum);
+  if(ps.combo.type==='schockaus') concealed=false;   // 3×1 wird sofort aufgedeckt
+  ps.concealed=!!concealed; vibe(20);
   if(!concealed){ const cb=$('comboBig'); cb.textContent=ps.combo.label; cb.className='combo-big pop grad'; }
   else { toast(G.players[idx].name+' beendet verdeckt 🙈',''); }
   renderPlayers();
@@ -541,20 +584,27 @@ async function resolveRound(){
   let win=ids[0], lose=ids[0];
   ids.forEach(i=>{ if(sortKey(G.playerStates[i])>sortKey(G.playerStates[win])) win=i; if(sortKey(G.playerStates[i])<sortKey(G.playerStates[lose])) lose=i; });
   const wc=G.playerStates[win].combo;
-  let amount = wc.deckel==='all' ? (G.middleLids>0?G.middleLids:3) : wc.deckel;
-  giveLids(lose,amount,win); vibe(30);
+  let amount, amountTxt;
+  if(wc.type==='schockaus'){
+    // Schock Aus = alles raus: Verlierer bekommt das volle Brett (alle 13) → Hälfte/Spiel endet
+    G.players.forEach((p,k)=>{ if(k!==lose) p.lids=0; });
+    G.middleLids=0; G.players[lose].lids=TOTAL_LIDS;
+    amountTxt='ALLE — volles Brett!';
+  } else {
+    amount=wc.deckel; giveLids(lose,amount,win); amountTxt=amount+' Deckel';
+  }
+  vibe(30);
   // Event-Kommentar
   let ev=''; if(wc.type==='schockaus')ev=EVENT.schockaus; else if(wc.type==='schock'&&wc.n===2)ev=EVENT.doof; else if(wc.type==='schock')ev=EVENT.schock; else if(wc.type==='general')ev=EVENT.general; else if(wc.type==='strasse')ev=EVENT.strasse;
   const rows=ids.map(i=>({idx:i,combo:G.playerStates[i].combo.label,win:i===win,lose:i===lose,dice:G.playerStates[i].dice}));
   renderAll();
-  showSummary({ title:`Runde ${G.round}`, subtitle:`${ev?ev+'<br>':''}${G.players[win].name} gewinnt · ${G.players[lose].name} kassiert ${amount} Deckel`,
+  showSummary({ title:`Runde ${G.round}`, subtitle:`${ev?ev+'<br>':''}${G.players[win].name} gewinnt · ${G.players[lose].name} kassiert ${amountTxt}`,
     rows, next:()=>afterRound(lose) });
-}
-function showSummary(o){
+}function showSummary(o){
   let h=`<h2>${o.title}</h2>`; if(o.subtitle)h+=`<p class="sub" style="text-align:center;margin-top:-4px">${o.subtitle}</p>`;
   h+='<div style="margin:14px 0">';
   o.rows.forEach(r=>{ const dice='<span class="mini-d">'+r.dice.map(d=>`<span>${d}</span>`).join('')+'</span>';
-    h+=`<div class="sum-row ${r.win?'win':''}${r.lose?'lose':''}"><span class="nm">${r.win?'👑 ':''}${r.lose?'💀 ':''}${G.players[r.idx].name}</span><span class="cb">${dice} ${r.combo}</span></div>`; });
+    h+=`<div class="sum-row ${r.win?'win':''}${r.lose?'lose':''}"><span class="nm">${r.win?'🥳 ':''}${r.lose?'😳 ':''}${G.players[r.idx].name}</span><span class="cb">${dice} ${r.combo}</span></div>`; });
   h+='</div><button class="btn" id="sumNext">Weiter</button>';
   openModal(h); $('sumNext').addEventListener('click',()=>{ closeModal(); o.next&&o.next(); });
 }
@@ -601,7 +651,7 @@ function onGameComplete(loserIdx,extra){
 }
 function gameOverOverlay(loserIdx,extra,kaiserHandoff,onNext){
   vibe([60,40,60,40,120]);
-  $('ovCmt').textContent=pick(LOSER_LINES); $('ovLbl').textContent='Verlierer'; $('ovWho').textContent='💀 '+G.players[loserIdx].name;
+  $('ovCmt').textContent=pick(LOSER_LINES); $('ovLbl').textContent='Verlierer'; $('ovWho').textContent='😳 '+G.players[loserIdx].name;
   $('overlay').classList.add('on');
   setTimeout(()=>{ $('overlay').classList.remove('on');
     let h=`<h2>🎲 Spiel beendet</h2><p style="text-align:center;font-size:1.05rem"><b style="color:var(--danger)">${G.players[loserIdx].name}</b> verliert.</p>`;
@@ -617,7 +667,7 @@ function gameOverOverlay(loserIdx,extra,kaiserHandoff,onNext){
 }
 function kaiserOverOverlay(loserIdx){
   vibe([80,40,80,40,80,40,200]); confetti(); playApplause();
-  $('ovCmt').textContent='👑 KAISERRUNDE VORBEI!'; $('ovLbl').textContent='Verlierer der Kaiserrunde'; $('ovWho').textContent='💀 '+G.players[loserIdx].name;
+  $('ovCmt').textContent='👑 KAISERRUNDE VORBEI!'; $('ovLbl').textContent='Verlierer der Kaiserrunde'; $('ovWho').textContent='😳 '+G.players[loserIdx].name;
   $('overlay').classList.add('on');
   setTimeout(()=>{ $('overlay').classList.remove('on');
     let h=`<h2>👑 Kaiserrunde beendet</h2><p style="text-align:center"><b style="color:var(--danger)">${G.players[loserIdx].name}</b> verliert die Kaiserrunde.</p>`;
@@ -636,16 +686,16 @@ function goLobby(){ stopRecovery(); showScreen('lobby'); renderBier('bierLobby')
 /* ============================================================
    KAISERRUNDE
    ============================================================ */
-$('kaiserBtn').addEventListener('click',()=>{
+$('kaiserToggle').addEventListener('click',()=>{
   if(!G||G.kaiserrunde){ return; }
   // MP_STUB: Gast schreibt Child-Node 'kaiserrequest'; HOST verarbeitet & pusht State.
   G.kaiserrunde=true; G.kaiserrundeBy=(G.players.find(p=>!p.isAI)||G.players[0]).name; G.kaiserGamesPlayed=0;
-  updateKaiser(); toast('👑 Kaiserrunde angekündigt! Dieses Spiel zu Ende, dann noch eins.','ok');
+  updateKaiser(); toast('👑 Kaiserrunde aktiv! Dieses Spiel zu Ende, dann noch eins.','ok');
 });
-function updateKaiser(){ const p=$('kpill');
-  if(G&&G.kaiserrunde){ p.classList.add('on'); p.textContent=(G.kaiserGamesPlayed>=1)?'👑 KAISERRUNDE — letztes Spiel!':'👑 Kaiserrunde angekündigt — dieses Spiel läuft noch'; }
-  else p.classList.remove('on');
-  $('kaiserBtn').style.display=(G&&G.kaiserrunde)?'none':''; $('kaiserHelp').style.display=(G&&G.kaiserrunde)?'none':''; }
+function updateKaiser(){ const t=$('kaiserToggle');
+  if(G&&G.kaiserrunde){ $('kpill').classList.add('on'); $('kpill').textContent=(G.kaiserGamesPlayed>=1)?'👑 KAISERRUNDE — letztes Spiel!':'👑 Kaiserrunde aktiv — dieses Spiel läuft noch'; t.classList.add('on'); }
+  else { $('kpill').classList.remove('on'); t.classList.remove('on'); }
+}
 
 /* ============================================================
    ZUSCHAUER / BEITRITT + BEITRITTS-STRAFE
@@ -675,7 +725,7 @@ $('resyncBtn').addEventListener('click',()=>{ const li=leader(); if(li>=0){ if(c
 /* ============================================================
    SIMULATION (Runden-Chip lang drücken / Version 3× klicken)
    ============================================================ */
-(function(){ const chip=$('roundChip'); let t=null;
+(function(){ const chip=$('middleBox'); let t=null;
   const s=()=>{ t=setTimeout(()=>{ simulateEnd(); t=null; },800); }; const c=()=>{ if(t){clearTimeout(t);t=null;} };
   chip.addEventListener('pointerdown',s); chip.addEventListener('pointerup',c); chip.addEventListener('pointerleave',c); chip.addEventListener('pointercancel',c);
 })();
@@ -690,7 +740,7 @@ function simulateEnd(){ if(!G||G.phase==='gameover'||G.phase==='kaiserover')retu
 function renderAll(){ renderPhase(); renderPlayers(); }
 function renderPhase(){
   let l='Hälfte 1'; if(G.half===2)l='Hälfte 2'; else if(G.half==='finale')l='Finale';
-  $('phaseLabel').textContent=l; $('roundChip').textContent='Runde '+G.round; $('middleChip').textContent='Mitte: '+G.middleLids;
+  $('phaseLabel').textContent=l; $('middleNum').textContent=G.middleLids;
 }
 function renderPlayers(){
   const box=$('players'); box.innerHTML='';
@@ -706,7 +756,7 @@ function renderPlayers(){
     const card=document.createElement('div');
     card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
     card.innerHTML=`<div class="cnt">${p.lids}</div>
-      <div class="nm">${G.marker===i?'🔖 ':''}${p.name} ${p.isAI?'<span class="ai">KI</span>':''}</div>
+      <div class="nm">${G.marker===i?'🔖 ':''}${p.name}${p.isAI?' <span class="ai">(KI)</span>':''}</div>
       <div class="turnflag">${isTurn&&!p.isAI?'du bist dran ✦':(isTurn?'würfelt…':'')}</div>
       <div class="lids">${lids}</div>${mini}${hid}<div class="res grad">${res}</div>`;
     box.appendChild(card);
