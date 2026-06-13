@@ -3,1076 +3,746 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#060e03">
+<meta name="theme-color" content="#0a0c26">
 <title>Ingo's Schock Doof</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   INGO'S SCHOCK DOOF — v2.0  (single-file, GitHub Pages)
-   Design-System destilliert aus dem Schnuppes-Spielportal
+   INGO'S SCHOCK DOOF — v2.0
+   CI: Schnuppes-Spielportal / Moni's Zehntausend
+   Cyan #53f6ff · Pink #ff4fd8 · Lila #8f5fff · Outfit · Glas
+   Regeln: 3 Würfel, authentisch. Multiplayer = MP_STUB (selbst einbauen)
    ============================================================ */
 :root{
-  --bg:#060e03;
-  --bg2:#0c160a;
-  --g:rgba(232,224,208,1);   /* cremeweiß */
-  --g-dim:rgba(232,224,208,.62);
-  --gold:#d4af37;
-  --gold-soft:rgba(212,175,55,.18);
-  --cyan:#00e5ff;
-  --pink:#ff4d8d;
-  --danger:#e74c3c;
-  --success:#2ecc71;
-  --glass:rgba(255,255,255,.04);
-  --glass-2:rgba(255,255,255,.06);
-  --r:14px;
-  --shadow:0 10px 40px rgba(0,0,0,.5);
+  --cyan:#53f6ff; --pink:#ff4fd8; --purple:#8f5fff;
+  --pink-soft:#ff9ef0; --gold:#ffcf5c;
+  --panel:rgba(10,12,38,.85); --panel-2:rgba(255,255,255,.04);
+  --line:rgba(255,255,255,.10); --danger:#ff5e7a; --ok:#42f5a3;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;height:100%}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
 body{
+  font-family:'Outfit',system-ui,sans-serif;color:#fff;min-height:100dvh;
   background:
-    radial-gradient(1200px 700px at 50% -10%, #15280f 0%, transparent 60%),
-    radial-gradient(900px 600px at 100% 110%, #1a0f1f 0%, transparent 55%),
-    var(--bg);
-  color:var(--g);
-  font-family:'Outfit',system-ui,sans-serif;
-  min-height:100dvh;
+    radial-gradient(circle at top left, rgba(143,95,255,.35), transparent 30%),
+    radial-gradient(circle at top right, rgba(255,79,216,.25), transparent 35%),
+    linear-gradient(180deg,#050111,#120523);
+  padding:max(14px,env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));
   overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
 }
-h1,h2,h3,.serif,.label{font-family:'Cinzel',serif}
-.label{letter-spacing:.06em;text-transform:uppercase}
-
-/* ---------- Layout ---------- */
-.wrap{max-width:760px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px 28px;min-height:100dvh;display:flex;flex-direction:column}
+.wrap{max-width:900px;margin:0 auto}
 .screen{display:none;animation:fade .35s ease}
-.screen.active{display:flex;flex-direction:column;flex:1}
+.screen.on{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.grad{background:linear-gradient(90deg,var(--pink),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 
-/* ---------- Header / Brand ---------- */
-.brand{display:flex;align-items:center;justify-content:center;gap:.6rem;flex-direction:column;text-align:center;margin:8px 0 18px}
-.brand .crest{font-size:2.4rem;filter:drop-shadow(0 4px 10px rgba(212,175,55,.4))}
-.brand h1{margin:.1em 0 0;font-size:clamp(1.6rem,7vw,2.6rem);font-weight:900;line-height:1;
-  background:linear-gradient(180deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.02em}
-.brand .sub{font-size:.72rem;color:var(--g-dim);letter-spacing:.34em;text-transform:uppercase;margin-top:.5rem}
-.ver{display:inline-block;font-size:.62rem;color:var(--gold);border:1px solid var(--gold-soft);border-radius:999px;padding:2px 9px;letter-spacing:.18em;margin-top:.6rem}
+/* ---------- Header / Logo ---------- */
+.brand{display:flex;align-items:center;gap:14px;justify-content:center;margin:6px 0 18px;text-align:left}
+.brand .ph{width:clamp(54px,15vw,76px);height:clamp(54px,15vw,76px);border-radius:50%;object-fit:cover;
+  border:3px solid var(--gold);box-shadow:0 0 22px rgba(255,207,92,.45),0 6px 16px rgba(0,0,0,.5);background:#1c1238}
+.brand .tt{line-height:.92}
+.brand .tt .sup{font-size:clamp(.6rem,2.6vw,.8rem);letter-spacing:.34em;color:var(--pink-soft);font-weight:600}
+.brand .tt h1{font-size:clamp(1.7rem,8vw,3.1rem);font-weight:900;letter-spacing:.01em}
+.brand .tt .ver{font-size:.62rem;letter-spacing:.18em;color:rgba(255,255,255,.5);font-weight:600;margin-top:2px;cursor:pointer}
 
-/* ---------- Cards / glass ---------- */
-.card{background:var(--glass);border:1px solid var(--gold-soft);border-radius:var(--r);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:16px;margin-bottom:14px}
-.card h2{margin:0 0 .7rem;font-size:.84rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+/* ---------- Panels ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:20px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);margin-bottom:14px}
+.panel h2{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--pink-soft);font-weight:700;margin-bottom:14px}
+.sub{color:rgba(255,255,255,.6);font-size:.85rem}
 
 /* ---------- Buttons ---------- */
-button{font-family:inherit;cursor:pointer;border:none;color:var(--g);background:transparent}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:15px 16px;border-radius:12px;font-weight:600;font-size:1rem;
-  background:linear-gradient(180deg,rgba(212,175,55,.95),rgba(176,141,30,.95));color:#1a1405;box-shadow:0 6px 18px rgba(212,175,55,.28);transition:transform .12s,filter .12s;letter-spacing:.02em}
-.btn:active{transform:translateY(1px) scale(.99);filter:brightness(1.05)}
-.btn.ghost{background:var(--glass-2);color:var(--g);border:1px solid var(--gold-soft);box-shadow:none}
-.btn.cyan{background:linear-gradient(180deg,#27e8ff,#00b8d4);color:#04181c;box-shadow:0 6px 18px rgba(0,229,255,.25)}
-.btn.danger{background:linear-gradient(180deg,#ff6b5e,#d6392c);color:#fff;box-shadow:0 6px 18px rgba(231,76,60,.3)}
+button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:transparent}
+.btn{display:flex;align-items:center;justify-content:center;gap:.55rem;width:100%;padding:16px;border-radius:16px;font-weight:800;font-size:1.02rem;letter-spacing:.02em;
+  background:linear-gradient(90deg,var(--pink),var(--purple));box-shadow:0 8px 26px rgba(143,95,255,.35);transition:transform .12s,filter .12s;position:relative;overflow:hidden}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn.cyan{background:linear-gradient(90deg,var(--cyan),#2bb8ff);box-shadow:0 8px 26px rgba(83,246,255,.32);color:#04181c}
+.btn.ghost{background:var(--panel-2);border:1px solid var(--line);box-shadow:none}
+.btn.gold{background:linear-gradient(90deg,#ffe08a,var(--gold));color:#231a05;box-shadow:0 8px 26px rgba(255,207,92,.32)}
+.btn.danger{background:linear-gradient(90deg,#ff6f8a,#e23b5d);box-shadow:0 8px 26px rgba(231,59,93,.32)}
 .btn:disabled{opacity:.4;filter:grayscale(.4);pointer-events:none}
-.btn.sm{width:auto;padding:9px 14px;font-size:.84rem}
-.row{display:flex;gap:10px}
-.row>*{flex:1}
+.btn.sm{width:auto;padding:10px 16px;font-size:.86rem;border-radius:13px}
+.row{display:flex;gap:10px}.row>*{flex:1}
 
-/* ---------- Lobby player rows ---------- */
-.pl-row{display:flex;align-items:center;gap:10px;background:var(--glass-2);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px;margin-bottom:9px}
-.pl-row input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--gold-soft);color:var(--g);font-size:1rem;font-family:inherit;padding:6px 2px;min-width:0}
-.pl-row input:focus{outline:none;border-bottom-color:var(--gold)}
-.pl-seat{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:'Cinzel';font-weight:700;background:var(--gold-soft);color:var(--gold);font-size:.8rem;flex:0 0 auto}
-.toggle{flex:0 0 auto;display:flex;background:rgba(0,0,0,.3);border-radius:999px;padding:3px;font-size:.74rem;font-weight:600}
-.toggle b{padding:5px 10px;border-radius:999px;color:var(--g-dim);transition:.15s}
-.toggle b.on{background:var(--gold);color:#1a1405}
-.x-btn{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:rgba(231,76,60,.14);color:#ff8c82;font-size:1.1rem;line-height:1}
-.mode-pick{display:flex;gap:10px}
-.mode-pick .opt{flex:1;text-align:center;padding:13px 8px;border-radius:12px;border:1px solid var(--gold-soft);background:var(--glass-2);cursor:pointer;transition:.15s}
-.mode-pick .opt.on{border-color:var(--gold);background:rgba(212,175,55,.14);box-shadow:0 0 0 1px var(--gold) inset}
-.mode-pick .opt .t{font-family:'Cinzel';font-weight:700;font-size:.92rem}
-.mode-pick .opt .d{font-size:.68rem;color:var(--g-dim);margin-top:3px}
+/* ---------- Lobby count selector ---------- */
+.counts{display:flex;gap:12px;margin-bottom:6px}
+.counts .opt{flex:1;text-align:center;padding:18px 6px;border-radius:18px;border:1px solid var(--line);background:var(--panel-2);transition:.15s;cursor:pointer}
+.counts .opt.on{border-color:var(--cyan);background:rgba(83,246,255,.12);box-shadow:0 0 0 1px var(--cyan) inset,0 0 22px rgba(83,246,255,.18)}
+.counts .opt .n{font-size:2rem;font-weight:900}
+.counts .opt .l{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.field{width:100%;background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:14px;color:#fff;font:600 1.05rem 'Outfit';padding:14px 16px;margin-bottom:14px}
+.field:focus{outline:none;border-color:var(--cyan)}
 
-/* ---------- Game header / phase ---------- */
-.ghead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
-.ghead .mini{font-size:.62rem;color:var(--g-dim);letter-spacing:.14em;text-transform:uppercase}
-.phase-banner{text-align:center;margin:2px 0 14px}
-.phase-banner .ph{font-family:'Cinzel';font-weight:900;font-size:clamp(1.2rem,5vw,1.7rem);background:linear-gradient(180deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
-.chip{display:inline-flex;align-items:center;gap:.4rem;font-family:'Cinzel';font-weight:600;font-size:.74rem;letter-spacing:.1em;color:var(--cyan);border:1px solid rgba(0,229,255,.3);border-radius:999px;padding:5px 12px;background:rgba(0,229,255,.06);user-select:none;-webkit-user-select:none}
-.chip.round{cursor:pointer}
-.icon-btn{width:38px;height:38px;flex:0 0 auto;border-radius:10px;background:var(--glass-2);border:1px solid var(--gold-soft);display:grid;place-items:center;font-size:1.05rem;color:var(--g)}
+/* ---------- Game header ---------- */
+.ghead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.icon-btn{width:42px;height:42px;flex:0 0 auto;border-radius:13px;background:var(--panel-2);border:1px solid var(--line);display:grid;place-items:center;font-size:1.1rem}
+.ghead .mid{text-align:center}.ghead .mid .t{font-weight:900;font-size:1.05rem}.ghead .mid .v{font-size:.58rem;letter-spacing:.16em;color:rgba(255,255,255,.45);cursor:pointer}
 
-/* ---------- Kaiserrunde pill ---------- */
-.kaiser-pill{display:none;align-items:center;justify-content:center;gap:.5rem;margin:0 0 12px;padding:10px 14px;border-radius:12px;
-  font-family:'Cinzel';font-weight:700;font-size:.86rem;color:#1a1405;
-  background:linear-gradient(90deg,#ffd86b,#d4af37,#ffd86b);background-size:200% 100%;
-  box-shadow:0 0 0 1px rgba(212,175,55,.5),0 8px 24px rgba(212,175,55,.35);
-  animation:kaiserPulse 1.6s ease-in-out infinite, kaiserShine 3s linear infinite}
-.kaiser-pill.show{display:flex}
-@keyframes kaiserPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
-@keyframes kaiserShine{to{background-position:200% 0}}
+/* ---------- Kaiser pill ---------- */
+.kpill{display:none;align-items:center;justify-content:center;gap:.5rem;margin-bottom:12px;padding:11px;border-radius:14px;font-weight:800;color:#231a05;
+  background:linear-gradient(90deg,#ffe08a,var(--gold),#ffe08a);background-size:200% 100%;box-shadow:0 0 0 1px rgba(255,207,92,.5),0 8px 24px rgba(255,207,92,.35);
+  animation:kp 1.5s ease-in-out infinite,ksh 3s linear infinite}
+.kpill.on{display:flex}
+@keyframes kp{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+@keyframes ksh{to{background-position:200% 0}}
 
-/* ---------- Player cards ---------- */
-.players{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
-.pc{position:relative;background:var(--glass);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:11px 11px 12px;transition:.2s}
-.pc.turn{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 22px rgba(0,229,255,.18)}
-.pc.loser{border-color:rgba(231,76,60,.5)}
-.pc .nm{display:flex;align-items:center;gap:.4rem;font-weight:600;font-size:.92rem}
-.pc .nm .ai{font-size:.58rem;color:var(--g-dim);border:1px solid var(--gold-soft);border-radius:5px;padding:1px 5px;letter-spacing:.08em}
-.pc .marker{font-size:.85rem}
-.lids{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
-.lid{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(212,175,55,.4);transition:.2s}
-.lid.f{background:radial-gradient(circle at 35% 30%,#ffe28a,#b8901f);border-color:#b8901f;box-shadow:0 1px 3px rgba(0,0,0,.4)}
-.pc .cnt{position:absolute;top:9px;right:10px;font-family:'Cinzel';font-weight:700;font-size:.92rem;color:var(--gold)}
-.pc .combo{margin-top:9px;font-family:'Cinzel';font-weight:700;font-size:.72rem;letter-spacing:.05em;color:var(--cyan);min-height:1em;opacity:0;transition:.25s}
-.pc .combo.show{opacity:1}
-.pc .minidice{display:flex;gap:3px;margin-top:7px}
-.pc .md{width:14px;height:14px;border-radius:3px;background:#f2ead8;color:#1a1405;font-size:9px;font-weight:700;display:grid;place-items:center}
+/* ---------- Phase banner ---------- */
+.phase{text-align:center;margin-bottom:12px}
+.phase .ph{font-weight:900;font-size:clamp(1.2rem,5.5vw,1.8rem)}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.chip{font-size:.72rem;font-weight:700;letter-spacing:.08em;border-radius:999px;padding:6px 13px;border:1px solid var(--line);background:var(--panel-2);user-select:none}
+.chip.r{border-color:rgba(83,246,255,.35);color:var(--cyan);cursor:pointer}
+.chip.m{border-color:rgba(255,207,92,.35);color:var(--gold)}
 
-/* ---------- Dice arena ---------- */
-.arena{background:var(--bg2);border:1px solid var(--gold-soft);border-radius:16px;padding:18px 14px;margin-bottom:14px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
-.arena .who{font-family:'Cinzel';font-weight:700;font-size:1.05rem;color:var(--g)}
-.arena .throws{font-size:.7rem;color:var(--g-dim);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
-.dice{display:flex;justify-content:center;gap:9px;margin:16px 0 8px;flex-wrap:wrap}
-.die{width:clamp(46px,13vw,58px);height:clamp(46px,13vw,58px);border-radius:13px;background:linear-gradient(155deg,#fbf6ea,#ded3bb);position:relative;cursor:pointer;
-  box-shadow:0 5px 12px rgba(0,0,0,.45),inset 0 -3px 6px rgba(0,0,0,.12),inset 0 2px 3px rgba(255,255,255,.7);transition:transform .15s,box-shadow .15s}
-.die.kept{transform:translateY(-7px) scale(1.02);box-shadow:0 10px 18px rgba(0,229,255,.35),0 0 0 2px var(--cyan),inset 0 -3px 6px rgba(0,0,0,.12)}
-.die.rolling{animation:tumble .5s ease}
-@keyframes tumble{0%{transform:rotate(0) scale(1)}25%{transform:rotate(-18deg) scale(.92)}50%{transform:rotate(14deg) scale(1.05)}75%{transform:rotate(-8deg) scale(.97)}100%{transform:rotate(0) scale(1)}}
-.die .pips{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:18%}
-.die .pip{width:9px;height:9px;border-radius:50%;background:#2a2114;align-self:center;justify-self:center;box-shadow:inset 0 1px 1px rgba(0,0,0,.4)}
-/* pip placement helpers via nth positions set in JS by grid-area */
-.combo-big{min-height:1.6em;font-family:'Cinzel';font-weight:900;font-size:clamp(1.1rem,5.5vw,1.7rem);letter-spacing:.03em;color:var(--gold);margin-top:6px;opacity:0;transform:scale(.8)}
+/* ---------- Players ---------- */
+.players{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
+.pc{flex:1 1 150px;max-width:220px;min-width:140px;background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:12px;position:relative;transition:.2s}
+.pc.active{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 24px rgba(83,246,255,.22)}
+.pc.lost{border-color:rgba(255,94,122,.55)}
+.pc .nm{display:flex;align-items:center;gap:.35rem;font-weight:700;font-size:.95rem}
+.pc .nm .ai{font-size:.55rem;color:var(--pink-soft);border:1px solid var(--line);border-radius:5px;padding:1px 5px;letter-spacing:.06em}
+.pc .turnflag{font-size:.62rem;color:var(--cyan);font-weight:700;letter-spacing:.06em;min-height:.9em;margin-top:1px}
+.pc .cnt{position:absolute;top:10px;right:12px;font-weight:900;font-size:1.15rem;color:var(--gold)}
+.lids{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.lid{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,207,92,.4)}
+.lid.f{background:radial-gradient(circle at 35% 30%,#ffe9a8,#c8951f);border-color:#c8951f;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.pc .res{margin-top:8px;min-height:1.05em;font-weight:800;font-size:.74rem;color:var(--cyan)}
+.pc .mini{display:flex;gap:3px;margin-top:6px}
+.pc .md{width:15px;height:15px;border-radius:4px;background:#f4ecff;color:#221038;font-size:10px;font-weight:800;display:grid;place-items:center}
+.pc .hidden-tag{color:var(--pink-soft);font-size:.7rem;font-weight:700;margin-top:6px}
+
+/* ---------- Arena: Becher + Würfel ---------- */
+.arena{background:rgba(10,12,38,.6);border:1px solid var(--line);border-radius:22px;padding:16px 14px;margin-bottom:14px;text-align:center}
+.arena .who{font-weight:800;font-size:1.05rem}
+.arena .thr{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:2px}
+.cup{width:120px;height:170px;margin:12px auto 6px;position:relative;clip-path:polygon(18% 0%,82% 0%,100% 100%,0% 100%);
+  background:
+    repeating-linear-gradient(to right,transparent 0,transparent 30px,rgba(180,80,255,.07) 30px,rgba(180,80,255,.07) 31px),
+    linear-gradient(160deg,#291b4c,#1c1238 48%,#0e0a20);
+  box-shadow:inset 18px 0 30px rgba(200,150,255,.06),inset -5px 0 18px rgba(0,0,0,.3),inset 0 10px 18px rgba(0,0,0,.4);transition:transform .1s}
+.cup.shake{animation:shake .5s ease}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-9deg) translateY(-4px)}40%{transform:rotate(8deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(4deg)}}
+.cup:before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:62%;height:15px;border-radius:50%;
+  background:linear-gradient(to bottom,#2e2050,#1c1440);box-shadow:inset 0 3px 8px rgba(0,0,0,.6);border:2px dashed rgba(255,79,216,.6)}
+.dice{display:flex;justify-content:center;gap:12px;margin:10px 0}
+.die{width:clamp(52px,15vw,64px);height:clamp(52px,15vw,64px);border-radius:14px;background:linear-gradient(155deg,#fdfbff,#e3d8f5);position:relative;cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 -3px 6px rgba(120,90,160,.18),inset 0 2px 3px rgba(255,255,255,.8);transition:transform .15s,box-shadow .15s}
+.die.kept{transform:translateY(-8px);box-shadow:0 12px 20px rgba(83,246,255,.4),0 0 0 3px var(--cyan)}
+.die.roll{animation:tmb .45s ease}
+@keyframes tmb{0%{transform:rotate(0) scale(1)}30%{transform:rotate(-20deg) scale(.9)}60%{transform:rotate(16deg) scale(1.06)}100%{transform:rotate(0) scale(1)}}
+.die .pips{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:20%}
+.die .pip{width:9px;height:9px;border-radius:50%;background:#2a1846;align-self:center;justify-self:center;box-shadow:inset 0 1px 1px rgba(0,0,0,.4)}
+.die.one .pip{background:#e23b5d}
+.combo-big{min-height:1.5em;font-weight:900;font-size:clamp(1.05rem,5.5vw,1.6rem);margin-top:4px;opacity:0;transform:scale(.85)}
 .combo-big.pop{animation:pop .5s cubic-bezier(.2,1.4,.4,1) forwards}
 @keyframes pop{to{opacity:1;transform:scale(1)}}
-.keep-hint{font-size:.66rem;color:var(--g-dim);letter-spacing:.08em;margin-top:2px}
-
-/* ---------- Modal ---------- */
-.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(3,7,2,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:18px}
-.modal-bg.open{display:flex;animation:fade .25s}
-.modal{width:100%;max-width:460px;max-height:88dvh;overflow:auto;background:linear-gradient(180deg,#11200c,#0a130a);border:1px solid var(--gold-soft);border-radius:18px;padding:22px 20px;box-shadow:var(--shadow)}
-.modal h2{font-family:'Cinzel';margin:0 0 12px;font-size:1.3rem;color:var(--gold);text-align:center;font-weight:900}
-.modal h3{font-family:'Cinzel';color:var(--cyan);font-size:.92rem;margin:16px 0 6px;letter-spacing:.04em}
-.modal p,.modal li{font-size:.9rem;line-height:1.55;color:var(--g)}
-.modal .sub{color:var(--g-dim);font-size:.82rem}
-.summary-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
-.summary-row:last-child{border-bottom:none}
-.summary-row .nm{font-weight:600}
-.summary-row .cb{font-family:'Cinzel';font-size:.78rem;color:var(--g-dim);text-align:right}
-.summary-row.win{color:var(--success)}
-.summary-row.lose{color:#ff8c82}
-.mini-d{display:inline-flex;gap:3px;vertical-align:middle}
-.mini-d span{width:16px;height:16px;border-radius:4px;background:#f2ead8;color:#1a1405;font-size:10px;font-weight:700;display:inline-grid;place-items:center}
+.hint{font-size:.66rem;color:rgba(255,255,255,.5);letter-spacing:.06em;margin-top:2px}
 
 /* ---------- Biersammler ---------- */
-.bier-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.9rem}
+.bier-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}
 .bier-row:last-child{border-bottom:none}
-.bier-row .amt{font-family:'Cinzel';font-weight:700;color:var(--gold)}
-.bier-tot{margin-top:10px;text-align:right;font-family:'Cinzel';font-weight:700;color:var(--gold)}
+.bier-row .amt{font-weight:800;color:var(--gold)}
+.bier-tot{text-align:right;font-weight:900;color:var(--gold);margin-top:10px}
+
+/* ---------- Modal ---------- */
+.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(5,1,17,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:18px}
+.modal-bg.open{display:flex;animation:fade .25s}
+.modal{width:100%;max-width:460px;max-height:88dvh;overflow:auto;background:linear-gradient(180deg,#160a2e,#0c0720);border:1px solid var(--line);border-radius:22px;padding:24px 20px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.modal h2{font-size:1.4rem;font-weight:900;text-align:center;margin-bottom:12px}
+.modal h3{font-size:.84rem;letter-spacing:.1em;text-transform:uppercase;color:var(--pink-soft);margin:16px 0 6px}
+.sum-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.sum-row:last-child{border-bottom:none}
+.sum-row.win{color:var(--ok)}.sum-row.lose{color:var(--danger)}
+.sum-row .nm{font-weight:700}.sum-row .cb{font-size:.78rem;text-align:right;color:rgba(255,255,255,.7)}
+.mini-d{display:inline-flex;gap:3px;vertical-align:middle}
+.mini-d span{width:17px;height:17px;border-radius:4px;background:#f4ecff;color:#221038;font-size:10px;font-weight:800;display:inline-grid;place-items:center}
+
+/* ---------- Overlay (Sieg/Niederlage) ---------- */
+#overlay{position:fixed;inset:0;z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;
+  background:radial-gradient(circle at center,rgba(20,6,40,.92),rgba(5,1,17,.97))}
+#overlay.on{display:flex;animation:fade .4s}
+#overlay .cmt{font-size:clamp(1.6rem,8vw,3rem);font-weight:900;margin-bottom:18px;line-height:1.1}
+#overlay .who{font-size:clamp(1.1rem,5vw,1.6rem);font-weight:800;letter-spacing:.04em}
+#overlay .lbl{font-size:.8rem;letter-spacing:.32em;opacity:.7;margin-bottom:8px;text-transform:uppercase}
 
 /* ---------- Toast ---------- */
 #toasts{position:fixed;left:0;right:0;bottom:max(18px,env(safe-area-inset-bottom));z-index:400;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 14px}
-.toast{background:rgba(12,22,10,.96);border:1px solid var(--gold-soft);color:var(--g);border-radius:12px;padding:11px 16px;font-size:.88rem;max-width:420px;box-shadow:var(--shadow);animation:toastIn .3s ease;display:flex;gap:.5rem;align-items:center}
-.toast.ok{border-color:rgba(46,204,113,.4)}
-.toast.warn{border-color:rgba(231,76,60,.45)}
-@keyframes toastIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.toast{background:rgba(16,8,36,.96);border:1px solid var(--line);border-radius:13px;padding:11px 16px;font-size:.88rem;max-width:420px;box-shadow:0 12px 30px rgba(0,0,0,.5);animation:tin .3s}
+.toast.ok{border-color:rgba(66,245,163,.4)}.toast.warn{border-color:rgba(255,94,122,.45)}
+@keyframes tin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* ---------- Confetti ---------- */
-#confetti{position:fixed;inset:0;z-index:500;pointer-events:none;overflow:hidden}
-.conf{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:confFall linear forwards}
-@keyframes confFall{to{transform:translateY(108vh) rotate(720deg);opacity:.9}}
+#conf{position:fixed;inset:0;z-index:350;pointer-events:none;overflow:hidden}
+.cf{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:cfall linear forwards}
+@keyframes cfall{to{transform:translateY(108vh) rotate(720deg);opacity:.9}}
 
-.foot{text-align:center;color:var(--g-dim);font-size:.66rem;letter-spacing:.1em;margin-top:auto;padding-top:14px}
-.divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold-soft),transparent);margin:14px 0}
-small.help{display:block;color:var(--g-dim);font-size:.74rem;margin-top:6px;line-height:1.5}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:14px 0}
+.help{display:block;color:rgba(255,255,255,.5);font-size:.72rem;margin-top:6px;line-height:1.5;text-align:center}
+.foot{text-align:center;color:rgba(255,255,255,.4);font-size:.66rem;letter-spacing:.1em;margin-top:8px}
+
+/* ---------- Responsive ---------- */
+@media(min-width:701px){
+  .players{flex-wrap:nowrap}
+}
+@media(max-width:450px){
+  .pc{flex:1 1 100%;max-width:none}
+  .counts .opt{padding:14px 4px}
+  .panel{padding:16px;border-radius:18px}
+}
 </style>
 </head>
 <body>
 
 <div id="toasts"></div>
-<div id="confetti"></div>
+<div id="conf"></div>
+<div id="overlay"><div class="cmt" id="ovCmt"></div><div class="lbl" id="ovLbl"></div><div class="who" id="ovWho"></div></div>
 
 <div class="wrap">
 
   <!-- ============ LOBBY ============ -->
-  <section id="lobby" class="screen active">
+  <section id="lobby" class="screen on">
     <div class="brand">
-      <div class="crest">🎲</div>
-      <h1>Ingo's Schock Doof</h1>
-      <div class="sub">Würfeln · Decken · Saufen</div>
-      <span class="ver" id="lobbyVer">v2.0</span>
-    </div>
-
-    <div class="card">
-      <h2>Spieler <span class="sub" style="text-transform:none;letter-spacing:0">(2–6)</span></h2>
-      <div id="plList"></div>
-      <button class="btn ghost sm" id="addPl" style="width:100%;margin-top:4px">＋ Spieler hinzufügen</button>
-    </div>
-
-    <div class="card">
-      <h2>Spielmodus</h2>
-      <div class="mode-pick" id="modePick">
-        <div class="opt on" data-mode="normal"><div class="t">Normal</div><div class="d">Hälfte 1 → 2 → Finale</div></div>
-        <div class="opt" data-mode="schnelle5"><div class="t">Schnelle 5</div><div class="d">5 Deckel · direkt</div></div>
+      <img class="ph" id="ingoLogo" alt="Ingo">
+      <div class="tt">
+        <div class="sup">INGO'S</div>
+        <h1 class="grad">Schock Doof</h1>
+        <div class="ver" id="lobbyVer">v2.0</div>
       </div>
     </div>
 
-    <div class="row">
-      <button class="btn" id="startBtn">Spiel starten</button>
-      <button class="btn ghost" id="rulesBtn" style="flex:0 0 auto;width:auto;padding:15px 18px">Regeln</button>
+    <div class="panel">
+      <h2>Dein Name</h2>
+      <input class="field" id="nameInput" maxlength="14" placeholder="Spielername" value="Saschi">
+      <h2>Spieleranzahl</h2>
+      <div class="counts" id="counts">
+        <div class="opt" data-c="2"><div class="n">2</div><div class="l">Spieler</div></div>
+        <div class="opt on" data-c="3"><div class="n">3</div><div class="l">Spieler</div></div>
+        <div class="opt" data-c="4"><div class="n">4</div><div class="l">Spieler</div></div>
+      </div>
+      <small class="help">Der Host startet, sobald alle Menschen da sind. Leere Plätze werden zu KI. <!-- MP_STUB: Lobby/Raum-Status, Chat, Sprachanruf hier andocken --></small>
     </div>
 
-    <div class="card" id="bierCardLobby" style="margin-top:14px">
+    <button class="btn" id="startBtn">Spiel starten →</button>
+
+    <div class="panel" style="margin-top:14px">
       <h2>🍺 Biersammler</h2>
       <div id="bierLobby"></div>
     </div>
-
-    <div class="foot">Schnuppes Spielportal · <span id="footVer">v2.0</span></div>
+    <div class="foot">Schnuppes Spielportal · <span class="lobbyVer2">v2.0</span></div>
   </section>
 
   <!-- ============ GAME ============ -->
   <section id="game" class="screen">
     <div class="ghead">
-      <button class="icon-btn" id="homeBtn" title="Zur Lobby">⌂</button>
-      <div style="text-align:center">
-        <div class="mini">Ingo's Schock Doof</div>
-        <div class="mini" id="gameVer" style="color:var(--gold)">v2.0</div>
-      </div>
-      <button class="icon-btn" id="recoverBtn" title="Feststecken beheben">↺</button>
+      <button class="icon-btn" id="homeBtn" title="Lobby">⌂</button>
+      <div class="mid"><div class="t grad">Ingo's Schock Doof</div><div class="v" id="gameVer">v2.0</div></div>
+      <button class="icon-btn" id="resyncBtn" title="Festhänger beheben">↺</button>
     </div>
 
-    <div class="kaiser-pill" id="kaiserPill">👑 KAISERRUNDE — letztes Spiel!</div>
+    <div class="kpill" id="kpill">👑 KAISERRUNDE — letztes Spiel!</div>
 
-    <div class="phase-banner">
-      <div class="ph" id="phaseLabel">Hälfte 1</div>
-      <div style="margin-top:8px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
-        <span class="chip round" id="roundChip">Runde 1</span>
-        <span class="chip" id="middleChip" style="color:var(--gold);border-color:var(--gold-soft);background:rgba(212,175,55,.06)">Mitte: 13</span>
+    <div class="phase">
+      <div class="ph grad" id="phaseLabel">Hälfte 1</div>
+      <div class="chips">
+        <span class="chip r" id="roundChip">Runde 1</span>
+        <span class="chip m" id="middleChip">Mitte: 13</span>
       </div>
     </div>
 
-    <div class="players" id="playersBox"></div>
+    <div class="players" id="players"></div>
 
     <div class="arena">
-      <div class="who" id="arenaWho">—</div>
-      <div class="throws" id="arenaThrows">Wurf 0 / 3</div>
-      <div class="dice" id="diceBox"></div>
-      <div class="keep-hint" id="keepHint">Würfel antippen = behalten</div>
+      <div class="who" id="who">—</div>
+      <div class="thr" id="thr">Wurf 0 / 3</div>
+      <div class="cup" id="cup"></div>
+      <div class="dice" id="dice"></div>
+      <div class="hint" id="hint">Würfel antippen = behalten</div>
       <div class="combo-big" id="comboBig"></div>
     </div>
 
     <div id="controls"></div>
 
     <div class="divider"></div>
-    <button class="btn ghost sm" id="kaiserBtn" style="width:100%">👑 Kaiserrunde ankündigen</button>
-    <small class="help" id="kaiserHelp">Aktuelles Spiel wird zu Ende gespielt, danach noch ein komplettes Spiel — dann Abrechnung.</small>
+    <button class="btn gold sm" id="kaiserBtn" style="width:100%">👑 Kaiserrunde ankündigen</button>
+    <small class="help" id="kaiserHelp">Aktuelles Spiel zu Ende, dann noch ein komplettes Spiel — dann Abrechnung.</small>
   </section>
 </div>
 
-<!-- ============ MODAL ============ -->
-<div class="modal-bg" id="modalBg">
-  <div class="modal" id="modalBody"></div>
-</div>
+<div class="modal-bg" id="modalBg"><div class="modal" id="modalBody"></div></div>
+
+<audio id="diceSound" preload="auto"><source src="./dice.mp3" type="audio/mpeg"></audio>
 
 <script>
+'use strict';
 /* ============================================================
-   INGO'S SCHOCK DOOF — v2.0
-   Vollständige Spiellogik. Multiplayer = MP_STUB (selbst einbauen).
+   INGO'S SCHOCK DOOF — v2.0  ·  Spiel-Logik
+   Multiplayer = MP_STUB (von Sascha selbst einzubauen)
    ============================================================ */
 const VERSION='v2.0';
+const TOTAL_LIDS=13;
+const THROWS=3;
 const $=id=>document.getElementById(id);
-document.querySelectorAll('#lobbyVer,#footVer,#gameVer').forEach(e=>e.textContent=VERSION);
+
+// Ingo-Logo (Base64) einsetzen
+$('ingoLogo').src='data:image/jpeg;base64,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';
+document.querySelectorAll('#lobbyVer,#gameVer,.lobbyVer2').forEach(e=>e.textContent=VERSION);
+
+/* ---------- Sounds ---------- */
+let applauseAudio=null;
+try{ applauseAudio=new Audio('./applause.mp3'); applauseAudio.preload='auto'; }catch(e){}
+window.applauseAudio=applauseAudio;
+function playDice(){ try{ const a=$('diceSound'); if(a){ a.currentTime=0; a.play().catch(()=>{}); } }catch(e){} }
+function playApplause(){ try{ if(applauseAudio){ applauseAudio.currentTime=0; applauseAudio.play().catch(()=>{}); } }catch(e){} }
+// Audio-Unlock bei erstem Tap (iOS)
+(function(){ let u=false; document.addEventListener('click',function un(){ if(u)return; u=true;
+  const d=$('diceSound'); if(d){ d.play().then(()=>{d.pause();d.currentTime=0;}).catch(()=>{}); }
+  if(applauseAudio){ applauseAudio.play().then(()=>{applauseAudio.pause();applauseAudio.currentTime=0;}).catch(()=>{}); }
+  document.removeEventListener('click',un); },{capture:true}); })();
 
 /* ---------- Helpers ---------- */
-function vibe(ms){ try{ if('vibrate' in navigator) navigator.vibrate(ms);}catch(e){} }
+function vibe(p){ try{ if('vibrate' in navigator) navigator.vibrate(p); }catch(e){} }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-function toast(msg,type){
-  const t=document.createElement('div');
-  t.className='toast'+(type?(' '+type):'');
-  t.textContent=msg;
-  $('toasts').appendChild(t);
-  setTimeout(()=>{ t.style.transition='opacity .4s,transform .4s'; t.style.opacity='0'; t.style.transform='translateY(10px)'; setTimeout(()=>t.remove(),420); },3000);
-}
-function openModal(html){ $('modalBody').innerHTML=html; $('modalBg').classList.add('open'); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function toast(msg,type){ const t=document.createElement('div'); t.className='toast'+(type?' '+type:''); t.textContent=msg; $('toasts').appendChild(t);
+  setTimeout(()=>{ t.style.transition='opacity .4s,transform .4s'; t.style.opacity='0'; t.style.transform='translateY(10px)'; setTimeout(()=>t.remove(),420); },2800); }
+function openModal(h){ $('modalBody').innerHTML=h; $('modalBg').classList.add('open'); }
 function closeModal(){ $('modalBg').classList.remove('open'); }
 $('modalBg').addEventListener('click',e=>{ if(e.target===$('modalBg')) closeModal(); });
 
-/* ============================================================
-   WÜRFEL-WAHRSCHEINLICHKEIT (1 seltener)
-   ============================================================ */
-function rollDie(){
-  const r=Math.random()*100;
-  if(r<15)return 1; if(r<32)return 2; if(r<49)return 3;
-  if(r<66)return 4; if(r<83)return 5; return 6;
-}
-
-/* pip-Positionen im 3x3-Grid (col row) */
-const PIP_POS={
-  1:[[2,2]],
-  2:[[1,1],[3,3]],
-  3:[[1,1],[2,2],[3,3]],
-  4:[[1,1],[3,1],[1,3],[3,3]],
-  5:[[1,1],[3,1],[2,2],[1,3],[3,3]],
-  6:[[1,1],[3,1],[1,2],[3,2],[1,3],[3,3]]
-};
-function diePips(val){
-  const pos=PIP_POS[val]||[];
-  return '<div class="pips">'+pos.map(p=>`<span class="pip" style="grid-column:${p[0]};grid-row:${p[1]}"></span>`).join('')+'</div>';
-}
+/* ---------- Würfel ---------- */
+function rollDie(){ const r=Math.random()*100; if(r<15)return 1; if(r<32)return 2; if(r<49)return 3; if(r<66)return 4; if(r<83)return 5; return 6; }
+const PIP={1:[[2,2]],2:[[1,1],[3,3]],3:[[1,1],[2,2],[3,3]],4:[[1,1],[3,1],[1,3],[3,3]],5:[[1,1],[3,1],[2,2],[1,3],[3,3]],6:[[1,1],[3,1],[1,2],[3,2],[1,3],[3,3]]};
+function pips(v){ return '<div class="pips">'+(PIP[v]||[]).map(p=>`<span class="pip" style="grid-column:${p[0]};grid-row:${p[1]}"></span>`).join('')+'</div>'; }
 
 /* ============================================================
-   KOMBINATIONS-BEWERTUNG
-   Liefert {type,label,rank,deckel}. rank: höher = besser.
+   REGEL-ENGINE (authentisch, 3 Würfel)
+   Rangfolge bester→schlechtester:
+   Schock Aus > Schock 6..3 > Schock Doof(1-1-2) > General > Straße > Zahl
    ============================================================ */
-function evaluateHand(dice, throwsUsed){
-  const c=[0,0,0,0,0,0,0]; dice.forEach(d=>c[d]++);
-  const allSame = c.some(x=>x===5);
-  const sorted=[...dice].sort((a,b)=>a-b).join('');
-  const isStraight = sorted==='12345' || sorted==='23456';
-
-  // SCHOCK-OUT (1-1-1-1-1 im 1. Wurf) wird vorher als Event behandelt,
-  // hier zur Sicherheit auch abgebildet:
-  if(c[1]===5 && throwsUsed===1) return {type:'SCHOCKOUT',label:'SCHOCK-OUT',rank:1000,deckel:0};
-
-  if(allSame){
-    const v=c.indexOf(5);
-    if(throwsUsed===1) return {type:'SCHOCK',label:'SCHOCK',rank:900+v,deckel:2};   // 1. Wurf → Schock, doppelt
-    return {type:'GENERAL',label:'GENERAL',rank:800+v,deckel:1};
-  }
-  if(isStraight){
-    const high = sorted==='23456'?6:5;
-    return {type:'STRASSE',label:'STRASSE',rank:700+high,deckel:1};
-  }
-  // Full House: Drilling + Paar
-  const drill=c.findIndex(x=>x===3);
-  const pairs=[]; for(let v=6;v>=1;v--) if(c[v]===2) pairs.push(v);
-  if(drill>0 && pairs.length===1){
-    return {type:'FULLHOUSE',label:'FULL HOUSE',rank:600+drill*10+pairs[0],deckel:1};
-  }
-  if(drill>0){
-    return {type:'DRILLING',label:'DRILLING '+drill,rank:500+drill*10,deckel:1};
-  }
-  if(pairs.length===2){
-    return {type:'ZWEIPAARE',label:'ZWEI PAARE',rank:400+pairs[0]*10+pairs[1],deckel:1};
-  }
-  if(pairs.length===1){
-    return {type:'PAAR',label:'PAAR '+pairs[0],rank:300+pairs[0]*10,deckel:1};
-  }
-  // Schock Doof: alles verschieden, keine Kombi → schlechtestes Ergebnis
-  const sum=dice.reduce((a,b)=>a+b,0);
-  return {type:'DOOF',label:'SCHOCK DOOF',rank:100+sum,deckel:1};
+function evalDice(dice, throwNum){
+  const s=[...dice].sort((a,b)=>a-b); const [a,b,c]=s;
+  const ones=dice.filter(d=>d===1).length;
+  if(a===1&&b===1&&c===1) return {type:'schockaus',label:'Schock Aus',deckel:'all',rank:1e9};
+  if(ones===2){ const n=s.find(x=>x!==1); const label=(n===2)?'Schock Doof':('Schock '+n);
+    return {type:'schock',n,label,deckel:n,rank:n*1e6+5e4+n}; }
+  if(a===b&&b===c) return {type:'general',label:'General '+a,deckel:3,rank:2e6+4e4+a};
+  if(b===a+1&&c===b+1) return {type:'strasse',label:'Straße '+a+'-'+c,deckel:2,rank:2e6+3e4+a};
+  const num=c*100+b*10+a; return {type:'zahl',label:'Zahl '+num,deckel:1,rank:1e6+num};
 }
+// Sortierschlüssel: höher = besser. Tie: weniger Würfe besser, dann früher im Zug.
+function sortKey(ps){ return ps.combo.rank*1000 - (ps.throwNum||1)*100 - (ps.order||0); }
 
 /* ============================================================
    STATE
    ============================================================ */
-let TOTAL_LIDS=13;
-let G=null;        // Spielzustand
-let SZ=null;       // Biersammler-Zustand (Firebase-Stub)
-let recoveryTimer=null;
-const IS_HOST=true; // MP_STUB: in MP echten Host bestimmen; nur Host pusht State.
+let G=null, SZ={settled:{},games:[]}, recoveryTimer=null;
+const AI_POOL=['Bärbel','Heinz','Nici','Marco','Leni','Mia','Nele','Dani','Finn'];
+const IS_HOST=true; // MP_STUB: echten Host bestimmen; nur Host pusht State.
 
-function freshG(players, mode){
-  TOTAL_LIDS = (mode==='schnelle5') ? 5 : 13;
-  return {
-    mode,                       // 'normal' | 'schnelle5'
-    phase:'laden',              // laden|rolling|summary|halfend|gameover|kaiserover
-    half: mode==='schnelle5' ? 'q' : 1,   // 1|2|'finale'  ('q' = Schnelle 5)
-    round:1,
-    players: players.map(p=>({name:p.name,isAI:p.isAI})),
-    lids: players.map(()=>0),
-    playerStates: [],
-    middleLids: TOTAL_LIDS,
-    starter:0,
-    turnOrder:[], turnPtr:0,
-    active: players.map((_,i)=>i),
-    marker:null,                // Halbzeit-1-Verlierer
-    halfLosers:[null,null],
-    finalists:null,
-    gameLoser:null,
-    schockBonus:false,          // letzte Runde Schock → Verlierer zahlt doppelt
-    kaiserrunde:false,
-    kaiserrundeBy:null,
-    kaiserGamesPlayed:0,        // abgeschlossene Spiele seit Ankündigung
-    sessionStart:Date.now(),
-    ts:Date.now()
-  };
+function freshG(players){
+  return { phase:'laden', half:1, round:1,
+    players:players.map(p=>({name:p.name,isAI:p.isAI,lids:0,left:false})),
+    middleLids:TOTAL_LIDS, starter:0, turnOrder:[], turnPtr:0, playerStates:[],
+    marker:null, halfLosers:[null,null], finalists:null, gameLoser:null,
+    kaiserrunde:false, kaiserrundeBy:null, kaiserGamesPlayed:0,
+    sessionStart:Date.now(), ts:Date.now() };
+}
+function participants(){
+  if(G.half==='finale'&&G.finalists) return G.finalists.filter(i=>!G.players[i].left);
+  return G.players.map((_,i)=>i).filter(i=>!G.players[i].left);
 }
 
 /* ============================================================
-   BIERSAMMLER  (Firebase-persistiert → MP_STUB; lokal in-memory)
+   BIERSAMMLER (in-memory + MP_STUB Firebase)
    ============================================================ */
-function normalizeSzState(st){
-  if(!st) return {players:[],settled:{},games:[]};
-  if(!st.settled) st.settled={};
-  if(!st.games)   st.games=[];
-  if(!st.players) st.players=[];
-  return st;
-}
-function loadBiersammler(){
-  // MP_STUB: szState aus Firebase laden (Node 'biersammler'), dann normalizeSzState.
-  // Bewusst KEIN localStorage (Anti-Pattern: geht bei Cache-Leerung verloren).
-  SZ = normalizeSzState(SZ);
-}
-function saveBiersammler(){
-  // MP_STUB: SZ nach Firebase schreiben (Node 'biersammler').
-}
-function recordLoss(name){
-  SZ=normalizeSzState(SZ);
-  SZ.settled[name]=(SZ.settled[name]||0)+1;
-  SZ.games.push({loser:name,ts:Date.now()});
-  saveBiersammler();
-}
-function bierTotalEuro(){ let n=0; for(const k in SZ.settled) n+=SZ.settled[k]; return (n*0.5); }
-
-function renderBierInto(elId){
-  SZ=normalizeSzState(SZ);
-  const el=$(elId); if(!el) return;
-  const names=Object.keys(SZ.settled);
-  if(!names.length){ el.innerHTML='<div class="sub" style="font-size:.82rem">Noch keine Niederlagen erfasst. 0,50 € pro verlorenem Spiel.</div>'; return; }
-  let h='';
-  names.sort((a,b)=>SZ.settled[b]-SZ.settled[a]).forEach(n=>{
-    const losses=SZ.settled[n];
-    h+=`<div class="bier-row"><span>${n} <span class="sub">· ${losses}×</span></span><span class="amt">${(losses*0.5).toFixed(2)} €</span></div>`;
-  });
-  h+=`<div class="bier-tot">Gesamt: ${bierTotalEuro().toFixed(2)} €</div>`;
-  el.innerHTML=h;
-}
+function loadBier(){ /* MP_STUB: SZ aus Firebase 'biersammler' laden */ if(!SZ.settled)SZ.settled={}; if(!SZ.games)SZ.games=[]; }
+function saveBier(){ /* MP_STUB: SZ nach Firebase 'biersammler' schreiben (persistent, KEIN localStorage) */ }
+function recordLoss(name){ SZ.settled[name]=(SZ.settled[name]||0)+1; SZ.games.push({loser:name,ts:Date.now()}); saveBier(); }
+function bierTotal(){ let n=0; for(const k in SZ.settled)n+=SZ.settled[k]; return n*0.5; }
+function renderBier(elId){ const el=$(elId); if(!el)return; const names=Object.keys(SZ.settled);
+  if(!names.length){ el.innerHTML='<div class="sub">Noch keine Niederlagen. 0,50 € pro verlorenem Spiel.</div>'; return; }
+  let h=''; names.sort((a,b)=>SZ.settled[b]-SZ.settled[a]).forEach(n=>{ const l=SZ.settled[n];
+    h+=`<div class="bier-row"><span>${n} <span class="sub">· ${l}×</span></span><span class="amt">${(l*0.5).toFixed(2)} €</span></div>`; });
+  h+=`<div class="bier-tot">Gesamt: ${bierTotal().toFixed(2)} €</div>`; el.innerHTML=h; }
 
 /* ============================================================
    LOBBY
    ============================================================ */
-let lobbyPlayers=[{name:'Du',isAI:false},{name:'KI Bea',isAI:true},{name:'KI Ingo',isAI:true}];
-let lobbyMode='normal';
-
-function renderLobby(){
-  const box=$('plList'); box.innerHTML='';
-  lobbyPlayers.forEach((p,i)=>{
-    const row=document.createElement('div'); row.className='pl-row';
-    row.innerHTML=`
-      <span class="pl-seat">${i+1}</span>
-      <input value="${p.name.replace(/"/g,'&quot;')}" maxlength="14" data-i="${i}">
-      <div class="toggle" data-i="${i}">
-        <b class="${!p.isAI?'on':''}" data-h="1">Mensch</b>
-        <b class="${p.isAI?'on':''}" data-h="0">KI</b>
-      </div>
-      ${lobbyPlayers.length>2?`<button class="x-btn" data-del="${i}">×</button>`:''}`;
-    box.appendChild(row);
-  });
-  box.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{ lobbyPlayers[+e.target.dataset.i].name=e.target.value; }));
-  box.querySelectorAll('.toggle b').forEach(b=>b.addEventListener('click',e=>{
-    const tog=e.target.closest('.toggle'); const i=+tog.dataset.i;
-    lobbyPlayers[i].isAI = e.target.dataset.h==='0'; renderLobby();
-  }));
-  box.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',e=>{ lobbyPlayers.splice(+e.target.dataset.del,1); renderLobby(); }));
-  $('addPl').style.display = lobbyPlayers.length>=6?'none':'block';
-  renderBierInto('bierLobby');
-}
-$('addPl').addEventListener('click',()=>{ if(lobbyPlayers.length<6){ lobbyPlayers.push({name:'KI '+String.fromCharCode(65+lobbyPlayers.length),isAI:true}); renderLobby(); }});
-$('modePick').querySelectorAll('.opt').forEach(o=>o.addEventListener('click',()=>{
-  $('modePick').querySelectorAll('.opt').forEach(x=>x.classList.remove('on'));
-  o.classList.add('on'); lobbyMode=o.dataset.mode;
-}));
-$('rulesBtn').addEventListener('click',()=>showTutorial(false));
+let lobbyCount=3;
+$('counts').querySelectorAll('.opt').forEach(o=>o.addEventListener('click',()=>{
+  $('counts').querySelectorAll('.opt').forEach(x=>x.classList.remove('on')); o.classList.add('on'); lobbyCount=+o.dataset.c; }));
 $('startBtn').addEventListener('click',startGame);
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); }
+
+function startGame(){
+  const myName=($('nameInput').value||'Spieler').trim();
+  // MP_STUB: hier kommen die menschlichen Mitspieler aus dem Raum. Lokal: 1 Mensch + KI.
+  const players=[{name:myName,isAI:false}];
+  const pool=AI_POOL.filter(n=>n.toLowerCase()!==myName.toLowerCase()).sort(()=>Math.random()-.5);
+  for(let i=1;i<lobbyCount;i++) players.push({name:pool[i-1]||('KI '+i),isAI:true});
+  G=freshG(players); loadBier();
+  showScreen('game'); updateKaiser(); startRecovery();
+  runLaden();
+}
 
 /* ============================================================
-   SPIELSTART + LADEN
+   LADEN — höchste Zahl beginnt
    ============================================================ */
-function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
-
-async function startGame(){
-  const humans=lobbyPlayers.filter(p=>!p.isAI).length;
-  if(lobbyPlayers.length<2){ toast('Mindestens 2 Spieler nötig.','warn'); return; }
-  lobbyPlayers.forEach((p,i)=>{ if(!p.name.trim()) p.name=(p.isAI?'KI ':'Spieler ')+(i+1); });
-  G=freshG(lobbyPlayers, lobbyMode);
-  loadBiersammler();
-  showScreen('game');
-  updateKaiserPill();
-  startRecoveryWatch();
-  await runLaden();
-}
-
 async function runLaden(){
-  G.phase='laden';
-  $('phaseLabel').textContent='Laden';
-  $('roundChip').textContent='Wer beginnt?';
-  $('playersBox').innerHTML='';
-  $('controls').innerHTML='';
-  $('arenaWho').textContent='Laden — höchste Zahl beginnt';
-  $('arenaThrows').textContent='Jeder ein Würfel';
-  $('comboBig').className='combo-big'; $('comboBig').textContent='';
-  $('keepHint').style.display='none';
+  G.phase='laden'; $('phaseLabel').textContent='Laden'; $('roundChip').textContent='Wer beginnt?';
+  $('hint').style.display='none'; $('controls').innerHTML=''; $('comboBig').className='combo-big'; $('comboBig').textContent='';
   renderPlayers();
-
-  let rolls, best, winners;
+  let order, best, winners;
   do{
-    rolls=G.active.map(()=>0);
-    // animierter Einzelwurf pro Spieler
-    for(let k=0;k<G.active.length;k++){
-      const idx=G.active[k];
-      $('diceBox').innerHTML=`<div class="die rolling">${diePips(rollDie())}</div>`;
-      await sleep(260);
-      rolls[k]=rollDie();
-      $('diceBox').innerHTML=`<div class="die">${diePips(rolls[k])}</div>`;
-      $('arenaWho').textContent=`${G.players[idx].name}: ${rolls[k]}`;
-      vibe(12);
-      await sleep(380);
+    order=participants(); const rolls=[];
+    for(const idx of order){
+      $('cup').classList.add('shake'); playDice();
+      $('dice').innerHTML=`<div class="die roll">${pips(rollDie())}</div>`;
+      await sleep(260); const v=rollDie(); rolls.push(v);
+      $('dice').innerHTML=`<div class="die${v===1?' one':''}">${pips(v)}</div>`;
+      $('who').textContent=`${G.players[idx].name}: ${v}`; $('cup').classList.remove('shake'); vibe(12); await sleep(360);
     }
-    best=Math.max(...rolls);
-    winners=G.active.filter((_,k)=>rolls[k]===best);
-  } while(winners.length>1); // Gleichstand → neu
-
-  G.starter=winners[0];
-  toast(`${G.players[G.starter].name} beginnt!`,'ok');
-  $('keepHint').style.display='';
-  await sleep(500);
-  beginRound(true);
+    best=Math.max(...rolls); winners=order.filter((_,k)=>rolls[k]===best);
+  } while(winners.length>1);
+  G.starter=winners[0]; toast(`${G.players[G.starter].name} beginnt!`,'ok'); $('hint').style.display='';
+  await sleep(450); beginRound();
 }
 
 /* ============================================================
    RUNDE
    ============================================================ */
-function buildTurnOrder(){
-  const pool = (G.half==='finale') ? G.finalists.slice() : G.active.slice();
-  // ab starter, in Sitzreihenfolge
-  const start = pool.includes(G.starter) ? G.starter : pool[0];
-  const order=[]; const si=pool.indexOf(start);
-  for(let i=0;i<pool.length;i++) order.push(pool[(si+i)%pool.length]);
-  return order;
-}
-function beginRound(first){
-  G.phase='rolling';
-  G.turnOrder=buildTurnOrder();
-  G.turnPtr=0;
-  G.playerStates=G.players.map(()=>({dice:[0,0,0,0,0],kept:[false,false,false,false,false],throws:0,done:false,combo:null}));
+function buildOrder(){ const pool=participants(); const start=pool.includes(G.starter)?G.starter:pool[0];
+  const si=pool.indexOf(start); const o=[]; for(let i=0;i<pool.length;i++)o.push(pool[(si+i)%pool.length]); return o; }
+function beginRound(){
+  G.phase='rolling'; G.turnOrder=buildOrder(); G.turnPtr=0;
+  G.playerStates=G.players.map(()=>({dice:[1,1,1],kept:[false,false,false],throwNum:0,done:false,concealed:false,combo:null,order:0,mustRoll:false}));
+  G.turnOrder.forEach((idx,k)=>{ G.playerStates[idx].order=k; });
   G.ts=Date.now();
-  // MP_STUB: if(IS_HOST) MP.pushState(G)  — vollen State pushen; Gäste lesen nur.
-  renderAll();
-  startTurn();
+  // MP_STUB: if(IS_HOST) pushState(G) — vollen State pushen; Gäste lesen nur.
+  renderAll(); startTurn();
 }
-function curIdx(){ return G.turnOrder[G.turnPtr]; }
-
+function cur(){ return G.turnOrder[G.turnPtr]; }
 function startTurn(){
-  const idx=curIdx();
+  const idx=cur(), ps=G.playerStates[idx];
   renderPlayers();
-  const st=G.playerStates[idx];
-  $('arenaWho').textContent=G.players[idx].name+(G.players[idx].isAI?' (KI)':' — du bist dran');
-  $('arenaThrows').textContent=`Wurf ${st.throws} / 3`;
+  $('who').textContent=G.players[idx].name+(G.players[idx].isAI?' (KI)':' — du bist dran ✦');
+  $('thr').textContent=`Wurf ${ps.throwNum} / ${THROWS}`;
   $('comboBig').className='combo-big'; $('comboBig').textContent='';
   renderDice();
-  if(G.players[idx].isAI){ $('keepHint').style.display='none'; aiTurn(); }
-  else { $('keepHint').style.display=''; renderControls(); }
+  if(G.players[idx].isAI){ $('hint').style.display='none'; aiTurn(); }
+  else{ $('hint').style.display=''; renderControls(); }
 }
-
 function renderControls(){
-  const idx=curIdx(); const st=G.playerStates[idx];
-  let h='';
-  if(st.throws===0){
-    h=`<button class="btn cyan" id="rollBtn">🎲 Würfeln</button>`;
-  } else if(st.throws<3){
-    h=`<div class="row">
-         <button class="btn cyan" id="rollBtn">Nochmal (${st.throws}/3)</button>
-         <button class="btn ghost" id="doneBtn">Behalten & fertig</button>
-       </div>`;
-  } else {
-    h=`<button class="btn" id="doneBtn">Zug beenden</button>`;
+  const idx=cur(), ps=G.playerStates[idx]; let h='';
+  if(ps.throwNum===0){ h=`<button class="btn cyan" id="rollBtn">🎲 Würfeln</button>`; }
+  else{
+    const last = ps.throwNum>=THROWS;
+    h='<div class="row">';
+    if(!last && !ps.mustRoll) h+=`<button class="btn ghost" id="doneBtn">Fertig</button>`;
+    if(!last) h+=`<button class="btn cyan" id="rollBtn">${ps.mustRoll?'Weiter würfeln':'Nochmal ('+ps.throwNum+'/'+THROWS+')'}</button>`;
+    if(last) h+=`<button class="btn" id="doneBtn">Zug beenden</button>`;
+    h+='</div>';
+    const cd=canDrehen(ps), cv=(ps.throwNum>=1 && !ps.mustRoll && !last);
+    if(cd||cv){ h+='<div class="row" style="margin-top:10px">';
+      if(cd) h+=`<button class="btn gold sm" id="drehBtn">🔄 Drehen (zwei 6en→1)</button>`;
+      if(cv) h+=`<button class="btn ghost sm" id="verdBtn">🙈 Verdeckt beenden</button>`;
+      h+='</div>'; }
   }
   $('controls').innerHTML=h;
-  const rb=$('rollBtn'); if(rb) rb.addEventListener('click',humanRoll);
-  const db=$('doneBtn'); if(db) db.addEventListener('click',()=>finishTurn(idx));
+  const rb=$('rollBtn'); if(rb)rb.addEventListener('click',humanRoll);
+  const db=$('doneBtn'); if(db)db.addEventListener('click',()=>finishTurn(idx,false));
+  const dr=$('drehBtn'); if(dr)dr.addEventListener('click',()=>{ doDrehen(idx); renderDice(); renderControls(); });
+  const vb=$('verdBtn'); if(vb)vb.addEventListener('click',()=>finishTurn(idx,true));
 }
+async function humanRoll(){ const idx=cur(); $('controls').innerHTML=''; await animRoll(idx);
+  const ps=G.playerStates[idx]; ps.mustRoll=false;
+  if(ps.throwNum>=THROWS) finishTurn(idx,false); else { renderControls(); renderDice(); } }
 
-async function humanRoll(){
-  const idx=curIdx(); const st=G.playerStates[idx];
-  $('controls').innerHTML='';
-  await animateRoll(idx);
-  // SCHOCK-OUT prüfen (1-1-1-1-1 im 1. Wurf)
-  if(st.throws===1 && st.dice.every(d=>d===1)){ return schockOut(idx); }
-  if(st.throws>=3) finishTurn(idx);
-  else { renderControls(); renderDice(); }
+async function animRoll(idx){
+  const ps=G.playerStates[idx]; const els=[...$('dice').children];
+  $('cup').classList.add('shake'); playDice(); vibe([10,30,10]);
+  els.forEach((el,i)=>{ if(!ps.kept[i]) el.classList.add('roll'); });
+  for(let f=0;f<5;f++){ els.forEach((el,i)=>{ if(!ps.kept[i]) el.innerHTML=pips(rollDie()); }); await sleep(70); }
+  for(let i=0;i<3;i++){ if(!ps.kept[i]) ps.dice[i]=rollDie(); }
+  ps.throwNum++; $('cup').classList.remove('shake'); renderDice(); $('thr').textContent=`Wurf ${ps.throwNum} / ${THROWS}`;
 }
-
-async function animateRoll(idx){
-  const st=G.playerStates[idx];
-  const dieEls=[...$('diceBox').children];
-  dieEls.forEach((el,i)=>{ if(!st.kept[i]) el.classList.add('rolling'); });
-  vibe([10,30,10]);
-  // Flicker
-  for(let f=0;f<6;f++){
-    dieEls.forEach((el,i)=>{ if(!st.kept[i]) el.innerHTML=diePips(rollDie()); });
-    await sleep(70);
-  }
-  for(let i=0;i<5;i++){ if(!st.kept[i]) st.dice[i]=rollDie(); }
-  st.throws++;
-  renderDice();
-  $('arenaThrows').textContent=`Wurf ${st.throws} / 3`;
-}
-
 function renderDice(){
-  const idx=curIdx(); const st=G.playerStates[idx];
-  const human=!G.players[idx].isAI;
-  $('diceBox').innerHTML=st.dice.map((d,i)=>
-    `<div class="die${st.kept[i]?' kept':''}" data-i="${i}">${diePips(d||1)}</div>`).join('');
-  if(human && st.throws>0 && st.throws<3){
-    [...$('diceBox').children].forEach(el=>el.addEventListener('click',()=>{
-      const i=+el.dataset.i; st.kept[i]=!st.kept[i]; vibe(8); renderDice();
-    }));
+  const idx=cur(), ps=G.playerStates[idx], human=!G.players[idx].isAI;
+  $('dice').innerHTML=ps.dice.map((d,i)=>`<div class="die${d===1?' one':''}${ps.kept[i]?' kept':''}" data-i="${i}">${pips(d)}</div>`).join('');
+  if(human && ps.throwNum>0 && ps.throwNum<THROWS && !ps.mustRoll){
+    [...$('dice').children].forEach(el=>el.addEventListener('click',()=>{ const i=+el.dataset.i; ps.kept[i]=!ps.kept[i]; vibe(8); renderDice(); }));
   }
 }
 
-function finishTurn(idx){
-  const st=G.playerStates[idx];
-  if(st.throws===0){ toast('Erst würfeln!','warn'); return; }
-  st.done=true;
-  st.combo=evaluateHand(st.dice, st.throws);
-  vibe(20);
-  // Große Kombi-Anzeige
-  const cb=$('comboBig'); cb.textContent=st.combo.label; cb.className='combo-big pop';
-  renderPlayers();
-  setTimeout(advanceTurn, G.players[idx].isAI?650:900);
-}
+/* ---------- Drehen: zwei (nicht behaltene) 6en → erste wird 1 (behalten), zweite neu ---------- */
+function canDrehen(ps){ if(ps.throwNum<1 || ps.throwNum>=THROWS) return false;
+  return ps.dice.filter((d,i)=>!ps.kept[i]&&d===6).length>=2; }
+function doDrehen(idx){ const ps=G.playerStates[idx]; if(!canDrehen(ps))return; let conv=0;
+  for(let i=0;i<3&&conv<2;i++){ if(!ps.kept[i]&&ps.dice[i]===6){ if(conv===0){ ps.dice[i]=1; ps.kept[i]=true; } conv++; } }
+  ps.mustRoll=true; vibe(20); toast('Gedreht — eine 6 wird zur 1, du musst nochmal würfeln.','ok'); }
 
-function advanceTurn(){
-  // nächsten nicht-fertigen Spieler suchen
-  G.turnPtr++;
-  while(G.turnPtr<G.turnOrder.length && G.playerStates[G.turnOrder[G.turnPtr]].done) G.turnPtr++;
-  if(G.turnPtr>=G.turnOrder.length){ resolveRound(); return; }
-  startTurn();
+function finishTurn(idx,concealed){
+  const ps=G.playerStates[idx]; if(ps.throwNum===0){ toast('Erst würfeln!','warn'); return; }
+  if(ps.mustRoll){ toast('Nach dem Drehen musst du erst würfeln.','warn'); return; }
+  ps.done=true; ps.concealed=!!concealed; ps.combo=evalDice(ps.dice,ps.throwNum); vibe(20);
+  if(!concealed){ const cb=$('comboBig'); cb.textContent=ps.combo.label; cb.className='combo-big pop grad'; }
+  else { toast(G.players[idx].name+' beendet verdeckt 🙈',''); }
+  renderPlayers();
+  setTimeout(advance, G.players[idx].isAI?600:850);
 }
+function advance(){ G.turnPtr++; while(G.turnPtr<G.turnOrder.length && G.playerStates[G.turnOrder[G.turnPtr]].done) G.turnPtr++;
+  if(G.turnPtr>=G.turnOrder.length) resolveRound(); else startTurn(); }
 
 /* ---------- KI ---------- */
 async function aiTurn(){
-  const idx=curIdx(); const st=G.playerStates[idx];
-  $('controls').innerHTML='';
-  await sleep(450);
-  while(st.throws<3 && !st.done){
-    await animateRoll(idx);
-    if(st.throws===1 && st.dice.every(d=>d===1)){ return schockOut(idx); }
-    aiDecideKeep(idx);
-    renderDice();
-    // weiterwürfeln? wenn schon alle behalten / 5-gleich → stop
-    const keepAll=st.kept.every(k=>k);
-    const allSame=st.dice.every(d=>d===st.dice[0]);
-    if(keepAll||allSame) break;
-    if(st.throws>=3) break;
-    // 25% Restzufall: trotzdem aufhören
-    if(st.throws===2 && Math.random()<.35) break;
-    await sleep(520);
+  const idx=cur(), ps=G.playerStates[idx]; $('controls').innerHTML=''; await sleep(420);
+  while(ps.throwNum<THROWS && !ps.done){
+    await animRoll(idx); ps.mustRoll=false;
+    aiKeep(idx); renderDice();
+    const ones=ps.dice.filter(d=>d===1).length;
+    if(ones===3) break;                              // Schock Aus, sofort fertig
+    if(ps.dice.every(d=>d===ps.dice[0])) break;      // General
+    if(ps.kept.every(k=>k)) break;
+    if(ps.throwNum>=THROWS) break;
+    if(ps.throwNum===2 && Math.random()<.4) break;
+    await sleep(480);
   }
-  finishTurn(idx);
+  finishTurn(idx,false);
 }
-function aiDecideKeep(idx){
-  const st=G.playerStates[idx];
-  const c=[0,0,0,0,0,0,0]; st.dice.forEach(d=>c[d]++);
-  // häufigsten Wert finden
-  let bestV=1; for(let v=2;v<=6;v++) if(c[v]>c[bestV]||(c[v]===c[bestV]&&v>bestV)) bestV=v;
-  const maxC=c[bestV];
-  st.kept=st.dice.map(()=>false);
-  if(maxC>=2){
-    // Pasch/Drilling halten
-    st.dice.forEach((d,i)=>{ if(d===bestV) st.kept[i]=true; });
-    // bei Drilling+ zusätzlich höchsten Einzelwürfel ggf. halten (Full-House-Chance)
-  } else {
-    // kein Paar → höchsten halten (Richtung gute Einzelwertung)
-    let hi=0,hiI=0; st.dice.forEach((d,i)=>{ if(d>hi){hi=d;hiI=i;} });
-    if(hi>=5) st.kept[hiI]=true;
-  }
-}
-
-/* ============================================================
-   SCHOCK-OUT  (1-1-1-1-1 im 1. Wurf)
-   Würfelnder scheidet aus, alle anderen zahlen 1 Deckel.
-   ============================================================ */
-function schockOut(idx){
-  vibe([40,40,80]);
-  const st=G.playerStates[idx];
-  st.done=true; st.combo={type:'SCHOCKOUT',label:'SCHOCK-OUT'};
-  const others=G.turnOrder.filter(i=>i!==idx);
-  others.forEach(i=>giveLid(i,1,idx));
-  const cb=$('comboBig'); cb.textContent='SCHOCK-OUT!'; cb.className='combo-big pop'; cb.style.color='var(--pink)';
-  renderAll();
-  showSummary({
-    title:'💥 Schock-Out!',
-    subtitle:`${G.players[idx].name} würfelt fünf Einsen – alle anderen kassieren 1 Deckel.`,
-    rows:G.turnOrder.map(i=>({idx:i,combo:i===idx?'SCHOCK-OUT (raus)':'+1 Deckel',win:i===idx,lose:i!==idx,dice:i===idx?st.dice:null})),
-    loser:null,
-    next:()=>{ cb.style.color=''; afterRound(idx); }
-  });
+function aiKeep(idx){
+  const ps=G.playerStates[idx]; const c=[0,0,0,0,0,0,0]; ps.dice.forEach(d=>c[d]++);
+  ps.kept=[false,false,false];
+  if(c[1]>=1){ ps.dice.forEach((d,i)=>{ if(d===1) ps.kept[i]=true; }); return; } // 1en sind Gold (Schock)
+  // sonst häufigsten/höchsten Wert halten
+  let bv=2; for(let v=3;v<=6;v++){ if(c[v]>c[bv]||(c[v]===c[bv]&&v>bv)) bv=v; }
+  if(c[bv]>=2){ ps.dice.forEach((d,i)=>{ if(d===bv) ps.kept[i]=true; }); }
+  else { let hi=0,hii=0; ps.dice.forEach((d,i)=>{ if(d>hi){hi=d;hii=i;} }); if(hi>=5) ps.kept[hii]=true; }
 }
 
 /* ============================================================
    RUNDE AUSWERTEN
    ============================================================ */
-function giveLid(toIdx,n,fromIdx){
-  for(let k=0;k<n;k++){
-    if(G.middleLids>0){ G.middleLids--; }
-    else if(fromIdx!=null && G.lids[fromIdx]>0){ G.lids[fromIdx]--; }
-    else { /* nichts mehr zu holen */ }
-    G.lids[toIdx]++;
-    if(G.lids[toIdx]>=TOTAL_LIDS){ G.lids[toIdx]=TOTAL_LIDS; break; }
+function giveLids(toIdx,amount,fromIdx){
+  for(let k=0;k<amount;k++){
+    if(G.middleLids>0) G.middleLids--;
+    else if(fromIdx!=null && G.players[fromIdx].lids>0) G.players[fromIdx].lids--;
+    else break;
+    G.players[toIdx].lids++;
+    if(G.players[toIdx].lids>=TOTAL_LIDS){ G.players[toIdx].lids=TOTAL_LIDS; break; }
   }
 }
-
-function resolveRound(){
-  G.phase='summary';
-  const ids=G.turnOrder;
-  // Bewertung sicherstellen
-  ids.forEach(i=>{ const st=G.playerStates[i]; if(!st.combo) st.combo=evaluateHand(st.dice,st.throws||1); });
-  // bester & schlechtester
+async function resolveRound(){
+  G.phase='summary'; const ids=G.turnOrder.slice();
+  ids.forEach(i=>{ const ps=G.playerStates[i]; if(!ps.combo) ps.combo=evalDice(ps.dice,ps.throwNum||1); });
+  // verdeckte nacheinander aufdecken
+  const hidden=ids.filter(i=>G.playerStates[i].concealed);
+  if(hidden.length){ for(const i of hidden){ const cb=$('comboBig'); cb.textContent=G.players[i].name+': '+G.playerStates[i].combo.label; cb.className='combo-big pop grad'; G.playerStates[i].concealed=false; renderPlayers(); await sleep(1200); } }
   let win=ids[0], lose=ids[0];
-  ids.forEach(i=>{
-    if(G.playerStates[i].combo.rank>G.playerStates[win].combo.rank) win=i;
-    if(G.playerStates[i].combo.rank<G.playerStates[lose].combo.rank) lose=i;
-  });
-  let deckel=G.playerStates[win].combo.deckel||1;
-  // Schock-Bonus (Verlierer zahlt doppelt) wenn Gewinner einen Schock hatte
-  if(G.playerStates[win].combo.type==='SCHOCK') deckel=2;
-  giveLid(lose,deckel,win);
-  vibe(30);
-
-  const rows=ids.map(i=>({
-    idx:i, combo:G.playerStates[i].combo.label, win:i===win, lose:i===lose, dice:G.playerStates[i].dice
-  }));
+  ids.forEach(i=>{ if(sortKey(G.playerStates[i])>sortKey(G.playerStates[win])) win=i; if(sortKey(G.playerStates[i])<sortKey(G.playerStates[lose])) lose=i; });
+  const wc=G.playerStates[win].combo;
+  let amount = wc.deckel==='all' ? (G.middleLids>0?G.middleLids:3) : wc.deckel;
+  giveLids(lose,amount,win); vibe(30);
+  // Event-Kommentar
+  let ev=''; if(wc.type==='schockaus')ev=EVENT.schockaus; else if(wc.type==='schock'&&wc.n===2)ev=EVENT.doof; else if(wc.type==='schock')ev=EVENT.schock; else if(wc.type==='general')ev=EVENT.general; else if(wc.type==='strasse')ev=EVENT.strasse;
+  const rows=ids.map(i=>({idx:i,combo:G.playerStates[i].combo.label,win:i===win,lose:i===lose,dice:G.playerStates[i].dice}));
   renderAll();
-  showSummary({
-    title:`Runde ${G.round}`,
-    subtitle:`${G.players[win].name} gewinnt · ${G.players[lose].name} kassiert ${deckel} Deckel`,
-    rows, loser:lose,
-    next:()=>afterRound(lose)
-  });
+  showSummary({ title:`Runde ${G.round}`, subtitle:`${ev?ev+'<br>':''}${G.players[win].name} gewinnt · ${G.players[lose].name} kassiert ${amount} Deckel`,
+    rows, next:()=>afterRound(lose) });
 }
-
-function showSummary(opt){
-  let h=`<h2>${opt.title}</h2>`;
-  if(opt.subtitle) h+=`<p class="sub" style="text-align:center;margin-top:-4px">${opt.subtitle}</p>`;
+function showSummary(o){
+  let h=`<h2>${o.title}</h2>`; if(o.subtitle)h+=`<p class="sub" style="text-align:center;margin-top:-4px">${o.subtitle}</p>`;
   h+='<div style="margin:14px 0">';
-  opt.rows.forEach(r=>{
-    const dice=r.dice?('<span class="mini-d">'+r.dice.map(d=>`<span>${d}</span>`).join('')+'</span>'):'';
-    h+=`<div class="summary-row ${r.win?'win':''}${r.lose?'lose':''}">
-          <span class="nm">${r.win?'👑 ':''}${r.lose?'💀 ':''}${G.players[r.idx].name}</span>
-          <span class="cb">${dice} ${r.combo}</span>
-        </div>`;
-  });
-  h+='</div>';
-  h+=`<button class="btn" id="sumNext">Weiter</button>`;
-  openModal(h);
-  $('sumNext').addEventListener('click',()=>{ closeModal(); opt.next&&opt.next(); });
+  o.rows.forEach(r=>{ const dice='<span class="mini-d">'+r.dice.map(d=>`<span>${d}</span>`).join('')+'</span>';
+    h+=`<div class="sum-row ${r.win?'win':''}${r.lose?'lose':''}"><span class="nm">${r.win?'👑 ':''}${r.lose?'💀 ':''}${G.players[r.idx].name}</span><span class="cb">${dice} ${r.combo}</span></div>`; });
+  h+='</div><button class="btn" id="sumNext">Weiter</button>';
+  openModal(h); $('sumNext').addEventListener('click',()=>{ closeModal(); o.next&&o.next(); });
 }
-
-/* ---------- Nach der Runde ---------- */
-function afterRound(roundLoser){
-  // Halbzeit-/Spielende prüfen
-  if(checkHalfEnd()) return;
-  // nächste Runde: Verlierer beginnt
-  G.starter=roundLoser;
-  G.round++;
-  beginRound(false);
-}
+function afterRound(roundLoser){ if(checkPhaseEnd())return; G.starter=roundLoser; G.round++; beginRound(); }
 
 /* ============================================================
-   HALBZEIT / SPIEL-ENDE
+   PHASEN-ENDE: Halbzeit / Finale / Kalt erwischt
    ============================================================ */
-function leaderIdx(){ // Spieler mit >=TOTAL_LIDS
-  for(const i of (G.half==='finale'?G.finalists:G.active)) if(G.lids[i]>=TOTAL_LIDS) return i;
-  return -1;
-}
-function checkHalfEnd(){
-  const li=leaderIdx();
-  if(li<0) return false;
-
-  if(G.mode==='schnelle5'){
-    G.gameLoser=li; onGameComplete(li); return true;
-  }
+function leader(){ for(const i of participants()) if(G.players[i].lids>=TOTAL_LIDS) return i; return -1; }
+function resetLids(){ G.players.forEach(p=>p.lids=0); G.middleLids=TOTAL_LIDS; }
+function checkPhaseEnd(){
+  const li=leader(); if(li<0) return false;
+  // MP_STUB: handlePhaseChange() auf allen Clients aus gesynctem State ableiten.
   if(G.half===1){
-    G.half=2; G.halfLosers[0]=li; G.marker=li;
-    resetLids(); G.starter=li; G.round=1;
-    G.phase='halfend';
-    showPhaseModal('Hälfte 1 beendet', `${G.players[li].name} verliert Hälfte 1 und bekommt den Marker 🔖 — beginnt Hälfte 2.`, ()=>beginRound(false));
+    G.halfLosers[0]=li; G.marker=li; resetLids(); G.half=2; G.starter=li; G.round=1; G.phase='halfend';
+    phaseModal('Hälfte 1 beendet',`${G.players[li].name} verliert Hälfte 1, bekommt den 🔖 Marker und beginnt Hälfte 2.`,()=>beginRound());
     return true;
   }
   if(G.half===2){
     G.halfLosers[1]=li;
-    // Kalt erwischt: gleicher Spieler verliert beide Hälften
-    if(G.halfLosers[0]===G.halfLosers[1]){
-      G.gameLoser=li; G.phase='gameover';
-      onGameComplete(li, `${G.players[li].name} verliert beide Hälften — kalt erwischt! Kein Finale.`);
-      return true;
-    }
-    // Finale: beide Halbzeit-Verlierer
-    G.finalists=[G.halfLosers[0],G.halfLosers[1]];
-    G.half='finale'; resetLids(); G.starter=G.halfLosers[1]; G.round=1;
-    G.phase='halfend';
-    showPhaseModal('Finale!', `${G.players[G.finalists[0]].name} gegen ${G.players[G.finalists[1]].name} — wer zuerst 13 Deckel hat, verliert.`, ()=>beginRound(false));
+    if(G.halfLosers[0]===G.halfLosers[1]){ G.gameLoser=li; G.phase='gameover'; onGameComplete(li,`${G.players[li].name} verliert beide Hälften — kalt erwischt! Kein Finale.`); return true; }
+    G.finalists=[G.halfLosers[0],G.halfLosers[1]]; resetLids(); G.half='finale'; G.starter=G.halfLosers[1]; G.round=1; G.phase='halfend';
+    phaseModal('Finale!',`${G.players[G.finalists[0]].name} gegen ${G.players[G.finalists[1]].name} — wer zuerst 13 Deckel hat, verliert.`,()=>beginRound());
     return true;
   }
-  if(G.half==='finale'){
-    G.gameLoser=li; G.phase='gameover'; onGameComplete(li); return true;
-  }
+  if(G.half==='finale'){ G.gameLoser=li; G.phase='gameover'; onGameComplete(li); return true; }
   return false;
 }
-function resetLids(){ G.lids=G.players.map(()=>0); G.middleLids=TOTAL_LIDS; }
-
-function showPhaseModal(title,text,next){
-  // handlePhaseChange-Äquivalent. MP_STUB: auf allen Clients via State-Sync auslösen.
-  openModal(`<h2>${title}</h2><p style="text-align:center">${text}</p><button class="btn" id="phNext">Weiter</button>`);
-  $('phNext').addEventListener('click',()=>{ closeModal(); next&&next(); });
-}
+function phaseModal(t,txt,next){ openModal(`<h2>${t}</h2><p style="text-align:center">${txt}</p><button class="btn" id="pn">Weiter</button>`);
+  $('pn').addEventListener('click',()=>{ closeModal(); next&&next(); }); }
 
 /* ============================================================
    KOMPLETTES SPIEL BEENDET
    ============================================================ */
-function onGameComplete(loserIdx, extraText){
-  const humans=G.players.filter(p=>!p.isAI).length;
-  const loserIsHuman=!G.players[loserIdx].isAI;
-  // Biersammler nur: >=2 Menschen, Verlierer ist Mensch
-  if(humans>=2 && loserIsHuman) recordLoss(G.players[loserIdx].name);
-
+function onGameComplete(loserIdx,extra){
+  const humans=G.players.filter(p=>!p.isAI&&!p.left).length;
+  if(humans>=2 && !G.players[loserIdx].isAI) recordLoss(G.players[loserIdx].name);
   if(G.kaiserrunde){
     G.kaiserGamesPlayed++;
-    if(G.kaiserGamesPlayed===1){
-      // laufendes Spiel beendet → jetzt DIE Kaiserrunde (ein weiteres komplettes Spiel)
-      updateKaiserPill();
-      showGameOver(loserIdx, extraText, true, ()=>startNextGame());
-      return;
-    }
-    if(G.kaiserGamesPlayed>=2){
-      // Kaiserrunde gespielt → Session-Ende + Konfetti + Abrechnung
-      G.phase='kaiserover';
-      showKaiserOver(loserIdx);
-      return;
-    }
+    if(G.kaiserGamesPlayed===1){ updateKaiser(); gameOverOverlay(loserIdx,extra,true,()=>nextGame()); return; }
+    if(G.kaiserGamesPlayed>=2){ G.phase='kaiserover'; kaiserOverOverlay(loserIdx); return; }
   }
-  showGameOver(loserIdx, extraText, false, ()=>startNextGame());
+  gameOverOverlay(loserIdx,extra,false,()=>nextGame());
 }
-
-function showGameOver(loserIdx,extraText,isKaiserHandoff,onNext){
+function gameOverOverlay(loserIdx,extra,kaiserHandoff,onNext){
   vibe([60,40,60,40,120]);
-  let h=`<h2>🎲 Spiel beendet</h2>`;
-  h+=`<p style="text-align:center;font-size:1.05rem"><b style="color:#ff8c82;font-family:'Cinzel'">${G.players[loserIdx].name}</b> verliert das Spiel.</p>`;
-  if(extraText) h+=`<p class="sub" style="text-align:center">${extraText}</p>`;
-  if(isKaiserHandoff) h+=`<p style="text-align:center;color:var(--gold);font-family:'Cinzel'">👑 Jetzt folgt die Kaiserrunde — das allerletzte Spiel!</p>`;
-  h+='<h3>🍺 Biersammler — Sitzung</h3><div id="goBier"></div>';
-  h+=`<div style="margin-top:16px">${isKaiserHandoff?'<button class="btn" id="goNext">Kaiserrunde starten 👑</button>':'<button class="btn" id="goNext">Neues Spiel</button>'}</div>`;
-  if(!isKaiserHandoff && !G.kaiserrunde) h+=`<button class="btn ghost sm" id="goHome" style="width:100%;margin-top:8px">Zur Lobby</button>`;
-  openModal(h);
-  renderBierInto('goBier');
-  $('goNext').addEventListener('click',()=>{ closeModal(); onNext&&onNext(); });
-  const gh=$('goHome'); if(gh) gh.addEventListener('click',()=>{ closeModal(); goLobby(); });
+  $('ovCmt').textContent=pick(LOSER_LINES); $('ovLbl').textContent='Verlierer'; $('ovWho').textContent='💀 '+G.players[loserIdx].name;
+  $('overlay').classList.add('on');
+  setTimeout(()=>{ $('overlay').classList.remove('on');
+    let h=`<h2>🎲 Spiel beendet</h2><p style="text-align:center;font-size:1.05rem"><b style="color:var(--danger)">${G.players[loserIdx].name}</b> verliert.</p>`;
+    if(extra)h+=`<p class="sub" style="text-align:center">${extra}</p>`;
+    if(kaiserHandoff)h+=`<p style="text-align:center;color:var(--gold);font-weight:800">👑 Jetzt die Kaiserrunde — das letzte Spiel!</p>`;
+    h+='<h3>🍺 Biersammler</h3><div id="goBier"></div>';
+    h+=`<button class="btn" id="goNext" style="margin-top:14px">${kaiserHandoff?'Kaiserrunde starten 👑':'Neues Spiel'}</button>`;
+    if(!kaiserHandoff && !G.kaiserrunde) h+=`<button class="btn ghost sm" id="goHome" style="width:100%;margin-top:8px">Zur Lobby</button>`;
+    openModal(h); renderBier('goBier');
+    $('goNext').addEventListener('click',()=>{ closeModal(); onNext&&onNext(); });
+    const gh=$('goHome'); if(gh)gh.addEventListener('click',()=>{ closeModal(); goLobby(); });
+  },2200);
 }
-
-function showKaiserOver(loserIdx){
-  vibe([80,40,80,40,80,40,200]);
-  confetti();
-  let h=`<h2>👑 Kaiserrunde beendet!</h2>`;
-  h+=`<p style="text-align:center"><b style="color:#ff8c82;font-family:'Cinzel'">${G.players[loserIdx].name}</b> verliert die Kaiserrunde.</p>`;
-  h+='<h3>🍺 Biersammler — Abrechnung</h3><div id="koBier"></div>';
-  h+=`<p class="sub" style="text-align:center;margin-top:12px">Angekündigt von ${G.kaiserrundeBy||'—'}.</p>`;
-  h+=`<button class="btn" id="koNew" style="margin-top:10px">Neues Spiel</button>`;
-  h+=`<button class="btn ghost sm" id="koHome" style="width:100%;margin-top:8px">Zur Lobby</button>`;
-  openModal(h);
-  renderBierInto('koBier');
-  $('koNew').addEventListener('click',()=>{ closeModal(); G.kaiserrunde=false; G.kaiserGamesPlayed=0; G.kaiserrundeBy=null; updateKaiserPill(); startNextGame(); });
-  $('koHome').addEventListener('click',()=>{ closeModal(); goLobby(); });
+function kaiserOverOverlay(loserIdx){
+  vibe([80,40,80,40,80,40,200]); confetti(); playApplause();
+  $('ovCmt').textContent='👑 KAISERRUNDE VORBEI!'; $('ovLbl').textContent='Verlierer der Kaiserrunde'; $('ovWho').textContent='💀 '+G.players[loserIdx].name;
+  $('overlay').classList.add('on');
+  setTimeout(()=>{ $('overlay').classList.remove('on');
+    let h=`<h2>👑 Kaiserrunde beendet</h2><p style="text-align:center"><b style="color:var(--danger)">${G.players[loserIdx].name}</b> verliert die Kaiserrunde.</p>`;
+    h+='<h3>🍺 Biersammler — Abrechnung</h3><div id="koBier"></div>';
+    h+=`<p class="sub" style="text-align:center;margin-top:10px">Angekündigt von ${G.kaiserrundeBy||'—'}.</p>`;
+    h+=`<button class="btn" id="koNew" style="margin-top:10px">Neues Spiel</button><button class="btn ghost sm" id="koHome" style="width:100%;margin-top:8px">Zur Lobby</button>`;
+    openModal(h); renderBier('koBier');
+    $('koNew').addEventListener('click',()=>{ closeModal(); G.kaiserrunde=false; G.kaiserGamesPlayed=0; G.kaiserrundeBy=null; updateKaiser(); nextGame(); });
+    $('koHome').addEventListener('click',()=>{ closeModal(); goLobby(); });
+  },2600);
 }
-
-function startNextGame(){
-  // komplettes neues Spiel, gleiche Spieler/Modus; Kaiser-Flag bleibt erhalten falls aktiv
-  const keepKaiser=G.kaiserrunde, by=G.kaiserrundeBy, played=G.kaiserGamesPlayed;
-  G=freshG(G.players.map(p=>({name:p.name,isAI:p.isAI})), G.mode);
-  G.kaiserrunde=keepKaiser; G.kaiserrundeBy=by; G.kaiserGamesPlayed=played;
-  updateKaiserPill();
-  runLaden();
-}
-function goLobby(){
-  stopRecoveryWatch();
-  showScreen('lobby'); renderLobby();
-}
+function nextGame(){ const kk=G.kaiserrunde,by=G.kaiserrundeBy,pl=G.kaiserGamesPlayed;
+  G=freshG(G.players.map(p=>({name:p.name,isAI:p.isAI}))); G.kaiserrunde=kk; G.kaiserrundeBy=by; G.kaiserGamesPlayed=pl; updateKaiser(); runLaden(); }
+function goLobby(){ stopRecovery(); showScreen('lobby'); renderBier('bierLobby'); }
 
 /* ============================================================
    KAISERRUNDE
    ============================================================ */
 $('kaiserBtn').addEventListener('click',()=>{
-  if(G.kaiserrunde){ toast('Kaiserrunde läuft bereits.','warn'); return; }
-  // MP_STUB: Gast schreibt 'kaiserrequest' Child-Node; HOST verarbeitet & pusht State.
-  G.kaiserrunde=true;
-  G.kaiserrundeBy=G.players.find(p=>!p.isAI)?.name || G.players[0].name;
-  G.kaiserGamesPlayed=0;
-  updateKaiserPill();
-  toast('👑 Kaiserrunde angekündigt! Dieses Spiel zu Ende, dann noch eins.','ok');
+  if(!G||G.kaiserrunde){ return; }
+  // MP_STUB: Gast schreibt Child-Node 'kaiserrequest'; HOST verarbeitet & pusht State.
+  G.kaiserrunde=true; G.kaiserrundeBy=(G.players.find(p=>!p.isAI)||G.players[0]).name; G.kaiserGamesPlayed=0;
+  updateKaiser(); toast('👑 Kaiserrunde angekündigt! Dieses Spiel zu Ende, dann noch eins.','ok');
 });
-function updateKaiserPill(){
-  const pill=$('kaiserPill');
-  if(G && G.kaiserrunde){
-    pill.classList.add('show');
-    pill.textContent = (G.kaiserGamesPlayed>=1) ? '👑 KAISERRUNDE — letztes Spiel!' : '👑 Kaiserrunde angekündigt — dieses Spiel läuft noch';
-  } else pill.classList.remove('show');
-  $('kaiserBtn').style.display = (G && G.kaiserrunde)?'none':'';
-  $('kaiserHelp').style.display = (G && G.kaiserrunde)?'none':'';
-}
+function updateKaiser(){ const p=$('kpill');
+  if(G&&G.kaiserrunde){ p.classList.add('on'); p.textContent=(G.kaiserGamesPlayed>=1)?'👑 KAISERRUNDE — letztes Spiel!':'👑 Kaiserrunde angekündigt — dieses Spiel läuft noch'; }
+  else p.classList.remove('on');
+  $('kaiserBtn').style.display=(G&&G.kaiserrunde)?'none':''; $('kaiserHelp').style.display=(G&&G.kaiserrunde)?'none':''; }
 
 /* ============================================================
-   STUCK-GAME AUTO-RECOVERY
+   ZUSCHAUER / BEITRITT + BEITRITTS-STRAFE
+   (lokal als Test; in MP über Zuschauer-Child-Nodes)
    ============================================================ */
-function startRecoveryWatch(){
-  stopRecoveryWatch();
-  // MP_STUB: nur HOST läuft diesen Watcher.
-  if(!IS_HOST) return;
-  recoveryTimer=setInterval(()=>{
-    if(!G) return;
-    const li=leaderIdx();
-    if(li>=0 && (G.phase==='rolling'||G.phase==='laden')){
-      const handled=checkHalfEnd();
-      if(handled) toast('Feststeckender Zustand erkannt & behoben.','ok');
-    }
-  },4000);
+function applyJoinPenalty(slotIdx){
+  // schlechtester (= meiste Deckel) aktiver Mitspieler + 2, gedeckelt auf TOTAL_LIDS-1
+  const active=participants().filter(i=>i!==slotIdx); let worst=0;
+  active.forEach(i=>{ if(G.players[i].lids>worst) worst=G.players[i].lids; });
+  let target=Math.min(worst+2,TOTAL_LIDS-1); const cur=G.players[slotIdx].lids||0; let delta=target-cur;
+  if(delta>0){ let got=0; const fromMid=Math.min(delta,G.middleLids); G.middleLids-=fromMid; got+=fromMid;
+    let guard=0; while(got<delta&&guard<2000){ let moved=false; for(const i of active){ if(got>=delta)break; if(G.players[i].lids>0){ G.players[i].lids--; got++; moved=true; } } if(!moved)break; guard++; }
+    G.players[slotIdx].lids=cur+got;
+  } else if(delta<0){ G.middleLids+=(-delta); G.players[slotIdx].lids=target; }
 }
-function stopRecoveryWatch(){ if(recoveryTimer){ clearInterval(recoveryTimer); recoveryTimer=null; } }
-$('recoverBtn').addEventListener('click',()=>{
-  const li=leaderIdx();
-  if(li>=0){ if(checkHalfEnd()) toast('Feststeckenden Zustand behoben.','ok'); }
-  else toast('Alles in Ordnung – kein feststeckender Zustand.','ok');
-});
+// MP_STUB: _integrateSpectators() — Zuschauer mit wantToPlay in KI-Slot setzen, dann applyJoinPenalty(slot).
 
 /* ============================================================
-   SIMULATION  (Runden-Chip 800ms lang drücken)
+   STUCK-RECOVERY
    ============================================================ */
-(function setupSim(){
-  const chip=$('roundChip'); let t=null;
-  const start=()=>{ t=setTimeout(()=>{ simulateEnd(); t=null; },800); };
-  const cancel=()=>{ if(t){ clearTimeout(t); t=null; } };
-  chip.addEventListener('pointerdown',start);
-  chip.addEventListener('pointerup',cancel);
-  chip.addEventListener('pointerleave',cancel);
-  chip.addEventListener('pointercancel',cancel);
+function startRecovery(){ stopRecovery(); if(!IS_HOST)return; // MP_STUB: nur HOST
+  recoveryTimer=setInterval(()=>{ if(!G)return; const li=leader();
+    if(li>=0 && (G.phase==='rolling'||G.phase==='laden')){ if(checkPhaseEnd()) toast('Festhänger erkannt & behoben.','ok'); } },4000); }
+function stopRecovery(){ if(recoveryTimer){ clearInterval(recoveryTimer); recoveryTimer=null; } }
+$('resyncBtn').addEventListener('click',()=>{ const li=leader(); if(li>=0){ if(checkPhaseEnd())toast('Festhänger behoben.','ok'); } else toast('Alles ok — kein Festhänger.','ok'); });
+
+/* ============================================================
+   SIMULATION (Runden-Chip lang drücken / Version 3× klicken)
+   ============================================================ */
+(function(){ const chip=$('roundChip'); let t=null;
+  const s=()=>{ t=setTimeout(()=>{ simulateEnd(); t=null; },800); }; const c=()=>{ if(t){clearTimeout(t);t=null;} };
+  chip.addEventListener('pointerdown',s); chip.addEventListener('pointerup',c); chip.addEventListener('pointerleave',c); chip.addEventListener('pointercancel',c);
 })();
-function simulateEnd(){
-  if(!G||G.phase==='gameover'||G.phase==='kaiserover'){ return; }
-  const pool=(G.half==='finale')?G.finalists:G.active;
-  const li=pool[Math.floor(Math.random()*pool.length)];
-  G.lids[li]=TOTAL_LIDS;
-  closeModal();
-  vibe(40);
-  toast('⚙️ Spielende simuliert.','warn');
-  renderAll();
-  checkHalfEnd();
-}
+let _vclicks=0,_vt=null;
+$('gameVer').addEventListener('click',()=>{ _vclicks++; clearTimeout(_vt); _vt=setTimeout(()=>_vclicks=0,600); if(_vclicks>=3){ _vclicks=0; simulateEnd(); } });
+function simulateEnd(){ if(!G||G.phase==='gameover'||G.phase==='kaiserover')return; const pool=participants();
+  const li=pool[Math.floor(Math.random()*pool.length)]; G.players[li].lids=TOTAL_LIDS; closeModal(); vibe(40); toast('⚙️ Spielende simuliert.','warn'); renderAll(); checkPhaseEnd(); }
 
 /* ============================================================
    RENDER
    ============================================================ */
 function renderAll(){ renderPhase(); renderPlayers(); }
 function renderPhase(){
-  let label='Hälfte 1';
-  if(G.mode==='schnelle5') label='Schnelle 5';
-  else if(G.half===1) label='Hälfte 1';
-  else if(G.half===2) label='Hälfte 2';
-  else if(G.half==='finale') label='Finale';
-  $('phaseLabel').textContent=label;
-  $('roundChip').textContent='Runde '+G.round;
-  $('middleChip').textContent='Mitte: '+G.middleLids;
+  let l='Hälfte 1'; if(G.half===2)l='Hälfte 2'; else if(G.half==='finale')l='Finale';
+  $('phaseLabel').textContent=l; $('roundChip').textContent='Runde '+G.round; $('middleChip').textContent='Mitte: '+G.middleLids;
 }
 function renderPlayers(){
-  const box=$('playersBox'); box.innerHTML='';
+  const box=$('players'); box.innerHTML='';
   G.players.forEach((p,i)=>{
-    if(G.half==='finale' && !G.finalists.includes(i)) return; // Finale: nur Finalisten
-    const isTurn=(G.phase==='rolling'||G.phase==='laden') && curIdxSafe()===i;
-    const lidsHtml=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<G.lids[i]?' f':''}"></span>`).join('');
-    const st=G.playerStates[i];
-    const comboLabel=(st&&st.done&&st.combo)?st.combo.label:'';
-    const mini=(st&&st.done&&st.dice&&st.dice[0])?('<div class="minidice">'+st.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'):'';
+    if(G.half==='finale' && G.finalists && !G.finalists.includes(i)) return;
+    if(p.left) return;
+    const isTurn=(G.phase==='rolling'||G.phase==='laden') && cur()===i;
+    const ps=G.playerStates[i];
+    const lids=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<p.lids?' f':''}"></span>`).join('');
+    let res='',mini='',hid='';
+    if(ps&&ps.done){ if(ps.concealed){ hid='<div class="hidden-tag">🙈 verdeckt</div>'; }
+      else if(ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; } }
     const card=document.createElement('div');
-    card.className='pc'+(isTurn?' turn':'')+(G.lids[i]>=TOTAL_LIDS?' loser':'');
-    card.innerHTML=`
-      <div class="cnt">${G.lids[i]}</div>
-      <div class="nm">${G.marker===i?'<span class="marker" title="Marker">🔖</span>':''}${p.name} ${p.isAI?'<span class="ai">KI</span>':''}</div>
-      <div class="lids">${lidsHtml}</div>
-      ${mini}
-      <div class="combo${comboLabel?' show':''}">${comboLabel}</div>`;
+    card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
+    card.innerHTML=`<div class="cnt">${p.lids}</div>
+      <div class="nm">${G.marker===i?'🔖 ':''}${p.name} ${p.isAI?'<span class="ai">KI</span>':''}</div>
+      <div class="turnflag">${isTurn&&!p.isAI?'du bist dran ✦':(isTurn?'würfelt…':'')}</div>
+      <div class="lids">${lids}</div>${mini}${hid}<div class="res grad">${res}</div>`;
     box.appendChild(card);
   });
 }
-function curIdxSafe(){ return (G.turnOrder&&G.turnOrder.length)?G.turnOrder[G.turnPtr]:-1; }
 
 /* ---------- Home ---------- */
 $('homeBtn').addEventListener('click',()=>{
-  openModal(`<h2>Zur Lobby?</h2><p style="text-align:center">Das laufende Spiel wird verworfen. Biersammler-Daten bleiben erhalten.</p>
+  openModal(`<h2>Zur Lobby?</h2><p style="text-align:center">Das laufende Spiel wird verworfen. Biersammler bleibt erhalten.</p>
     <div class="row" style="margin-top:14px"><button class="btn ghost" id="stay">Bleiben</button><button class="btn danger" id="leave">Verlassen</button></div>`);
-  $('stay').addEventListener('click',closeModal);
-  $('leave').addEventListener('click',()=>{ closeModal(); goLobby(); });
+  $('stay').addEventListener('click',closeModal); $('leave').addEventListener('click',()=>{ closeModal(); goLobby(); });
 });
 
 /* ============================================================
-   ONBOARDING / TUTORIAL
+   KOMMENTARE (Zehntausend-Stil) + KONFETTI
    ============================================================ */
-function showTutorial(firstTime){
-  const h=`
-    <h2>🎲 So geht Schock Doof</h2>
-    <p>Jeder hat <b>3 Würfe</b> pro Runde. Nach jedem Wurf darfst du beliebige Würfel <b>antippen = behalten</b>. Erst am Ende wird deine Kombination bewertet.</p>
-    <h3>Ziel</h3>
-    <p>Der <b>schlechteste</b> Wurf jeder Runde kassiert Deckel aus der Mitte. Wer zuerst <b>${TOTAL_LIDS||13} Deckel</b> hat, verliert.</p>
-    <h3>Kombinationen (stark → schwach)</h3>
-    <p style="line-height:1.7">
-      <b>Schock</b> – 5 Gleiche im 1. Wurf (Verlierer zahlt doppelt)<br>
-      <b>General</b> – 5 Gleiche (nicht 1. Wurf)<br>
-      <b>Straße</b> – 1-2-3-4-5 oder 2-3-4-5-6<br>
-      <b>Schock-Out</b> – fünf Einsen im 1. Wurf: alle anderen zahlen, du bist raus<br>
-      <b>Full House</b> · <b>Drilling</b> · <b>Zwei Paare</b> · <b>Paar</b><br>
-      <b>Schock Doof</b> – alles verschieden, nichts geht (schlechtestes Ergebnis)
-    </p>
-    <h3>Ablauf</h3>
-    <p>Hälfte 1 → Hälfte 2 → Finale der beiden Halbzeit-Verlierer. Wer <b>beide</b> Hälften verliert, ist <i>kalt erwischt</i> und verliert direkt.</p>
-    <h3>👑 Kaiserrunde</h3>
-    <p>Jeder kann sie ankündigen: das laufende Spiel endet normal, dann gibt's noch <b>ein</b> komplettes Spiel — danach die Biersammler-Abrechnung.</p>
-    <p class="sub">Tipp: Runden-Chip 0,8s gedrückt halten simuliert ein Spielende (zum Testen).</p>
-    <button class="btn" id="tutOk" style="margin-top:8px">${firstTime?'Los geht\'s!':'Verstanden'}</button>`;
-  openModal(h);
-  $('tutOk').addEventListener('click',()=>{ closeModal(); try{localStorage.setItem('sd_tut_seen','1');}catch(e){} });
-}
+const LOSER_LINES=['🍺 DU ZAHLST DIE RUNDE!','😵 ZUGEDECKELT — 0,50 € INS GLAS!','🎲 HEUTE WAR NICHT DEIN WÜRFELTAG!','🫠 13 DECKEL — VOLLE DECKUNG!','🐢 LANGSAM ZUGEDECKT!','💸 PROST — DIE NÄCHSTE GEHT AUF DICH!'];
+const EVENT={ schockaus:'💥 SCHOCK AUS — ALLE DECKEL AUF EINMAL!', schock:'🎯 SCHOCK! DA ZAHLT GLEICH JEMAND…', doof:'🤡 SCHOCK DOOF — DER NAMENSGEBER PERSÖNLICH!', general:'🪖 GENERAL — DREI GLEICHE!', strasse:'🚶 STRASSE — SCHÖN DER REIHE NACH!' };
+function confetti(){ const box=$('conf'); if(!box)return; const cols=['#53f6ff','#ff4fd8','#8f5fff','#ffcf5c','#fff'];
+  for(let i=0;i<90;i++){ const c=document.createElement('div'); c.className='cf'; c.style.left=Math.random()*100+'vw'; c.style.background=cols[i%cols.length];
+    c.style.animationDuration=(2.2+Math.random()*1.8)+'s'; c.style.animationDelay=(Math.random()*.5)+'s'; c.style.transform='rotate('+(Math.random()*360)+'deg)';
+    box.appendChild(c); setTimeout(()=>c.remove(),4200); } }
+
+/* ---------- Init ---------- */
+renderBier('bierLobby');
 
 /* ============================================================
-   KONFETTI
-   ============================================================ */
-function confetti(){
-  const box=$('confetti'); if(!box) return;
-  const colors=['#d4af37','#00e5ff','#ff4d8d','#2ecc71','#fff'];
-  for(let i=0;i<90;i++){
-    const c=document.createElement('div'); c.className='conf';
-    c.style.left=Math.random()*100+'vw';
-    c.style.background=colors[i%colors.length];
-    c.style.animationDuration=(2.2+Math.random()*1.8)+'s';
-    c.style.animationDelay=(Math.random()*0.6)+'s';
-    c.style.transform='rotate('+(Math.random()*360)+'deg)';
-    box.appendChild(c);
-    setTimeout(()=>c.remove(),4200);
-  }
-}
-
-/* ============================================================
-   INIT
-   ============================================================ */
-SZ=normalizeSzState(null);
-renderLobby();
-let seen=false; try{ seen=localStorage.getItem('sd_tut_seen')==='1'; }catch(e){}
-if(!seen) setTimeout(()=>showTutorial(true),400);
-
-/* ============================================================
-   MP_STUB — MULTIPLAYER-EINBAU (Übersicht)
-   ------------------------------------------------------------
-   1) Firebase init mit deiner Config (oben im Briefing).
-   2) HOST-Bestimmung: ersten verbundenen Client als Host markieren.
-   3) STATE-PUSH: nur HOST schreibt G nach Firebase (Node 'state').
-      - vor jedem Push: G.ts=Date.now()
-      - Stellen mit "MP_STUB: pushState" markiert (beginRound).
-   4) STATE-READ: Gäste hören auf 'state':
-      - if(raw.ts >= G.ts){ G=raw; renderAll(); handlePhaseChange(); }
-      - NIE alten State übernehmen (ts-Guard).
-   5) GAST-REQUESTS via Child-Nodes (eigener Listener):
-      - 'kaiserrequest', 'roll', 'keep', 'done' → HOST verarbeitet,
-        verändert G, pusht offiziellen State. Gäste pushen NIE vollen State.
-   6) BIERSAMMLER: loadBiersammler()/saveBiersammler() an Firebase-Node
-      'biersammler' hängen (persistent, kein localStorage).
-   7) PHASENWECHSEL: showPhaseModal/handlePhaseChange auf allen Clients
-      aus dem gesyncten State ableiten.
-   8) Boolean false in Arrays vor Firebase guarden (sonst gedroppt).
+   MP_STUB — MULTIPLAYER (selbst einbauen)
+   1) Firebase init (schnuppes-spielportal), fester Raum.
+   2) HOST bestimmen; nur HOST pusht G (vor Push: G.ts=Date.now()).
+   3) Gäste hören 'state': if(raw.ts>=G.ts){ G=normalize(raw); renderAll(); handlePhaseChange(); }
+   4) Gast-Signale via Child-Nodes (kaiserrequest, roll/keep/done, spectators/{k}.wantToPlay) — eigener Listener; Gäste pushen NIE vollen State.
+   5) _integrateSpectators(): Zuschauer in KI-Slot setzen → applyJoinPenalty(slot).
+   6) Verlässt ein Mensch → players[i].left=true (kein KI-Ersatz); participants() überspringt ihn.
+   7) Biersammler: loadBier()/saveBier() an Firebase 'biersammler' (persistent, kein localStorage).
+   8) Firebase droppt false/null in Arrays → beim Einlesen normalisieren (kept, halfLosers, ladenDice).
    ============================================================ */
 </script>
 </body>
