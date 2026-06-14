@@ -384,7 +384,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v3.9';
+const VERSION='v4.0';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -421,10 +421,13 @@ let applauseAudio=null;
 try{ applauseAudio=new Audio('./applause.mp3'); applauseAudio.preload='auto'; }catch(e){}
 function playDice(){ try{ const a=$('diceSound'); if(a){ a.currentTime=0; a.play().catch(()=>{}); } }catch(e){} }
 function playApplause(){ try{ if(applauseAudio){ applauseAudio.currentTime=0; applauseAudio.play().catch(()=>{}); } }catch(e){} }
-(function(){ let u=false; document.addEventListener('click',function un(){ if(u)return; u=true;
-  const d=$('diceSound'); if(d){ d.play().then(()=>{d.pause();d.currentTime=0;}).catch(()=>{}); }
-  if(applauseAudio){ applauseAudio.play().then(()=>{applauseAudio.pause();applauseAudio.currentTime=0;}).catch(()=>{}); }
-  document.removeEventListener('click',un); },{capture:true}); })();
+(function(){ let u=false; function unlockAudio(){
+    if(u) return; u=true;
+    try{ const ctx=new(window.AudioContext||window.webkitAudioContext)(); ctx.resume().catch(()=>{}); }catch(e){}
+  }
+  document.addEventListener('touchstart',unlockAudio,{once:true,capture:true,passive:true});
+  document.addEventListener('click',unlockAudio,{once:true,capture:true});
+})();
 
 /* ---------- Helpers ---------- */
 function vibe(p){ try{ if('vibrate' in navigator) navigator.vibrate(p); }catch(e){} }
@@ -490,56 +493,43 @@ function pushState(){ if(!amHost||!ONLINE||!G) return; G.ts=Date.now(); try{ ROO
 function enterRoom(){
   myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount;
   try{ if(myName&&myName!=='Spieler') localStorage.setItem('schock_name',myName); }catch(e){}
-  showScreen('waiting');
+  showScreen('waiting'); roomEnteredAt=Date.now();
   if(!ONLINE){ amHost=true; roomPlayersLocal=[myName]; renderWaiting(); return; }
 
-  // Host-Vergabe via atomarer Firebase-Transaktion — kein Uhren-Problem quer über Geräte
-  // room/host enthält die CID des aktuellen Hosts (erster Schreiber gewinnt)
-  roomEnteredAt=Date.now();
-  ROOM.child('host').transaction(cur=> cur||CID, (err,committed,snap)=>{
-    if(err){ console.error('host tx',err); }
-    amHost = snap&&snap.val()===CID;
-    if(amHost){
-      // Host löscht sofort alten State — kein Gast sieht veraltete Deckel
-      ROOM.child('state').remove();
-      ROOM.child('signals').remove();
-      ROOM.child('config/seats').transaction(c=>c||seatCount);
-      toast('Du bist Host – starte das Spiel wenn alle da sind.','ok');
-    }
-    _setupRoomListeners();
-  });
-  // Bei Verbindungsabbruch: wenn wir Host sind, Host-Node löschen (damit Gast übernehmen kann)
-}
-
-function _setupRoomListeners(){
+  // 1) Presence SOFORT setzen — Host sieht uns ab dem ersten Augenblick
   const me=ROOM.child('presence/'+CID);
   me.set({name:myName, ts:Date.now()});
   me.onDisconnect().remove();
 
+  // 2) Listener SOFORT registrieren — kein missed State-Update durch Transaction-Verzögerung
   ROOM.child('config/seats').on('value',s=>{ if(s.val()){ seatCount=s.val(); renderWaiting(); } });
   ROOM.child('presence').on('value',presSnap=>{
     presence=presSnap.val()||{};
-    // Host weg aus Presence? Anderen Host bestimmen
     ROOM.child('host').once('value',hostSnap=>{
       const h=hostSnap.val();
-      if(h && !presence[h] && !presence[h]){
-        ROOM.child('host').transaction(c=>(presence[c]?c:CID));
-      }
+      if(h && !presence[h]){ ROOM.child('host').transaction(c=>(presence[c]?c:CID)); }
     });
     renderWaiting();
   });
   ROOM.child('host').on('value',s=>{
-    const v=s.val();
-    const prevHost=amHost;
-    if(v!==null) amHost=(v===CID);   // null = kurzer Reconnect, Status beibehalten
-    if(amHost&&!prevHost){ toast('Du bist jetzt Host.','ok'); ROOM.child('config/seats').transaction(c=>c||seatCount); }
+    const v=s.val(); const prevHost=amHost;
+    if(v!==null) amHost=(v===CID);
+    if(amHost&&!prevHost){ ROOM.child('config/seats').transaction(c=>c||seatCount); toast('Du bist Host.','ok'); }
     renderWaiting();
   });
-  ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; 
-/* ── Vollbild ── */
-function tryFs(){ try{ const el=document.documentElement; if(el.requestFullscreen) el.requestFullscreen().catch(()=>{}); else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen(); }catch(e){} }function updateFsBtns(){ document.querySelectorAll('.fs-btn').forEach(b=>{ b.textContent=isFs()?'⛶ Vollbild aus':'⛶ Vollbild'; }); }document.addEventListener('webkitfullscreenchange',updateFsBtns);
+  // 3) Transaction: Host-Rolle beanspruchen (async — läuft nach den Listenern)
+  ROOM.child('host').transaction(cur=>cur||CID,(err,committed,snap)=>{
+    if(err){console.error('host tx',err);return;}
+    const wasHost=amHost; amHost=snap&&snap.val()===CID;
+    if(amHost&&!wasHost){
+      ROOM.child('state').remove(); ROOM.child('signals').remove();
+      ROOM.child('config/seats').transaction(c=>c||seatCount);
+      toast('Du bist Host – starte wenn alle da sind.','ok');
+    }
+    renderWaiting();
+  });
 
-renderBier('bierLobby'); } });
+  ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; renderBier('bierLobby'); } });
   ROOM.child('state').on('value',s=>{
     if(amHost) return;   // Host steuert State selbst
     const raw=s.val();
@@ -751,8 +741,8 @@ function checkPhaseEnd(){
     if(G.halfLosers[0]===G.halfLosers[1]){ onGameComplete(li,`${G.players[li].name} verliert beide Hälften — kalt erwischt! Kein Finale.`); return true; }
     G.finalists=[G.halfLosers[0],G.halfLosers[1]]; resetLids(); G.half='finale'; G.starter=G.halfLosers[1]; G.round=1; G.phase='notice';
     G.notice={title:'Finale!',text:`${G.players[G.finalists[0]].name} gegen ${G.players[G.finalists[1]].name} — wer zuerst 13 Deckel hat, verliert.`}; paint(); pushState();
-    if(amHost) setTimeout(()=>{ G.notice=null; beginRound(); },2800); return true; }
-  if(G.half==='finale'){ onGameComplete(li); return true; }
+    playApplause(); if(amHost) setTimeout(()=>{ G.notice=null; beginRound(); },2800); return true; }
+  if(G.half==='finale'){ playApplause(); onGameComplete(li); return true; }
   return false;
 }
 
