@@ -99,12 +99,12 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 
 /* ---------- Players ---------- */
 .players{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:6px;width:100%}
-.pc{flex:1 1 calc(50% - 4px);max-width:none;min-width:130px;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;position:relative;transition:.2s}
+.pc{flex:1 1 calc(50% - 4px);max-width:none;min-width:130px;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;position:relative;transition:.2s;text-align:center}
 .pc.active{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 20px rgba(255,212,0,.22)}
 .pc.lost{border-color:rgba(226,35,26,.65);box-shadow:0 0 0 1px rgba(226,35,26,.4)}
 .pc .nm{display:flex;align-items:center;gap:.35rem;font-weight:700;font-size:.95rem}
 .pc .nm .ai{font-size:.55rem;color:var(--pink-soft);border:1px solid var(--line);border-radius:5px;padding:1px 5px;letter-spacing:.06em}
-.pc .turnflag{font-size:.6rem;color:var(--gold);font-weight:700;letter-spacing:.05em;min-height:.85em;margin-top:1px}
+.pc .turnflag{font-size:.6rem;font-weight:700;letter-spacing:.05em;min-height:.85em;margin-top:1px;text-align:center}
 .pc .cnt{position:absolute;top:10px;right:12px;font-weight:900;font-size:1.15rem;color:var(--gold)}
 .lids{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px;justify-content:center}
 .lid{width:11px;height:11px;border-radius:50%;border:1.5px solid rgba(255,212,0,.4)}
@@ -198,9 +198,8 @@ body{-webkit-user-select:none;user-select:none}
 .kaiser-toggle.on{color:var(--gold);border-color:var(--gold);animation:kp 1.4s ease-in-out infinite}
 .kaiser-toggle.on .box{background:var(--gold);box-shadow:0 0 10px var(--gold)}
 .kaiser-toggle.on .box:after{content:'✓'}
-.kaiser-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);z-index:500;background:rgba(226,35,26,.92);color:#fff;font-weight:900;font-size:clamp(.9rem,4vw,1.2rem);border-radius:18px;padding:18px 22px;text-align:center;max-width:80vw;pointer-events:none;opacity:0;transition:opacity .3s,transform .3s;display:none}
-.kaiser-flash.on{display:block;opacity:1;transform:translate(-50%,-50%) scale(1);animation:kfblink 3.2s ease forwards}
-@keyframes kfblink{0%{opacity:0;transform:translate(-50%,-50%) scale(.8)}10%{opacity:1;transform:translate(-50%,-50%) scale(1)}85%{opacity:1}100%{opacity:0}}
+.kaiser-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:500;background:rgba(226,35,26,.94);color:#fff;font-weight:900;font-size:clamp(.9rem,4vw,1.15rem);border-radius:18px;padding:16px 22px;text-align:center;max-width:82vw;pointer-events:none;opacity:0;transition:opacity .35s,transform .35s}
+.kaiser-flash.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
 
 /* Wartebereich */
 .seat{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px;border:1px solid var(--line);background:var(--panel-2);margin-bottom:8px}
@@ -405,7 +404,10 @@ function participants(){
 function cur(){ return G.turnOrder[G.turnPtr]; }
 function maxFor(ps){ return (ps.order===0)?THROWS:G.maxThrows; }
 function curMax(){ return maxFor(G.playerStates[cur()]); }
-function myIdx(){ if(!G) return -1; const i=G.players.findIndex(p=>p.cid===CID); if(i>=0) return i; return (!ONLINE)?G.players.findIndex(p=>!p.isAI):-1; }
+function myIdx(){ if(!G) return -1; let i=G.players.findIndex(p=>p.cid===CID); if(i>=0) return i;
+  // Fallback: Name-Match (wenn CID noch nicht im State z.B. nach reconnect)
+  i=G.players.findIndex(p=>!p.isAI&&p.name===myName); if(i>=0) return i;
+  return (!ONLINE)?G.players.findIndex(p=>!p.isAI):-1; }
 function isMe(idx){ return idx===myIdx(); }
 
 /* ---------- Firebase: State-Sync ---------- */
@@ -451,13 +453,12 @@ function enterRoom(){
     const raw=s.val(); if(!raw) return;
     G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
   });
-  ROOM.child('signals').on('child_added',s=>{
-    const sig=s.val();
-    if(!sig) return;
-    // Kaiser + newgame darf jeder Host jederzeit verarbeiten
-    if(sig.type==='kaiser'||sig.type==='newgame'){ if(amHost){ s.ref.remove(); handleSignal(sig); } return; }
-    if(!amHost) return;   // Spiel-Signale nur Host
-    s.ref.remove(); handleSignal(sig);
+  ROOM.child('signals').on('child_added',snap=>{
+    const sig=snap.val(); if(!sig) return;
+    if(sig.type==='kaiser'||sig.type==='newgame'){
+      if(amHost){ snap.ref.remove(); handleSignal(sig); } return; }
+    if(!amHost) return;
+    snap.ref.remove(); handleSignal(sig);
   });
 }
 function electHost(){
@@ -627,13 +628,13 @@ function checkPhaseEnd(){
   const li=leader(); if(li<0) return false;
   if(G.half===1){ G.halfLosers[0]=li; G.marker=li; resetLids(); G.half=2; G.starter=li; G.round=1; G.phase='notice';
     G.notice={title:'Hälfte 1 beendet',text:`${G.players[li].name} verliert Hälfte 1, bekommt den 🔖 Marker und beginnt Hälfte 2.`}; paint(); pushState();
-    if(amHost) setTimeout(()=>{ G.notice=null; beginRound(); },2800); return true; }
+    playApplause(); if(amHost) setTimeout(()=>{ G.notice=null; beginRound(); },2800); return true; }
   if(G.half===2){ G.halfLosers[1]=li;
     if(G.halfLosers[0]===G.halfLosers[1]){ onGameComplete(li,`${G.players[li].name} verliert beide Hälften — kalt erwischt! Kein Finale.`); return true; }
     G.finalists=[G.halfLosers[0],G.halfLosers[1]]; resetLids(); G.half='finale'; G.starter=G.halfLosers[1]; G.round=1; G.phase='notice';
     G.notice={title:'Finale!',text:`${G.players[G.finalists[0]].name} gegen ${G.players[G.finalists[1]].name} — wer zuerst 13 Deckel hat, verliert.`}; paint(); pushState();
-    if(amHost) setTimeout(()=>{ G.notice=null; beginRound(); },2800); return true; }
-  if(G.half==='finale'){ onGameComplete(li); return true; }
+    playApplause(); if(amHost) setTimeout(()=>{ G.notice=null; beginRound(); },2800); return true; }
+  if(G.half==='finale'){ playApplause(); onGameComplete(li); return true; }
   return false;
 }
 
@@ -661,9 +662,14 @@ function applyKaiser(byCid){
   updateKaiser(); pushState();
 }
 function flashKaiser(byName){
-  let el=$('kaiserFlash'); if(!el){ el=document.createElement('div'); el.id='kaiserFlash'; document.body.appendChild(el); }
-  el.textContent=byName+': Nach dieser Runde folgt die Kaiserrunde!';
-  el.className='kaiser-flash on'; setTimeout(()=>el.classList.remove('on'),3200);
+  let el=$('kaiserFlash'); if(el) el.remove();
+  el=document.createElement('div'); el.id='kaiserFlash'; el.className='kaiser-flash';
+  el.textContent=byName+': Nach dieser folgt die Kaiserrunde!';
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    el.classList.add('on');
+    setTimeout(()=>{ el.classList.remove('on'); setTimeout(()=>el.remove(),400); },3000);
+  }));
 }
 function updateKaiser(){ const t=$('kaiserToggle');
   if(G&&G.kaiserrunde){ $('kpill').classList.add('on'); $('kpill').textContent=(G.kaiserGamesPlayed>=1)?'👑 KAISERRUNDE — letztes Spiel!':'👑 Kaiserrunde aktiv — dieses Spiel läuft noch'; if(t)t.classList.add('on'); }
@@ -681,8 +687,9 @@ function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 
 function renderMitteBox(){
   if(!G) return;
-  const lids=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<(TOTAL_LIDS-G.middleLids)?' f':''}" style="${k<(TOTAL_LIDS-G.middleLids)?'':''}"></span>`).join('');
-  $('middleBox').innerHTML=`<span class="lbl">🍺 Mitte</span><span class="num" id="middleNum">${G.middleLids}</span><div class="lids" style="justify-content:center;margin-top:5px">${lids}</div>`;
+  // Gefüllt (gold) = noch in der Mitte; leer = schon verteilt
+  const lids=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<G.middleLids?' f':''}"></span>`).join('');
+  $('middleBox').innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:.4rem"><span class="lbl">🍺 Mitte</span><span class="num" id="middleNum">${G.middleLids}</span></div><div class="lids" style="justify-content:center;margin-top:5px">${lids}</div>`;
 }
 
 function renderPhase(){ let l='Hälfte 1'; if(G.half===2)l='Hälfte 2'; else if(G.half==='finale')l='Finale'; if(G.phase==='laden')l='Laden';
