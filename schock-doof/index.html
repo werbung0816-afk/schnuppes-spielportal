@@ -325,7 +325,6 @@ body{-webkit-user-select:none;user-select:none}
       <h2 style="display:flex;align-items:center;justify-content:space-between">🍺 Biersammler <span class="footVer" style="font-size:.62rem;font-weight:600;letter-spacing:.12em;color:rgba(255,255,255,.4);font-family:inherit"></span></h2>
       <div id="bierLobby"></div>
     </div>
-    <div class="foot"><span class="footVer">v2.1</span></div>
   </section>
 
   <!-- ============ WARTEBEREICH ============ -->
@@ -385,7 +384,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v3.8';
+const VERSION='v3.9';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -414,6 +413,8 @@ let roomPlayersLocal=[];      // nur für Offline-Test
 let curScreen='lobby';
 
 document.querySelectorAll('.footVer').forEach(e=>e.textContent=VERSION);
+// Letzten Namen aus localStorage laden
+try{ const n=localStorage.getItem('schock_name'); if(n) $('nameInput').value=n; }catch(e){}
 
 /* ---------- Sounds ---------- */
 let applauseAudio=null;
@@ -487,7 +488,9 @@ function pushState(){ if(!amHost||!ONLINE||!G) return; G.ts=Date.now(); try{ ROO
 
 /* ---------- Firebase: Präsenz / Raum ---------- */
 function enterRoom(){
-  myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount; showScreen('waiting');
+  myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount;
+  try{ if(myName&&myName!=='Spieler') localStorage.setItem('schock_name',myName); }catch(e){}
+  showScreen('waiting');
   if(!ONLINE){ amHost=true; roomPlayersLocal=[myName]; renderWaiting(); return; }
 
   // Host-Vergabe via atomarer Firebase-Transaktion — kein Uhren-Problem quer über Geräte
@@ -748,8 +751,8 @@ function checkPhaseEnd(){
     if(G.halfLosers[0]===G.halfLosers[1]){ onGameComplete(li,`${G.players[li].name} verliert beide Hälften — kalt erwischt! Kein Finale.`); return true; }
     G.finalists=[G.halfLosers[0],G.halfLosers[1]]; resetLids(); G.half='finale'; G.starter=G.halfLosers[1]; G.round=1; G.phase='notice';
     G.notice={title:'Finale!',text:`${G.players[G.finalists[0]].name} gegen ${G.players[G.finalists[1]].name} — wer zuerst 13 Deckel hat, verliert.`}; paint(); pushState();
-    playApplause(); if(amHost) setTimeout(()=>{ G.notice=null; beginRound(); },2800); return true; }
-  if(G.half==='finale'){ playApplause(); onGameComplete(li); return true; }
+    if(amHost) setTimeout(()=>{ G.notice=null; beginRound(); },2800); return true; }
+  if(G.half==='finale'){ onGameComplete(li); return true; }
   return false;
 }
 
