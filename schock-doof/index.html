@@ -384,7 +384,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v4.2';
+const VERSION='v4.3';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -490,7 +490,7 @@ function hydrate(raw){
 function pushState(){ if(!amHost||!ONLINE||!G) return; G.ts=Date.now(); try{ ROOM.child('state').set(sanitize(G)); }catch(e){console.warn(e);} }
 
 /* ---------- Firebase: Präsenz / Raum ---------- */
-let myPresKey=null;   // Push-Key unseres Presence-Eintrags
+let mySeq=0;   // Atomare Sequenznummer — 1 = Host, >1 = Gast
 
 function enterRoom(){
   myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount;
@@ -498,59 +498,65 @@ function enterRoom(){
   showScreen('waiting'); roomEnteredAt=Date.now();
   if(!ONLINE){ amHost=true; roomPlayersLocal=[myName]; renderWaiting(); return; }
 
-  // Presence via push() — Push-Key ist server-seitig zeitgeordnet
-  // Kleinster Key = frühester Joiner = Host (keine Transaction, kein Stale-Node)
-  const presRef=ROOM.child('presence').push({name:myName,cid:CID,ts:Date.now()});
-  myPresKey=presRef.key;
-  presRef.onDisconnect().remove();
+  // Atomarer Sequenz-Counter: erster Joiner = seq 1 = Host
+  // Serverbasiert → kein Uhren-Problem, kein Stale-State
+  ROOM.child('meta/seq').transaction(c=>(c||0)+1,(err,committed,snap)=>{
+    if(err||!snap){ toast('Verbindungsfehler — bitte neu laden.','warn'); return; }
+    mySeq=snap.val();
 
-  ROOM.child('config/seats').on('value',s=>{ if(s.val()){ seatCount=s.val(); renderWaiting(); } });
+    // Presence mit Sequenznummer setzen
+    const me=ROOM.child('presence/'+CID);
+    me.set({name:myName,seq:mySeq,cid:CID});
+    me.onDisconnect().remove();
 
-  ROOM.child('presence').on('value',presSnap=>{
-    presence={}; let firstKey=null;
-    presSnap.forEach(ch=>{
-      const v=ch.val(); if(!v) return;
-      presence[v.cid||ch.key]={name:v.name,ts:v.ts,key:ch.key};
-      if(!firstKey||ch.key<firstKey) firstKey=ch.key;
+    // Alle Listener nach gesichertem seq registrieren
+    ROOM.child('config/seats').on('value',s=>{ if(s.val()){ seatCount=s.val(); renderWaiting(); } });
+
+    ROOM.child('presence').on('value',presSnap=>{
+      presence={}; let minSeq=Infinity;
+      presSnap.forEach(ch=>{
+        const v=ch.val(); if(!v||!v.cid) return;
+        presence[v.cid]={name:v.name,seq:v.seq||999,cid:v.cid};
+        if(v.seq<minSeq) minSeq=v.seq;
+      });
+      const wasHost=amHost;
+      amHost=(mySeq>0&&mySeq===minSeq);
+      if(amHost&&!wasHost){
+        ROOM.child('state').remove();
+        ROOM.child('signals').remove();
+        ROOM.child('config/seats').transaction(c=>c||seatCount);
+        toast('Du bist Host.','ok');
+      }
+      renderWaiting();
     });
-    const wasHost=amHost;
-    amHost=!!(myPresKey&&myPresKey===firstKey);
-    if(amHost&&!wasHost){
-      // Neu zum Host geworden: alten State aufräumen
-      ROOM.child('state').remove();
-      ROOM.child('signals').remove();
-      ROOM.child('config/seats').transaction(c=>c||seatCount);
-      toast('Du bist Host.','ok');
-    }
-    renderWaiting();
-  });
 
-  ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; renderBier('bierLobby'); } });
+    ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; renderBier('bierLobby'); } });
 
-  ROOM.child('state').on('value',s=>{
-    if(amHost) return;
-    const raw=s.val();
-    if(!raw){ if(curScreen==='game') G=null; return; }
-    if(raw.ts&&raw.ts<roomEnteredAt-3000) return;
-    G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
-    if(G.phase==='rolling'){
-      const rp=G.playerStates&&G.playerStates.find(ps=>ps&&ps.done&&ps.revealed&&!ps.concealed);
-      if(rp&&rp.combo){ const cb=$('comboBig'); cb.textContent=rp.combo.label;
-        cb.className='combo-big pop'+(rp.combo.type==='schockaus'?'':' grad');
-        cb.style.color=(rp.combo.type==='schockaus')?'var(--red)':''; }
-    }
-  });
+    ROOM.child('state').on('value',s=>{
+      if(amHost) return;
+      const raw=s.val();
+      if(!raw){ if(curScreen==='game') G=null; return; }
+      if(raw.ts&&raw.ts<roomEnteredAt-3000) return;
+      G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
+      if(G.phase==='rolling'){
+        const rp=G.playerStates&&G.playerStates.find(ps=>ps&&ps.done&&ps.revealed&&!ps.concealed);
+        if(rp&&rp.combo){ const cb=$('comboBig'); cb.textContent=rp.combo.label;
+          cb.className='combo-big pop'+(rp.combo.type==='schockaus'?'':' grad');
+          cb.style.color=(rp.combo.type==='schockaus')?'var(--red)':''; }
+      }
+    });
 
-  ROOM.child('signals').on('child_added',snap=>{
-    const sig=snap.val(); if(!sig) return;
-    if(sig.type==='kaiser'||sig.type==='newgame'){
-      if(amHost){ snap.ref.remove(); handleSignal(sig); } return; }
-    if(!amHost) return;
-    snap.ref.remove(); handleSignal(sig);
+    ROOM.child('signals').on('child_added',snap=>{
+      const sig=snap.val(); if(!sig) return;
+      if(sig.type==='kaiser'||sig.type==='newgame'){
+        if(amHost){ snap.ref.remove(); handleSignal(sig); } return; }
+      if(!amHost) return;
+      snap.ref.remove(); handleSignal(sig);
+    });
   });
 }
 
-function presenceList(){ return Object.values(presence).map(v=>({cid:v.cid||'?',name:v.name||'Spieler',ts:v.ts||0,key:v.key||''})).sort((a,b)=>a.key<b.key?-1:1); }
+function presenceList(){ return Object.values(presence).filter(v=>v.cid).map(v=>({cid:v.cid,name:v.name||'Spieler',seq:v.seq||999})).sort((a,b)=>a.seq-b.seq); }
 function renderWaiting(){
   const list = ONLINE? presenceList() : roomPlayersLocal.map((n,i)=>({cid:'L'+i,name:n}));
   $('waitCount').textContent=seatCount;
@@ -575,7 +581,7 @@ function addTestPlayer(){
 function leaveRoom(){
   if(ONLINE){ try{
     if(amHost) ROOM.child('state').remove();
-    if(myPresKey) ROOM.child('presence/'+myPresKey).remove(); myPresKey=null;
+    ROOM.child('presence/'+CID).remove(); mySeq=0;
     ROOM.off();
   }catch(e){} }
   amHost=!ONLINE; presence={}; G=null; showScreen('lobby');
