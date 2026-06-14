@@ -98,15 +98,15 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .chip.m{border-color:rgba(255,207,92,.35);color:var(--gold)}
 
 /* ---------- Players ---------- */
-.players{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
-.pc{flex:1 1 150px;max-width:220px;min-width:138px;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;position:relative;transition:.2s}
+.players{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:6px;width:100%}
+.pc{flex:1 1 calc(50% - 4px);max-width:none;min-width:130px;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;position:relative;transition:.2s}
 .pc.active{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 20px rgba(255,212,0,.22)}
 .pc.lost{border-color:rgba(226,35,26,.65);box-shadow:0 0 0 1px rgba(226,35,26,.4)}
 .pc .nm{display:flex;align-items:center;gap:.35rem;font-weight:700;font-size:.95rem}
 .pc .nm .ai{font-size:.55rem;color:var(--pink-soft);border:1px solid var(--line);border-radius:5px;padding:1px 5px;letter-spacing:.06em}
 .pc .turnflag{font-size:.6rem;color:var(--gold);font-weight:700;letter-spacing:.05em;min-height:.85em;margin-top:1px}
 .pc .cnt{position:absolute;top:10px;right:12px;font-weight:900;font-size:1.15rem;color:var(--gold)}
-.lids{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+.lids{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px;justify-content:center}
 .lid{width:11px;height:11px;border-radius:50%;border:1.5px solid rgba(255,212,0,.4)}
 .lid.f{background:radial-gradient(circle at 35% 30%,#fff0a8,#c8951f);border-color:#c8951f;box-shadow:0 1px 2px rgba(0,0,0,.5)}
 .pc .res{margin-top:6px;min-height:1em;font-weight:800;font-size:.72rem;color:var(--gold)}
@@ -187,9 +187,9 @@ body{-webkit-user-select:none;user-select:none}
 #game,#game *{cursor:default}
 
 /* Mitte-Anzeige (groß) */
-.middle-box{display:inline-flex;align-items:center;gap:.4rem;padding:4px 12px;border-radius:12px;border:1px solid rgba(255,212,0,.35);background:rgba(255,212,0,.08)}
-.middle-box .lbl{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700}
-.middle-box .num{font-size:1.2rem;font-weight:900;color:var(--gold);line-height:1}
+.middle-box{display:flex;flex-direction:column;align-items:center;width:100%;padding:8px 11px;border-radius:14px;border:1px solid rgba(255,212,0,.35);background:rgba(255,212,0,.08);margin-bottom:6px;box-sizing:border-box}
+.middle-box .lbl{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700;display:inline-block}
+.middle-box .num{font-size:1.2rem;font-weight:900;color:var(--gold);line-height:1;display:inline-block;margin-left:.4rem}
 
 /* Kaiserrunde als dezentes Kontrollkästchen, pulsiert bei Aktivität */
 .kaiser-wrap{text-align:center;margin:0 0 10px}
@@ -198,6 +198,9 @@ body{-webkit-user-select:none;user-select:none}
 .kaiser-toggle.on{color:var(--gold);border-color:var(--gold);animation:kp 1.4s ease-in-out infinite}
 .kaiser-toggle.on .box{background:var(--gold);box-shadow:0 0 10px var(--gold)}
 .kaiser-toggle.on .box:after{content:'✓'}
+.kaiser-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);z-index:500;background:rgba(226,35,26,.92);color:#fff;font-weight:900;font-size:clamp(.9rem,4vw,1.2rem);border-radius:18px;padding:18px 22px;text-align:center;max-width:80vw;pointer-events:none;opacity:0;transition:opacity .3s,transform .3s;display:none}
+.kaiser-flash.on{display:block;opacity:1;transform:translate(-50%,-50%) scale(1);animation:kfblink 3.2s ease forwards}
+@keyframes kfblink{0%{opacity:0;transform:translate(-50%,-50%) scale(.8)}10%{opacity:1;transform:translate(-50%,-50%) scale(1)}85%{opacity:1}100%{opacity:0}}
 
 /* Wartebereich */
 .seat{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px;border:1px solid var(--line);background:var(--panel-2);margin-bottom:8px}
@@ -252,8 +255,8 @@ body{-webkit-user-select:none;user-select:none}
       <input class="field" id="nameInput" maxlength="14" placeholder="Spielername" value="Saschi">
       <h2>Spieleranzahl</h2>
       <div class="counts" id="counts">
-        <div class="opt" data-c="2"><div class="n">2</div><div class="l">Spieler</div></div>
-        <div class="opt on" data-c="3"><div class="n">3</div><div class="l">Spieler</div></div>
+        <div class="opt on" data-c="2"><div class="n">2</div><div class="l">Spieler</div></div>
+        <div class="opt" data-c="3"><div class="n">3</div><div class="l">Spieler</div></div>
         <div class="opt" data-c="4"><div class="n">4</div><div class="l">Spieler</div></div>
       </div>
       <small class="help">Der Host startet, sobald alle Menschen da sind. Leere Plätze werden zu KI. <!-- MP_STUB: Lobby/Raum-Status, Chat, Sprachanruf hier andocken --></small>
@@ -292,16 +295,15 @@ body{-webkit-user-select:none;user-select:none}
   <section id="game" class="screen">
     <div class="ghead">
       <button class="icon-btn" id="homeBtn" title="Lobby">⌂</button>
-      <span class="kaiser-toggle" id="kaiserToggle"><span class="box"></span><span>👑</span></span>
       <div class="mid">
-        <div class="ph grad" id="phaseLabel">Hälfte 1</div>
-        <span class="middle-box" id="middleBox"><span class="lbl">🍺 Mitte</span><span class="num" id="middleNum">13</span></span>
+        <div class="ph" id="phaseLabel" style="font-weight:900;font-size:clamp(.9rem,4vw,1.2rem)">Hälfte 1</div>
       </div>
       <button class="icon-btn" id="resyncBtn" title="Festhänger beheben">↺</button>
     </div>
 
     <div class="kpill" id="kpill">👑 KAISERRUNDE — letztes Spiel!</div>
 
+    <span class="middle-box" id="middleBox"><span class="lbl">🍺 Mitte</span><span class="num" id="middleNum">13</span></span>
     <div class="players" id="players"></div>
 
     <div class="arena">
@@ -313,7 +315,7 @@ body{-webkit-user-select:none;user-select:none}
 
     <div id="controls"></div>
 
-    <div class="foot"><span class="footVer" id="gameFootVer">v2.1</span></div>
+    <div class="foot" style="display:flex;align-items:center;justify-content:center;gap:10px"><span class="kaiser-toggle" id="kaiserToggle" style="font-size:.7rem"><span class="box"></span><span>👑 Kaiserrunde</span></span><span class="footVer" id="gameFootVer">v2.1</span></div>
   </section>
 </div>
 
@@ -328,7 +330,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v2.2';
+const VERSION='v2.3';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -344,7 +346,7 @@ try{ if(typeof firebase!=='undefined'){ firebase.initializeApp(firebaseConfig); 
 const CID='c'+Math.random().toString(36).slice(2)+Date.now().toString(36);
 let amHost=!ONLINE;           // offline: man ist immer Host (Solo + KI)
 let myName='Spieler';
-let seatCount=3;
+let seatCount=2;
 let presence={};
 let roomPlayersLocal=[];      // nur für Offline-Test
 let curScreen='lobby';
@@ -637,13 +639,13 @@ function checkPhaseEnd(){
 
 /* ---------- Spiel beendet (Host) ---------- */
 function onGameComplete(loserIdx,extra){
-  const humans=G.players.filter(p=>!p.isAI&&!p.left).length;
-  if(humans>=2 && !G.players[loserIdx].isAI) recordLoss(G.players[loserIdx].name);
+  const realHumans=G.players.filter(p=>!p.isAI&&!p.left&&!isTestName(p.name));
+  if(realHumans.length>=2 && !G.players[loserIdx].isAI && !isTestName(G.players[loserIdx].name)) recordLoss(G.players[loserIdx].name);
   let kind='normal';
   if(G.kaiserrunde){ G.kaiserGamesPlayed++; if(G.kaiserGamesPlayed===1)kind='handoff'; else if(G.kaiserGamesPlayed>=2)kind='final'; }
   G.phase=(kind==='final')?'kaiserover':'gameover';
   G.over={loser:loserIdx,extra:extra||'',kind,comment:(kind==='final')?'👑 KAISERRUNDE VORBEI!':pick(LOSER_LINES)};
-  vibe([60,40,60,40,120]); if(kind==='final'){ confetti(); playApplause(); }
+  vibe([60,40,60,40,120]); confetti(); if(kind==='final') playApplause();
   paint(); pushState();
 }
 function newGameHost(){ if(!amHost)return; if(G.over&&G.over.kind==='final'){ G.kaiserrunde=false; G.kaiserGamesPlayed=0; G.kaiserrundeBy=null; }
@@ -654,8 +656,14 @@ function newGameHost(){ if(!amHost)return; if(G.over&&G.over.kind==='final'){ G.
 function applyKaiser(byCid){
   if(!amHost||!G)return;
   if(G.kaiserrunde){ if(G.kaiserGamesPlayed>=1){ return; } G.kaiserrunde=false; G.kaiserrundeBy=null; G.kaiserGamesPlayed=0; }
-  else { const p=G.players.find(x=>x.cid===byCid); G.kaiserrunde=true; G.kaiserrundeBy=(p?p.name:(G.players.find(x=>!x.isAI)||G.players[0]).name); G.kaiserGamesPlayed=0; }
+  else { const p=G.players.find(x=>x.cid===byCid); const by=p?p.name:(G.players.find(x=>!x.isAI)||G.players[0]).name;
+    G.kaiserrunde=true; G.kaiserrundeBy=by; G.kaiserGamesPlayed=0; flashKaiser(by); }
   updateKaiser(); pushState();
+}
+function flashKaiser(byName){
+  let el=$('kaiserFlash'); if(!el){ el=document.createElement('div'); el.id='kaiserFlash'; document.body.appendChild(el); }
+  el.textContent=byName+': Nach dieser Runde folgt die Kaiserrunde!';
+  el.className='kaiser-flash on'; setTimeout(()=>el.classList.remove('on'),3200);
 }
 function updateKaiser(){ const t=$('kaiserToggle');
   if(G&&G.kaiserrunde){ $('kpill').classList.add('on'); $('kpill').textContent=(G.kaiserGamesPlayed>=1)?'👑 KAISERRUNDE — letztes Spiel!':'👑 Kaiserrunde aktiv — dieses Spiel läuft noch'; if(t)t.classList.add('on'); }
@@ -666,8 +674,21 @@ function startRecovery(){ stopRecovery(); if(!amHost)return; recoveryTimer=setIn
 function stopRecovery(){ if(recoveryTimer){ clearInterval(recoveryTimer); recoveryTimer=null; } }
 
 /* ---------- Render ---------- */
-function paint(){ if(!G)return; renderPhase(); renderPlayers(); renderTurnUI(); renderOverlays(); updateKaiser(); }
-function renderPhase(){ let l='Hälfte 1'; if(G.half===2)l='Hälfte 2'; else if(G.half==='finale')l='Finale'; if(G.phase==='laden')l='Laden'; $('phaseLabel').textContent=l; $('middleNum').textContent=G.middleLids; }
+function paint(){ if(!G)return; renderPhase(); renderMitteBox(); renderPlayers(); renderTurnUI(); renderOverlays(); updateKaiser(); }
+// Farben pro Spieler-Slot (bis 4)
+const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
+function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
+
+function renderMitteBox(){
+  if(!G) return;
+  const lids=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<(TOTAL_LIDS-G.middleLids)?' f':''}" style="${k<(TOTAL_LIDS-G.middleLids)?'':''}"></span>`).join('');
+  $('middleBox').innerHTML=`<span class="lbl">🍺 Mitte</span><span class="num" id="middleNum">${G.middleLids}</span><div class="lids" style="justify-content:center;margin-top:5px">${lids}</div>`;
+}
+
+function renderPhase(){ let l='Hälfte 1'; if(G.half===2)l='Hälfte 2'; else if(G.half==='finale')l='Finale'; if(G.phase==='laden')l='Laden';
+  const pl=$('phaseLabel'); pl.textContent=l; pl.style.color=l.startsWith('Hälfte')?'var(--red)':'';
+  pl.style.webkitTextFillColor=l.startsWith('Hälfte')?'var(--red)':'';
+  $('middleNum').textContent=G.middleLids; renderMitteBox(); }
 function renderPlayers(){
   const box=$('players'); box.innerHTML='';
   G.players.forEach((p,i)=>{
@@ -678,11 +699,14 @@ function renderPlayers(){
     if(ps){ if(ps.done&&ps.concealed&&!fullReveal){ hid='<div class="hidden-tag">🙈 verdeckt</div>'; }
       else if(ps.done&&fullReveal&&ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else { const laid=ps.dice.map((d,k)=>ps.kept[k]?d:null).filter(d=>d!=null); if(laid.length) mini='<div class="mini">'+laid.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; else if(ps.done) hid='<div class="hidden-tag">fertig</div>'; } }
+    const col=playerColor(i);
     const card=document.createElement('div'); card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
-    card.innerHTML=`<div class="cnt">${p.lids}</div>
+    card.style.setProperty('--pcol',col);
+    if(isTurn){ card.style.borderColor=col; card.style.boxShadow=`0 0 0 1px ${col},0 0 18px ${col}44`; }
+    card.innerHTML=`<div class="cnt" style="color:${col}">${p.lids}</div>
       <div class="nm">${G.marker===i?'🔖 ':''}${p.name}${p.isAI?' <span class="ai">(KI)</span>':''}</div>
-      <div class="turnflag">${isTurn&&meCard?'du bist dran ✦':(isTurn?(p.isAI?'würfelt…':'ist dran…'):'')}</div>
-      <div class="lids">${lids}</div>${mini}${hid}<div class="res grad">${res}</div>`;
+      <div class="turnflag" style="color:${col}">${isTurn&&meCard?'du bist dran ✦':(isTurn?(p.isAI?'würfelt…':'ist dran…'):'')}</div>
+      <div class="lids" style="justify-content:center">${lids}</div>${mini}${hid}<div class="res" style="color:${col}">${res}</div>`;
     box.appendChild(card);
   });
 }
@@ -735,10 +759,13 @@ function renderOverlays(){
 }
 
 /* ---------- Biersammler ---------- */
-function recordLoss(name){ if(!amHost)return; SZ.settled[name]=(SZ.settled[name]||0)+1; SZ.games=SZ.games||[]; SZ.games.push({loser:name,ts:Date.now()}); if(ONLINE){ try{ ROOM.child('biersammler').set(SZ); }catch(e){} } }
+function isTestName(n){ return /^test/i.test(n); }
+function recordLoss(name){ if(!amHost)return; if(isTestName(name))return;
+  SZ.settled[name]=(SZ.settled[name]||0)+1; SZ.games=SZ.games||[]; SZ.games.push({loser:name,ts:Date.now()});
+  if(ONLINE){ try{ ROOM.child('biersammler').set(SZ); }catch(e){} } }
 function bierTotal(){ let n=0; for(const k in SZ.settled)n+=SZ.settled[k]; return n*0.5; }
 function renderBier(elId){ const el=$(elId); if(!el)return; const names=Object.keys(SZ.settled||{});
-  if(!names.length){ el.innerHTML='<div class="sub">Noch keine Niederlagen. 0,50 € pro verlorenem Spiel.</div>'; return; }
+  if(!names.length){ el.innerHTML=''; return; }
   let h=''; names.sort((a,b)=>SZ.settled[b]-SZ.settled[a]).forEach(n=>{ const l=SZ.settled[n]; h+=`<div class="bier-row"><span>${n} <span class="sub">· ${l}×</span></span><span class="amt">${(l*0.5).toFixed(2)} €</span></div>`; });
   h+=`<div class="bier-tot">Gesamt: ${bierTotal().toFixed(2)} €</div>`; el.innerHTML=h; }
 
@@ -749,7 +776,7 @@ function confetti(){ const box=$('conf'); if(!box)return; const cols=['#ffd400',
   for(let i=0;i<90;i++){ const c=document.createElement('div'); c.className='cf'; c.style.left=Math.random()*100+'vw'; c.style.background=cols[i%cols.length]; c.style.animationDuration=(2.2+Math.random()*1.8)+'s'; c.style.animationDelay=(Math.random()*.5)+'s'; c.style.transform='rotate('+(Math.random()*360)+'deg)'; box.appendChild(c); setTimeout(()=>c.remove(),4200); } }
 
 /* ---------- UI-Events ---------- */
-let lobbyCount=3;
+let lobbyCount=2;
 $('counts').querySelectorAll('.opt').forEach(o=>o.addEventListener('click',()=>{ $('counts').querySelectorAll('.opt').forEach(x=>x.classList.remove('on')); o.classList.add('on'); lobbyCount=+o.dataset.c; }));
 $('startBtn').addEventListener('click',enterRoom);
 $('startMatchBtn').addEventListener('click',startMatch);
