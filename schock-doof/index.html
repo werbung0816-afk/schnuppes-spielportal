@@ -384,7 +384,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v4.0';
+const VERSION='v4.1';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -490,54 +490,56 @@ function hydrate(raw){
 function pushState(){ if(!amHost||!ONLINE||!G) return; G.ts=Date.now(); try{ ROOM.child('state').set(sanitize(G)); }catch(e){console.warn(e);} }
 
 /* ---------- Firebase: Präsenz / Raum ---------- */
+function claimHost(){
+  // Einzige Quelle der Wahrheit für amHost — KEINE on('value') für host,
+  // da optimistische Transaction-Updates beide Geräte kurz zu Hosts machen
+  ROOM.child('host').transaction(cur=>cur||CID,(err,committed,snap)=>{
+    if(err){ console.error('host tx',err); return; }
+    const prev=amHost;
+    amHost=!!(snap&&snap.val()===CID);
+    if(amHost&&!prev){
+      ROOM.child('state').remove();
+      ROOM.child('signals').remove();
+      ROOM.child('config/seats').transaction(c=>c||seatCount);
+      toast('Du bist Host.','ok');
+    }
+    renderWaiting();
+  });
+}
+
 function enterRoom(){
   myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount;
   try{ if(myName&&myName!=='Spieler') localStorage.setItem('schock_name',myName); }catch(e){}
   showScreen('waiting'); roomEnteredAt=Date.now();
   if(!ONLINE){ amHost=true; roomPlayersLocal=[myName]; renderWaiting(); return; }
 
-  // 1) Presence SOFORT setzen — Host sieht uns ab dem ersten Augenblick
+  // Presence sofort setzen
   const me=ROOM.child('presence/'+CID);
-  me.set({name:myName, ts:Date.now()});
+  me.set({name:myName,ts:Date.now()});
   me.onDisconnect().remove();
 
-  // 2) Listener SOFORT registrieren — kein missed State-Update durch Transaction-Verzögerung
+  // Alle Listener sofort registrieren (vor der Transaction)
   ROOM.child('config/seats').on('value',s=>{ if(s.val()){ seatCount=s.val(); renderWaiting(); } });
+
   ROOM.child('presence').on('value',presSnap=>{
     presence=presSnap.val()||{};
-    ROOM.child('host').once('value',hostSnap=>{
-      const h=hostSnap.val();
-      if(h && !presence[h]){ ROOM.child('host').transaction(c=>(presence[c]?c:CID)); }
+    // Falls Host nicht mehr in Presence: neu beanspruchen
+    ROOM.child('host').once('value',hs=>{
+      const h=hs.val(); if(h&&!presence[h]) claimHost();
     });
     renderWaiting();
   });
-  ROOM.child('host').on('value',s=>{
-    const v=s.val(); const prevHost=amHost;
-    if(v!==null) amHost=(v===CID);
-    if(amHost&&!prevHost){ ROOM.child('config/seats').transaction(c=>c||seatCount); toast('Du bist Host.','ok'); }
-    renderWaiting();
-  });
-  // 3) Transaction: Host-Rolle beanspruchen (async — läuft nach den Listenern)
-  ROOM.child('host').transaction(cur=>cur||CID,(err,committed,snap)=>{
-    if(err){console.error('host tx',err);return;}
-    const wasHost=amHost; amHost=snap&&snap.val()===CID;
-    if(amHost&&!wasHost){
-      ROOM.child('state').remove(); ROOM.child('signals').remove();
-      ROOM.child('config/seats').transaction(c=>c||seatCount);
-      toast('Du bist Host – starte wenn alle da sind.','ok');
-    }
-    renderWaiting();
-  });
+
+  // KEIN host.on('value') — verhindert optimistischen amHost=true auf beiden Geräten
 
   ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; renderBier('bierLobby'); } });
+
   ROOM.child('state').on('value',s=>{
-    if(amHost) return;   // Host steuert State selbst
+    if(amHost) return;
     const raw=s.val();
     if(!raw){ if(curScreen==='game') G=null; return; }
-    // Veralteten State ignorieren (älter als unser Raumeintritt)
-    if(raw.ts && raw.ts < roomEnteredAt - 3000){ console.log('Stale state ignored, ts=',raw.ts,'entered=',roomEnteredAt); return; }
+    if(raw.ts && raw.ts < roomEnteredAt-3000) return;
     G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
-    // Soeben aufgedecktes Ergebnis in comboBig zeigen (Gast-Seite)
     if(G.phase==='rolling'){
       const rp=G.playerStates&&G.playerStates.find(ps=>ps&&ps.done&&ps.revealed&&!ps.concealed);
       if(rp&&rp.combo){ const cb=$('comboBig'); cb.textContent=rp.combo.label;
@@ -545,6 +547,7 @@ function enterRoom(){
         cb.style.color=(rp.combo.type==='schockaus')?'var(--red)':''; }
     }
   });
+
   ROOM.child('signals').on('child_added',snap=>{
     const sig=snap.val(); if(!sig) return;
     if(sig.type==='kaiser'||sig.type==='newgame'){
@@ -552,9 +555,11 @@ function enterRoom(){
     if(!amHost) return;
     snap.ref.remove(); handleSignal(sig);
   });
+
+  // Zuletzt Host-Rolle per Transaction beanspruchen
+  claimHost();
 }
 
-function electHost(){ /* nicht mehr verwendet – via Firebase-Transaction */ }
 function presenceList(){ return Object.keys(presence).map(k=>({cid:k,name:(presence[k]&&presence[k].name)||'Spieler',ts:(presence[k]&&presence[k].ts)||0})).sort((a,b)=>a.ts-b.ts); }
 function renderWaiting(){
   const list = ONLINE? presenceList() : roomPlayersLocal.map((n,i)=>({cid:'L'+i,name:n}));
