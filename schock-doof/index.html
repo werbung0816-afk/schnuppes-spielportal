@@ -432,17 +432,46 @@ function pushState(){ if(!amHost||!ONLINE||!G) return; G.ts=Date.now(); try{ ROO
 function enterRoom(){
   myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount; showScreen('waiting');
   if(!ONLINE){ amHost=true; roomPlayersLocal=[myName]; renderWaiting(); return; }
+  // alten Raum-State aus früheren Sessions aufräumen (nur einmalig beim Eintreten)
+  ROOM.child('state').once('value',snap=>{
+    const st=snap.val(); if(st&&st.phase&&st.phase!=='rolling'&&st.phase!=='laden'&&st.phase!=='summary'){
+      ROOM.child('state').remove(); }   // abgestürzter Zustand
+  });
   const me=ROOM.child('presence/'+CID);
   me.set({name:myName, ts:firebase.database.ServerValue.TIMESTAMP});
   me.onDisconnect().remove();
-  ROOM.child('host').transaction(c=> c||CID );
-  ROOM.child('host').on('value',s=>{ amHost=(s.val()===CID); if(amHost) ROOM.child('config/seats').transaction(c=> c||seatCount); renderWaiting(); });
+  let wasHost=false;
   ROOM.child('config/seats').on('value',s=>{ if(s.val()){ seatCount=s.val(); renderWaiting(); } });
-  ROOM.child('presence').on('value',s=>{ presence=s.val()||{}; renderWaiting(); });
+  ROOM.child('presence').on('value',s=>{
+    presence=s.val()||{};
+    const wasH=amHost; electHost();
+    if(amHost&&!wasH){
+      // neu zum Host geworden: Sitzplätze schreiben + Signale abhören
+      ROOM.child('config/seats').transaction(c=>c||seatCount);
+      if(!wasHost){ wasHost=true; }
+      toast('Du bist jetzt Host.','ok');
+    }
+    renderWaiting();
+  });
   ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; renderBier('bierLobby'); } });
-  ROOM.child('state').on('value',s=>{ if(amHost) return; const raw=s.val(); if(!raw) return; G=hydrate(raw);
-    if(curScreen!=='game') showScreen('game'); paint(); });
-  ROOM.child('signals').on('child_added',s=>{ if(!amHost)return; const sig=s.val(); s.ref.remove(); handleSignal(sig); });
+  ROOM.child('state').on('value',s=>{
+    if(amHost) return;
+    const raw=s.val(); if(!raw) return;
+    G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
+  });
+  ROOM.child('signals').on('child_added',s=>{
+    const sig=s.val();
+    if(!sig) return;
+    // Kaiser + newgame darf jeder Host jederzeit verarbeiten
+    if(sig.type==='kaiser'||sig.type==='newgame'){ if(amHost){ s.ref.remove(); handleSignal(sig); } return; }
+    if(!amHost) return;   // Spiel-Signale nur Host
+    s.ref.remove(); handleSignal(sig);
+  });
+}
+function electHost(){
+  // Host = früheste Präsenz (kleinster ts). Test-Einträge zählen nicht.
+  const list=presenceList().filter(x=>!x.cid.startsWith('test_'));
+  amHost = list.length>0 && list[0].cid===CID;
 }
 function presenceList(){ return Object.keys(presence).map(k=>({cid:k,name:(presence[k]&&presence[k].name)||'Spieler',ts:(presence[k]&&presence[k].ts)||0})).sort((a,b)=>a.ts-b.ts); }
 function renderWaiting(){
@@ -466,7 +495,10 @@ function addTestPlayer(){
   const nm=p.length?pick(p):('Gast'+Date.now()%100);
   ROOM.child('presence/test_'+Math.random().toString(36).slice(2,7)).set({name:nm,ts:Date.now()});
 }
-function leaveRoom(){ if(ONLINE){ try{ ROOM.child('presence/'+CID).remove(); ROOM.off(); }catch(e){} } amHost=!ONLINE; showScreen('lobby'); }
+function leaveRoom(){
+  if(ONLINE){ try{ ROOM.child('presence/'+CID).remove(); ROOM.off(); }catch(e){} }
+  amHost=!ONLINE; presence={}; showScreen('lobby');
+}
 
 /* ---------- Spielstart (Host) ---------- */
 function startMatch(){
