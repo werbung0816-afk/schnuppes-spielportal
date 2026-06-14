@@ -142,7 +142,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .die.one .pip{background:#e2231a}
 .die.back{cursor:default;background:linear-gradient(160deg,#9a6a3c,#5e3c20);box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 -3px 6px rgba(0,0,0,.28),inset 0 2px 3px rgba(255,235,200,.25)}
 .die.back:after{content:'';position:absolute;inset:0;border-radius:14px;background:repeating-linear-gradient(45deg,rgba(255,240,210,.07) 0 6px,transparent 6px 12px)}
-.combo-big{min-height:1.3em;font-weight:900;font-size:clamp(1rem,5vw,1.5rem);margin-top:2px;opacity:0;transform:scale(.85)}
+.combo-big{min-height:2.4em;font-weight:900;font-size:clamp(.95rem,4.5vw,1.35rem);margin-top:4px;opacity:0;transform:scale(.85);text-align:center;line-height:1.25}
 .combo-big.pop{animation:pop .5s cubic-bezier(.2,1.4,.4,1) forwards}
 @keyframes pop{to{opacity:1;transform:scale(1)}}
 .hint{font-size:.62rem;color:rgba(255,255,255,.5);letter-spacing:.06em;margin-top:1px}
@@ -367,7 +367,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v3.0';
+const VERSION='v3.1';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -673,7 +673,9 @@ function resolveRound(){
   else { giveLids(lose,wc.deckel,win); amountTxt=wc.deckel+' Deckel'; }
   vibe(30);
   let ev=''; if(wc.type==='schockaus')ev=EVENT.schockaus; else if(wc.type==='schock'&&wc.n===2)ev=EVENT.doof; else if(wc.type==='schock')ev=EVENT.schock; else if(wc.type==='general')ev=EVENT.general; else if(wc.type==='strasse')ev=EVENT.strasse;
-  G.banner=`${ev?ev+' · ':''}<span style="color:${playerColor(win)}">${G.players[win].name}</span> 🥳 · <span style="color:${playerColor(lose)}">${G.players[lose].name}</span> 😳 +${amountTxt}`;
+  const wLine=`<span style="color:${playerColor(win)};display:block">🥳 ${G.players[win].name} gewinnt!${ev?' · '+ev:''}</span>`;
+  const lLine=`<span style="color:${playerColor(lose)};display:block;font-size:.82em;font-weight:700;margin-top:2px">😳 ${G.players[lose].name} +${amountTxt}</span>`;
+  G.banner=wLine+lLine;
   paint(); pushState();
   if(amHost) setTimeout(()=>{ if(checkPhaseEnd())return; G.starter=lose; G.round++; beginRound(); },2700);
 }
@@ -735,7 +737,24 @@ function updateKaiser(){ const t=$('kaiserToggle');
   else { $('kpill').classList.remove('on'); if(t)t.classList.remove('on'); } }
 
 /* ---------- Recovery / Simulation (Host) ---------- */
-function startRecovery(){ stopRecovery(); if(!amHost)return; recoveryTimer=setInterval(()=>{ if(!G)return; const li=leader(); if(li>=0&&(G.phase==='rolling'||G.phase==='laden')){ if(checkPhaseEnd()) toast('Festhänger behoben.','ok'); } },4000); }
+function startRecovery(){ stopRecovery(); if(!amHost)return;
+  recoveryTimer=setInterval(()=>{
+    if(!G) return;
+    const age=Date.now()-(G.ts||0);
+    // summary hängt: Host sollte nach 2.7s weiter sein
+    if(G.phase==='summary' && age>6000){
+      toast('Festhänger (summary) behoben.','ok');
+      if(checkPhaseEnd())return; G.starter=(leader()>=0?leader():G.turnOrder[0]); G.round++; beginRound(); return;
+    }
+    // notice hängt: Host sollte nach 2.8s weiter sein
+    if(G.phase==='notice' && age>6000){
+      toast('Festhänger (notice) behoben.','ok'); G.notice=null; beginRound(); return;
+    }
+    // laden/rolling: Endstand-Check
+    const li=leader();
+    if(li>=0&&(G.phase==='rolling'||G.phase==='laden')){ if(checkPhaseEnd()) toast('Festhänger behoben.','ok'); }
+  },4000);
+}
 function stopRecovery(){ if(recoveryTimer){ clearInterval(recoveryTimer); recoveryTimer=null; } }
 
 /* ---------- Render ---------- */
@@ -850,7 +869,15 @@ $('addTestBtn').addEventListener('click',addTestPlayer);
 $('leaveRoomBtn').addEventListener('click',leaveRoom);
 $('kaiserToggle').addEventListener('click',()=>{ if(!G)return; if(amHost)applyKaiser(CID); else sendSignal('kaiser'); });
 $('homeBtn').addEventListener('click',()=>{ if(ONLINE){ leaveRoom(); } else { showScreen('lobby'); } });
-$('resyncBtn').addEventListener('click',()=>{ if(amHost){ const li=leader&&G?leader():-1; if(li>=0){ if(checkPhaseEnd())toast('Festhänger behoben.','ok'); } else toast('Alles ok.','ok'); } else { toast('Nur der Host kann synchronisieren.',''); } });
+$('resyncBtn').addEventListener('click',()=>{
+  if(!amHost){ toast('Nur der Host kann synchronisieren.',''); return; }
+  if(!G){ toast('Kein Spiel aktiv.',''); return; }
+  if(G.phase==='summary'){ toast('Weiter nach Hänger.','ok'); if(checkPhaseEnd())return; G.starter=(leader()>=0?leader():G.turnOrder[0]); G.round++; beginRound(); return; }
+  if(G.phase==='notice'){ toast('Weiter nach Hänger.','ok'); G.notice=null; beginRound(); return; }
+  const li=leader();
+  if(li>=0){ if(checkPhaseEnd()) toast('Festhänger behoben.','ok'); else toast('Alles ok.','ok'); }
+  else toast('Alles ok — kein Festhänger.','ok');
+});
 $('cup').addEventListener('click',()=>{ if(!G||G.phase!=='rolling')return; const idx=cur(); if(!isMe(idx))return; const ps=G.playerStates[idx]; if(ps.mustRoll){ actRoll(); return; } if(ps.throwNum>=curMax())return; actRoll(); });
 (function(){ const chip=$('middleBox'); let t=null; const s=()=>{ t=setTimeout(()=>{ if(amHost&&G){ const pool=participants(); const li=pool[Math.floor(Math.random()*pool.length)]; G.players[li].lids=TOTAL_LIDS; toast('⚙️ Spielende simuliert.','warn'); paint(); checkPhaseEnd(); } t=null; },800); }; const c=()=>{ if(t){clearTimeout(t);t=null;} };
   chip.addEventListener('pointerdown',s); chip.addEventListener('pointerup',c); chip.addEventListener('pointerleave',c); chip.addEventListener('pointercancel',c); })();
