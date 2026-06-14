@@ -28,15 +28,15 @@ html,body{height:100%}
 body{
   font-family:'Outfit',system-ui,sans-serif;color:#fff;min-height:100dvh;
   background:
-    repeating-radial-gradient(circle at 50% 0%,
+    repeating-radial-gradient(circle at 50% 50%,
       transparent 0px,
-      transparent 60px,
-      rgba(0,0,0,.18) 60px,
-      rgba(0,0,0,.18) 62px,
-      rgba(255,255,255,.04) 62px,
-      rgba(255,255,255,.04) 64px,
-      transparent 64px,
-      transparent 120px
+      transparent 68px,
+      rgba(0,0,0,.20) 68px,
+      rgba(0,0,0,.20) 71px,
+      rgba(255,255,255,.05) 71px,
+      rgba(255,255,255,.05) 73px,
+      transparent 73px,
+      transparent 138px
     ),
     radial-gradient(ellipse 120% 80% at 50% -10%, #1a6bbf 0%, #0a3d70 55%, #041e3a 100%);
   padding:max(6px,env(safe-area-inset-top)) 12px calc(10px + env(safe-area-inset-bottom));
@@ -218,11 +218,11 @@ body{-webkit-user-select:none;user-select:none}
       transparent 75px, transparent 145px
     ),
     radial-gradient(ellipse 130% 110% at 50% 38%, #2178d8 0%, #0e52a0 40%, #062d6a 75%, #041428 100%);
-  animation:intro-life 2.6s ease forwards}
+  animation:intro-life 3.0s ease forwards}
 @keyframes intro-life{
   0%{opacity:0}
-  15%{opacity:1}
-  73%{opacity:1}
+  13%{opacity:1}
+  80%{opacity:1}
   100%{opacity:0}
 }
 .intro-logo{width:clamp(110px,26vw,160px);height:clamp(110px,26vw,160px);border-radius:50%;object-fit:cover;object-position:50% 16%;
@@ -370,7 +370,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v2.6';
+const VERSION='v2.7';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -475,7 +475,7 @@ function enterRoom(){
       ROOM.child('state').remove(); }   // abgestürzter Zustand
   });
   const me=ROOM.child('presence/'+CID);
-  me.set({name:myName, ts:firebase.database.ServerValue.TIMESTAMP});
+  me.set({name:myName, ts:Date.now()});
   me.onDisconnect().remove();
   let wasHost=false;
   ROOM.child('config/seats').on('value',s=>{ if(s.val()){ seatCount=s.val(); renderWaiting(); } });
@@ -493,7 +493,8 @@ function enterRoom(){
   ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; renderBier('bierLobby'); } });
   ROOM.child('state').on('value',s=>{
     if(amHost) return;
-    const raw=s.val(); if(!raw) return;
+    const raw=s.val();
+    if(!raw){ if(curScreen==='game'){ G=null; } return; }
     G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
   });
   ROOM.child('signals').on('child_added',snap=>{
@@ -543,8 +544,8 @@ function leaveRoom(){
 /* ---------- Spielstart (Host) ---------- */
 function startMatch(){
   if(ONLINE && !amHost){ toast('Nur der Host startet.','warn'); return; }
-  // Alten Spielstand & Signale löschen (Biersammler bleibt erhalten)
-  if(ONLINE){ try{ ROOM.child('state').remove(); ROOM.child('signals').remove(); }catch(e){} }
+  // Signale aus alten Sessions aufräumen (state wird via pushState überschrieben)
+  if(ONLINE){ try{ ROOM.child('signals').remove(); }catch(e){} }
   const list = ONLINE? presenceList() : roomPlayersLocal.map((n,i)=>({cid:'L'+i,name:n}));
   const players=list.slice(0,seatCount).map(h=>({name:h.name,isAI:(typeof h.cid==='string'&&h.cid.indexOf('test_')===0),cid:h.cid}));
   const humanNames=players.map(p=>p.name.toLowerCase());
