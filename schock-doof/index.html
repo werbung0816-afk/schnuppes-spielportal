@@ -367,7 +367,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v3.1';
+const VERSION='v3.2';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -456,7 +456,7 @@ function hydrate(raw){
   const g=raw; g.players=g.players||[]; g.players.forEach(p=>{ if(typeof p.lids!=='number')p.lids=0; });
   g.turnOrder=g.turnOrder||[]; g.finalists=g.finalists||[]; g.halfLosers=g.halfLosers||[-1,-1];
   g.playerStates=g.playerStates||[];
-  g.playerStates.forEach(ps=>{ ps.dice=ps.dice||[1,1,1]; ps.kept=ps.kept||[false,false,false];
+  g.playerStates.forEach(ps=>{ ps.dice=ps.dice||[1,1,1]; ps.kept=ps.kept||[false,false,false]; ps.prevDice=ps.prevDice||null;
     for(let i=0;i<3;i++){ ps.kept[i]=!!ps.kept[i]; if(typeof ps.dice[i]!=='number')ps.dice[i]=1; } });
   return g;
 }
@@ -483,7 +483,6 @@ function enterRoom(){
     _setupRoomListeners();
   });
   // Bei Verbindungsabbruch: wenn wir Host sind, Host-Node löschen (damit Gast übernehmen kann)
-  ROOM.child('host').onDisconnect().remove();
 }
 
 function _setupRoomListeners(){
@@ -492,9 +491,21 @@ function _setupRoomListeners(){
   me.onDisconnect().remove();
 
   ROOM.child('config/seats').on('value',s=>{ if(s.val()){ seatCount=s.val(); renderWaiting(); } });
-  ROOM.child('presence').on('value',s=>{ presence=s.val()||{}; renderWaiting(); });
+  ROOM.child('presence').on('value',presSnap=>{
+    presence=presSnap.val()||{};
+    // Host weg aus Presence? Anderen Host bestimmen
+    ROOM.child('host').once('value',hostSnap=>{
+      const h=hostSnap.val();
+      if(h && !presence[h] && !presence[h]){
+        ROOM.child('host').transaction(c=>(presence[c]?c:CID));
+      }
+    });
+    renderWaiting();
+  });
   ROOM.child('host').on('value',s=>{
-    const prevHost=amHost; amHost=s.val()===CID;
+    const v=s.val();
+    const prevHost=amHost;
+    if(v!==null) amHost=(v===CID);   // null = kurzer Reconnect, Status beibehalten
     if(amHost&&!prevHost){ toast('Du bist jetzt Host.','ok'); ROOM.child('config/seats').transaction(c=>c||seatCount); }
     renderWaiting();
   });
@@ -581,8 +592,10 @@ async function runLaden(){
 /* ---------- Runde (Host) ---------- */
 function buildOrder(){ const pool=participants(); const start=pool.includes(G.starter)?G.starter:pool[0]; const si=pool.indexOf(start); const o=[]; for(let i=0;i<pool.length;i++)o.push(pool[(si+i)%pool.length]); return o; }
 function beginRound(){
+  // Letzte Würfel retten, damit Spielerkarten sie noch zeigen bis zum ersten Wurf
+  const prev=(G.playerStates||[]).map(ps=>ps&&ps.done?ps.dice:null);
   G.phase='rolling'; G.banner=''; G.notice=null; G.over=null; G.turnOrder=buildOrder(); G.turnPtr=0; G.maxThrows=THROWS;
-  G.playerStates=G.players.map(()=>({dice:[1,1,1],kept:[false,false,false],throwNum:0,done:false,concealed:false,combo:null,order:0,mustRoll:false}));
+  G.playerStates=G.players.map((_,i)=>({dice:[1,1,1],kept:[false,false,false],throwNum:0,done:false,concealed:false,combo:null,order:0,mustRoll:false,prevDice:(prev[i]||null)}));
   G.turnOrder.forEach((idx,k)=>{ G.playerStates[idx].order=k; });
   startTurn();
 }
@@ -619,6 +632,7 @@ function hostFinish(concealed){ finishTurn(cur(),concealed); }
 
 async function animRoll(idx){
   const ps=G.playerStates[idx]; const me=(idx===myIdx());
+  $('comboBig').innerHTML=''; $('comboBig').className='combo-big';   // Banner weg beim ersten Wurf
   $('cup').classList.add('shake'); playDice(); vibe([10,30,10]);
   if(me){ $('dice').innerHTML=ps.dice.map((d,i)=>`<div class="die${ps.kept[i]?' kept':''}" data-i="${i}">${pips(d)}</div>`).join('');
     const els=[...$('dice').children]; els.forEach((el,i)=>{ if(!ps.kept[i]) el.classList.add('roll'); });
@@ -783,6 +797,7 @@ function renderPlayers(){
     let res='',mini='',hid=''; const meCard=(i===myIdx()); const fullReveal=meCard||(G.phase!=='rolling'&&G.phase!=='laden');
     if(ps){ if(ps.done&&ps.concealed&&!fullReveal){ hid='<div class="hidden-tag">🙈 verdeckt</div>'; }
       else if(ps.done&&fullReveal&&ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
+      else if(!ps.done&&ps.throwNum===0&&ps.prevDice){ mini='<div class="mini">'+ps.prevDice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else { const laid=ps.dice.map((d,k)=>ps.kept[k]?d:null).filter(d=>d!=null); if(laid.length) mini='<div class="mini">'+laid.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; else if(ps.done) hid='<div class="hidden-tag">fertig</div>'; } }
     const col=playerColor(i);
     const card=document.createElement('div'); card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
