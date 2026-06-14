@@ -211,25 +211,26 @@ body{-webkit-user-select:none;user-select:none}
 /* ── Intro ─────────────────────────────────────────────── */
 #intro{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;
   background:
-    repeating-radial-gradient(circle at 50% 48%,
-      transparent 0px, transparent 55px,
-      rgba(0,0,0,.20) 55px, rgba(0,0,0,.20) 57px,
-      rgba(255,255,255,.05) 57px, rgba(255,255,255,.05) 59px,
-      transparent 59px, transparent 110px
+    repeating-radial-gradient(circle at 50% 42%,
+      transparent 0px, transparent 70px,
+      rgba(0,0,0,.22) 70px, rgba(0,0,0,.22) 73px,
+      rgba(255,255,255,.06) 73px, rgba(255,255,255,.06) 75px,
+      transparent 75px, transparent 145px
     ),
-    radial-gradient(ellipse 140% 100% at 50% 40%, #1e78d4 0%, #0d4a8a 45%, #041e3a 100%);
-  animation:intro-life 3.2s ease forwards}
+    radial-gradient(ellipse 130% 110% at 50% 38%, #2178d8 0%, #0e52a0 40%, #062d6a 75%, #041428 100%);
+  animation:intro-life 2.6s ease forwards}
 @keyframes intro-life{
   0%{opacity:0}
-  12%{opacity:1}
-  72%{opacity:1}
-  100%{opacity:0;pointer-events:none}
+  15%{opacity:1}
+  73%{opacity:1}
+  100%{opacity:0}
 }
-.intro-logo{width:clamp(90px,24vw,140px);height:clamp(90px,24vw,140px);border-radius:50%;object-fit:cover;object-position:50% 16%;
-  border:4px solid #ffd400;box-shadow:0 0 0 2px #fff4,0 0 40px #ffd40066,0 12px 32px #0008;
-  animation:intro-pop .55s .3s cubic-bezier(.2,1.4,.4,1) both}
+.intro-logo{width:clamp(110px,26vw,160px);height:clamp(110px,26vw,160px);border-radius:50%;object-fit:cover;object-position:50% 16%;
+  border:4px solid #ffd400;box-shadow:0 0 0 3px #fff3,0 0 40px #ffd40088,0 12px 32px #0009;
+  animation:intro-pop .55s .3s cubic-bezier(.2,1.4,.4,1) both,intro-glow 1.4s .85s ease-in-out infinite alternate}
+@keyframes intro-glow{from{box-shadow:0 0 0 3px #fff3,0 0 28px #ffd40066,0 8px 24px #0008}to{box-shadow:0 0 0 4px #fff6,0 0 55px #ffd400cc,0 0 90px #ffd40044,0 12px 32px #000a}}
 @keyframes intro-pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
-.intro-sup{font-size:clamp(.65rem,2.5vw,.9rem);letter-spacing:.45em;font-weight:700;color:#ffd400cc;margin-top:18px;
+.intro-sup{font-size:clamp(.8rem,2.8vw,1.05rem);letter-spacing:.45em;font-weight:900;color:#ffd400;margin-bottom:14px;
   animation:intro-up .5s .6s ease both}
 .intro-title{font-size:clamp(2rem,10vw,3.8rem);font-weight:900;letter-spacing:.02em;line-height:1;
   background:linear-gradient(90deg,#fff 30%,#ffd400);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
@@ -275,7 +276,7 @@ body{-webkit-user-select:none;user-select:none}
 <div id="conf"></div>
 <div id="overlay"></div>
 
-<div id="intro"><img class="intro-logo" id="introLogo" alt="Ingo"><div class="intro-sup">INGO'S</div><div class="intro-title">Schock Doof</div><div class="intro-sub">Schnuppes Spielportal · v<span class="footVer"></span></div></div>
+<div id="intro"><div class="intro-sup">INGO'S</div><img class="intro-logo" id="introLogo" alt="Ingo"><div class="intro-title">Schock Doof</div><div class="intro-sub">Schnuppes Spielportal · v<span class="footVer"></span></div></div>
 
 <div class="wrap">
 
@@ -369,7 +370,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v2.5';
+const VERSION='v2.6';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -531,13 +532,19 @@ function addTestPlayer(){
   ROOM.child('presence/test_'+Math.random().toString(36).slice(2,7)).set({name:nm,ts:Date.now()});
 }
 function leaveRoom(){
-  if(ONLINE){ try{ ROOM.child('presence/'+CID).remove(); ROOM.off(); }catch(e){} }
-  amHost=!ONLINE; presence={}; showScreen('lobby');
+  if(ONLINE){ try{
+    if(amHost) ROOM.child('state').remove();   // veralteten Stand aufräumen
+    ROOM.child('presence/'+CID).remove();
+    ROOM.off();
+  }catch(e){} }
+  amHost=!ONLINE; presence={}; G=null; showScreen('lobby');
 }
 
 /* ---------- Spielstart (Host) ---------- */
 function startMatch(){
   if(ONLINE && !amHost){ toast('Nur der Host startet.','warn'); return; }
+  // Alten Spielstand & Signale löschen (Biersammler bleibt erhalten)
+  if(ONLINE){ try{ ROOM.child('state').remove(); ROOM.child('signals').remove(); }catch(e){} }
   const list = ONLINE? presenceList() : roomPlayersLocal.map((n,i)=>({cid:'L'+i,name:n}));
   const players=list.slice(0,seatCount).map(h=>({name:h.name,isAI:(typeof h.cid==='string'&&h.cid.indexOf('test_')===0),cid:h.cid}));
   const humanNames=players.map(p=>p.name.toLowerCase());
@@ -691,7 +698,9 @@ function onGameComplete(loserIdx,extra){
   vibe([60,40,60,40,120]); confetti(); if(kind==='final') playApplause();
   paint(); pushState();
 }
-function newGameHost(){ if(!amHost)return; if(G.over&&G.over.kind==='final'){ G.kaiserrunde=false; G.kaiserGamesPlayed=0; G.kaiserrundeBy=null; }
+function newGameHost(){ if(!amHost)return;
+  if(ONLINE){ try{ ROOM.child('signals').remove(); }catch(e){} }
+  if(G.over&&G.over.kind==='final'){ G.kaiserrunde=false; G.kaiserGamesPlayed=0; G.kaiserrundeBy=null; }
   const keep=G.kaiserrunde,by=G.kaiserrundeBy,pl=G.kaiserGamesPlayed; const players=G.players.map(p=>({name:p.name,isAI:p.isAI,cid:p.cid}));
   G=freshG(players); G.kaiserrunde=keep; G.kaiserrundeBy=by; G.kaiserGamesPlayed=pl; updateKaiser(); runLaden(); }
 
