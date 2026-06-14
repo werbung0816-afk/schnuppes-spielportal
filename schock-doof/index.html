@@ -302,7 +302,7 @@ body{-webkit-user-select:none;user-select:none}
 
     <div class="kpill" id="kpill">👑 KAISERRUNDE — letztes Spiel!</div>
 
-    <span class="middle-box" id="middleBox"><span class="lbl">🍺 Mitte</span><span class="num" id="middleNum">13</span></span>
+    <span class="middle-box" id="middleBox"><span class="num" id="middleNum">13</span></span>
     <div class="players" id="players"></div>
 
     <div class="arena">
@@ -329,7 +329,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v2.3';
+const VERSION='v2.4';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -689,10 +689,10 @@ function renderMitteBox(){
   if(!G) return;
   // Gefüllt (gold) = noch in der Mitte; leer = schon verteilt
   const lids=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<G.middleLids?' f':''}"></span>`).join('');
-  $('middleBox').innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:.4rem"><span class="lbl">🍺 Mitte</span><span class="num" id="middleNum">${G.middleLids}</span></div><div class="lids" style="justify-content:center;margin-top:5px">${lids}</div>`;
+  $('middleBox').innerHTML=`<span class="num" id="middleNum">${G.middleLids}</span><div class="lids" style="justify-content:center;margin-top:5px">${lids}</div>`;
 }
 
-function renderPhase(){ let l='Hälfte 1'; if(G.half===2)l='Hälfte 2'; else if(G.half==='finale')l='Finale'; if(G.phase==='laden')l='Laden';
+function renderPhase(){ let l='HÄLFTE 1'; if(G.half===2)l='HÄLFTE 2'; else if(G.half==='finale')l='FINALE'; if(G.phase==='laden')l='LADEN';
   const pl=$('phaseLabel'); pl.textContent=l; pl.style.color=l.startsWith('Hälfte')?'var(--red)':'';
   pl.style.webkitTextFillColor=l.startsWith('Hälfte')?'var(--red)':'';
   $('middleNum').textContent=G.middleLids; renderMitteBox(); }
