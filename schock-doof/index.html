@@ -97,7 +97,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .kpill{display:none;align-items:center;justify-content:center;gap:.4rem;margin-bottom:6px;padding:8px;border-radius:14px;font-weight:800;color:#231a05;
   background:linear-gradient(90deg,#ffe08a,var(--gold),#ffe08a);background-size:200% 100%;box-shadow:0 0 0 1px rgba(255,207,92,.5),0 8px 24px rgba(255,207,92,.35);
   animation:kp 1.5s ease-in-out infinite,ksh 3s linear infinite}
-.kpill.on{display:flex}
+.kpill.on{display:none}
 @keyframes kp{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
 @keyframes ksh{to{background-position:200% 0}}
 
@@ -310,7 +310,7 @@ body{-webkit-user-select:none;user-select:none}
 
     <div class="panel">
       <h2>Dein Name</h2>
-      <input class="field" id="nameInput" maxlength="14" placeholder="Spielername" value="Saschi">
+      <input class="field" id="nameInput" maxlength="14" placeholder="Dein Name">
       <h2>Spieleranzahl</h2>
       <div class="counts" id="counts">
         <div class="opt on" data-c="2"><div class="n">2</div><div class="l">Spieler</div></div>
@@ -358,8 +358,6 @@ body{-webkit-user-select:none;user-select:none}
       <button class="icon-btn" id="resyncBtn" title="Festhänger beheben">↺</button>
     </div>
 
-    <div class="kpill" id="kpill">👑 KAISERRUNDE — letztes Spiel!</div>
-
     <span class="middle-box" id="middleBox"><span class="num" id="middleNum">13</span></span>
     <div class="players" id="players"></div>
 
@@ -387,7 +385,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v3.7';
+const VERSION='v3.8';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -791,8 +789,8 @@ function flashKaiser(byName){
   }));
 }
 function updateKaiser(){ const t=$('kaiserToggle');
-  if(G&&G.kaiserrunde){ $('kpill').classList.add('on'); $('kpill').textContent=(G.kaiserGamesPlayed>=1)?'👑 KAISERRUNDE — letztes Spiel!':'👑 Kaiserrunde aktiv — dieses Spiel läuft noch'; if(t)t.classList.add('on'); }
-  else { $('kpill').classList.remove('on'); if(t)t.classList.remove('on'); } }
+  if(G&&G.kaiserrunde){ if(t)t.classList.add('on'); }
+  else { if(t)t.classList.remove('on'); } }
 
 /* ---------- Recovery / Simulation (Host) ---------- */
 function startRecovery(){ stopRecovery(); if(!amHost)return;
