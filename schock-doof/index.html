@@ -85,7 +85,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .counts .opt.on{border-color:var(--cyan);background:rgba(83,246,255,.12);box-shadow:0 0 0 1px var(--cyan) inset,0 0 22px rgba(83,246,255,.18)}
 .counts .opt .n{font-size:2rem;font-weight:900}
 .counts .opt .l{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55)}
-.field{width:100%;background:rgba(255,255,255,.07);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);border-radius:14px;color:#fff;font:600 1.05rem 'Outfit';padding:14px 16px;margin-bottom:14px}
+.field{width:100%;background:rgba(255,255,255,.07);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);border-radius:14px;color:#fff;font:600 1.05rem 'Outfit';padding:14px 16px;margin-bottom:14px;text-align:center}
 .field:focus{outline:none;border-color:var(--cyan)}
 
 /* ---------- Game header ---------- */
@@ -211,8 +211,6 @@ body{-webkit-user-select:none;user-select:none}
 .kaiser-toggle.on .box{background:var(--gold);box-shadow:0 0 10px var(--gold)}
 .kaiser-toggle.on .box:after{content:'✓'}
 /* Vollbild-Button */
-.fs-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:rgba(255,255,255,.7);font-size:.75rem;font-weight:700;padding:5px 9px;cursor:pointer;transition:.15s;backdrop-filter:blur(4px)}
-.fs-btn:hover{background:rgba(255,255,255,.18);color:#fff}
 .kaiser-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:500;background:rgba(226,35,26,.94);color:#fff;font-weight:900;font-size:clamp(.9rem,4vw,1.15rem);border-radius:18px;padding:16px 22px;text-align:center;max-width:82vw;pointer-events:none;opacity:0;transition:opacity .35s,transform .35s}
 .kaiser-flash.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
 /* ── Intro ─────────────────────────────────────────────── */
@@ -324,7 +322,7 @@ body{-webkit-user-select:none;user-select:none}
     <button class="btn" id="startBtn">Raum erstellen / betreten</button>
 
     <div class="panel" style="margin-top:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><h2 style="margin-bottom:0">🍺 Biersammler</h2><button class="fs-btn" onclick="tryFs()">⛶ Vollbild</button></div>
+      <h2 style="display:flex;align-items:center;justify-content:space-between">🍺 Biersammler <span class="footVer" style="font-size:.62rem;font-weight:600;letter-spacing:.12em;color:rgba(255,255,255,.4);font-family:inherit"></span></h2>
       <div id="bierLobby"></div>
     </div>
     <div class="foot"><span class="footVer">v2.1</span></div>
@@ -389,7 +387,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v3.5';
+const VERSION='v3.7';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -483,7 +481,7 @@ function hydrate(raw){
   const g=raw; g.players=g.players||[]; g.players.forEach(p=>{ if(typeof p.lids!=='number')p.lids=0; });
   g.turnOrder=g.turnOrder||[]; g.finalists=g.finalists||[]; g.halfLosers=g.halfLosers||[-1,-1];
   g.playerStates=g.playerStates||[];
-  g.playerStates.forEach(ps=>{ ps.dice=ps.dice||[1,1,1]; ps.kept=ps.kept||[false,false,false]; ps.prevDice=ps.prevDice||null;
+  g.playerStates.forEach(ps=>{ ps.dice=ps.dice||[1,1,1]; ps.kept=ps.kept||[false,false,false]; ps.prevDice=ps.prevDice||null; ps.revealed=!!ps.revealed;
     for(let i=0;i<3;i++){ ps.kept[i]=!!ps.kept[i]; if(typeof ps.dice[i]!=='number')ps.dice[i]=1; } });
   return g;
 }
@@ -538,11 +536,7 @@ function _setupRoomListeners(){
   });
   ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; 
 /* ── Vollbild ── */
-function tryFs(){ try{ const el=document.documentElement; if(el.requestFullscreen) el.requestFullscreen().catch(()=>{}); else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen(); }catch(e){} }
-function isFs(){ return !!(document.fullscreenElement||document.webkitFullscreenElement); }
-function updateFsBtns(){ document.querySelectorAll('.fs-btn').forEach(b=>{ b.textContent=isFs()?'⛶ Vollbild aus':'⛶ Vollbild'; }); }
-document.addEventListener('fullscreenchange',updateFsBtns);
-document.addEventListener('webkitfullscreenchange',updateFsBtns);
+function tryFs(){ try{ const el=document.documentElement; if(el.requestFullscreen) el.requestFullscreen().catch(()=>{}); else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen(); }catch(e){} }function updateFsBtns(){ document.querySelectorAll('.fs-btn').forEach(b=>{ b.textContent=isFs()?'⛶ Vollbild aus':'⛶ Vollbild'; }); }document.addEventListener('webkitfullscreenchange',updateFsBtns);
 
 renderBier('bierLobby'); } });
   ROOM.child('state').on('value',s=>{
@@ -552,6 +546,13 @@ renderBier('bierLobby'); } });
     // Veralteten State ignorieren (älter als unser Raumeintritt)
     if(raw.ts && raw.ts < roomEnteredAt - 3000){ console.log('Stale state ignored, ts=',raw.ts,'entered=',roomEnteredAt); return; }
     G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
+    // Soeben aufgedecktes Ergebnis in comboBig zeigen (Gast-Seite)
+    if(G.phase==='rolling'){
+      const rp=G.playerStates&&G.playerStates.find(ps=>ps&&ps.done&&ps.revealed&&!ps.concealed);
+      if(rp&&rp.combo){ const cb=$('comboBig'); cb.textContent=rp.combo.label;
+        cb.className='combo-big pop'+(rp.combo.type==='schockaus'?'':' grad');
+        cb.style.color=(rp.combo.type==='schockaus')?'var(--red)':''; }
+    }
   });
   ROOM.child('signals').on('child_added',snap=>{
     const sig=snap.val(); if(!sig) return;
@@ -631,7 +632,7 @@ function beginRound(){
   const prev=(G.playerStates||[]).map(ps=>ps&&ps.done?ps.dice:null);
   G.phase='rolling'; G.banner=''; G.notice=null; G.over=null; G.turnOrder=buildOrder(); G.turnPtr=0; G.maxThrows=THROWS;
   try{ $('comboBig').innerHTML=''; $('comboBig').className='combo-big'; }catch(e){}
-  G.playerStates=G.players.map((_,i)=>({dice:[1,1,1],kept:[false,false,false],throwNum:0,done:false,concealed:false,combo:null,order:0,mustRoll:false,prevDice:(prev[i]||null)}));
+  G.playerStates=G.players.map((_,i)=>({dice:[1,1,1],kept:[false,false,false],throwNum:0,done:false,concealed:false,revealed:false,combo:null,order:0,mustRoll:false,prevDice:(prev[i]||null)}));
   G.turnOrder.forEach((idx,k)=>{ G.playerStates[idx].order=k; });
   startTurn();
 }
@@ -688,7 +689,13 @@ function finishTurn(idx,concealed){
   ps.done=true; ps.combo=evalDice(ps.dice,ps.throwNum); if(ps.combo.type==='schockaus') concealed=false;
   ps.concealed=!!concealed; vibe(20); if(ps.order===0) G.maxThrows=ps.throwNum;
   // Kombi-Label nur auf dem eigenen Gerät zeigen (kein Information Leak an Gegner)
-  if(!concealed && isMe(idx)){ const cb=$('comboBig'); cb.textContent=ps.combo.label; cb.className='combo-big pop'+(ps.combo.type==='schockaus'?'':' grad'); cb.style.color=(ps.combo.type==='schockaus')?'var(--red)':''; }
+  if(!concealed){
+    ps.revealed=true;   // Ergebnis sofort für alle sichtbar
+    // comboBig auf diesem Gerät sofort zeigen
+    const cb=$('comboBig'); cb.textContent=ps.combo.label;
+    cb.className='combo-big pop'+(ps.combo.type==='schockaus'?'':' grad');
+    cb.style.color=(ps.combo.type==='schockaus')?'var(--red)':'';
+  }
   renderPlayers(); pushState();
   setTimeout(advance, G.players[idx].isAI?600:850);
 }
@@ -812,7 +819,9 @@ function stopRecovery(){ if(recoveryTimer){ clearInterval(recoveryTimer); recove
 function paint(){ if(!G)return; renderPhase(); renderMitteBox(); renderPlayers(); renderTurnUI(); renderOverlays(); updateKaiser();
   // comboBig leeren wenn neue Runde (rolling, kein Banner mehr)
   if(G.phase==='rolling'||G.phase==='laden'){
-    const cb=$('comboBig'); if(cb&&!G.banner){ cb.innerHTML=''; cb.className='combo-big'; }
+    // comboBig nur leeren wenn kein gerade aufgedecktes Ergebnis angezeigt wird
+    const hasRevealed=G.playerStates&&G.playerStates.some(ps=>ps&&ps.done&&ps.revealed&&!ps.concealed);
+    const cb=$('comboBig'); if(cb&&!G.banner&&!hasRevealed){ cb.innerHTML=''; cb.className='combo-big'; }
   }
 }
 // Farben pro Spieler-Slot (bis 4)
@@ -836,7 +845,7 @@ function renderPlayers(){
     if(G.half==='finale'&&G.finalists&&G.finalists.length&&!G.finalists.includes(i)) return; if(p.left) return;
     const isTurn=(G.phase==='rolling'||G.phase==='laden')&&cur()===i;
     const ps=G.playerStates[i]; const lids=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<p.lids?' f':''}"></span>`).join('');
-    let res='',mini='',hid=''; const meCard=(i===myIdx()); const fullReveal=meCard||(G.phase!=='rolling'&&G.phase!=='laden');
+    let res='',mini='',hid=''; const meCard=(i===myIdx()); const fullReveal=meCard||ps.revealed||(G.phase!=='rolling'&&G.phase!=='laden');
     if(ps){ if(ps.done&&ps.concealed&&!fullReveal){ hid='<div class="hidden-tag">🙈 verdeckt</div>'; }
       else if(ps.done&&fullReveal&&ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else if(!ps.done&&ps.throwNum===0&&ps.prevDice){ mini='<div class="mini">'+ps.prevDice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
@@ -857,7 +866,7 @@ function renderDice(){
   if(ps.throwNum===0){ $('dice').innerHTML=''; return; }
   $('dice').innerHTML=ps.dice.map((d,i)=>{ const reveal=me||ps.kept[i]; if(!reveal)return `<div class="die back"></div>`;
     return `<div class="die${d===1?' one':''}${ps.kept[i]?' kept':''}" data-i="${i}">${pips(d)}</div>`; }).join('');
-  if(me && ps.throwNum>0 && ps.throwNum<curMax() && !ps.mustRoll){
+  if(me && ps.throwNum>0 && ps.throwNum<curMax()){
     [...$('dice').children].forEach(el=>{ if(el.dataset.i!=null){ const fn=e=>{e.preventDefault();actKeep(+el.dataset.i);}; el.addEventListener('click',fn); el.addEventListener('touchend',fn,{passive:false}); } }); }
 }
 function renderTurnUI(){
@@ -941,11 +950,7 @@ $('cup').addEventListener('click',()=>{ if(!G||G.phase!=='rolling')return; const
 
 
 /* ── Vollbild ── */
-function tryFs(){ try{ const el=document.documentElement; if(el.requestFullscreen) el.requestFullscreen().catch(()=>{}); else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen(); }catch(e){} }
-function isFs(){ return !!(document.fullscreenElement||document.webkitFullscreenElement); }
-function updateFsBtns(){ document.querySelectorAll('.fs-btn').forEach(b=>{ b.textContent=isFs()?'⛶ Vollbild aus':'⛶ Vollbild'; }); }
-document.addEventListener('fullscreenchange',updateFsBtns);
-document.addEventListener('webkitfullscreenchange',updateFsBtns);
+function tryFs(){ try{ const el=document.documentElement; if(el.requestFullscreen) el.requestFullscreen().catch(()=>{}); else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen(); }catch(e){} }function updateFsBtns(){ document.querySelectorAll('.fs-btn').forEach(b=>{ b.textContent=isFs()?'⛶ Vollbild aus':'⛶ Vollbild'; }); }document.addEventListener('webkitfullscreenchange',updateFsBtns);
 
 renderBier('bierLobby');
 
