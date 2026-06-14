@@ -384,7 +384,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v4.7';
+const VERSION='v4.8';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -493,20 +493,24 @@ function pushState(){ if(!amHost||!ONLINE||!G) return; G.ts=Date.now(); try{ ROO
 function enterRoom(){
   myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount; showScreen('waiting');
   if(!ONLINE){ amHost=true; roomPlayersLocal=[myName]; renderWaiting(); return; }
-  // alten State aufräumen falls Spiel abgestürzt war
-  // Kompletten alten State + Signals aufräumen beim Eintreten
-  ROOM.child('state').remove();
-  ROOM.child('signals').remove();
+  // alten Raum-State aus früheren Sessions aufräumen (nur einmalig beim Eintreten)
+  ROOM.child('state').once('value',snap=>{
+    const st=snap.val(); if(st&&st.phase&&st.phase!=='rolling'&&st.phase!=='laden'&&st.phase!=='summary'){
+      ROOM.child('state').remove(); }   // abgestürzter Zustand
+  });
   const me=ROOM.child('presence/'+CID);
   me.set({name:myName, ts:firebase.database.ServerValue.TIMESTAMP});
   me.onDisconnect().remove();
+  let wasHost=false;
   ROOM.child('config/seats').on('value',s=>{ if(s.val()){ seatCount=s.val(); renderWaiting(); } });
   ROOM.child('presence').on('value',s=>{
     presence=s.val()||{};
     const wasH=amHost; electHost();
     if(amHost&&!wasH){
-      ROOM.child('config/seats').set(seatCount);   // immer überschreiben
-      toast('Du bist Host.','ok');
+      // neu zum Host geworden: Sitzplätze schreiben + Signale abhören
+      ROOM.child('config/seats').transaction(c=>c||seatCount);
+      if(!wasHost){ wasHost=true; }
+      toast('Du bist jetzt Host.','ok');
     }
     renderWaiting();
   });
@@ -517,20 +521,20 @@ function enterRoom(){
     G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
   });
   ROOM.child('signals').on('child_added',s=>{
-    const sig=s.val(); if(!sig) return;
+    const sig=s.val();
+    if(!sig) return;
+    // Kaiser + newgame darf jeder Host jederzeit verarbeiten
     if(sig.type==='kaiser'||sig.type==='newgame'){ if(amHost){ s.ref.remove(); handleSignal(sig); } return; }
-    if(!amHost) return;
+    if(!amHost) return;   // Spiel-Signale nur Host
     s.ref.remove(); handleSignal(sig);
   });
 }
-
 function electHost(){
+  // Host = früheste Präsenz (kleinster ts). Test-Einträge zählen nicht.
   const list=presenceList().filter(x=>!x.cid.startsWith('test_'));
-  amHost=list.length>0&&list[0].cid===CID;
+  amHost = list.length>0 && list[0].cid===CID;
 }
-
 function presenceList(){ return Object.keys(presence).map(k=>({cid:k,name:(presence[k]&&presence[k].name)||'Spieler',ts:(presence[k]&&presence[k].ts)||0})).sort((a,b)=>a.ts-b.ts); }
-
 
 function renderWaiting(){
   const list = ONLINE? presenceList() : roomPlayersLocal.map((n,i)=>({cid:'L'+i,name:n}));
@@ -558,21 +562,18 @@ function leaveRoom(){
   amHost=!ONLINE; presence={}; G=null; showScreen('lobby');
 }
 
+
+
 /* ---------- Spielstart (Host) ---------- */
 function startMatch(){
   if(ONLINE && !amHost){ toast('Nur der Host startet.','warn'); return; }
-  // Alten Stand KOMPLETT löschen bevor wir neuen pushen (kein alter State beim Gast)
-  if(ONLINE){ try{ ROOM.child('state').remove(); ROOM.child('signals').remove(); }catch(e){} }
   const list = ONLINE? presenceList() : roomPlayersLocal.map((n,i)=>({cid:'L'+i,name:n}));
-  // Alle echten Menschen aufnehmen (nicht auf seatCount begrenzen → verhindert Stale-Wert-Bug)
-  const realHumans=list.filter(h=>!h.cid.startsWith('test_'));
-  const targetCount=Math.max(seatCount, realHumans.length);
-  const players=realHumans.map(h=>({name:h.name,isAI:false,cid:h.cid}));
+  const players=list.slice(0,seatCount).map(h=>({name:h.name,isAI:(typeof h.cid==='string'&&h.cid.indexOf('test_')===0),cid:h.cid}));
   const humanNames=players.map(p=>p.name.toLowerCase());
   const aiNames=[]; if(!humanNames.includes('ingo')) aiNames.push('Ingo');
   const pool=AI_POOL.filter(n=>!humanNames.includes(n.toLowerCase())).sort(()=>Math.random()-.5);
-  for(const n of pool){ if(players.length+aiNames.length>=targetCount)break; aiNames.push(n); }
-  let ai=0; while(players.length<targetCount){ players.push({name:aiNames[ai++]||('KI '+(players.length+1)),isAI:true,cid:null}); }
+  for(const n of pool){ if(players.length+aiNames.length>=seatCount)break; aiNames.push(n); }
+  let ai=0; while(players.length<seatCount){ players.push({name:aiNames[ai++]||('KI '+(players.length+1)),isAI:true,cid:null}); }
   G=freshG(players); showScreen('game'); updateKaiser(); startRecovery(); runLaden();
 }
 
