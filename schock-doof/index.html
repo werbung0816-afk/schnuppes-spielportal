@@ -31,7 +31,7 @@ body{
     radial-gradient(circle at top left, rgba(23,63,176,.45), transparent 32%),
     radial-gradient(circle at top right, rgba(255,212,0,.14), transparent 34%),
     linear-gradient(180deg,#05122e,#0a1f5c);
-  padding:max(8px,env(safe-area-inset-top)) 14px calc(12px + env(safe-area-inset-bottom));
+  padding:max(6px,env(safe-area-inset-top)) 12px calc(10px + env(safe-area-inset-bottom));
   overflow-x:hidden;
 }
 .wrap{max-width:900px;margin:0 auto}
@@ -50,7 +50,7 @@ body{
 .brand .tt .ver{font-size:.62rem;letter-spacing:.18em;color:rgba(255,255,255,.5);font-weight:600;margin-top:2px;cursor:pointer}
 
 /* ---------- Panels ---------- */
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:20px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);margin-bottom:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);margin-bottom:14px}
 .panel h2{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--pink-soft);font-weight:700;margin-bottom:14px}
 .sub{color:rgba(255,255,255,.6);font-size:.85rem}
 
@@ -77,12 +77,12 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .field:focus{outline:none;border-color:var(--cyan)}
 
 /* ---------- Game header ---------- */
-.ghead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-.icon-btn{width:42px;height:42px;flex:0 0 auto;border-radius:13px;background:var(--panel-2);border:1px solid var(--line);display:grid;place-items:center;font-size:1.1rem}
-.ghead .mid{text-align:center}.ghead .mid .t{font-weight:900;font-size:1.05rem}.ghead .mid .v{font-size:.58rem;letter-spacing:.16em;color:rgba(255,255,255,.45);cursor:pointer}
+.ghead{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px}
+.icon-btn{width:40px;height:40px;flex:0 0 auto;border-radius:12px;background:var(--panel-2);border:1px solid var(--line);display:grid;place-items:center;font-size:1.05rem}
+.ghead .mid{flex:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
 
 /* ---------- Kaiser pill ---------- */
-.kpill{display:none;align-items:center;justify-content:center;gap:.5rem;margin-bottom:12px;padding:11px;border-radius:14px;font-weight:800;color:#231a05;
+.kpill{display:none;align-items:center;justify-content:center;gap:.4rem;margin-bottom:6px;padding:8px;border-radius:14px;font-weight:800;color:#231a05;
   background:linear-gradient(90deg,#ffe08a,var(--gold),#ffe08a);background-size:200% 100%;box-shadow:0 0 0 1px rgba(255,207,92,.5),0 8px 24px rgba(255,207,92,.35);
   animation:kp 1.5s ease-in-out infinite,ksh 3s linear infinite}
 .kpill.on{display:flex}
@@ -90,8 +90,8 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 @keyframes ksh{to{background-position:200% 0}}
 
 /* ---------- Phase banner ---------- */
-.phase{text-align:center;margin-bottom:8px}
-.phase .ph{font-weight:900;font-size:clamp(1.1rem,5vw,1.6rem)}
+.phase{text-align:center;margin-bottom:4px}
+.phase .ph{font-weight:900;font-size:clamp(.9rem,4vw,1.2rem)}
 .chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
 .chip{font-size:.72rem;font-weight:700;letter-spacing:.08em;border-radius:999px;padding:6px 13px;border:1px solid var(--line);background:var(--panel-2);user-select:none}
 .chip.r{border-color:rgba(83,246,255,.35);color:var(--cyan);cursor:pointer}
@@ -115,9 +115,8 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .pc .hidden-tag{color:var(--pink-soft);font-size:.7rem;font-weight:700;margin-top:6px}
 
 /* ---------- Arena: Becher + Würfel ---------- */
-.arena{background:rgba(8,18,52,.55);border:1px solid var(--line);border-radius:18px;padding:10px 12px;margin-bottom:8px;text-align:center}
-.arena .who{font-weight:800;font-size:.98rem}
-.arena .thr{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:1px}
+.arena{background:rgba(8,18,52,.55);border:1px solid var(--line);border-radius:14px;padding:7px 10px;margin-bottom:6px;text-align:center}
+.arena .thr{font-size:.9rem;font-weight:900;color:#fff;margin-bottom:2px}
 .cup{width:118px;height:104px;margin:4px auto 2px;position:relative}
 .cup img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 7px 10px rgba(0,0,0,.5))}
 .cup.shake{animation:shake .5s ease}
@@ -188,13 +187,13 @@ body{-webkit-user-select:none;user-select:none}
 #game,#game *{cursor:default}
 
 /* Mitte-Anzeige (groß) */
-.middle-box{display:inline-flex;align-items:center;gap:.55rem;margin-top:6px;padding:7px 18px;border-radius:16px;border:1px solid rgba(255,207,92,.35);background:rgba(255,207,92,.08)}
-.middle-box .lbl{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700}
-.middle-box .num{font-size:1.7rem;font-weight:900;color:var(--gold);line-height:1}
+.middle-box{display:inline-flex;align-items:center;gap:.4rem;padding:4px 12px;border-radius:12px;border:1px solid rgba(255,212,0,.35);background:rgba(255,212,0,.08)}
+.middle-box .lbl{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.middle-box .num{font-size:1.2rem;font-weight:900;color:var(--gold);line-height:1}
 
 /* Kaiserrunde als dezentes Kontrollkästchen, pulsiert bei Aktivität */
 .kaiser-wrap{text-align:center;margin:0 0 10px}
-.kaiser-toggle{display:inline-flex;align-items:center;gap:.5rem;padding:8px 15px;border-radius:13px;font-size:.84rem;font-weight:600;color:rgba(255,255,255,.7);border:1px solid var(--line);background:var(--panel-2)}
+.kaiser-toggle{display:inline-flex;align-items:center;gap:.3rem;padding:6px 9px;border-radius:11px;font-size:.75rem;font-weight:600;color:rgba(255,255,255,.7);border:1px solid var(--line);background:var(--panel-2);cursor:pointer}
 .kaiser-toggle .box{width:16px;height:16px;border-radius:5px;border:1.5px solid rgba(255,207,92,.55);display:inline-grid;place-items:center;font-size:.7rem;color:#231a05}
 .kaiser-toggle.on{color:var(--gold);border-color:var(--gold);animation:kp 1.4s ease-in-out infinite}
 .kaiser-toggle.on .box{background:var(--gold);box-shadow:0 0 10px var(--gold)}
@@ -293,31 +292,22 @@ body{-webkit-user-select:none;user-select:none}
   <section id="game" class="screen">
     <div class="ghead">
       <button class="icon-btn" id="homeBtn" title="Lobby">⌂</button>
-      <div class="mid"><div class="t grad">Ingo's Schock Doof</div></div>
+      <span class="kaiser-toggle" id="kaiserToggle"><span class="box"></span><span>👑</span></span>
+      <div class="mid">
+        <div class="ph grad" id="phaseLabel">Hälfte 1</div>
+        <span class="middle-box" id="middleBox"><span class="lbl">🍺 Mitte</span><span class="num" id="middleNum">13</span></span>
+      </div>
       <button class="icon-btn" id="resyncBtn" title="Festhänger beheben">↺</button>
     </div>
 
     <div class="kpill" id="kpill">👑 KAISERRUNDE — letztes Spiel!</div>
 
-    <div class="phase">
-      <div class="ph grad" id="phaseLabel">Hälfte 1</div>
-      <div class="chips">
-        <span class="middle-box" id="middleBox"><span class="lbl">🍺 Mitte</span><span class="num" id="middleNum">13</span></span>
-      </div>
-    </div>
-
-    <div class="kaiser-wrap">
-      <span class="kaiser-toggle" id="kaiserToggle"><span class="box"></span><span>👑 Kaiserrunde</span></span>
-    </div>
-
     <div class="players" id="players"></div>
 
     <div class="arena">
-      <div class="who" id="who">—</div>
-      <div class="thr" id="thr">Wurf 0 / 3</div>
+      <div class="thr" id="thr" style="font-weight:900;font-size:.95rem;color:#fff;margin-bottom:2px">Wurf 0 / 3</div>
       <div class="cup" id="cup"><img id="cupImg" alt=""><div class="cup-name" id="cupName"></div></div>
       <div class="dice" id="dice"></div>
-      <div class="hint" id="hint">Würfel antippen = behalten</div>
       <div class="combo-big" id="comboBig"></div>
     </div>
 
@@ -515,16 +505,16 @@ function startMatch(){
 
 /* ---------- Laden (Host) ---------- */
 async function runLaden(){
-  G.phase='laden'; G.banner=''; G.notice=null; G.over=null; $('phaseLabel').textContent='Laden'; $('hint').style.display='none';
+  G.phase='laden'; G.banner=''; G.notice=null; G.over=null; $('phaseLabel').textContent='Laden';
   $('controls').innerHTML=''; $('comboBig').className='combo-big'; $('comboBig').textContent=''; renderPlayers(); pushState();
   let order, best, winners;
   do{ order=participants(); const rolls=[];
     for(const idx of order){ $('cupName').textContent=G.players[idx].name; $('cup').classList.add('shake'); playDice();
       $('dice').innerHTML=`<div class="die roll">${pips(rollDie())}</div>`; await sleep(220); const v=rollDie(); rolls.push(v);
-      $('dice').innerHTML=`<div class="die${v===1?' one':''}">${pips(v)}</div>`; $('who').textContent=`${G.players[idx].name}: ${v}`; $('cup').classList.remove('shake'); vibe(12); await sleep(320); }
+      $('dice').innerHTML=`<div class="die${v===1?' one':''}">${pips(v)}</div>`; $('cup').classList.remove('shake'); vibe(12); await sleep(320); }
     best=Math.max(...rolls); winners=order.filter((_,k)=>rolls[k]===best);
   } while(winners.length>1);
-  G.starter=winners[0]; toast(`${G.players[G.starter].name} beginnt!`,'ok'); $('hint').style.display='';
+  G.starter=winners[0]; toast(`${G.players[G.starter].name} beginnt!`,'ok');
   await sleep(400); beginRound();
 }
 
@@ -707,11 +697,10 @@ function renderDice(){
 function renderTurnUI(){
   const c=$('controls'); if(!G||G.phase!=='rolling'){ c.innerHTML=''; return; }
   const idx=cur(); $('cupName').textContent=G.players[idx].name;
-  $('who').textContent=G.players[idx].name+(isMe(idx)?' — du bist dran ✦':(G.players[idx].isAI?' (KI)':''));
   $('thr').textContent=`Wurf ${G.playerStates[idx].throwNum} / ${curMax()}`;
   renderDice();
-  if(isMe(idx)){ $('hint').style.display=''; renderControls(); }
-  else { $('hint').style.display='none'; c.innerHTML=`<div class="waitturn">${G.players[idx].isAI?'🤖 '+G.players[idx].name+' würfelt…':'⏳ Warte auf '+G.players[idx].name+' …'}</div>`; }
+  if(isMe(idx)){ renderControls(); }
+  else { c.innerHTML=`<div class="waitturn">${G.players[idx].isAI?'🤖 '+G.players[idx].name+' würfelt…':'⏳ Warte auf '+G.players[idx].name+' …'}</div>`; }
 }
 function renderControls(){
   const idx=cur(), ps=G.playerStates[idx]; let h='';
@@ -742,7 +731,7 @@ function renderOverlays(){
     ov.innerHTML=`<div class="cmt" style="font-size:clamp(1.3rem,6vw,2rem)">${G.notice.title}</div><div class="ovx">${G.notice.text}</div>`; ov.classList.add('on');
   } else { ov.classList.remove('on'); ov.innerHTML=''; }
   // Banner (Rundenergebnis) im Arena-Bereich
-  if(G&&G.phase==='summary'){ $('who').textContent='Rundenergebnis'; $('thr').textContent=''; $('dice').innerHTML=''; const cb=$('comboBig'); cb.textContent=G.banner||''; cb.className='combo-big pop grad'; $('hint').style.display='none'; $('cupName').textContent=''; }
+  if(G&&G.phase==='summary'){ $('thr').textContent=''; $('dice').innerHTML=''; const cb=$('comboBig'); cb.textContent=G.banner||''; cb.className='combo-big pop grad'; $('cupName').textContent=''; }
 }
 
 /* ---------- Biersammler ---------- */
