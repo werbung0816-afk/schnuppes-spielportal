@@ -367,7 +367,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v2.9';
+const VERSION='v3.0';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -427,7 +427,7 @@ function evalDice(dice, throwNum){
 function sortKey(ps){ return ps.combo.rank*1000 - (ps.throwNum||1)*100 - (ps.order||0); }
 
 /* ---------- State ---------- */
-let G=null, SZ={settled:{},games:[]}, recoveryTimer=null, _rolling=false;
+let G=null, SZ={settled:{},games:[]}, recoveryTimer=null, _rolling=false, roomEnteredAt=0;
 const AI_POOL=['Micha','Holly','JP','Sebs','Gonzo','Hannes','Oli','Joschi'];
 function freshG(players){
   return { phase:'laden', half:1, round:1,
@@ -469,10 +469,14 @@ function enterRoom(){
 
   // Host-Vergabe via atomarer Firebase-Transaktion — kein Uhren-Problem quer über Geräte
   // room/host enthält die CID des aktuellen Hosts (erster Schreiber gewinnt)
+  roomEnteredAt=Date.now();
   ROOM.child('host').transaction(cur=> cur||CID, (err,committed,snap)=>{
     if(err){ console.error('host tx',err); }
     amHost = snap&&snap.val()===CID;
     if(amHost){
+      // Host löscht sofort alten State — kein Gast sieht veraltete Deckel
+      ROOM.child('state').remove();
+      ROOM.child('signals').remove();
       ROOM.child('config/seats').transaction(c=>c||seatCount);
       toast('Du bist Host – starte das Spiel wenn alle da sind.','ok');
     }
@@ -499,6 +503,8 @@ function _setupRoomListeners(){
     if(amHost) return;   // Host steuert State selbst
     const raw=s.val();
     if(!raw){ if(curScreen==='game') G=null; return; }
+    // Veralteten State ignorieren (älter als unser Raumeintritt)
+    if(raw.ts && raw.ts < roomEnteredAt - 3000){ console.log('Stale state ignored, ts=',raw.ts,'entered=',roomEnteredAt); return; }
     G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
   });
   ROOM.child('signals').on('child_added',snap=>{
