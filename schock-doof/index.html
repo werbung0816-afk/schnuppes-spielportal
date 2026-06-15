@@ -245,7 +245,7 @@ body{-webkit-user-select:none;user-select:none}
 .bier-sheet{background:linear-gradient(170deg,#0e2060,#07000f);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;padding:20px 18px 32px;border-top:1px solid rgba(255,255,255,.15)}
 .bier-sheet h2{text-align:center;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:var(--pink-soft);margin-bottom:14px}
 .bier-close{float:right;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer;margin-top:-4px}
-#lobby.on{flex-direction:column;align-items:center;justify-content:center;min-height:100dvh;padding:24px 16px;box-sizing:border-box}
+#lobby.on{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100dvh;padding:24px 16px;box-sizing:border-box}
 #lobby.on>*{width:100%;max-width:400px;box-sizing:border-box}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -347,7 +347,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.5';
+const VERSION='v5.6';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
