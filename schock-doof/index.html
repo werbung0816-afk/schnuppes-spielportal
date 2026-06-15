@@ -337,7 +337,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v4.9g2b';
+const VERSION='v4.9g2c';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -440,6 +440,11 @@ function enterRoom(){
   showScreen('waiting');
   if(!ONLINE){ amHost=true; roomPlayersLocal=[myName]; renderWaiting(); return; }
   // alten Raum-State aus früheren Sessions aufräumen (nur einmalig beim Eintreten)
+  // Stale presence-Einträge aufräumen (Browser-Absturz hinterlässt Geister)
+  ROOM.child('presence').once('value',snap=>{
+    const cutoff=Date.now()-10*60*1000;
+    snap.forEach(ch=>{ const v=ch.val(); if(v&&v.ts&&v.ts<cutoff) ch.ref.remove(); });
+  });
   ROOM.child('state').once('value',snap=>{
     const st=snap.val(); if(st&&st.phase&&st.phase!=='rolling'&&st.phase!=='laden'&&st.phase!=='summary'){
       ROOM.child('state').remove(); }   // abgestürzter Zustand
@@ -454,7 +459,7 @@ function enterRoom(){
     const wasH=amHost; electHost();
     if(amHost&&!wasH){
       // neu zum Host geworden: Sitzplätze schreiben + Signale abhören
-      ROOM.child('config/seats').transaction(c=>c||seatCount);
+      ROOM.child('config/seats').set(seatCount);
       if(!wasHost){ wasHost=true; }
       toast('Du bist jetzt Host.','ok');
     }
