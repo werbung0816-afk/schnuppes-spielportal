@@ -364,7 +364,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v4.9g1';
+const VERSION='v4.9g2';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -387,6 +387,7 @@ let roomPlayersLocal=[];      // nur für Offline-Test
 let curScreen='lobby';
 
 document.querySelectorAll('.footVer').forEach(e=>e.textContent=VERSION);
+try{ const n=localStorage.getItem('schock_name'); if(n) $('nameInput').value=n; }catch(e){}
 (function(){const el=document.getElementById('intro');if(!el)return;
  setTimeout(()=>el.remove(),4400);
  el.addEventListener('click',()=>{el.style.transition='opacity .25s';el.style.opacity='0';setTimeout(()=>el.remove(),280);});
@@ -461,7 +462,9 @@ function pushState(){ if(!amHost||!ONLINE||!G) return; G.ts=Date.now(); try{ ROO
 
 /* ---------- Firebase: Präsenz / Raum ---------- */
 function enterRoom(){
-  myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount; showScreen('waiting');
+  myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount;
+  try{ if(myName&&myName!=='Spieler') localStorage.setItem('schock_name',myName); }catch(e){}
+  showScreen('waiting');
   if(!ONLINE){ amHost=true; roomPlayersLocal=[myName]; renderWaiting(); return; }
   // alten Raum-State aus früheren Sessions aufräumen (nur einmalig beim Eintreten)
   ROOM.child('state').once('value',snap=>{
@@ -563,7 +566,8 @@ async function runLaden(){
 function buildOrder(){ const pool=participants(); const start=pool.includes(G.starter)?G.starter:pool[0]; const si=pool.indexOf(start); const o=[]; for(let i=0;i<pool.length;i++)o.push(pool[(si+i)%pool.length]); return o; }
 function beginRound(){
   G.phase='rolling'; G.banner=''; G.notice=null; G.over=null; G.turnOrder=buildOrder(); G.turnPtr=0; G.maxThrows=THROWS;
-  G.playerStates=G.players.map(()=>({dice:[1,1,1],kept:[false,false,false],throwNum:0,done:false,concealed:false,combo:null,order:0,mustRoll:false}));
+  const prev=(G.playerStates||[]).map(ps=>ps&&ps.done?ps.dice:null);
+  G.playerStates=G.players.map((_,i)=>({dice:[1,1,1],kept:[false,false,false],throwNum:0,done:false,concealed:false,revealed:false,combo:null,order:0,mustRoll:false,prevDice:(prev[i]||null)}));
   G.turnOrder.forEach((idx,k)=>{ G.playerStates[idx].order=k; });
   startTurn();
 }
@@ -708,7 +712,11 @@ function stopRecovery(){ if(recoveryTimer){ clearInterval(recoveryTimer); recove
 
 /* ---------- Render ---------- */
 function paint(){ if(!G)return; renderPhase(); renderPlayers(); renderTurnUI(); renderOverlays(); updateKaiser(); }
-function renderPhase(){ let l='Hälfte 1'; if(G.half===2)l='Hälfte 2'; else if(G.half==='finale')l='Finale'; if(G.phase==='laden')l='Laden'; $('phaseLabel').textContent=l; $('middleNum').textContent=G.middleLids; }
+function renderPhase(){ let l='HÄLFTE 1'; if(G.half===2)l='HÄLFTE 2'; else if(G.half==='finale')l='FINALE'; if(G.phase==='laden')l='LADEN';
+  const pl=$('phaseLabel'); pl.textContent=l;
+  pl.style.color=l.startsWith('HÄLFTE')?'var(--red)':'';
+  pl.style.webkitTextFillColor=l.startsWith('HÄLFTE')?'var(--red)':'';
+  $('middleNum').textContent=G.middleLids; }
 function renderPlayers(){
   const box=$('players'); box.innerHTML='';
   G.players.forEach((p,i)=>{
@@ -718,6 +726,7 @@ function renderPlayers(){
     let res='',mini='',hid=''; const meCard=(i===myIdx()); const fullReveal=meCard||(G.phase!=='rolling'&&G.phase!=='laden');
     if(ps){ if(ps.done&&ps.concealed&&!fullReveal){ hid='<div class="hidden-tag">🙈 verdeckt</div>'; }
       else if(ps.done&&fullReveal&&ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
+      else if(!ps.done&&ps.throwNum===0&&ps.prevDice){ mini='<div class="mini">'+ps.prevDice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else { const laid=ps.dice.map((d,k)=>ps.kept[k]?d:null).filter(d=>d!=null); if(laid.length) mini='<div class="mini">'+laid.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; else if(ps.done) hid='<div class="hidden-tag">fertig</div>'; } }
     const card=document.createElement('div'); card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
     card.innerHTML=`<div class="cnt">${p.lids}</div>
