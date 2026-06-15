@@ -56,7 +56,7 @@ body{
 /* ---------- Buttons ---------- */
 button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:transparent}
 .btn{display:flex;align-items:center;justify-content:center;gap:.55rem;width:100%;padding:14px;border-radius:15px;font-weight:800;font-size:1rem;letter-spacing:.02em;
-  background:linear-gradient(90deg,var(--blue),var(--blue-2));box-shadow:0 8px 22px rgba(23,63,176,.4);transition:transform .12s,filter .12s;position:relative;overflow:hidden;color:#fff}
+  background:linear-gradient(90deg,rgba(23,63,176,.75),rgba(46,107,255,.75));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);box-shadow:0 6px 18px rgba(0,0,0,.35);transition:transform .12s,filter .12s;position:relative;overflow:hidden;color:#fff}
 .btn:active{transform:translateY(1px) scale(.99)}
 .btn.cyan{background:linear-gradient(90deg,#ffe26b,var(--gold));box-shadow:0 8px 22px rgba(255,212,0,.32);color:#1a1500}
 .btn.ghost{background:var(--panel-2);border:1px solid var(--line);box-shadow:none;color:#fff}
@@ -72,7 +72,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .counts .opt.on{border-color:var(--cyan);background:rgba(83,246,255,.12);box-shadow:0 0 0 1px var(--cyan) inset,0 0 22px rgba(83,246,255,.18)}
 .counts .opt .n{font-size:2rem;font-weight:900}
 .counts .opt .l{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55)}
-.field{width:100%;background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:14px;color:#fff;font:600 1.05rem 'Outfit';padding:14px 16px;margin-bottom:14px}
+.field{width:100%;background:rgba(255,255,255,.07);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);border-radius:14px;color:#fff;font:600 1.05rem 'Outfit';padding:14px 16px;margin-bottom:14px;text-align:center}
 .field:focus{outline:none;border-color:var(--cyan)}
 
 /* ---------- Game header ---------- */
@@ -233,6 +233,18 @@ body{-webkit-user-select:none;user-select:none}
 .intro-sup{position:absolute;left:50%;bottom:calc(50% + clamp(45px,10vw,60px) + 10px);transform:translateX(-50%);white-space:nowrap;font-size:clamp(1.2rem,4.5vw,1.8rem);letter-spacing:.52em;font-weight:900;color:#ffd400;animation:intro-up .5s .6s ease both}
 .intro-title{position:absolute;left:50%;top:calc(50% + clamp(45px,10vw,60px) + 10px);transform:translateX(-50%);white-space:nowrap;font-size:clamp(2rem,10vw,3.8rem);font-weight:900;background:linear-gradient(90deg,#fff 30%,#ffd400);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:intro-up .5s .75s ease both}
 @keyframes intro-up{from{opacity:0;transform:translateX(-50%) translateY(14px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+.kaiser-toggle{display:inline-flex;align-items:center;gap:.35rem;padding:6px 10px;border-radius:12px;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.7);border:1px solid var(--line);background:var(--panel-2);cursor:pointer;backdrop-filter:blur(4px)}
+.kaiser-toggle .box{width:16px;height:16px;border-radius:5px;border:1.5px solid rgba(255,207,92,.55);display:inline-grid;place-items:center;font-size:.7rem}
+.kaiser-toggle.on{color:var(--gold);border-color:var(--gold);animation:kp 1.4s ease-in-out infinite}
+.kaiser-toggle.on .box{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.kaiser-toggle.on .box:after{content:'✓';color:#1a1500}
+@keyframes kp{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+.kaiser-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:500;background:rgba(226,35,26,.94);color:#fff;font-weight:900;font-size:clamp(.9rem,4vw,1.15rem);border-radius:18px;padding:16px 22px;text-align:center;max-width:82vw;pointer-events:none;opacity:0;transition:opacity .35s,transform .35s}
+.kaiser-flash.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+.middle-box{display:flex;flex-direction:column;align-items:center;width:100%;padding:8px 11px;border-radius:14px;border:1px solid rgba(255,212,0,.35);background:rgba(255,212,0,.08);margin-bottom:6px}
+.middle-box .num{font-size:1.4rem;font-weight:900;color:var(--gold);line-height:1}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
@@ -271,7 +283,7 @@ body{-webkit-user-select:none;user-select:none}
     <button class="btn" id="startBtn">Raum erstellen →</button>
 
     <div class="panel" style="margin-top:14px">
-      <h2>🍺 Biersammler</h2>
+      <h2 style="display:flex;align-items:center;justify-content:space-between">🍺 Biersammler <span class="footVer" style="font-size:.62rem;font-weight:600;color:rgba(255,255,255,.4)"></span></h2>
       <div id="bierLobby"></div>
     </div>
     <div class="foot"><span class="footVer">v2.1</span></div>
@@ -320,7 +332,7 @@ body{-webkit-user-select:none;user-select:none}
       <div class="combo-big" id="comboBig"></div>
     </div>
 
-    <div id="controls"></div>
+    <div id="controls" style="min-height:120px"></div>
 
     <div class="foot"><span class="footVer" id="gameFootVer">v2.1</span></div>
   </section>
@@ -337,7 +349,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v4.9g2c';
+const VERSION='v4.9g3';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -369,10 +381,7 @@ let applauseAudio=null;
 try{ applauseAudio=new Audio('./applause.mp3'); applauseAudio.preload='auto'; }catch(e){}
 function playDice(){ try{ const a=$('diceSound'); if(a){ a.currentTime=0; a.play().catch(()=>{}); } }catch(e){} }
 function playApplause(){ try{ if(applauseAudio){ applauseAudio.currentTime=0; applauseAudio.play().catch(()=>{}); } }catch(e){} }
-(function(){ let u=false; document.addEventListener('click',function un(){ if(u)return; u=true;
-  const d=$('diceSound'); if(d){ d.play().then(()=>{d.pause();d.currentTime=0;}).catch(()=>{}); }
-  if(applauseAudio){ applauseAudio.play().then(()=>{applauseAudio.pause();applauseAudio.currentTime=0;}).catch(()=>{}); }
-  document.removeEventListener('click',un); },{capture:true}); })();
+(function(){ function unlockAudio(){ try{ const ctx=new(window.AudioContext||window.webkitAudioContext)(); ctx.resume().catch(()=>{}); }catch(e){} } document.addEventListener('touchstart',unlockAudio,{once:true,capture:true,passive:true}); document.addEventListener('click',unlockAudio,{once:true,capture:true}); })();
 
 /* ---------- Helpers ---------- */
 function vibe(p){ try{ if('vibrate' in navigator) navigator.vibrate(p); }catch(e){} }
@@ -465,7 +474,34 @@ function enterRoom(){
     }
     renderWaiting();
   });
-  ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; renderBier('bierLobby'); } });
+  ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; 
+$('kaiserToggle').addEventListener('click',()=>{
+  if(!G) return;
+  if(G.kaiserrunde){
+    if(G.kaiserGamesPlayed>=1){ toast('Kaiserrunde läuft bereits.','warn'); return; }
+    G.kaiserrunde=false; G.kaiserrundeBy=null; G.kaiserGamesPlayed=0; updateKaiser(); toast('Kaiserrunde abgewählt.',''); pushState();
+  } else {
+    const by=(G.players.find(p=>!p.isAI)||G.players[0]).name;
+    G.kaiserrunde=true; G.kaiserrundeBy=by; G.kaiserGamesPlayed=0; updateKaiser(); pushState();
+    flashKaiser(by);
+  }
+});
+function flashKaiser(byName){
+  let el=$('kaiserFlash'); if(el) el.remove();
+  el=document.createElement('div'); el.id='kaiserFlash'; el.className='kaiser-flash';
+  el.textContent=byName+': Nach dieser folgt die Kaiserrunde!';
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    el.classList.add('on');
+    setTimeout(()=>{ el.classList.remove('on'); setTimeout(()=>el.remove(),400); },3000);
+  }));
+}
+function updateKaiser(){
+  const t=$('kaiserToggle'); if(!t) return;
+  if(G&&G.kaiserrunde){ t.classList.add('on'); } else { t.classList.remove('on'); }
+}
+
+renderBier('bierLobby'); } });
   ROOM.child('state').on('value',s=>{
     if(amHost) return;
     const raw=s.val(); if(!raw) return;
@@ -653,15 +689,16 @@ function checkPhaseEnd(){
     if(G.halfLosers[0]===G.halfLosers[1]){ onGameComplete(li,`${G.players[li].name} verliert beide Hälften — kalt erwischt! Kein Finale.`); return true; }
     G.finalists=[G.halfLosers[0],G.halfLosers[1]]; resetLids(); G.half='finale'; G.starter=G.halfLosers[1]; G.round=1; G.phase='notice';
     G.notice={title:'Finale!',text:`${G.players[G.finalists[0]].name} gegen ${G.players[G.finalists[1]].name} — wer zuerst 13 Deckel hat, verliert.`}; paint(); pushState();
-    if(amHost) setTimeout(()=>{ G.notice=null; beginRound(); },2800); return true; }
-  if(G.half==='finale'){ onGameComplete(li); return true; }
+    playApplause(); if(amHost) setTimeout(()=>{ G.notice=null; beginRound(); },2800); return true; }
+  if(G.half==='finale'){ playApplause(); onGameComplete(li); return true; }
   return false;
 }
 
 /* ---------- Spiel beendet (Host) ---------- */
 function onGameComplete(loserIdx,extra){
   const humans=G.players.filter(p=>!p.isAI&&!p.left).length;
-  if(humans>=2 && !G.players[loserIdx].isAI) recordLoss(G.players[loserIdx].name);
+  const realH=G.players.filter(p=>!p.isAI&&!p.left&&!isTestName(p.name));
+  if(realH.length>=2 && !G.players[loserIdx].isAI) recordLoss(G.players[loserIdx].name);
   let kind='normal';
   if(G.kaiserrunde){ G.kaiserGamesPlayed++; if(G.kaiserGamesPlayed===1)kind='handoff'; else if(G.kaiserGamesPlayed>=2)kind='final'; }
   G.phase=(kind==='final')?'kaiserover':'gameover';
@@ -690,7 +727,14 @@ function stopRecovery(){ if(recoveryTimer){ clearInterval(recoveryTimer); recove
 
 /* ---------- Render ---------- */
 function paint(){ if(!G)return; renderPhase(); renderPlayers(); renderTurnUI(); renderOverlays(); updateKaiser(); }
-function renderPhase(){ let l='HÄLFTE 1'; if(G.half===2)l='HÄLFTE 2'; else if(G.half==='finale')l='FINALE'; if(G.phase==='laden')l='LADEN';
+
+function renderMitteBox(){
+  if(!G) return;
+  const lids=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<G.middleLids?' f':''}"></span>`).join('');
+  const mb=$('middleBox'); if(!mb) return;
+  mb.innerHTML=`<span class="num">${G.middleLids}</span><div class="lids" style="justify-content:center;margin-top:4px">${lids}</div>`;
+}
+function renderPhase(){ renderMitteBox(); let l='HÄLFTE 1'; if(G.half===2)l='HÄLFTE 2'; else if(G.half==='finale')l='FINALE'; if(G.phase==='laden')l='LADEN';
   const pl=$('phaseLabel'); pl.textContent=l; pl.style.color=l.startsWith('HÄLFTE')?'var(--red)':''; pl.style.webkitTextFillColor=l.startsWith('HÄLFTE')?'var(--red)':'';
   $('middleNum').textContent=G.middleLids; }
 function renderPlayers(){
@@ -787,6 +831,33 @@ $('resyncBtn').addEventListener('click',()=>{ if(amHost){ const li=leader&&G?lea
 $('cup').addEventListener('click',()=>{ if(!G||G.phase!=='rolling')return; const idx=cur(); if(!isMe(idx))return; const ps=G.playerStates[idx]; if(ps.mustRoll){ actRoll(); return; } if(ps.throwNum>=curMax())return; actRoll(); });
 (function(){ const chip=$('middleBox'); let t=null; const s=()=>{ t=setTimeout(()=>{ if(amHost&&G){ const pool=participants(); const li=pool[Math.floor(Math.random()*pool.length)]; G.players[li].lids=TOTAL_LIDS; toast('⚙️ Spielende simuliert.','warn'); paint(); checkPhaseEnd(); } t=null; },800); }; const c=()=>{ if(t){clearTimeout(t);t=null;} };
   chip.addEventListener('pointerdown',s); chip.addEventListener('pointerup',c); chip.addEventListener('pointerleave',c); chip.addEventListener('pointercancel',c); })();
+
+
+$('kaiserToggle').addEventListener('click',()=>{
+  if(!G) return;
+  if(G.kaiserrunde){
+    if(G.kaiserGamesPlayed>=1){ toast('Kaiserrunde läuft bereits.','warn'); return; }
+    G.kaiserrunde=false; G.kaiserrundeBy=null; G.kaiserGamesPlayed=0; updateKaiser(); toast('Kaiserrunde abgewählt.',''); pushState();
+  } else {
+    const by=(G.players.find(p=>!p.isAI)||G.players[0]).name;
+    G.kaiserrunde=true; G.kaiserrundeBy=by; G.kaiserGamesPlayed=0; updateKaiser(); pushState();
+    flashKaiser(by);
+  }
+});
+function flashKaiser(byName){
+  let el=$('kaiserFlash'); if(el) el.remove();
+  el=document.createElement('div'); el.id='kaiserFlash'; el.className='kaiser-flash';
+  el.textContent=byName+': Nach dieser folgt die Kaiserrunde!';
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    el.classList.add('on');
+    setTimeout(()=>{ el.classList.remove('on'); setTimeout(()=>el.remove(),400); },3000);
+  }));
+}
+function updateKaiser(){
+  const t=$('kaiserToggle'); if(!t) return;
+  if(G&&G.kaiserrunde){ t.classList.add('on'); } else { t.classList.remove('on'); }
+}
 
 renderBier('bierLobby');
 
