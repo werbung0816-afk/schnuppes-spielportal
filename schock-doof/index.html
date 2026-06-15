@@ -40,7 +40,7 @@ body{
 .grad{background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 
 /* ---------- Header / Logo ---------- */
-.brand{display:flex;align-items:center;gap:14px;justify-content:center;margin:4px 0 12px;text-align:left}
+.brand{display:flex;align-items:center;gap:14px;justify-content:center;margin:4px 0 12px;text-align:center}
 .brand .ph{width:clamp(54px,15vw,76px);height:clamp(54px,15vw,76px);border-radius:50%;object-fit:cover;object-position:50% 16%;
   border:3px solid var(--gold);box-shadow:0 0 22px rgba(255,207,92,.45),0 6px 16px rgba(0,0,0,.5);background:#1c1238}
 .brand .tt{line-height:.92}
@@ -50,7 +50,7 @@ body{
 
 /* ---------- Panels ---------- */
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);margin-bottom:14px}
-.panel h2{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--pink-soft);font-weight:700;margin-bottom:14px}
+.panel h2{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--pink-soft);font-weight:700;margin-bottom:14px;text-align:center}
 .sub{color:rgba(255,255,255,.6);font-size:.85rem}
 
 /* ---------- Buttons ---------- */
@@ -274,7 +274,7 @@ body{-webkit-user-select:none;user-select:none}
       <h2>Spieleranzahl</h2>
       <div class="counts" id="counts">
         <div class="opt on" data-c="2"><div class="n">2</div><div class="l">Spieler</div></div>
-        <div class="opt on" data-c="3"><div class="n">3</div><div class="l">Spieler</div></div>
+        <div class="opt" data-c="3"><div class="n">3</div><div class="l">Spieler</div></div>
         <div class="opt" data-c="4"><div class="n">4</div><div class="l">Spieler</div></div>
       </div>
       <small class="help">Der Host startet, sobald alle Menschen da sind. Leere Plätze werden zu KI. <!-- MP_STUB: Lobby/Raum-Status, Chat, Sprachanruf hier andocken --></small>
@@ -299,7 +299,6 @@ body{-webkit-user-select:none;user-select:none}
       <div id="seats"></div>
       <small class="help">Mitspieler treten dem Raum bei. Der Host startet, wenn alle da sind — freie Plätze werden zu KI. <!-- MP_STUB: echte Gast-Joins über Firebase --></small>
     </div>
-    <div class="help" id="waitHostNote" style="display:none">⏳ Warte auf den Host – er startet, wenn alle da sind.</div>
     <button class="btn" id="startMatchBtn">▶ Spiel starten</button>
     <div class="row" style="margin-top:10px">
       <button class="btn ghost sm" id="addTestBtn">＋ Test‑Mitspieler</button>
@@ -348,7 +347,9 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v4.9g3e';
+const VERSION='v4.9g3f';
+const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
+function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
