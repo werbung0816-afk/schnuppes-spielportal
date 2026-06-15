@@ -273,7 +273,7 @@ body{-webkit-user-select:none;user-select:none}
       <input class="field" id="nameInput" maxlength="14" placeholder="Spielername" value="Saschi">
       <h2>Spieleranzahl</h2>
       <div class="counts" id="counts">
-        <div class="opt" data-c="2"><div class="n">2</div><div class="l">Spieler</div></div>
+        <div class="opt on" data-c="2"><div class="n">2</div><div class="l">Spieler</div></div>
         <div class="opt on" data-c="3"><div class="n">3</div><div class="l">Spieler</div></div>
         <div class="opt" data-c="4"><div class="n">4</div><div class="l">Spieler</div></div>
       </div>
@@ -286,7 +286,6 @@ body{-webkit-user-select:none;user-select:none}
       <h2 style="display:flex;align-items:center;justify-content:space-between">🍺 Biersammler <span class="footVer" style="font-size:.62rem;font-weight:600;color:rgba(255,255,255,.4)"></span></h2>
       <div id="bierLobby"></div>
     </div>
-    <div class="foot"><span class="footVer">v2.1</span></div>
   </section>
 
   <!-- ============ WARTEBEREICH ============ -->
@@ -349,7 +348,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v4.9g3d';
+const VERSION='v4.9g3e';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -423,10 +422,8 @@ function participants(){
   return G.players.map((_,i)=>i).filter(i=>!G.players[i].left);
 }
 function cur(){ return G.turnOrder[G.turnPtr]; }
-function maxFor(ps){ return (ps&&ps.order===0)?THROWS:G.maxThrows; }
+function maxFor(ps){ return (ps&&ps.order===0)?THROWS:(G.maxThrows||THROWS); }
 function curMax(){ const ps=G&&G.playerStates&&G.playerStates[cur()]; return ps?maxFor(ps):THROWS; }
-function maxFor(ps){ return (ps.order===0)?THROWS:G.maxThrows; }
-function curMax(){ return maxFor(G.playerStates[cur()]); }
 function myIdx(){ if(!G) return -1; const i=G.players.findIndex(p=>p.cid===CID); if(i>=0) return i; return (!ONLINE)?G.players.findIndex(p=>!p.isAI):-1; }
 function isMe(idx){ return idx===myIdx(); }
 
@@ -638,8 +635,8 @@ function finishTurn(idx,concealed){
   const ps=G.playerStates[idx]; if(ps.throwNum===0){ toast('Erst würfeln!','warn'); return; }
   if(ps.mustRoll){ toast('Nach dem Drehen erst würfeln.','warn'); return; }
   ps.done=true; ps.combo=evalDice(ps.dice,ps.throwNum); if(ps.combo.type==='schockaus') concealed=false;
-  ps.concealed=!!concealed; vibe(20); if(ps.order===0) G.maxThrows=ps.throwNum;
-  if(!concealed){ const cb=$('comboBig'); cb.textContent=ps.combo.label; cb.className='combo-big pop'+(ps.combo.type==='schockaus'?'':' grad'); cb.style.color=(ps.combo.type==='schockaus')?'var(--red)':''; }
+  ps.concealed=!!concealed; ps.revealed=!concealed; vibe(20); if(ps.order===0) G.maxThrows=ps.throwNum;
+  if(!concealed&&isMe(idx)){ const cb=$('comboBig'); cb.textContent=ps.combo.label; cb.className='combo-big pop'+(ps.combo.type==='schockaus'?'':' grad'); cb.style.color=(ps.combo.type==='schockaus')?'var(--red)':''; }
   renderPlayers(); pushState();
   setTimeout(advance, G.players[idx].isAI?600:850);
 }
@@ -753,11 +750,13 @@ function renderPlayers(){
       else if(ps.done&&fullReveal&&ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else if(!ps.done&&ps.throwNum===0&&ps.prevDice){ mini='<div class="mini">'+ps.prevDice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else { const laid=ps.dice.map((d,k)=>ps.kept[k]?d:null).filter(d=>d!=null); if(laid.length) mini='<div class="mini">'+laid.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; else if(ps.done) hid='<div class="hidden-tag">fertig</div>'; } }
+    const col=playerColor(i);
     const card=document.createElement('div'); card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
-    card.innerHTML=`<div class="cnt">${p.lids}</div>
-      <div class="nm">${G.marker===i?'🔖 ':''}${p.name}${p.isAI?' <span class="ai">(KI)</span>':''}</div>
-      <div class="turnflag">${isTurn&&meCard?'du bist dran ✦':(isTurn?(p.isAI?'würfelt…':'ist dran…'):'')}</div>
-      <div class="lids">${lids}</div>${mini}${hid}<div class="res grad">${res}</div>`;
+    if(isTurn){ card.style.borderColor=col; card.style.boxShadow=`0 0 0 1.5px ${col},0 0 18px ${col}44`; }
+    card.innerHTML=`<div class="cnt" style="color:${col}">${p.lids}</div>
+      <div class="nm" style="color:${col}">${G.marker===i?'🔖 ':''}${p.name}${p.isAI?' <span class="ai">(KI)</span>':''}</div>
+      <div class="turnflag" style="color:${col}">${isTurn&&meCard?'du bist dran ✦':(isTurn?(p.isAI?'würfelt…':'ist dran…'):'')}</div>
+      <div class="lids" style="justify-content:center">${lids}</div>${mini}${hid}<div class="res" style="color:${col}">${res}</div>`;
     box.appendChild(card);
   });
 }
@@ -766,7 +765,7 @@ function renderDice(){
   if(ps.throwNum===0){ $('dice').innerHTML=''; return; }
   $('dice').innerHTML=ps.dice.map((d,i)=>{ const reveal=me||ps.kept[i]; if(!reveal)return `<div class="die back"></div>`;
     return `<div class="die${d===1?' one':''}${ps.kept[i]?' kept':''}" data-i="${i}">${pips(d)}</div>`; }).join('');
-  if(me && ps.throwNum>0 && ps.throwNum<curMax() && !ps.mustRoll){
+  if(me && ps.throwNum>0 && ps.throwNum<curMax()){
     [...$('dice').children].forEach(el=>{ if(el.dataset.i!=null) el.addEventListener('click',()=>actKeep(+el.dataset.i)); }); }
 }
 function renderTurnUI(){
@@ -806,7 +805,7 @@ function renderOverlays(){
     ov.innerHTML=`<div class="cmt" style="font-size:clamp(1.3rem,6vw,2rem)">${G.notice.title}</div><div class="ovx">${G.notice.text}</div>`; ov.classList.add('on');
   } else { ov.classList.remove('on'); ov.innerHTML=''; }
   // Banner (Rundenergebnis) im Arena-Bereich
-  if(G&&G.phase==='summary'){ $('thr').textContent=''; $('dice').innerHTML=''; const cb=$('comboBig'); cb.textContent=G.banner||''; cb.className='combo-big pop grad'; $('cupName').textContent=''; }
+  if(G&&G.phase==='summary'){ $('thr').textContent=''; $('dice').innerHTML=''; const cb=$('comboBig'); cb.innerHTML=G.banner||''; cb.className='combo-big pop'; cb.style.color=''; $('cupName').textContent=''; }
 }
 
 /* ---------- Biersammler ---------- */
@@ -824,7 +823,7 @@ function confetti(){ const box=$('conf'); if(!box)return; const cols=['#ffd400',
   for(let i=0;i<90;i++){ const c=document.createElement('div'); c.className='cf'; c.style.left=Math.random()*100+'vw'; c.style.background=cols[i%cols.length]; c.style.animationDuration=(2.2+Math.random()*1.8)+'s'; c.style.animationDelay=(Math.random()*.5)+'s'; c.style.transform='rotate('+(Math.random()*360)+'deg)'; box.appendChild(c); setTimeout(()=>c.remove(),4200); } }
 
 /* ---------- UI-Events ---------- */
-let lobbyCount=3;
+let lobbyCount=2;
 $('counts').querySelectorAll('.opt').forEach(o=>o.addEventListener('click',()=>{ $('counts').querySelectorAll('.opt').forEach(x=>x.classList.remove('on')); o.classList.add('on'); lobbyCount=+o.dataset.c; }));
 $('startBtn').addEventListener('click',enterRoom);
 $('startMatchBtn').addEventListener('click',startMatch);
