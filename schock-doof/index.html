@@ -239,6 +239,12 @@ body{-webkit-user-select:none;user-select:none}
 .kaiser-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:500;background:rgba(226,35,26,.94);color:#fff;font-weight:900;font-size:clamp(.9rem,4vw,1.15rem);border-radius:18px;padding:16px 22px;text-align:center;max-width:82vw;pointer-events:none;opacity:0;transition:opacity .35s,transform .35s}
 .kaiser-flash.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
 @keyframes kp{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+
+#bierModal{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;padding:0}
+#bierModal.on{display:flex}
+.bier-sheet{background:linear-gradient(170deg,#0e2060,#07000f);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;padding:20px 18px 32px;border-top:1px solid rgba(255,255,255,.15)}
+.bier-sheet h2{text-align:center;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:var(--pink-soft);margin-bottom:14px}
+.bier-close{float:right;background:none;border:none;color:rgba(255,255,255,.5);font-size:1.4rem;cursor:pointer;margin-top:-4px}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
@@ -275,13 +281,10 @@ body{-webkit-user-select:none;user-select:none}
 
     <button class="btn" id="startBtn">Raum erstellen →</button>
 
-    <div class="panel" style="margin-top:14px">
-      <h2>🍺 Biersammler</h2>
-      <div id="bierLobby"></div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:10px;opacity:.65">
-        <span id="kaiserToggle" style="display:inline-flex;align-items:center;gap:.35rem;padding:5px 9px;border-radius:11px;font-size:.75rem;font-weight:600;color:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);cursor:pointer"><span id="kaiserBox" style="width:15px;height:15px;border-radius:4px;border:1.5px solid rgba(255,207,92,.5);display:inline-grid;place-items:center;font-size:.65rem"></span> 👑 Kaiserrunde</span>
-        <span class="footVer" style="font-size:.62rem;letter-spacing:.1em;color:rgba(255,255,255,.4)"></span>
-      </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;opacity:.6;flex-wrap:wrap">
+      <span id="kaiserToggle" style="display:inline-flex;align-items:center;gap:.3rem;padding:4px 8px;border-radius:9px;font-size:.73rem;font-weight:600;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);cursor:pointer"><span id="kaiserBox" style="width:13px;height:13px;border-radius:3px;border:1.5px solid rgba(255,207,92,.5);display:inline-grid;place-items:center;font-size:.6rem"></span> 👑 Kaiserrunde</span>
+      <span id="bierBtn" style="display:inline-flex;align-items:center;gap:.3rem;padding:4px 8px;border-radius:9px;font-size:.73rem;font-weight:600;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);cursor:pointer">🍺 Biersammler</span>
+      <span class="footVer" style="font-size:.62rem;letter-spacing:.1em;color:rgba(255,255,255,.4)"></span>
     </div>
   </section>
 
@@ -464,7 +467,7 @@ function enterRoom(){
     }
     renderWaiting();
   });
-  ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; renderBier('bierLobby'); } });
+  ROOM.child('biersammler').on('value',s=>{ const v=s.val(); if(v){ SZ={settled:v.settled||{},games:v.games||[]}; } });
   ROOM.child('state').on('value',s=>{
     if(amHost) return;
     const raw=s.val(); if(!raw){ G=null; return; }
@@ -583,6 +586,7 @@ function hostFinish(concealed){ finishTurn(cur(),concealed); }
 
 async function animRoll(idx){
   const ps=G.playerStates[idx]; const me=(idx===myIdx());
+  const _cb=$('comboBig'); if(_cb){_cb.innerHTML='';_cb.className='combo-big';}
   $('cup').classList.add('shake'); playDice(); vibe([10,30,10]);
   if(me){ $('dice').innerHTML=ps.dice.map((d,i)=>`<div class="die${ps.kept[i]?' kept':''}" data-i="${i}">${pips(d)}</div>`).join('');
     const els=[...$('dice').children]; els.forEach((el,i)=>{ if(!ps.kept[i]) el.classList.add('roll'); });
@@ -803,6 +807,11 @@ $('cup').addEventListener('click',()=>{ if(!G||G.phase!=='rolling')return; const
   chip.addEventListener('pointerdown',s); chip.addEventListener('pointerup',c); chip.addEventListener('pointerleave',c); chip.addEventListener('pointercancel',c); })();
 
 
+// Biersammler Modal
+document.addEventListener('click',e=>{
+  if(e.target.closest('#bierBtn')){ renderBier('bierModalContent'); $('bierModal').classList.add('on'); }
+  if(e.target.closest('#bierClose')||e.target.id==='bierModal') $('bierModal').classList.remove('on');
+});
 const _kt=$('kaiserToggle'); if(_kt) _kt.addEventListener('click',()=>{
   if(!G||!amHost){ if(G&&!amHost)sendSignal('kaiser'); return; }
   if(G.kaiserrunde){
@@ -813,8 +822,8 @@ const _kt=$('kaiserToggle'); if(_kt) _kt.addEventListener('click',()=>{
     G.kaiserrunde=true; G.kaiserrundeBy=by; G.kaiserGamesPlayed=0; updateKaiser(); pushState(); flashKaiser(by);
   }
 });
-renderBier('bierLobby');
 
 </script>
+<div id="bierModal"><div class="bier-sheet"><button class="bier-close" id="bierClose">✕</button><h2>🍺 Biersammler</h2><div id="bierModalContent"></div></div></div>
 </body>
 </html>
