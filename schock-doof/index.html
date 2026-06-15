@@ -347,7 +347,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.6';
+const VERSION='v5.8';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -645,7 +645,10 @@ function resolveRound(){
   let ev=''; if(wc.type==='schockaus')ev=EVENT.schockaus; else if(wc.type==='schock'&&wc.n===2)ev=EVENT.doof; else if(wc.type==='schock')ev=EVENT.schock; else if(wc.type==='general')ev=EVENT.general; else if(wc.type==='strasse')ev=EVENT.strasse;
   G.banner=`<span style="color:${playerColor(win)}">🥳 ${G.players[win].name} gewinnt!${ev?' · '+ev:''}</span><br><span style="color:${playerColor(lose)};font-size:.85em">😳 ${G.players[lose].name} +${amountTxt}</span>`;
   paint(); pushState();
-  if(amHost) setTimeout(()=>{ if(checkPhaseEnd())return; G.starter=lose; G.round++; beginRound(); },2700);
+  // Bei Schock Aus mit vollem Brett: sofort prüfen ob Spiel vorbei
+  const immediateEnd=wc.type==='schockaus'&&leader()>=0;
+  const delay=immediateEnd?500:2700;
+  if(amHost) setTimeout(()=>{ if(checkPhaseEnd())return; G.starter=lose; G.round++; beginRound(); },delay);
 }
 
 /* ---------- Phasen-Ende (Host) ---------- */
@@ -707,12 +710,22 @@ function advanceStuck(){
   if(!G) return false;
   if(G.phase==='summary'){
     toast('Festhänger behoben.','ok');
-    if(checkPhaseEnd()) return true;
-    G.starter=G.turnOrder.find(i=>!G.players[i].isAI)??G.turnOrder[0];
-    G.round++; beginRound(); return true;
+    if(checkPhaseEnd()){
+      // Force-Push: amHost-Check umgehen, G.ts aktualisieren
+      G.ts=Date.now(); try{ if(ONLINE) ROOM.child('state').set(sanitize(G)); }catch(e){}
+      paint();
+      return true;
+    }
+    // Kein Spielende — nächste Runde erzwingen
+    const nextP=G.turnOrder.find(i=>!G.players[i].isAI)??G.turnOrder[0];
+    G.starter=nextP; G.round++; beginRound(); return true;
   }
   if(G.phase==='notice'){
     toast('Festhänger behoben.','ok'); G.notice=null; beginRound(); return true;
+  }
+  if(G.phase==='gameover'||G.phase==='kaiserover'){
+    G.ts=Date.now(); try{ if(ONLINE) ROOM.child('state').set(sanitize(G)); }catch(e){}
+    paint(); return true;
   }
   const li=leader();
   if(li>=0&&(G.phase==='rolling'||G.phase==='laden')){
@@ -723,7 +736,7 @@ function advanceStuck(){
 function startRecovery(){ stopRecovery(); if(!amHost)return;
   recoveryTimer=setInterval(()=>{ if(!G)return;
     const age=Date.now()-(G.ts||0);
-    if((G.phase==='summary'||G.phase==='notice')&&age>5000) advanceStuck();
+    if((G.phase==='summary'||G.phase==='notice'||G.phase==='gameover'||G.phase==='kaiserover')&&age>5000) advanceStuck();
     else if(G.phase==='rolling'||G.phase==='laden') advanceStuck();
   },4000);
 }
