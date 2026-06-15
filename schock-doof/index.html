@@ -346,7 +346,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.13';
+const VERSION='v5.14';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -601,7 +601,7 @@ async function animRoll(idx){
     for(let f=0;f<5;f++){ els.forEach((el)=>{ const i=Number(el.dataset.i); if(!ps.kept[i]) el.innerHTML=pips(rollDie()); }); await sleep(70); } }
   else { await sleep(420); }
   for(let i=0;i<3;i++){ if(!ps.kept[i]) ps.dice[i]=rollDie(); }
-  ps.throwNum++; $('cup').classList.remove('shake'); renderDice(); $('thr').textContent=`Wurf ${ps.throwNum} / ${curMax()}`;
+  ps.throwNum++; ps.mustRoll=false; $('cup').classList.remove('shake'); renderDice(); $('thr').textContent=`Wurf ${ps.throwNum} / ${curMax()}`;
 }
 function canDrehen(ps){ if(ps.throwNum<1||ps.throwNum>=maxFor(ps))return false; return ps.dice.filter(d=>d===6).length>=2; }
 function doDrehen(idx){ const ps=G.playerStates[idx]; if(!canDrehen(ps))return; let conv=0;
