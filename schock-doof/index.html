@@ -260,7 +260,7 @@ body{-webkit-user-select:none;user-select:none}
 
   <!-- ============ LOBBY ============ -->
   <section id="lobby" class="screen on">
-    <div class="brand">
+    <div class="brand" style="margin-bottom:18px">
       <img class="ph ingo-logo" id="ingoLogo" alt="Ingo">
       <div class="tt">
         <div class="sup">INGO'S</div>
@@ -269,9 +269,7 @@ body{-webkit-user-select:none;user-select:none}
     </div>
 
     <div class="panel">
-      <h2>Dein Name</h2>
-      <input class="field" id="nameInput" maxlength="14" placeholder="Spielername" value="Saschi">
-      <h2>Spieleranzahl</h2>
+      <input class="field" id="nameInput" maxlength="14" placeholder="Dein Name">
       <div class="counts" id="counts">
         <div class="opt on" data-c="2"><div class="n">2</div><div class="l">Spieler</div></div>
         <div class="opt" data-c="3"><div class="n">3</div><div class="l">Spieler</div></div>
@@ -329,9 +327,9 @@ body{-webkit-user-select:none;user-select:none}
 
     <div id="controls" style="min-height:120px"></div>
 
-    <div class="foot" style="display:flex;align-items:center;justify-content:center;gap:12px">
-      <span id="kaiserToggle" style="display:inline-flex;align-items:center;gap:.3rem;padding:4px 8px;border-radius:9px;font-size:.73rem;font-weight:600;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);cursor:pointer"><span id="kaiserBox" style="width:13px;height:13px;border-radius:3px;border:1.5px solid rgba(255,207,92,.45);display:inline-grid;place-items:center;font-size:.6rem"></span> 👑 Kaiserrunde</span>
-      <span class="footVer" style="font-size:.62rem;letter-spacing:.1em;color:rgba(255,255,255,.35)"></span>
+    <div class="foot" style="display:flex;align-items:center;justify-content:center;gap:12px;opacity:.65">
+      <span id="kaiserToggle" style="display:inline-flex;align-items:center;gap:.3rem;padding:4px 8px;border-radius:9px;font-size:.73rem;font-weight:600;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);cursor:pointer"><span id="kaiserBox" style="width:13px;height:13px;border-radius:3px;border:1.5px solid rgba(255,207,92,.5);display:inline-grid;place-items:center;font-size:.6rem"></span> 👑 Kaiserrunde</span>
+      <span id="bierBtnGame" style="display:inline-flex;align-items:center;gap:.3rem;padding:4px 8px;border-radius:9px;font-size:.73rem;font-weight:600;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);cursor:pointer">🍺 Biersammler</span>
     </div>
   </section>
 </div>
@@ -347,7 +345,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.0';
+const VERSION='v5.1';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -707,7 +705,12 @@ function startRecovery(){ stopRecovery(); if(!amHost)return; recoveryTimer=setIn
 function stopRecovery(){ if(recoveryTimer){ clearInterval(recoveryTimer); recoveryTimer=null; } }
 
 /* ---------- Render ---------- */
-function paint(){ if(!G)return; renderPhase(); renderPlayers(); renderTurnUI(); renderOverlays(); updateKaiser(); }
+function paint(){ if(!G)return; renderPhase(); renderPlayers(); renderTurnUI(); renderOverlays(); updateKaiser();
+  // comboBig leeren wenn neue Runde (kein banner, rolling/laden)
+  if((G.phase==='rolling'||G.phase==='laden')&&!G.banner){
+    const cb=$('comboBig'); if(cb){cb.innerHTML='';cb.className='combo-big';}
+  }
+}
 function renderMitteBox(){ if(!G)return; const mn=$('middleNum'); if(mn)mn.textContent=G.middleLids; const ml=$('middleLids'); if(ml){ ml.innerHTML=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<G.middleLids?' f':''}"></span>`).join(''); } }
 function renderPhase(){ renderMitteBox(); let l='HÄLFTE 1'; if(G.half===2)l='HÄLFTE 2'; else if(G.half==='finale')l='FINALE'; if(G.phase==='laden')l='LADEN';
   const pl=$('phaseLabel'); pl.textContent=l; pl.style.color=l.startsWith('HÄLFTE')?'var(--red)':''; pl.style.webkitTextFillColor=l.startsWith('HÄLFTE')?'var(--red)':''; }
@@ -811,7 +814,7 @@ $('cup').addEventListener('click',()=>{ if(!G||G.phase!=='rolling')return; const
 
 // Biersammler Modal
 document.addEventListener('click',e=>{
-  if(e.target.closest('#bierBtn')){ renderBier('bierModalContent'); $('bierModal').classList.add('on'); }
+  if(e.target.closest('#bierBtn')||e.target.closest('#bierBtnGame')){ renderBier('bierModalContent'); $('bierModal').classList.add('on'); }
   if(e.target.closest('#bierClose')||e.target.id==='bierModal') $('bierModal').classList.remove('on');
 });
 const _kt=$('kaiserToggle'); if(_kt) _kt.addEventListener('click',()=>{
