@@ -346,7 +346,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.12';
+const VERSION='v5.13';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -687,7 +687,7 @@ function onGameComplete(loserIdx,extra){
   const winLine=(kind==='final')?'👑 KAISERRUNDE VORBEI!':pick(WINNER_LINES);
   G.over={loser:loserIdx,winner:winnerIdx>=0?winnerIdx:null,extra:extra||'',kind,comment:winLine,loserLine:pick(LOSER_LINES)};
   vibe([60,40,60,40,120]); confetti(); playApplause();
-  paint(); pushState();
+  paint(); pushState(); _ensureOverlay();
 }
 function newGameHost(){ if(!amHost)return; if(G.over&&G.over.kind==='final'){ G.kaiserrunde=false; G.kaiserGamesPlayed=0; G.kaiserrundeBy=null; }
   const keep=G.kaiserrunde,by=G.kaiserrundeBy,pl=G.kaiserGamesPlayed; const players=G.players.map(p=>({name:p.name,isAI:p.isAI,cid:p.cid}));
@@ -699,6 +699,17 @@ function applyKaiser(byCid){
   if(G.kaiserrunde){ if(G.kaiserGamesPlayed>=1){ return; } G.kaiserrunde=false; G.kaiserrundeBy=null; G.kaiserGamesPlayed=0; }
   else { const p=G.players.find(x=>x.cid===byCid); G.kaiserrunde=true; G.kaiserrundeBy=(p?p.name:(G.players.find(x=>!x.isAI)||G.players[0]).name); G.kaiserGamesPlayed=0; }
   updateKaiser(); pushState();
+}
+// Stellt sicher dass das Game-Over-Overlay sichtbar bleibt
+let _ovPolling=null;
+function _ensureOverlay(){
+  if(_ovPolling) clearInterval(_ovPolling);
+  _ovPolling=setInterval(()=>{
+    if(!G||(G.phase!=='gameover'&&G.phase!=='kaiserover')){ clearInterval(_ovPolling); _ovPolling=null; return; }
+    const ov=$('overlay'); if(!ov) return;
+    if(!ov.classList.contains('on')){ paint(); }
+  },400);
+  setTimeout(()=>{ if(_ovPolling){ clearInterval(_ovPolling); _ovPolling=null; } },12000);
 }
 function flashKaiser(byName){
   let el=$('kaiserFlash'); if(el)el.remove();
@@ -718,14 +729,14 @@ function updateKaiser(){
 function advanceStuck(){
   if(!G) return false;
   if(G.phase==='summary'){
-    toast('Festhänger behoben.','ok');
+    const _li=leader(); const _half=G.half;
+    toast(`Stuck: half=${_half} leader=${_li} amHost=${amHost}`,'warn');
     if(checkPhaseEnd()){
-      // Force-Push: amHost-Check umgehen, G.ts aktualisieren
       G.ts=Date.now(); try{ if(ONLINE) ROOM.child('state').set(sanitize(G)); }catch(e){}
-      paint();
-      return true;
+      paint(); _ensureOverlay(); return true;
     }
     // Kein Spielende — nächste Runde erzwingen
+    toast('Neue Runde erzwungen.','ok');
     const nextP=G.turnOrder.find(i=>!G.players[i].isAI)??G.turnOrder[0];
     G.starter=nextP; G.round++; beginRound(); return true;
   }
@@ -734,7 +745,7 @@ function advanceStuck(){
   }
   if(G.phase==='gameover'||G.phase==='kaiserover'){
     G.ts=Date.now(); try{ if(ONLINE) ROOM.child('state').set(sanitize(G)); }catch(e){}
-    paint(); return true;
+    paint(); _ensureOverlay(); return true;
   }
   const li=leader();
   if(li>=0&&(G.phase==='rolling'||G.phase==='laden')){
