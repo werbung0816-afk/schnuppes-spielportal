@@ -281,8 +281,7 @@ body{-webkit-user-select:none;user-select:none}
 
     <button class="btn" id="startBtn">Raum erstellen →</button>
 
-    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;opacity:.6;flex-wrap:wrap">
-      <span id="kaiserToggle" style="display:inline-flex;align-items:center;gap:.3rem;padding:4px 8px;border-radius:9px;font-size:.73rem;font-weight:600;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);cursor:pointer"><span id="kaiserBox" style="width:13px;height:13px;border-radius:3px;border:1.5px solid rgba(255,207,92,.5);display:inline-grid;place-items:center;font-size:.6rem"></span> 👑 Kaiserrunde</span>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;opacity:.6">
       <span id="bierBtn" style="display:inline-flex;align-items:center;gap:.3rem;padding:4px 8px;border-radius:9px;font-size:.73rem;font-weight:600;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);cursor:pointer">🍺 Biersammler</span>
       <span class="footVer" style="font-size:.62rem;letter-spacing:.1em;color:rgba(255,255,255,.4)"></span>
     </div>
@@ -330,7 +329,10 @@ body{-webkit-user-select:none;user-select:none}
 
     <div id="controls" style="min-height:120px"></div>
 
-    <div class="foot"><span class="footVer" id="gameFootVer">v2.1</span></div>
+    <div class="foot" style="display:flex;align-items:center;justify-content:center;gap:12px">
+      <span id="kaiserToggle" style="display:inline-flex;align-items:center;gap:.3rem;padding:4px 8px;border-radius:9px;font-size:.73rem;font-weight:600;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);cursor:pointer"><span id="kaiserBox" style="width:13px;height:13px;border-radius:3px;border:1.5px solid rgba(255,207,92,.45);display:inline-grid;place-items:center;font-size:.6rem"></span> 👑 Kaiserrunde</span>
+      <span class="footVer" style="font-size:.62rem;letter-spacing:.1em;color:rgba(255,255,255,.35)"></span>
+    </div>
   </section>
 </div>
 
@@ -534,13 +536,13 @@ async function runLaden(){
   G.phase='laden'; G.banner=''; G.notice=null; G.over=null; $('phaseLabel').textContent='Laden';
   $('controls').innerHTML=''; $('comboBig').className='combo-big'; $('comboBig').textContent=''; renderPlayers(); pushState();
   let order, best, winners;
-  do{ order=participants(); const rolls=[];
+  do{ order=participants().sort(()=>Math.random()-.5); const rolls=[];
     for(const idx of order){ $('cupName').textContent=G.players[idx].name; $('cup').classList.add('shake'); playDice();
       $('dice').innerHTML=`<div class="die roll">${pips(rollDie())}</div>`; await sleep(220); const v=rollDie(); rolls.push(v);
       $('dice').innerHTML=`<div class="die${v===1?' one':''}">${pips(v)}</div>`; $('cup').classList.remove('shake'); vibe(12); await sleep(320); }
     best=Math.max(...rolls); winners=order.filter((_,k)=>rolls[k]===best);
   } while(winners.length>1);
-  G.starter=winners[0]; toast(`${G.players[G.starter].name} beginnt!`,'ok');
+  const allP=participants(); G.starter=winners[0]||(allP[Math.floor(Math.random()*allP.length)]); toast(`${G.players[G.starter].name} beginnt!`,'ok');
   await sleep(400); beginRound();
 }
 
@@ -715,7 +717,7 @@ function renderPlayers(){
     if(G.half==='finale'&&G.finalists&&G.finalists.length&&!G.finalists.includes(i)) return; if(p.left) return;
     const isTurn=(G.phase==='rolling'||G.phase==='laden')&&cur()===i;
     const ps=G.playerStates[i]; const lids=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<p.lids?' f':''}"></span>`).join('');
-    let res='',mini='',hid=''; const meCard=(i===myIdx()); const fullReveal=meCard||(G.phase!=='rolling'&&G.phase!=='laden');
+    let res='',mini='',hid=''; const meCard=(i===myIdx()); const fullReveal=meCard||(ps&&ps.revealed)||(G.phase!=='rolling'&&G.phase!=='laden');
     if(ps){ if(ps.done&&ps.concealed&&!fullReveal){ hid='<div class="hidden-tag">🙈 verdeckt</div>'; }
       else if(ps.done&&fullReveal&&ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else if(!ps.done&&ps.throwNum===0&&ps.prevDice){ mini='<div class="mini">'+ps.prevDice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
