@@ -349,7 +349,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v4.9g3c';
+const VERSION='v4.9g3d';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -733,13 +733,15 @@ function paint(){ if(!G)return; renderPhase(); renderPlayers(); renderTurnUI(); 
 
 function renderMitteBox(){
   if(!G) return;
-  const lids=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<G.middleLids?' f':''}"></span>`).join('');
-  const mb=$('middleBox'); if(!mb) return;
-  mb.innerHTML=`<span class="num">${G.middleLids}</span><div class="lids" style="justify-content:center;margin-top:4px">${lids}</div>`;
+  const mn=$('middleNum'); if(mn) mn.textContent=G.middleLids;
+  const ml=$('middleLids'); if(ml){
+    const lids=Array.from({length:TOTAL_LIDS},(_,k)=>`<span class="lid${k<G.middleLids?' f':''}"></span>`).join('');
+    ml.innerHTML=lids;
+  }
 }
 function renderPhase(){ renderMitteBox(); let l='HÄLFTE 1'; if(G.half===2)l='HÄLFTE 2'; else if(G.half==='finale')l='FINALE'; if(G.phase==='laden')l='LADEN';
   const pl=$('phaseLabel'); pl.textContent=l; pl.style.color=l.startsWith('HÄLFTE')?'var(--red)':''; pl.style.webkitTextFillColor=l.startsWith('HÄLFTE')?'var(--red)':'';
-  $('middleNum').textContent=G.middleLids; }
+}
 function renderPlayers(){
   const box=$('players'); box.innerHTML='';
   G.players.forEach((p,i)=>{
