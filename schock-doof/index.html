@@ -349,7 +349,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v4.9g3b';
+const VERSION='v4.9g3c';
 const TOTAL_LIDS=13;
 const THROWS=3;
 const $=id=>document.getElementById(id);
@@ -505,7 +505,9 @@ renderBier('bierLobby'); } });
   ROOM.child('state').on('value',s=>{
     if(amHost) return;
     const raw=s.val(); if(!raw){ G=null; return; }
-    if(raw.ts && raw.ts < roomEnteredAt - 60000) return; // State älter als 60s ignorieren
+    if(raw.ts && raw.ts < roomEnteredAt - 60000) return;
+    // Nur ins Spiel wenn eigene CID im State (verhindert alten State aus fremder Session)
+    if(raw.players && !raw.players.some(p=>p&&p.cid===CID)) return;
     G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
   });
   ROOM.child('signals').on('child_added',s=>{
