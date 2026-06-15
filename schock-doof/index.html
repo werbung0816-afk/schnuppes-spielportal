@@ -243,6 +243,9 @@ body{-webkit-user-select:none;user-select:none}
 
 .kaiser-toggle{display:inline-flex;align-items:center;gap:.3rem;padding:4px 8px;border-radius:9px;font-size:.73rem;font-weight:600;color:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07)}
 .kaiser-toggle.on{color:var(--gold)!important;border-color:rgba(255,212,0,.6)!important;animation:kp 1.4s ease-in-out infinite}
+
+#overlay .ov-win{font-size:clamp(1.8rem,9vw,3.2rem);font-weight:900;letter-spacing:.02em;line-height:1;margin-bottom:12px;text-shadow:0 0 40px currentColor}
+#overlay .ov-div{width:60px;height:2px;background:rgba(255,255,255,.2);border-radius:2px;margin:14px auto}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
@@ -343,7 +346,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.10';
+const VERSION='v5.12';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -438,7 +441,12 @@ function hydrate(raw){
     for(let i=0;i<3;i++){ ps.kept[i]=!!ps.kept[i]; if(typeof ps.dice[i]!=='number')ps.dice[i]=1; } });
   return g;
 }
-function pushState(){ if(!amHost||!ONLINE||!G) return; G.ts=Date.now(); try{ ROOM.child('state').set(sanitize(G)); }catch(e){console.warn(e);} }
+function pushState(){
+  if(!ONLINE||!G) return;
+  // gameover/kaiserover immer pushen (auch als Gast), alle anderen nur als Host
+  if(!amHost && G.phase!=='gameover' && G.phase!=='kaiserover') return;
+  G.ts=Date.now(); try{ ROOM.child('state').set(sanitize(G)); }catch(e){ console.warn('pushState:',e); }
+}
 
 /* ---------- Firebase: Präsenz / Raum ---------- */
 function enterRoom(){
@@ -471,6 +479,8 @@ function enterRoom(){
     const raw=s.val(); if(!raw){ G=null; return; }
     if(raw.ts&&raw.ts<roomEnteredAt-60000) return;
     if(raw.players&&!raw.players.some(p=>p&&p.cid===CID)) return;
+    // Älteren State ignorieren wenn lokal bereits gameover/kaiserover
+    if(G&&(G.phase==='gameover'||G.phase==='kaiserover')&&raw.phase!=='gameover'&&raw.phase!=='kaiserover'&&raw.ts&&G.ts&&raw.ts<G.ts) return;
     G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
   });
   ROOM.child('signals').on('child_added',s=>{
@@ -673,8 +683,10 @@ function onGameComplete(loserIdx,extra){
   let kind='normal';
   if(G.kaiserrunde){ G.kaiserGamesPlayed++; if(G.kaiserGamesPlayed===1)kind='handoff'; else if(G.kaiserGamesPlayed>=2)kind='final'; }
   G.phase=(kind==='final')?'kaiserover':'gameover';
-  G.over={loser:loserIdx,extra:extra||'',kind,comment:(kind==='final')?'👑 KAISERRUNDE VORBEI!':pick(LOSER_LINES)};
-  vibe([60,40,60,40,120]); if(kind==='final'){ confetti(); playApplause(); }
+  const winnerIdx=G.players.reduce((best,_,i)=>i!==loserIdx&&!G.players[i].isAI?i:best,-1);
+  const winLine=(kind==='final')?'👑 KAISERRUNDE VORBEI!':pick(WINNER_LINES);
+  G.over={loser:loserIdx,winner:winnerIdx>=0?winnerIdx:null,extra:extra||'',kind,comment:winLine,loserLine:pick(LOSER_LINES)};
+  vibe([60,40,60,40,120]); confetti(); playApplause();
   paint(); pushState();
 }
 function newGameHost(){ if(!amHost)return; if(G.over&&G.over.kind==='final'){ G.kaiserrunde=false; G.kaiserGamesPlayed=0; G.kaiserrundeBy=null; }
@@ -805,11 +817,27 @@ function renderControls(){
 function renderOverlays(){
   const ov=$('overlay');
   if(G&&(G.phase==='gameover'||G.phase==='kaiserover')&&G.over){
-    const o=G.over; let h=`<div class="cmt">${o.comment}</div><div class="lbl">${o.kind==='final'?'Verlierer der Kaiserrunde':'Verlierer'}</div><div class="who">😳 ${G.players[o.loser].name}</div>`;
+    const o=G.over;
+    const wCol=o.winner!=null?playerColor(o.winner):'var(--gold)';
+    const lCol=playerColor(o.loser);
+    let h='';
+    // Gewinner
+    if(o.winner!=null){
+      h+=`<div class="cmt" style="color:${wCol}">${o.comment}</div>`;
+      h+=`<div class="ov-win" style="color:${wCol}">🏆 ${G.players[o.winner].name}</div>`;
+    } else {
+      h+=`<div class="cmt">${o.comment}</div>`;
+    }
+    // Trennlinie
+    h+=`<div class="ov-div"></div>`;
+    // Verlierer
+    h+=`<div class="lbl">${o.kind==='final'?'Verlierer der Kaiserrunde':'Verlierer'}</div>`;
+    h+=`<div class="who" style="color:${lCol}">😳 ${G.players[o.loser].name}</div>`;
+    if(o.loserLine) h+=`<div class="ovx" style="color:${lCol};opacity:.9;font-weight:700;margin-top:4px">${o.loserLine}</div>`;
     if(o.extra) h+=`<div class="ovx">${o.extra}</div>`;
-    if(o.kind==='handoff') h+=`<div class="ovx" style="color:var(--gold)">👑 Jetzt die Kaiserrunde — das letzte Spiel!</div>`;
+    if(o.kind==='handoff') h+=`<div class="ovx" style="color:var(--gold);margin-top:8px">👑 Jetzt die Kaiserrunde — das letzte Spiel!</div>`;
     h+=`<div class="ovbier" id="ovBier"></div>`;
-    h+= amHost ? `<button class="btn" id="ovNew" style="max-width:280px;margin-top:14px">${o.kind==='handoff'?'Kaiserrunde starten 👑':'Neues Spiel'}</button>` : `<div class="ovx" style="margin-top:14px">⏳ Host startet das nächste Spiel …</div>`;
+    h+= amHost ? `<button class="btn" id="ovNew" style="max-width:280px;margin-top:14px">${o.kind==='handoff'?'Kaiserrunde starten 👑':'Neues Spiel'}</button>` : `<div class="ovx" style="margin-top:14px;opacity:.7">⏳ Host startet das nächste Spiel …</div>`;
     ov.innerHTML=h; ov.classList.add('on'); renderBier('ovBier');
     const nb=$('ovNew'); if(nb)nb.addEventListener('click',()=>{ if(amHost)newGameHost(); });
   } else if(G&&G.phase==='notice'&&G.notice){
@@ -828,6 +856,7 @@ function renderBier(elId){ const el=$(elId); if(!el)return; const names=Object.k
   h+=`<div class="bier-tot">Gesamt: ${bierTotal().toFixed(2)} €</div>`; el.innerHTML=h; }
 
 /* ---------- Kommentare + Konfetti ---------- */
+const WINNER_LINES=['🏆 SIEG! HEUTE LÄUFTS!','🎯 TREFFER — UNSCHLAGBAR!','👑 MEISTER DES BECHERS!','🔥 ZU HEISS ZUM VERLIEREN!','💪 ZU STARK FÜR DIESE RUNDE!','⚡ BLITZWÜRFLER DES ABENDS!'];
 const LOSER_LINES=['🍺 DU ZAHLST DIE RUNDE!','😳 ZUGEDECKELT — 0,50 € INS GLAS!','🎲 HEUTE WAR NICHT DEIN WÜRFELTAG!','🫠 13 DECKEL — VOLLE DECKUNG!','🐢 LANGSAM ZUGEDECKT!','💸 PROST — DIE NÄCHSTE GEHT AUF DICH!'];
 const EVENT={ schockaus:'💥 SCHOCK AUS — ALLE DECKEL!', schock:'🎯 SCHOCK!', doof:'🤡 SCHOCK DOOF!', general:'🪖 GENERAL!', strasse:'🚶 STRASSE!' };
 function confetti(){ const box=$('conf'); if(!box)return; const cols=['#ffd400','#173fb0','#2e6bff','#e2231a','#fff'];
