@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.23';
+const VERSION='v5.24';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -556,7 +556,7 @@ async function runLaden(){
   G.phase='laden'; G.banner=''; G.notice=null; G.over=null; $('phaseLabel').textContent='Laden';
   $('controls').innerHTML=''; $('comboBig').className='combo-big'; $('comboBig').textContent=''; renderPlayers(); pushState();
   let order, best, winners;
-  do{ order=participants().sort(()=>Math.random()-.5); const rolls=[];
+  do{ order=G.players.map((_,i)=>i).filter(i=>!G.players[i].left).sort(()=>Math.random()-.5); const rolls=[];
     for(const idx of order){ $('cupName').textContent=G.players[idx].name; $('cup').classList.add('shake'); playDice();
       $('dice').innerHTML=`<div class="die roll">${pips(rollDie())}</div>`; await sleep(220); const v=rollDie(); rolls.push(v);
       $('dice').innerHTML=`<div class="die${v===1?' one':''}">${pips(v)}</div>`; $('cup').classList.remove('shake'); vibe(12); await sleep(320); }
@@ -567,7 +567,7 @@ async function runLaden(){
 }
 
 /* ---------- Runde (Host) ---------- */
-function buildOrder(){ const pool=participants(); const start=pool.includes(G.starter)?G.starter:pool[0]; const si=pool.indexOf(start); const o=[]; for(let i=0;i<pool.length;i++)o.push(pool[(si+i)%pool.length]); return o; }
+function buildOrder(){ const pool=G.players.map((_,i)=>i).filter(i=>!G.players[i].left); const start=pool.includes(G.starter)?G.starter:pool[0]; const si=pool.indexOf(start); const o=[]; for(let i=0;i<pool.length;i++)o.push(pool[(si+i)%pool.length]); return o; }
 function beginRound(){
   G.phase='rolling'; G.banner=''; G.notice=null; G.over=null; G.turnOrder=buildOrder(); G.turnPtr=0; G.maxThrows=THROWS;
   const _prev=(G.playerStates||[]).map(ps=>ps&&ps.done?ps.dice:null);
