@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.26';
+const VERSION='v5.27';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -663,7 +663,9 @@ function resolveRound(){
   else { giveLids(lose,wc.deckel,win); amountTxt=wc.deckel+' Deckel'; }
   vibe(30);
   let ev=''; if(wc.type==='schockaus')ev=EVENT.schockaus; else if(wc.type==='schock'&&wc.n===2)ev=EVENT.doof; else if(wc.type==='schock')ev=EVENT.schock; else if(wc.type==='general')ev=EVENT.general; else if(wc.type==='strasse')ev=EVENT.strasse;
-  G.banner=`<span style="color:${playerColor(win)}">🥳 ${G.players[win].name} gewinnt!${ev?' · '+ev:''}</span><br><span style="color:${playerColor(lose)};font-size:.85em">😳 ${G.players[lose].name} +${amountTxt}</span>`;
+  const _we=WIN_EMOJIS[Math.floor(Math.random()*WIN_EMOJIS.length)];
+  const _le=LOSE_EMOJIS[Math.floor(Math.random()*LOSE_EMOJIS.length)];
+  G.banner=`<span style="color:${playerColor(win)}">${_we} ${G.players[win].name} gewinnt!${ev?' · '+ev:''}</span><br><span style="color:${playerColor(lose)};font-size:.85em">${_le} ${G.players[lose].name} +${amountTxt}</span>`;
   paint(); pushState();
   // Bei Schock Aus mit vollem Brett: sofort prüfen ob Spiel vorbei
   // Alle Geräte setzen Timer (amHost-Check im Callback, nicht davor)
@@ -923,6 +925,8 @@ function renderBier(elId){ const el=$(elId); if(!el)return; const names=Object.k
   h+=`<div class="bier-tot">Gesamt: ${bierTotal().toFixed(2)} €</div>`; el.innerHTML=h; }
 
 /* ---------- Kommentare + Konfetti ---------- */
+const WIN_EMOJIS=['🥳','🎉','🏆','🎯','💪','🔥','⚡','🌟','🎊','👑','🥂','😎','🤩','🫡'];
+const LOSE_EMOJIS=['😳','😬','🫠','😅','💸','😭','🫣','🙈','😤','😰','🫤','🤦','💀','🤡'];
 const WINNER_LINES=['🏆 SIEG! HEUTE LÄUFTS!','🎯 TREFFER — UNSCHLAGBAR!','👑 MEISTER DES BECHERS!','🔥 ZU HEISS ZUM VERLIEREN!','💪 ZU STARK FÜR DIESE RUNDE!','⚡ BLITZWÜRFLER DES ABENDS!'];
 const LOSER_LINES=['🍺 DU ZAHLST DIE RUNDE!','😳 ZUGEDECKELT — 0,50 € INS GLAS!','🎲 HEUTE WAR NICHT DEIN WÜRFELTAG!','🫠 13 DECKEL — VOLLE DECKUNG!','🐢 LANGSAM ZUGEDECKT!','💸 PROST — DIE NÄCHSTE GEHT AUF DICH!'];
 const EVENT={ schockaus:'💥 SCHOCK AUS — ALLE DECKEL!', schock:'🎯 SCHOCK!', doof:'🤡 SCHOCK DOOF!', general:'🪖 GENERAL!', strasse:'🚶 STRASSE!' };
