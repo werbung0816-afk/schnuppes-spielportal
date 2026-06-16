@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.22';
+const VERSION='v5.23';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -432,8 +432,8 @@ function freshG(players){
     banner:'', notice:null, over:null, ts:Date.now() };
 }
 function participants(){
-  if(G.half==='finale'&&G.finalists&&G.finalists.length) return G.finalists.filter(i=>i>=0);
-  return G.players.map((_,i)=>i).filter(i=>!G.players[i].isAI);
+  if(G.half==='finale'&&G.finalists&&G.finalists.length) return G.finalists.filter(i=>i>=0&&!G.players[i].left);
+  return G.players.map((_,i)=>i).filter(i=>!G.players[i].isAI&&!G.players[i].left);
 }
 function cur(){ return G.turnOrder[G.turnPtr]; }
 function maxFor(ps){ return (ps&&ps.order===0)?THROWS:(G.maxThrows||THROWS); }
