@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.19';
+const VERSION='v5.20';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -669,7 +669,7 @@ function resolveRound(){
   // Alle Geräte setzen Timer (amHost-Check im Callback, nicht davor)
   const immediateEnd=wc.type==='schockaus'&&leader()>=0;
   const delay=immediateEnd?500:2700;
-  setTimeout(()=>{ if(checkPhaseEnd())return; if(amHost){ G.starter=lose; G.round++; beginRound(); } },delay);
+  setTimeout(()=>{ const _ended=checkPhaseEnd(); if(_ended&&_gameOverConfirmed){ try{_showGameOverOverlay();}catch(e){} } if(_ended)return; if(amHost){ G.starter=lose; G.round++; beginRound(); } },delay);
 }
 
 /* ---------- Phasen-Ende (Host) ---------- */
@@ -678,12 +678,12 @@ function resetLids(){ G.players.forEach(p=>p.lids=0); G.middleLids=TOTAL_LIDS; }
 function checkPhaseEnd(){
   const li=leader(); if(li<0) return false;
   if(G.half===1){ G.halfLosers[0]=li; G.marker=li; resetLids(); G.half=2; G.starter=li; G.round=1; G.phase='notice';
-    G.notice={title:'Hälfte 1 beendet',text:`${G.players[li].name} verliert Hälfte 1, bekommt den 🔖 Marker und beginnt Hälfte 2.`}; paint(); pushState();
+    G.notice={title:'1. Hälfte beendet',text:`${G.players[li].name} verliert die 1. Hälfte, bekommt den 🔖 Marker und legt zur 2. Runde vor. Auf geht's!`}; paint(); pushState();
     setTimeout(()=>{ if(amHost){ G.notice=null; beginRound(); } },2800); return true; }
   if(G.half===2){ G.halfLosers[1]=li;
     if(G.halfLosers[0]===G.halfLosers[1]){ onGameComplete(li,`${G.players[li].name} verliert beide Hälften — kalt erwischt! Kein Finale.`); return true; }
     G.finalists=[G.halfLosers[0],G.halfLosers[1]]; resetLids(); G.half='finale'; G.starter=G.halfLosers[1]; G.round=1; G.phase='notice';
-    G.notice={title:'Finale!',text:`${G.players[G.finalists[0]].name} gegen ${G.players[G.finalists[1]].name} — wer zuerst 13 Deckel hat, verliert.`}; paint(); pushState();
+    G.notice={title:'🏆 Finale!',text:`${G.players[G.finalists[0]].name} gegen ${G.players[G.finalists[1]].name} — wer zuerst 13 Deckel hat, verliert das Spiel!`}; paint(); pushState();
     playApplause(); setTimeout(()=>{ if(amHost){ G.notice=null; beginRound(); } },2800); return true; }
   if(G.half==='finale'){ playApplause(); onGameComplete(li); return true; }
   return false;
@@ -828,7 +828,8 @@ function renderPlayers(){
     if(ps){ if(ps.done&&ps.concealed&&!fullReveal){ hid='<div class="hidden-tag">🙈 verdeckt</div>'; }
       else if(ps.done&&fullReveal&&ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else if(!ps.done&&ps.throwNum===0&&ps.prevDice){ mini='<div class="mini">'+ps.prevDice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
-      else { const laid=ps.dice.map((d,k)=>ps.kept[k]?d:null).filter(d=>d!=null); if(laid.length) mini='<div class="mini">'+laid.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; else if(ps.done) hid='<div class="hidden-tag">fertig</div>'; } }
+      else { const laid=ps.dice.map((d,k)=>ps.kept[k]?d:null).filter(d=>d!=null);
+        if(laid.length){ if(fullReveal) mini='<div class="mini">'+laid.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; else mini='<div class="mini">'+laid.map(()=>'<span class="md" style="opacity:.4">●</span>').join('')+'</div>'; } else if(ps.done) hid='<div class="hidden-tag">fertig</div>'; } }
     const col=playerColor(i);
     const card=document.createElement('div'); card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
     if(isTurn){ card.style.borderColor=col; card.style.boxShadow=`0 0 0 1.5px ${col},0 0 18px ${col}44`; }
@@ -872,7 +873,7 @@ function renderControls(){
 }
 function renderOverlays(){
   // Während bestätigtem Gameover: Overlay nicht anfassen
-  if(_gameOverConfirmed){ _showGameOverOverlay(); return; }
+  if(_gameOverConfirmed){ try{_showGameOverOverlay();}catch(e){ toast('⚠ OvErr:'+e.message,'warn'); } return; }
   const ov=$('overlay');
   if(G&&(G.phase==='gameover'||G.phase==='kaiserover')&&G.over){
     const o=G.over;
@@ -899,7 +900,8 @@ function renderOverlays(){
     ov.innerHTML=h; ov.classList.add('on'); renderBier('ovBier');
     const nb=$('ovNew'); if(nb)nb.addEventListener('click',()=>{ if(amHost)newGameHost(); });
   } else if(G&&G.phase==='notice'&&G.notice){
-    ov.innerHTML=`<div class="cmt" style="font-size:clamp(1.3rem,6vw,2rem)">${G.notice.title}</div><div class="ovx">${G.notice.text}</div>`; ov.classList.add('on');
+    const _nc=G.notice.title.includes('Finale')?'#ffd400':'#e2231a';
+    ov.innerHTML=`<div class="cmt" style="font-size:clamp(1.6rem,7vw,2.6rem);font-weight:900;color:${_nc};text-shadow:0 0 30px ${_nc}88;letter-spacing:.02em;line-height:1.1">${G.notice.title}</div><div class="ovx" style="margin-top:16px;font-size:clamp(.95rem,3.5vw,1.15rem);color:rgba(255,255,255,.9);max-width:340px;line-height:1.6">${G.notice.text}</div>`; ov.classList.add('on');
   } else { ov.classList.remove('on'); ov.innerHTML=''; }
   // Banner (Rundenergebnis) im Arena-Bereich
   if(G&&G.phase==='summary'){ $('thr').textContent=''; $('dice').innerHTML=''; const cb=$('comboBig'); cb.innerHTML=G.banner||''; cb.className='combo-big pop'; cb.style.color=''; $('cupName').textContent=''; }
