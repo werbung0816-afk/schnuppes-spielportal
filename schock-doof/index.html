@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.20';
+const VERSION='v5.21';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -455,8 +455,8 @@ function hydrate(raw){
 }
 function pushState(){
   if(!ONLINE||!G) return;
-  // gameover/kaiserover immer pushen (auch als Gast), alle anderen nur als Host
-  if(!amHost && G.phase!=='gameover' && G.phase!=='kaiserover') return;
+  // notice, gameover, kaiserover immer pushen — kritische Übergänge
+  if(!amHost && G.phase!=='gameover' && G.phase!=='kaiserover' && G.phase!=='notice') return;
   G.ts=Date.now(); try{ ROOM.child('state').set(sanitize(G)); }catch(e){ console.warn('pushState:',e); }
 }
 
@@ -679,12 +679,12 @@ function checkPhaseEnd(){
   const li=leader(); if(li<0) return false;
   if(G.half===1){ G.halfLosers[0]=li; G.marker=li; resetLids(); G.half=2; G.starter=li; G.round=1; G.phase='notice';
     G.notice={title:'1. Hälfte beendet',text:`${G.players[li].name} verliert die 1. Hälfte, bekommt den 🔖 Marker und legt zur 2. Runde vor. Auf geht's!`}; paint(); pushState();
-    setTimeout(()=>{ if(amHost){ G.notice=null; beginRound(); } },2800); return true; }
+    setTimeout(()=>{ G.notice=null; if(amHost) beginRound(); },2800); return true; }
   if(G.half===2){ G.halfLosers[1]=li;
     if(G.halfLosers[0]===G.halfLosers[1]){ onGameComplete(li,`${G.players[li].name} verliert beide Hälften — kalt erwischt! Kein Finale.`); return true; }
     G.finalists=[G.halfLosers[0],G.halfLosers[1]]; resetLids(); G.half='finale'; G.starter=G.halfLosers[1]; G.round=1; G.phase='notice';
     G.notice={title:'🏆 Finale!',text:`${G.players[G.finalists[0]].name} gegen ${G.players[G.finalists[1]].name} — wer zuerst 13 Deckel hat, verliert das Spiel!`}; paint(); pushState();
-    playApplause(); setTimeout(()=>{ if(amHost){ G.notice=null; beginRound(); } },2800); return true; }
+    playApplause(); setTimeout(()=>{ G.notice=null; if(amHost) beginRound(); },2800); return true; }
   if(G.half==='finale'){ playApplause(); onGameComplete(li); return true; }
   return false;
 }
@@ -776,9 +776,11 @@ function advanceStuck(){
   if(G.phase==='summary'){
     const _li=leader(); const _half=G.half;
     toast(`Stuck: half=${_half} leader=${_li} amHost=${amHost}`,'warn');
-    if(checkPhaseEnd()){
+    let _cpe=false;
+    try{ _cpe=checkPhaseEnd(); }catch(e){ toast('⚠ '+e.message,'warn'); }
+    if(_cpe){
       G.ts=Date.now(); try{ if(ONLINE) ROOM.child('state').set(sanitize(G)); }catch(e){}
-      _showGameOverOverlay(); _ensureOverlay(); return true;
+      if(_gameOverConfirmed) _showGameOverOverlay(); _ensureOverlay(); return true;
     }
     // Kein Spielende — nächste Runde erzwingen
     toast('Neue Runde erzwungen.','ok');
@@ -786,7 +788,10 @@ function advanceStuck(){
     G.starter=nextP; G.round++; beginRound(); return true;
   }
   if(G.phase==='notice'){
-    toast('Festhänger behoben.','ok'); G.notice=null; beginRound(); return true;
+    G.notice=null;
+    if(amHost) beginRound();
+    else { G.ts=Date.now(); try{if(ONLINE)ROOM.child('state').set(sanitize(G));}catch(e){} }
+    return true;
   }
   if(G.phase==='gameover'||G.phase==='kaiserover'){
     G.ts=Date.now(); try{ if(ONLINE) ROOM.child('state').set(sanitize(G)); }catch(e){}
