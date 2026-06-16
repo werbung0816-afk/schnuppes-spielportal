@@ -264,6 +264,13 @@ body{-webkit-user-select:none;user-select:none}
 <div id="intro"><div class="intro-sup">INGO'S</div><img class="intro-logo" id="introLogo" alt="Ingo"><div class="intro-title">Schock Doof</div></div>
 <div class="wrap">
 
+<button id="devBtn" title="Dev-Menü">⚙</button>
+<div id="devMenu">
+  <button id="devKI">💀 KI verliert sofort</button>
+  <button id="devMe">💀 Ich verliere sofort</button>
+  <button id="devHalf">⏭ Hälfte enden</button>
+</div>
+
   <!-- ============ LOBBY ============ -->
   <section id="lobby" class="screen on">
     <div class="brand" style="margin-bottom:16px;justify-content:center">
@@ -351,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.18';
+const VERSION='v5.19';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -484,6 +491,8 @@ function enterRoom(){
     const raw=s.val(); if(!raw){ G=null; return; }
     if(raw.ts&&raw.ts<roomEnteredAt-60000) return;
     if(raw.players&&!raw.players.some(p=>p&&p.cid===CID)) return;
+    // Älteren State niemals annehmen (allgemeiner Guard)
+    if(G&&G.ts&&raw.ts&&raw.ts<=G.ts) return;
     // Gameover darf nicht überschrieben werden
     if(_gameOverConfirmed&&raw.phase!=='gameover'&&raw.phase!=='kaiserover') return;
     G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
@@ -944,11 +953,5 @@ const _kt=$('kaiserToggle'); if(_kt) _kt.addEventListener('click',()=>{
 
 </script>
 <div id="bierModal"><div class="bier-sheet"><button class="bier-close" id="bierClose">✕</button><h2>🍺 Biersammler</h2><div id="bierModalContent"></div></div></div>
-<button id="devBtn" title="Dev">⚙</button>
-<div id="devMenu">
-  <button id="devKI">💀 KI verliert sofort</button>
-  <button id="devMe">💀 Ich verliere sofort</button>
-  <button id="devHalf">⏭ Hälfte beenden</button>
-</div>
 </body>
 </html>
