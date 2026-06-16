@@ -246,9 +246,9 @@ body{-webkit-user-select:none;user-select:none}
 
 #overlay .ov-win{font-size:clamp(1.8rem,9vw,3.2rem);font-weight:900;letter-spacing:.02em;line-height:1;margin-bottom:12px;text-shadow:0 0 40px currentColor}
 #overlay .ov-div{width:60px;height:2px;background:rgba(255,255,255,.2);border-radius:2px;margin:14px auto}
-#devBtn{position:fixed;bottom:60px;right:14px;z-index:350;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:1.1rem;width:36px;height:36px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+#devBtn{position:fixed;bottom:72px;right:12px;z-index:600;background:rgba(255,100,0,.7);border:2px solid rgba(255,150,0,.8);color:#fff;font-size:1rem;width:38px;height:38px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center}
 #devBtn.on{display:flex}
-#devMenu{position:fixed;bottom:102px;right:14px;z-index:350;background:rgba(10,5,30,.95);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px;display:none;flex-direction:column;gap:6px;min-width:190px}
+#devMenu{position:fixed;bottom:116px;right:12px;z-index:600;background:rgba(10,5,30,.95);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px;display:none;flex-direction:column;gap:6px;min-width:190px}
 #devMenu.on{display:flex}
 #devMenu button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;padding:7px 12px;border-radius:9px;font-size:.82rem;cursor:pointer;text-align:left}
 </style>
@@ -351,7 +351,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.16';
+const VERSION='v5.18';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -713,16 +713,40 @@ function _ensureOverlay(){
   _ovBackup=G&&G.over?{...G.over}:null;
   _ovPolling=setInterval(()=>{
     if(!_gameOverConfirmed){ clearInterval(_ovPolling); _ovPolling=null; return; }
-    // Falls G durch Firebase-State zurückgesetzt → Gameover wiederherstellen
+    // Falls G zurückgesetzt → Gameover wiederherstellen
     if(G&&G.phase!=='gameover'&&G.phase!=='kaiserover'&&_ovBackup){
       G.phase='gameover'; G.over=_ovBackup;
       G.ts=Date.now(); try{ if(ONLINE) ROOM.child('state').set(sanitize(G)); }catch(e){}
     }
-    const ov=$('overlay'); if(!ov) return;
-    if(!ov.classList.contains('on')) paint();
+    _showGameOverOverlay(); // Direktaufruf — unabhängig von paint()
   },400);
   setTimeout(()=>{ if(_ovPolling){ clearInterval(_ovPolling); _ovPolling=null; } },15000);
 }
+function _showGameOverOverlay(){
+  const ov=$('overlay'); if(!ov||!G||!G.over) return;
+  const o=G.over;
+  const wCol=o.winner!=null?playerColor(o.winner):'var(--gold)';
+  const lCol=playerColor(o.loser);
+  if(ov.classList.contains('on')) return; // schon sichtbar — nichts tun
+  let h='';
+  if(o.winner!=null){
+    h+=`<div class="cmt" style="color:${wCol}">${o.comment}</div>`;
+    h+=`<div class="ov-win" style="color:${wCol}">🏆 ${G.players[o.winner].name}</div>`;
+  } else {
+    h+=`<div class="cmt">${o.comment||''}</div>`;
+  }
+  h+=`<div class="ov-div"></div>`;
+  h+=`<div class="lbl">${o.kind==='final'?'Verlierer der Kaiserrunde':'Verlierer'}</div>`;
+  h+=`<div class="who" style="color:${lCol}">😳 ${G.players[o.loser].name}</div>`;
+  if(o.loserLine) h+=`<div class="ovx" style="color:${lCol};opacity:.9;font-weight:700;margin-top:4px">${o.loserLine}</div>`;
+  if(o.kind==='handoff') h+=`<div class="ovx" style="color:var(--gold);margin-top:8px">👑 Jetzt die Kaiserrunde — das letzte Spiel!</div>`;
+  h+=`<div class="ovbier" id="ovBier"></div>`;
+  h+=amHost?`<button class="btn" id="ovNew" style="max-width:280px;margin-top:14px">${o.kind==='handoff'?'Kaiserrunde starten 👑':'Neues Spiel'}</button>`:`<div class="ovx" style="margin-top:14px;opacity:.7">⏳ Host startet das nächste Spiel …</div>`;
+  ov.innerHTML=h; ov.classList.add('on');
+  renderBier('ovBier');
+  const nb=$('ovNew'); if(nb) nb.addEventListener('click',()=>{ if(amHost) newGameHost(); });
+}
+
 function flashKaiser(byName){
   let el=$('kaiserFlash'); if(el)el.remove();
   el=document.createElement('div'); el.id='kaiserFlash'; el.className='kaiser-flash';
@@ -745,7 +769,7 @@ function advanceStuck(){
     toast(`Stuck: half=${_half} leader=${_li} amHost=${amHost}`,'warn');
     if(checkPhaseEnd()){
       G.ts=Date.now(); try{ if(ONLINE) ROOM.child('state').set(sanitize(G)); }catch(e){}
-      paint(); _ensureOverlay(); return true;
+      _showGameOverOverlay(); _ensureOverlay(); return true;
     }
     // Kein Spielende — nächste Runde erzwingen
     toast('Neue Runde erzwungen.','ok');
@@ -838,6 +862,8 @@ function renderControls(){
   const vb=$('verdBtn'); if(vb)vb.addEventListener('click',()=>actFinish(true));
 }
 function renderOverlays(){
+  // Während bestätigtem Gameover: Overlay nicht anfassen
+  if(_gameOverConfirmed){ _showGameOverOverlay(); return; }
   const ov=$('overlay');
   if(G&&(G.phase==='gameover'||G.phase==='kaiserover')&&G.over){
     const o=G.over;
