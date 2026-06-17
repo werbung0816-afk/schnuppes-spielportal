@@ -56,12 +56,12 @@ body{
 /* ---------- Buttons ---------- */
 button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:transparent}
 .btn{display:flex;align-items:center;justify-content:center;gap:.55rem;width:100%;padding:14px;border-radius:15px;font-weight:800;font-size:1rem;letter-spacing:.02em;
-  background:linear-gradient(90deg,var(--blue),var(--blue-2));box-shadow:0 8px 22px rgba(23,63,176,.4);transition:transform .12s,filter .12s;position:relative;overflow:hidden;color:#fff}
+  background:linear-gradient(90deg,rgba(23,63,176,.55),rgba(46,107,255,.55));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);box-shadow:0 8px 22px rgba(23,63,176,.25);transition:transform .12s,filter .12s;position:relative;overflow:hidden;color:#fff}
 .btn:active{transform:translateY(1px) scale(.99)}
-.btn.cyan{background:linear-gradient(90deg,#ffe26b,var(--gold));box-shadow:0 8px 22px rgba(255,212,0,.32);color:#1a1500}
-.btn.ghost{background:var(--panel-2);border:1px solid var(--line);box-shadow:none;color:#fff}
-.btn.gold{background:linear-gradient(90deg,#ffe26b,var(--gold));color:#1a1500;box-shadow:0 8px 22px rgba(255,212,0,.32)}
-.btn.danger{background:linear-gradient(90deg,#ff6f8a,#e23b5d);box-shadow:0 8px 22px rgba(231,59,93,.32);color:#fff}
+.btn.cyan{background:linear-gradient(90deg,rgba(255,226,107,.6),rgba(255,212,0,.6));border-color:rgba(255,212,0,.4);box-shadow:0 8px 22px rgba(255,212,0,.22);color:#1a1500}
+.btn.ghost{background:rgba(255,255,255,.06);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--line);box-shadow:none;color:#fff}
+.btn.gold{background:linear-gradient(90deg,rgba(255,226,107,.6),rgba(255,212,0,.6));border-color:rgba(255,212,0,.4);color:#1a1500;box-shadow:0 8px 22px rgba(255,212,0,.22)}
+.btn.danger{background:linear-gradient(90deg,rgba(255,111,138,.6),rgba(226,59,93,.6));border-color:rgba(226,59,93,.4);box-shadow:0 8px 22px rgba(231,59,93,.22);color:#fff}
 .btn:disabled{opacity:.4;filter:grayscale(.4);pointer-events:none}
 .btn.sm{width:auto;padding:10px 16px;font-size:.86rem;border-radius:13px}
 .row{display:flex;gap:10px}.row>*{flex:1}
@@ -98,7 +98,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 
 /* ---------- Players ---------- */
 .players{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
-.pc{flex:1 1 150px;max-width:220px;min-width:138px;min-height:176px;box-sizing:border-box;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;position:relative;transition:.2s}
+.pc{flex:1 1 150px;max-width:220px;min-width:138px;min-height:134px;box-sizing:border-box;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;position:relative;transition:.2s}
 .pc.active{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 20px rgba(255,212,0,.22)}
 .pc.lost{border-color:rgba(226,35,26,.65);box-shadow:0 0 0 1px rgba(226,35,26,.4)}
 .pc .nm{display:flex;align-items:center;gap:.35rem;font-weight:700;font-size:.95rem}
@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.33';
+const VERSION='v5.34';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
