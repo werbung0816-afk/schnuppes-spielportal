@@ -114,7 +114,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .pc .hidden-tag{color:var(--pink-soft);font-size:.7rem;font-weight:700;margin-top:6px}
 
 /* ---------- Arena: Becher + Würfel ---------- */
-.arena{background:rgba(8,18,52,.55);border:1px solid var(--line);border-radius:14px;padding:7px 10px;margin-bottom:6px;text-align:center}
+.arena{background:rgba(8,18,52,.55);border:1px solid var(--line);border-radius:14px;padding:7px 10px;margin-bottom:6px;text-align:center;height:330px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;overflow:hidden}
 .arena .thr{font-size:.9rem;font-weight:900;color:#fff;margin-bottom:2px}
 .cup{width:118px;height:104px;margin:4px auto 2px;position:relative}
 .cup img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 7px 10px rgba(0,0,0,.5))}
@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.29';
+const VERSION='v5.30';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -570,6 +570,7 @@ async function runLaden(){
 function buildOrder(){ const pool=G.players.map((_,i)=>i).filter(i=>!G.players[i].left); const start=pool.includes(G.starter)?G.starter:pool[0]; const si=pool.indexOf(start); const o=[]; for(let i=0;i<pool.length;i++)o.push(pool[(si+i)%pool.length]); return o; }
 function beginRound(){
   G.phase='rolling'; G.banner=''; G.notice=null; G.over=null; G.turnOrder=buildOrder(); G.turnPtr=0; G.maxThrows=THROWS;
+  G.roundAnnounce={starter:G.starter,ts:Date.now()};
   const _prev=(G.playerStates||[]).map(ps=>ps&&ps.done?ps.dice:null);
   G.playerStates=G.players.map((_,i)=>({dice:[1,1,1],kept:[false,false,false],throwNum:0,done:false,concealed:false,revealed:false,combo:null,order:0,mustRoll:false,prevDice:(_prev[i]||null)}));
   G.turnOrder.forEach((idx,k)=>{ G.playerStates[idx].order=k; });
@@ -722,6 +723,7 @@ function applyKaiser(byCid){
   updateKaiser(); pushState();
 }
 // Stellt sicher dass das Game-Over-Overlay sichtbar bleibt
+let _lastAnnounceTs=0;
 let _ovPolling=null, _ovBackup=null;
 function _ensureOverlay(){
   if(_ovPolling) clearInterval(_ovPolling);
@@ -820,6 +822,10 @@ function stopRecovery(){ if(recoveryTimer){ clearInterval(recoveryTimer); recove
 
 /* ---------- Render ---------- */
 function paint(){ if(!G)return; renderPhase(); renderPlayers(); renderTurnUI(); renderOverlays(); updateKaiser();
+  if(G.roundAnnounce&&G.roundAnnounce.ts!==_lastAnnounceTs){
+    _lastAnnounceTs=G.roundAnnounce.ts;
+    const sN=G.players[G.roundAnnounce.starter]; if(sN) toast(`🎲 ${sN.name} legt vor.`,'');
+  }
   // comboBig leeren wenn neue Runde (kein banner, rolling/laden)
   if((G.phase==='rolling'||G.phase==='laden')&&!G.banner){
     const cb=$('comboBig'); if(cb){cb.innerHTML='';cb.className='combo-big';}
