@@ -121,7 +121,8 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .cup img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 7px 10px rgba(0,0,0,.5))}
 .cup.shake{animation:shake .5s ease}
 @keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-9deg) translateY(-4px)}40%{transform:rotate(8deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(4deg)}}
-.cup-name{position:absolute;left:0;right:0;top:42%;text-align:center;font-weight:800;font-size:.7rem;letter-spacing:.05em;
+.cup-name{position:absolute;left:6%;right:6%;top:38%;text-align:center;font-weight:800;font-size:.7rem;letter-spacing:.05em;line-height:1.05;
+  white-space:normal;word-break:break-word;overflow-wrap:break-word;
   color:rgba(74,42,16,.82);text-shadow:0 1px 0 rgba(255,235,200,.3),0 0 1px rgba(40,18,2,.6);transform:rotate(-1.5deg);pointer-events:none}
 .dice{display:flex;justify-content:center;gap:10px;margin:6px 0 4px}
 .die{width:clamp(46px,13vw,56px);height:clamp(46px,13vw,56px);border-radius:13px;background:linear-gradient(155deg,#fdfbff,#e3d8f5);position:relative;cursor:pointer;
@@ -359,7 +360,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.40';
+const VERSION='v5.41';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -562,7 +563,7 @@ async function runLaden(){
   $('controls').innerHTML=''; $('comboBig').className='combo-big'; $('comboBig').textContent=''; renderPlayers(); pushState();
   let order, best, winners;
   do{ order=activePlayers().sort(()=>Math.random()-.5); const rolls=[];
-    for(const idx of order){ $('cupName').textContent=G.players[idx].name; $('cup').classList.add('shake'); playDice();
+    for(const idx of order){ setCupName(G.players[idx].name); $('cup').classList.add('shake'); playDice();
       $('dice').innerHTML=`<div class="die roll">${pips(rollDie())}</div>`; await sleep(220); const v=rollDie(); rolls.push(v);
       $('dice').innerHTML=`<div class="die${v===1?' one':''}">${pips(v)}</div>`; $('cup').classList.remove('shake'); vibe(12); await sleep(320); }
     best=Math.max(...rolls); winners=order.filter((_,k)=>rolls[k]===best);
@@ -729,6 +730,8 @@ function applyKaiser(byCid){
 }
 // Stellt sicher dass das Game-Over-Overlay sichtbar bleibt
 let _lastAnnounceTs=0, _vlT=null, _vorlegerActive=false;
+function setCupName(name){ const el=$('cupName'); if(!el)return; el.textContent=name||''; const len=(name||'').length;
+  el.style.fontSize = len>16?'.5rem':len>11?'.58rem':len>7?'.64rem':'.7rem'; }
 function showVorleger(name,col){ const cb=$('comboBig'); if(!cb)return; _vorlegerActive=true; cb.textContent=`${name} legt vor.`; cb.className='combo-big pop'; cb.style.color=col||'#ffd400'; clearTimeout(_vlT); _vlT=setTimeout(()=>{ _vorlegerActive=false; if(cb.textContent.endsWith('legt vor.')){ cb.classList.remove('pop'); cb.textContent=''; cb.style.color=''; } },2200); }
 let _ovPolling=null, _ovBackup=null;
 function _ensureOverlay(){
@@ -873,7 +876,7 @@ function renderDice(){
 }
 function renderTurnUI(){
   const c=$('controls'); if(!G||G.phase!=='rolling'){ c.innerHTML=''; return; }
-  const idx=cur(); $('cupName').textContent=G.players[idx].name;
+  const idx=cur(); setCupName(G.players[idx].name);
   $('thr').textContent=`Wurf ${G.playerStates[idx].throwNum} / ${curMax()}`;
   renderDice();
   if(isMe(idx)){ renderControls(); }
@@ -926,7 +929,7 @@ function renderOverlays(){
     ov.innerHTML=`<div class="cmt" style="font-size:clamp(1.6rem,7vw,2.6rem);font-weight:900;color:${_nc};text-shadow:0 0 30px ${_nc}88;letter-spacing:.02em;line-height:1.1">${G.notice.title}</div><div class="ovx" style="margin-top:16px;font-size:clamp(.95rem,3.5vw,1.15rem);color:rgba(255,255,255,.9);max-width:340px;line-height:1.6">${G.notice.text}</div>`; ov.classList.add('on');
   } else { ov.classList.remove('on'); ov.innerHTML=''; }
   // Banner (Rundenergebnis) im Arena-Bereich
-  if(G&&G.phase==='summary'){ $('thr').textContent=''; $('dice').innerHTML=''; const cb=$('comboBig'); cb.innerHTML=G.banner||''; cb.className='combo-big pop'; cb.style.color=''; $('cupName').textContent=''; }
+  if(G&&G.phase==='summary'){ $('thr').textContent=''; $('dice').innerHTML=''; const cb=$('comboBig'); cb.innerHTML=G.banner||''; cb.className='combo-big pop'; cb.style.color=''; setCupName(''); }
 }
 
 /* ---------- Biersammler ---------- */
