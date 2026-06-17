@@ -251,8 +251,6 @@ body{-webkit-user-select:none;user-select:none}
 #devMenu{position:fixed;bottom:116px;right:12px;z-index:600;background:rgba(10,5,30,.95);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px;display:none;flex-direction:column;gap:6px;min-width:190px}
 #devMenu.on{display:flex}
 #devMenu button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;padding:7px 12px;border-radius:9px;font-size:.82rem;cursor:pointer;text-align:left}
-.vorleger-ov{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);background:rgba(5,10,30,.94);border:1px solid rgba(255,212,0,.45);border-radius:14px;padding:10px 20px;font-weight:800;font-size:.95rem;color:#ffd400;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:5;white-space:nowrap}
-.vorleger-ov.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
@@ -334,7 +332,6 @@ body{-webkit-user-select:none;user-select:none}
     <div class="players" id="players"></div>
 
     <div class="arena">
-      <div class="vorleger-ov" id="vorleger"></div>
       <div class="thr" id="thr" style="font-weight:900;font-size:.95rem;color:#fff;margin-bottom:2px">Wurf 0 / 3</div>
       <div class="cup" id="cup"><img id="cupImg" alt=""><div class="cup-name" id="cupName"></div></div>
       <div class="dice" id="dice"></div>
@@ -361,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.31';
+const VERSION='v5.32';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -727,7 +724,7 @@ function applyKaiser(byCid){
 }
 // Stellt sicher dass das Game-Over-Overlay sichtbar bleibt
 let _lastAnnounceTs=0, _vlT=null;
-function showVorleger(name){ const el=$('vorleger'); if(!el)return; el.textContent=`🎲 ${name} legt vor.`; el.classList.add('on'); clearTimeout(_vlT); _vlT=setTimeout(()=>el.classList.remove('on'),2200); }
+function showVorleger(name){ const cb=$('comboBig'); if(!cb)return; cb.textContent=`${name} legt vor.`; cb.className='combo-big pop'; cb.style.color='#ffd400'; clearTimeout(_vlT); _vlT=setTimeout(()=>{ if(cb.textContent.endsWith('legt vor.')){ cb.classList.remove('pop'); cb.textContent=''; cb.style.color=''; } },2200); }
 let _ovPolling=null, _ovBackup=null;
 function _ensureOverlay(){
   if(_ovPolling) clearInterval(_ovPolling);
