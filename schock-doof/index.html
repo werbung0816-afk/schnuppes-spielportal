@@ -98,7 +98,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 
 /* ---------- Players ---------- */
 .players{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
-.pc{flex:1 1 150px;max-width:220px;min-width:138px;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;position:relative;transition:.2s}
+.pc{flex:1 1 150px;max-width:220px;min-width:138px;min-height:176px;box-sizing:border-box;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;position:relative;transition:.2s}
 .pc.active{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 20px rgba(255,212,0,.22)}
 .pc.lost{border-color:rgba(226,35,26,.65);box-shadow:0 0 0 1px rgba(226,35,26,.4)}
 .pc .nm{display:flex;align-items:center;gap:.35rem;font-weight:700;font-size:.95rem}
@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.32';
+const VERSION='v5.33';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -877,12 +877,12 @@ function renderTurnUI(){
 function renderControls(){
   const idx=cur(), ps=G.playerStates[idx]; let h='';
   if(ps.throwNum===0){ h=`<button class="btn cyan" id="rollBtn">🎲 Würfeln</button>`; }
-  else{ const last=ps.throwNum>=curMax(); h='<div class="row">';
+  else{ const last=ps.throwNum>=curMax(); const cd=canDrehen(ps); h='<div class="row">';
     if(!last&&!ps.mustRoll) h+=`<button class="btn ghost" id="doneBtn">Fertig</button>`;
     if(!last) h+=`<button class="btn cyan" id="rollBtn">${ps.mustRoll?'Weiter würfeln':'Nochmal ('+ps.throwNum+'/'+curMax()+')'}</button>`;
-    if(last) h+=`<button class="btn" id="doneBtn">Zug beenden</button>`; h+='</div>';
-    const cd=canDrehen(ps);
-    if(cd){ h+='<div class="row" style="margin-top:10px">'; h+=`<button class="btn gold sm" id="drehBtn">🔄 Drehen (zwei 6en→1)</button>`; h+='</div>'; } }
+    if(last) h+=`<button class="btn" id="doneBtn">Zug beenden</button>`;
+    if(cd) h+=`<button class="btn gold" id="drehBtn">6en drehen</button>`;
+    h+='</div>'; }
   $('controls').innerHTML=h;
   const rb=$('rollBtn'); if(rb)rb.addEventListener('click',actRoll);
   const db=$('doneBtn'); if(db)db.addEventListener('click',()=>actFinish(false));
