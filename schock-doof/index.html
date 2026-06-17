@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.28';
+const VERSION='v5.29';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -629,7 +629,7 @@ function finishTurn(idx,concealed){
   if(ps.mustRoll){ toast('Nach dem Drehen erst würfeln.','warn'); return; }
   ps.done=true; ps.combo=evalDice(ps.dice,ps.throwNum); if(ps.combo.type==='schockaus') concealed=false;
   ps.concealed=!!concealed; vibe(20); if(ps.order===0) G.maxThrows=ps.throwNum;
-  if(!concealed){ const cb=$('comboBig'); cb.textContent=ps.combo.label; cb.className='combo-big pop'+(ps.combo.type==='schockaus'?'':' grad'); cb.style.color=(ps.combo.type==='schockaus')?'var(--red)':''; }
+  if(!concealed&&isMe(idx)){ const cb=$('comboBig'); cb.textContent=ps.combo.label; cb.className='combo-big pop'+(ps.combo.type==='schockaus'?'':' grad'); cb.style.color=(ps.combo.type==='schockaus')?'var(--red)':''; }
   renderPlayers(); pushState();
   setTimeout(advance, G.players[idx].isAI?600:850);
 }
