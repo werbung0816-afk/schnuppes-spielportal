@@ -111,6 +111,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .pc .res{margin-top:2px;min-height:1em;font-weight:800;font-size:.7rem;color:var(--gold)}
 .pc .mini{display:flex;gap:3px;margin-top:2px}
 .pc .md{width:15px;height:15px;border-radius:4px;background:#f4ecff;color:#221038;font-size:10px;font-weight:800;display:grid;place-items:center}
+.pc .md.cov{background:linear-gradient(160deg,#9a6a3c,#5e3c20);box-shadow:inset 0 -2px 3px rgba(0,0,0,.3),inset 0 1px 1px rgba(255,235,200,.25)}
 .pc .hidden-tag{color:var(--pink-soft);font-size:.7rem;font-weight:700;margin-top:6px}
 
 /* ---------- Arena: Becher + Würfel ---------- */
@@ -358,7 +359,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.39';
+const VERSION='v5.40';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -431,10 +432,14 @@ function freshG(players){
     kaiserrunde:false, kaiserrundeBy:null, kaiserGamesPlayed:0,
     banner:'', notice:null, over:null, ts:Date.now() };
 }
-function participants(){
-  if(G.half==='finale'&&G.finalists&&G.finalists.length) return G.finalists.filter(i=>i>=0&&!G.players[i].left);
-  return G.players.map((_,i)=>i).filter(i=>!G.players[i].isAI&&!G.players[i].left);
+function activePlayers(){
+  let base;
+  if(G.half==='finale'&&G.finalists&&G.finalists.length) base=G.finalists.filter(i=>i>=0&&!G.players[i].left);
+  else base=G.players.map((_,i)=>i).filter(i=>!G.players[i].left);
+  if(G.half!=='finale'&&G.middleLids<=0) base=base.filter(i=>G.players[i].lids>0);
+  return base;
 }
+function participants(){ return activePlayers().filter(i=>!G.players[i].isAI); }
 function cur(){ return G.turnOrder[G.turnPtr]; }
 function maxFor(ps){ return (ps&&ps.order===0)?THROWS:(G.maxThrows||THROWS); }
 function curMax(){ const ps=G&&G.playerStates&&G.playerStates[cur()]; return ps?maxFor(ps):THROWS; }
@@ -556,7 +561,7 @@ async function runLaden(){
   G.phase='laden'; G.banner=''; G.notice=null; G.over=null; $('phaseLabel').textContent='Laden';
   $('controls').innerHTML=''; $('comboBig').className='combo-big'; $('comboBig').textContent=''; renderPlayers(); pushState();
   let order, best, winners;
-  do{ order=G.players.map((_,i)=>i).filter(i=>!G.players[i].left).sort(()=>Math.random()-.5); const rolls=[];
+  do{ order=activePlayers().sort(()=>Math.random()-.5); const rolls=[];
     for(const idx of order){ $('cupName').textContent=G.players[idx].name; $('cup').classList.add('shake'); playDice();
       $('dice').innerHTML=`<div class="die roll">${pips(rollDie())}</div>`; await sleep(220); const v=rollDie(); rolls.push(v);
       $('dice').innerHTML=`<div class="die${v===1?' one':''}">${pips(v)}</div>`; $('cup').classList.remove('shake'); vibe(12); await sleep(320); }
@@ -567,7 +572,7 @@ async function runLaden(){
 }
 
 /* ---------- Runde (Host) ---------- */
-function buildOrder(){ const pool=G.players.map((_,i)=>i).filter(i=>!G.players[i].left); const start=pool.includes(G.starter)?G.starter:pool[0]; const si=pool.indexOf(start); const o=[]; for(let i=0;i<pool.length;i++)o.push(pool[(si+i)%pool.length]); return o; }
+function buildOrder(){ const pool=activePlayers(); const start=pool.includes(G.starter)?G.starter:pool[0]; const si=pool.indexOf(start); const o=[]; for(let i=0;i<pool.length;i++)o.push(pool[(si+i)%pool.length]); return o; }
 function beginRound(){
   G.phase='rolling'; G.banner=''; G.notice=null; G.over=null; G.turnOrder=buildOrder(); G.turnPtr=0; G.maxThrows=THROWS;
   G.roundAnnounce={starter:G.starter,ts:Date.now()};
@@ -847,7 +852,7 @@ function renderPlayers(){
       else if(ps.done&&fullReveal&&ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else if(!ps.done&&ps.throwNum===0&&ps.prevDice){ mini='<div class="mini">'+ps.prevDice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else { const laid=ps.dice.map((d,k)=>ps.kept[k]?d:null).filter(d=>d!=null);
-        if(laid.length){ if(fullReveal) mini='<div class="mini">'+laid.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; else mini='<div class="mini">'+laid.map(()=>'<span class="md" style="opacity:.4">●</span>').join('')+'</div>'; } else if(ps.done) hid='<div class="hidden-tag">fertig</div>'; } }
+        if(laid.length){ if(fullReveal) mini='<div class="mini">'+laid.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; else mini='<div class="mini">'+laid.map(()=>'<span class="md cov"></span>').join('')+'</div>'; } else if(ps.done) hid='<div class="hidden-tag">fertig</div>'; } }
     const col=playerColor(i);
     const card=document.createElement('div'); card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
     if(isTurn){ card.style.borderColor=col; card.style.boxShadow=`0 0 0 1.5px ${col},0 0 18px ${col}44`; }
