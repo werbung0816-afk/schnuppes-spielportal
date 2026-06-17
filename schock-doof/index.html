@@ -332,9 +332,9 @@ body{-webkit-user-select:none;user-select:none}
     <div class="players" id="players"></div>
 
     <div class="arena">
-      <div class="thr" id="thr" style="font-weight:900;font-size:.95rem;color:#fff;margin-bottom:2px">Wurf 0 / 3</div>
       <div class="cup" id="cup"><img id="cupImg" alt=""><div class="cup-name" id="cupName"></div></div>
       <div class="dice" id="dice"></div>
+      <div class="thr" id="thr" style="font-weight:900;font-size:.95rem;color:#fff;margin:4px 0 2px">Wurf 0 / 3</div>
       <div class="combo-big" id="comboBig"></div>
     </div>
 
@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.38';
+const VERSION='v5.39';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -479,7 +479,7 @@ function enterRoom(){
     const wasH=amHost; electHost();
     if(amHost&&!wasH){
       // neu zum Host geworden: Sitzplätze schreiben + Signale abhören
-      ROOM.child('config/seats').transaction(c=>c||seatCount);
+      ROOM.child('config/seats').set(seatCount); // erzwingt die in der Lobby gewählte Spieleranzahl
       if(!wasHost){ wasHost=true; }
       toast('Du bist jetzt Host.','ok');
     }
