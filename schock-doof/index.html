@@ -114,7 +114,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .pc .hidden-tag{color:var(--pink-soft);font-size:.7rem;font-weight:700;margin-top:6px}
 
 /* ---------- Arena: Becher + Würfel ---------- */
-.arena{background:rgba(8,18,52,.55);border:1px solid var(--line);border-radius:14px;padding:6px 10px;margin-bottom:6px;text-align:center;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;overflow:hidden;position:relative}
+.arena{background:rgba(8,18,52,.55);border:1px solid var(--line);border-radius:14px;padding:14px 10px 6px;margin-bottom:6px;text-align:center;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;box-sizing:border-box;overflow:hidden;position:relative}
 .arena .thr{font-size:.9rem;font-weight:900;color:#fff;margin-bottom:2px}
 .cup{width:118px;height:104px;margin:4px auto 2px;position:relative}
 .cup img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 7px 10px rgba(0,0,0,.5))}
@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.37';
+const VERSION='v5.38';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
