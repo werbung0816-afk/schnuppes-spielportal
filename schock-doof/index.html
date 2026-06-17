@@ -230,7 +230,7 @@ body{-webkit-user-select:none;user-select:none}
 .intro-title{white-space:nowrap;font-size:clamp(2rem,10vw,3.8rem);font-weight:900;line-height:1}
 .intro-title span.grad{background:linear-gradient(90deg,#fff 30%,#ffd400);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .word-doof{position:relative;display:inline-block}
-.props-img{position:absolute;left:50%;bottom:100%;transform:translate(-50%,14px);height:clamp(64px,17vw,92px);width:auto;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));margin-bottom:clamp(0px,.5vw,4px)}
+.props-img{position:absolute;left:50%;bottom:100%;transform:translate(-50%,14px);height:clamp(58px,15vw,83px);width:auto;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));margin-bottom:clamp(0px,.5vw,4px)}
 .brand2{display:flex;align-items:center;gap:14px;justify-content:center;margin:4px 0 12px;text-align:center}
 .brand2-photo{width:clamp(54px,15vw,76px);height:clamp(54px,15vw,76px);border-radius:50%;object-fit:cover;object-position:50% 16%;border:4px solid #ffd400;box-shadow:0 0 24px #ffd400aa;flex:none}
 .brand2-text{line-height:.92;text-align:left;display:flex;flex-direction:column;align-items:flex-start}
@@ -379,7 +379,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.40';
+const VERSION='v5.41';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
