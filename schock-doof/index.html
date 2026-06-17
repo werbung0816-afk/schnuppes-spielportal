@@ -43,7 +43,7 @@ body{
 .brand{display:flex;align-items:center;gap:14px;justify-content:center;margin:4px 0 12px;text-align:center}
 .brand .ph{width:clamp(54px,15vw,76px);height:clamp(54px,15vw,76px);border-radius:50%;object-fit:cover;object-position:50% 16%;
   border:3px solid var(--gold);box-shadow:0 0 22px rgba(255,207,92,.45),0 6px 16px rgba(0,0,0,.5);background:#1c1238}
-.brand .tt{line-height:.92}
+.brand .tt{line-height:.92;text-align:left}
 .brand .tt .sup{font-size:clamp(.6rem,2.6vw,.8rem);letter-spacing:.34em;color:var(--pink-soft);font-weight:600}
 .brand .tt h1{font-size:clamp(1.7rem,8vw,3.1rem);font-weight:900;letter-spacing:.01em}
 .brand .tt .ver{font-size:.62rem;letter-spacing:.18em;color:rgba(255,255,255,.5);font-weight:600;margin-top:2px;cursor:pointer}
@@ -56,12 +56,12 @@ body{
 /* ---------- Buttons ---------- */
 button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:transparent}
 .btn{display:flex;align-items:center;justify-content:center;gap:.55rem;width:100%;padding:14px;border-radius:15px;font-weight:800;font-size:1rem;letter-spacing:.02em;
-  background:linear-gradient(90deg,rgba(23,63,176,.55),rgba(46,107,255,.55));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);box-shadow:0 8px 22px rgba(23,63,176,.25);transition:transform .12s,filter .12s;position:relative;overflow:hidden;color:#fff}
+  background:linear-gradient(90deg,var(--blue),var(--blue-2));box-shadow:0 8px 22px rgba(23,63,176,.4);transition:transform .12s,filter .12s;position:relative;overflow:hidden;color:#fff}
 .btn:active{transform:translateY(1px) scale(.99)}
-.btn.cyan{background:linear-gradient(90deg,rgba(255,226,107,.6),rgba(255,212,0,.6));border-color:rgba(255,212,0,.4);box-shadow:0 8px 22px rgba(255,212,0,.22);color:#1a1500}
-.btn.ghost{background:rgba(255,255,255,.06);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--line);box-shadow:none;color:#fff}
-.btn.gold{background:linear-gradient(90deg,rgba(255,226,107,.6),rgba(255,212,0,.6));border-color:rgba(255,212,0,.4);color:#1a1500;box-shadow:0 8px 22px rgba(255,212,0,.22)}
-.btn.danger{background:linear-gradient(90deg,rgba(255,111,138,.6),rgba(226,59,93,.6));border-color:rgba(226,59,93,.4);box-shadow:0 8px 22px rgba(231,59,93,.22);color:#fff}
+.btn.cyan{background:linear-gradient(90deg,#ffe26b,var(--gold));box-shadow:0 8px 22px rgba(255,212,0,.32);color:#1a1500}
+.btn.ghost{background:var(--panel-2);border:1px solid var(--line);box-shadow:none;color:#fff}
+.btn.gold{background:linear-gradient(90deg,#ffe26b,var(--gold));color:#1a1500;box-shadow:0 8px 22px rgba(255,212,0,.32)}
+.btn.danger{background:linear-gradient(90deg,#ff6f8a,#e23b5d);box-shadow:0 8px 22px rgba(231,59,93,.32);color:#fff}
 .btn:disabled{opacity:.4;filter:grayscale(.4);pointer-events:none}
 .btn.sm{width:auto;padding:10px 16px;font-size:.86rem;border-radius:13px}
 .row{display:flex;gap:10px}.row>*{flex:1}
@@ -98,7 +98,7 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 
 /* ---------- Players ---------- */
 .players{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
-.pc{flex:1 1 150px;max-width:220px;min-width:138px;min-height:134px;box-sizing:border-box;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;position:relative;transition:.2s}
+.pc{flex:1 1 150px;max-width:220px;min-width:138px;min-height:100px;box-sizing:border-box;background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;position:relative;transition:.2s}
 .pc.active{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 20px rgba(255,212,0,.22)}
 .pc.lost{border-color:rgba(226,35,26,.65);box-shadow:0 0 0 1px rgba(226,35,26,.4)}
 .pc .nm{display:flex;align-items:center;gap:.35rem;font-weight:700;font-size:.95rem}
@@ -358,7 +358,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.34';
+const VERSION='v5.36';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -723,8 +723,8 @@ function applyKaiser(byCid){
   updateKaiser(); pushState();
 }
 // Stellt sicher dass das Game-Over-Overlay sichtbar bleibt
-let _lastAnnounceTs=0, _vlT=null;
-function showVorleger(name){ const cb=$('comboBig'); if(!cb)return; cb.textContent=`${name} legt vor.`; cb.className='combo-big pop'; cb.style.color='#ffd400'; clearTimeout(_vlT); _vlT=setTimeout(()=>{ if(cb.textContent.endsWith('legt vor.')){ cb.classList.remove('pop'); cb.textContent=''; cb.style.color=''; } },2200); }
+let _lastAnnounceTs=0, _vlT=null, _vorlegerActive=false;
+function showVorleger(name){ const cb=$('comboBig'); if(!cb)return; _vorlegerActive=true; cb.textContent=`${name} legt vor.`; cb.className='combo-big pop'; cb.style.color='#ffd400'; clearTimeout(_vlT); _vlT=setTimeout(()=>{ _vorlegerActive=false; if(cb.textContent.endsWith('legt vor.')){ cb.classList.remove('pop'); cb.textContent=''; cb.style.color=''; } },2200); }
 let _ovPolling=null, _ovBackup=null;
 function _ensureOverlay(){
   if(_ovPolling) clearInterval(_ovPolling);
@@ -827,8 +827,8 @@ function paint(){ if(!G)return; renderPhase(); renderPlayers(); renderTurnUI(); 
     _lastAnnounceTs=G.roundAnnounce.ts;
     const sN=G.players[G.roundAnnounce.starter]; if(sN) showVorleger(sN.name);
   }
-  // comboBig leeren wenn neue Runde (kein banner, rolling/laden)
-  if((G.phase==='rolling'||G.phase==='laden')&&!G.banner){
+  // comboBig leeren wenn neue Runde (kein banner, rolling/laden) — außer Vorleger-Ansage läuft gerade
+  if((G.phase==='rolling'||G.phase==='laden')&&!G.banner&&!_vorlegerActive){
     const cb=$('comboBig'); if(cb){cb.innerHTML='';cb.className='combo-big';}
   }
 }
