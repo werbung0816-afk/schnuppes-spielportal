@@ -386,7 +386,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.47';
+const VERSION='v5.49';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -462,8 +462,7 @@ function playChain(list){
 function vibe(p){ try{ if('vibrate' in navigator) navigator.vibrate(p); }catch(e){} }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
-function toast(msg,type){ const t=document.createElement('div'); t.className='toast'+(type?' '+type:''); t.textContent=msg; $('toasts').appendChild(t);
-  setTimeout(()=>{ t.style.transition='opacity .4s,transform .4s'; t.style.opacity='0'; t.style.transform='translateY(10px)'; setTimeout(()=>t.remove(),420); },2800); }
+function toast(msg,type){ /* Hinweis-Popups deaktiviert */ }
 function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); curScreen=id; if(typeof _syncDevBtn==='function')_syncDevBtn(); }
 
 /* ---------- Würfel ---------- */
@@ -924,8 +923,8 @@ function renderPlayers(){
     if(ps){ if(ps.done&&ps.concealed&&!fullReveal){ hid='<div class="hidden-tag">🙈 verdeckt</div>'; }
       else if(ps.done&&fullReveal&&ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else if(!ps.done&&ps.throwNum===0&&ps.prevDice){ mini='<div class="mini">'+ps.prevDice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
-      else { if(ps.throwNum>=1){
-        mini='<div class="mini">'+ps.dice.map((d,k)=>(ps.kept[k]||fullReveal)?`<span class="md">${d}</span>`:'<span class="md cov"></span>').join('')+'</div>'; }
+      else { if(ps.throwNum>=1){ const earlyFinish=ps.done&&ps.throwNum<maxFor(ps);
+        mini='<div class="mini">'+ps.dice.map((d,k)=>(ps.kept[k]||fullReveal||earlyFinish)?`<span class="md">${d}</span>`:'<span class="md cov"></span>').join('')+'</div>'; }
         else if(ps.done) hid='<div class="hidden-tag">fertig</div>'; } }
     const col=playerColor(i);
     const card=document.createElement('div'); card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
