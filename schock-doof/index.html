@@ -386,7 +386,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.52';
+const VERSION='v5.54';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -708,18 +708,42 @@ function advance(){ G.turnPtr++; while(G.turnPtr<G.turnOrder.length && G.playerS
   if(G.turnPtr>=G.turnOrder.length) resolveRound(); else startTurn(); }
 
 /* ---------- KI (Host) ---------- */
+// Schätzt, ob ein anderer aktiver Spieler in dieser Runde schon mind. einen Schock garantiert hat
+// (>=2 offen ausgelegte Einsen, oder bereits fertig mit Schock/Schock-Aus). Ein Schock schlägt
+// immer General/Straße/Zahl, egal mit welcher Zahl er am Ende kombiniert wird.
+function opponentGuaranteesSchockOrBetter(selfIdx){
+  for(const i of G.turnOrder){
+    if(i===selfIdx) continue;
+    const p=G.playerStates[i]; if(!p||p.throwNum<1) continue;
+    if(p.done&&p.combo){ if(p.combo.rank>=2050000) return true; continue; }
+    const onesKept=p.dice.filter((d,k)=>p.kept[k]&&d===1).length;
+    if(onesKept>=2) return true;
+  }
+  return false;
+}
 async function aiTurn(){
   const idx=cur(), ps=G.playerStates[idx]; $('controls').innerHTML=''; await sleep(420);
   try{ while(ps.throwNum<maxFor(ps) && !ps.done){
     await animRoll(idx); ps.mustRoll=false; aiKeep(idx); renderDice(); pushState();
     const ones=ps.dice.filter(d=>d===1).length;
-    if(ones===3) break; if(ps.dice.every(d=>d===ps.dice[0])) break; if(ps.kept.every(k=>k)) break;
-    if(ps.throwNum>=maxFor(ps)) break; if(ps.throwNum===2 && Math.random()<.4) break; await sleep(480);
+    if(ones===3) break;
+    if(ps.throwNum>=maxFor(ps)) break;
+    const cc=evalDice(ps.dice,ps.throwNum);
+    if(cc.rank<2050000 && opponentGuaranteesSchockOrBetter(idx)){
+      // Aktuelles Ergebnis verliert ohnehin gegen einen sichtbar garantierten Gegner-Schock — alles neu versuchen
+      ps.kept=[false,false,false]; await sleep(480); continue;
+    }
+    if(ps.dice.every(d=>d===ps.dice[0])) break;
+    if(ps.kept.every(k=>k)) break;
+    if(ps.throwNum===2 && cc.type!=='zahl') break;
+    await sleep(480);
   } }catch(e){ console.error('aiTurn',e); }
   finishTurn(idx,false);
 }
 function aiKeep(idx){ const ps=G.playerStates[idx]; const c=[0,0,0,0,0,0,0]; ps.dice.forEach(d=>c[d]++); ps.kept=[false,false,false];
   if(c[1]>=1){ ps.dice.forEach((d,i)=>{ if(d===1)ps.kept[i]=true; }); return; }
+  const s=[...ps.dice].sort((a,b)=>a-b);
+  if(s[1]===s[0]+1&&s[2]===s[1]+1){ ps.kept=[true,true,true]; return; }
   let bv=2; for(let v=3;v<=6;v++){ if(c[v]>c[bv]||(c[v]===c[bv]&&v>bv)) bv=v; }
   if(c[bv]>=2){ ps.dice.forEach((d,i)=>{ if(d===bv)ps.kept[i]=true; }); }
   else { let hi=0,hii=0; ps.dice.forEach((d,i)=>{ if(d>hi){hi=d;hii=i;} }); if(hi>=5)ps.kept[hii]=true; } }
