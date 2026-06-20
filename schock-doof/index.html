@@ -386,7 +386,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.55';
+const VERSION='v5.56';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -742,12 +742,13 @@ async function aiTurn(){
   finishTurn(idx,false);
 }
 function aiKeep(idx){ const ps=G.playerStates[idx]; const c=[0,0,0,0,0,0,0]; ps.dice.forEach(d=>c[d]++); ps.kept=[false,false,false];
-  if(c[1]>=1){ ps.dice.forEach((d,i)=>{ if(d===1)ps.kept[i]=true; }); return; }
   const s=[...ps.dice].sort((a,b)=>a-b);
-  if(s[1]===s[0]+1&&s[2]===s[1]+1){ ps.kept=[true,true,true]; return; }
+  if(s[1]===s[0]+1&&s[2]===s[1]+1){ ps.kept=[true,true,true]; return; } // fertige Straße (auch 1-2-3) immer sichern, nie wegen Einsen-Prioritaet zerlegen
+  if(c[1]>=1){ ps.dice.forEach((d,i)=>{ if(d===1)ps.kept[i]=true; }); return; }
   let bv=2; for(let v=3;v<=6;v++){ if(c[v]>c[bv]||(c[v]===c[bv]&&v>bv)) bv=v; }
-  if(c[bv]>=2){ ps.dice.forEach((d,i)=>{ if(d===bv)ps.kept[i]=true; }); }
-  else { let hi=0,hii=0; ps.dice.forEach((d,i)=>{ if(d>hi){hi=d;hii=i;} }); if(hi>=5)ps.kept[hii]=true; } }
+  if(c[bv]>=2){ ps.dice.forEach((d,i)=>{ if(d===bv)ps.kept[i]=true; }); return; }
+  for(let v=2;v<=5;v++){ if(c[v]>=1&&c[v+1]>=1){ ps.dice.forEach((d,i)=>{ if(d===v||d===v+1) ps.kept[i]=true; }); return; } } // Beinahe-Straße: zwei aufeinanderfolgende Werte sichern, Rest neu wuerfeln
+  let hi=0,hii=0; ps.dice.forEach((d,i)=>{ if(d>hi){hi=d;hii=i;} }); if(hi>=5)ps.kept[hii]=true; }
 
 /* ---------- Runde auswerten (Host) ---------- */
 function giveLids(toIdx,amount,fromIdx){ for(let k=0;k<amount;k++){ if(G.middleLids>0)G.middleLids--; else if(fromIdx!=null&&G.players[fromIdx].lids>0)G.players[fromIdx].lids--; else break; G.players[toIdx].lids++; if(G.players[toIdx].lids>=TOTAL_LIDS){G.players[toIdx].lids=TOTAL_LIDS;break;} } }
