@@ -386,7 +386,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.50';
+const VERSION='v5.51';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -778,9 +778,8 @@ function onGameComplete(loserIdx,extra,isDoubleLoss){
   if(G.kaiserrunde){ G.kaiserGamesPlayed++; if(G.kaiserGamesPlayed===1)kind='handoff'; else if(G.kaiserGamesPlayed>=2)kind='final'; }
   G.phase=(kind==='final')?'kaiserover':'gameover';
   const winnerIdx=G.players.reduce((best,_,i)=>i!==loserIdx&&!G.players[i].isAI?i:best,-1);
-  const winLine=(kind==='final')?'👑 KAISERRUNDE VORBEI!':pick(WINNER_LINES);
-  const loserLine=isDoubleLoss?pick(DOUBLE_LOSS_LINES):pick(LOSER_LINES);
-  G.over={loser:loserIdx,winner:winnerIdx>=0?winnerIdx:null,extra:extra||'',kind,comment:winLine,loserLine,showBier};
+  const winLine=(kind==='final')?'👑 KAISERRUNDE VORBEI!':(isDoubleLoss?pick(DOUBLE_LOSS_LINES):pick(LOSER_LINES));
+  G.over={loser:loserIdx,winner:winnerIdx>=0?winnerIdx:null,extra:extra||'',kind,comment:winLine,showBier};
   _gameOverConfirmed=true;
   vibe([60,40,60,40,120]); confetti();
   if(isDoubleLoss) playChain([oopsAudio,applauseAudio]); else playChain([jingle2Audio,applauseAudio,beerAudio]);
@@ -823,7 +822,7 @@ function _showGameOverOverlay(){
   if(ov.classList.contains('on')) return; // schon sichtbar — nichts tun
   let h='';
   if(o.winner!=null){
-    h+=`<div class="cmt" style="color:${wCol}">${o.comment}</div>`;
+    h+=`<div class="cmt" style="color:${lCol}">${o.comment}</div>`;
     h+=`<div class="ov-win" style="color:${wCol}">🏆 ${G.players[o.winner].name}</div>`;
   } else {
     h+=`<div class="cmt">${o.comment||''}</div>`;
@@ -831,7 +830,6 @@ function _showGameOverOverlay(){
   h+=`<div class="ov-div"></div>`;
   h+=`<div class="lbl">${o.kind==='final'?'Verlierer der Kaiserrunde':'Verlierer'}</div>`;
   h+=`<div class="who" style="color:${lCol}">😳 ${G.players[o.loser].name}</div>`;
-  if(o.loserLine) h+=`<div class="ovx" style="color:${lCol};opacity:.9;font-weight:700;margin-top:4px">${o.loserLine}</div>`;
   h+=bierBlockHTML();
   if(o.extra) h+=`<div class="ovx">${o.extra}</div>`;
   if(o.kind==='handoff') h+=`<div class="ovx" style="color:var(--gold);margin-top:8px">👑 Jetzt die Kaiserrunde — das letzte Spiel!</div>`;
@@ -977,7 +975,7 @@ function renderOverlays(){
     let h='';
     // Gewinner
     if(o.winner!=null){
-      h+=`<div class="cmt" style="color:${wCol}">${o.comment}</div>`;
+      h+=`<div class="cmt" style="color:${lCol}">${o.comment}</div>`;
       h+=`<div class="ov-win" style="color:${wCol}">🏆 ${G.players[o.winner].name}</div>`;
     } else {
       h+=`<div class="cmt">${o.comment}</div>`;
@@ -987,7 +985,6 @@ function renderOverlays(){
     // Verlierer
     h+=`<div class="lbl">${o.kind==='final'?'Verlierer der Kaiserrunde':'Verlierer'}</div>`;
     h+=`<div class="who" style="color:${lCol}">😳 ${G.players[o.loser].name}</div>`;
-    if(o.loserLine) h+=`<div class="ovx" style="color:${lCol};opacity:.9;font-weight:700;margin-top:4px">${o.loserLine}</div>`;
     h+=bierBlockHTML();
     if(o.extra) h+=`<div class="ovx">${o.extra}</div>`;
     if(o.kind==='handoff') h+=`<div class="ovx" style="color:var(--gold);margin-top:8px">👑 Jetzt die Kaiserrunde — das letzte Spiel!</div>`;
@@ -1018,7 +1015,6 @@ function renderBier(elId){ const el=$(elId); if(!el)return; const names=Object.k
 /* ---------- Kommentare + Konfetti ---------- */
 const WIN_EMOJIS=['🥳','🎉','🏆','🎯','💪','🔥','⚡','🌟','🎊','👑','🥂','😎','🤩','🫡'];
 const LOSE_EMOJIS=['😳','😬','🫠','😅','💸','😭','🫣','🙈','😤','😰','🫤','🤦','💀','🤡'];
-const WINNER_LINES=['🏆 SIEG! HEUTE LÄUFTS!','🎯 TREFFER — UNSCHLAGBAR!','👑 MEISTER DES BECHERS!','🔥 ZU HEISS ZUM VERLIEREN!','💪 ZU STARK FÜR DIESE RUNDE!','⚡ BLITZWÜRFLER DES ABENDS!'];
 const LOSER_LINES=['🍺 DU ZAHLST DIE RUNDE!','😳 ZUGEDECKELT — 0,50 € INS GLAS!','🎲 HEUTE WAR NICHT DEIN WÜRFELTAG!','🫠 13 DECKEL — VOLLE DECKUNG!','🐢 LANGSAM ZUGEDECKT!','💸 PROST — DIE NÄCHSTE GEHT AUF DICH!','🍻 HEUTE SPENDIERST DU DIE RUNDE!','🍻 SCHOCK DOOF — PROSIT AUF DICH!','🍻 INGO SCHMUNZELT NUR UND SAGT PROST!','🍻 ZAPF SCHON MAL AN — DU BIST DRAN!','🍻 EIN DECKEL MEHR, EIN BIER FÜR ALLE!','🍻 GLÜCKWUNSCH — DU BIST SPONSOR DES ABENDS!','🍻 PROST — DIE LIEFERUNG GEHT AUF DEIN KONTO!','🍻 WER ZULETZT WÜRFELT, ZAHLT AM MEISTEN!','🍻 DEIN GELDBEUTEL MACHT JETZT BAR-DIENST!'];
 // Sprüche für die Zwischenanzeigen nach den Hälften — hier steht noch kein Spielverlierer fest
 const HALF_QUOTES=['Noch ist nichts verloren.','Jetzt heißt es nochmal besonders anstrengen.','Du bist auf dem besten Wege zum Kellner.','Aus die Maus, wie geht\'s weiter?','Stark gespielt, stark verloren.','Ich habe es kommen sehen, murmelt Ingo.','Durchmarsch zum Finale, Glückwunsch!'];
