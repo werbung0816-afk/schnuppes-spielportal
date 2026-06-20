@@ -227,15 +227,19 @@ body{-webkit-user-select:none;user-select:none}
 
 #intro{position:fixed;inset:0;z-index:1000;background:repeating-radial-gradient(circle at 50% 50%,transparent 0px,transparent 70px,rgba(0,0,0,.22) 70px,rgba(0,0,0,.22) 73px,rgba(255,255,255,.06) 73px,rgba(255,255,255,.06) 75px,transparent 75px,transparent 145px),radial-gradient(ellipse 130% 110% at 50% 38%,#2178d8 0%,#0e52a0 40%,#062d6a 75%,#041428 100%);animation:intro-fade .55s ease both}
 @keyframes intro-fade{from{opacity:0}to{opacity:1}}
-.intro-logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:clamp(90px,20vw,120px);height:clamp(90px,20vw,120px);border-radius:50%;object-fit:cover;object-position:50% 16%;border:4px solid #ffd400;box-shadow:0 0 40px #ffd400aa}
-.intro-textwrap{position:absolute;left:50%;top:calc(50% + clamp(45px,10vw,60px) + 10px);transform:translateX(-50%);display:flex;flex-direction:column;align-items:flex-start}
+.intro-logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:clamp(90px,20vw,120px);height:clamp(90px,20vw,120px);border-radius:50%;object-fit:cover;object-position:50% 16%;border:4px solid #ffd400;box-shadow:0 0 40px #ffd400aa;opacity:0;animation:intro-logo-in .5s cubic-bezier(.3,1.4,.4,1) .1s both}
+@keyframes intro-logo-in{from{opacity:0;transform:translate(-50%,-50%) scale(.55)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.intro-textwrap{position:absolute;left:50%;top:calc(50% + clamp(45px,10vw,60px) + 10px);transform:translateX(-50%);display:flex;flex-direction:column;align-items:flex-start;opacity:0;animation:intro-text-in .45s ease-out .32s both}
+@keyframes intro-text-in{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .intro-sup{font-size:clamp(.95rem,3.4vw,1.3rem);letter-spacing:.32em;font-weight:900;color:#173fb0;background:#ffd400;padding:3px 10px;border-radius:5px;margin-bottom:4px}
 .intro-title{white-space:nowrap;font-size:clamp(2rem,10vw,3.8rem);font-weight:900;line-height:1}
 .intro-title span.grad{background:linear-gradient(90deg,#fff 30%,#ffd400);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .word-doof{position:relative;display:inline-block}
-.props-img{position:absolute;left:50%;bottom:100%;transform:translate(-50%,14px);height:clamp(58px,15vw,83px);width:auto;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));margin-bottom:clamp(0px,.5vw,4px)}
+.props-img{position:absolute;left:50%;bottom:100%;transform:translate(-50%,14px);height:clamp(58px,15vw,83px);width:auto;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));margin-bottom:clamp(0px,.5vw,4px);opacity:0;animation:props-drop-in .5s cubic-bezier(.25,.9,.3,1.35) .58s both}
+@keyframes props-drop-in{0%{opacity:0;transform:translate(-50%,-26px) rotate(-14deg)}70%{opacity:1;transform:translate(-50%,18px) rotate(4deg)}100%{opacity:1;transform:translate(-50%,14px) rotate(0deg)}}
 .brand2{display:flex;align-items:center;gap:14px;justify-content:center;margin:4px 0 12px;text-align:center}
-.brand2-photo{width:clamp(54px,15vw,76px);height:clamp(54px,15vw,76px);border-radius:50%;object-fit:cover;object-position:50% 16%;border:4px solid #ffd400;box-shadow:0 0 24px #ffd400aa;flex:none}
+.brand2-photo{width:clamp(54px,15vw,76px);height:clamp(54px,15vw,76px);border-radius:50%;object-fit:cover;object-position:50% 16%;border:4px solid #ffd400;box-shadow:0 0 24px #ffd400aa;flex:none;animation:ingo-glow-pulse 3.4s ease-in-out infinite}
+@keyframes ingo-glow-pulse{0%,100%{box-shadow:0 0 18px #ffd40088}50%{box-shadow:0 0 36px #ffd400dd}}
 .brand2-text{line-height:.92;text-align:left;display:flex;flex-direction:column;align-items:flex-start}
 .brand2-sup{font-size:clamp(.55rem,2.2vw,.72rem);letter-spacing:.28em;font-weight:900;color:#173fb0;background:#ffd400;padding:2px 8px;border-radius:5px;margin-bottom:3px}
 .brand2-title{white-space:nowrap;font-size:clamp(1.7rem,8vw,3.1rem);font-weight:900;line-height:1}
@@ -382,7 +386,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.46';
+const VERSION='v5.47';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -920,8 +924,8 @@ function renderPlayers(){
     if(ps){ if(ps.done&&ps.concealed&&!fullReveal){ hid='<div class="hidden-tag">🙈 verdeckt</div>'; }
       else if(ps.done&&fullReveal&&ps.combo){ res=ps.combo.label; mini='<div class="mini">'+ps.dice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
       else if(!ps.done&&ps.throwNum===0&&ps.prevDice){ mini='<div class="mini">'+ps.prevDice.map(d=>`<span class="md">${d}</span>`).join('')+'</div>'; }
-      else { if(ps.throwNum>=1){ const showAll=fullReveal||(ps.done&&!ps.concealed);
-        mini='<div class="mini">'+ps.dice.map((d,k)=>(ps.kept[k]||showAll)?`<span class="md">${d}</span>`:'<span class="md cov"></span>').join('')+'</div>'; }
+      else { if(ps.throwNum>=1){
+        mini='<div class="mini">'+ps.dice.map((d,k)=>(ps.kept[k]||fullReveal)?`<span class="md">${d}</span>`:'<span class="md cov"></span>').join('')+'</div>'; }
         else if(ps.done) hid='<div class="hidden-tag">fertig</div>'; } }
     const col=playerColor(i);
     const card=document.createElement('div'); card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
