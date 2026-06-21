@@ -394,7 +394,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.59';
+const VERSION='v5.60';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -544,7 +544,7 @@ function enterRoom(){
   showScreen('waiting');
   if(!ONLINE){ amHost=true; roomPlayersLocal=[myName]; renderWaiting(); return; }
   // alten Raum-State aus früheren Sessions aufräumen (nur einmalig beim Eintreten)
-  ROOM.child('presence').once('value',snap=>{ const cut=Date.now()-10*60*1000; snap.forEach(ch=>{ const v=ch.val(); if(v&&v.ts&&v.ts<cut)ch.ref.remove(); }); });
+  ROOM.child('presence').once('value',snap=>{ const cut=Date.now()-10*60*1000; snap.forEach(ch=>{ const v=ch.val(); const isTest=ch.key.indexOf('test_')===0; if(v&&((v.ts&&v.ts<cut)||isTest)) ch.ref.remove(); }); });
   ROOM.child('state').once('value',snap=>{ const st=snap.val(); if(st&&st.phase&&!['rolling','laden','summary'].includes(st.phase)) ROOM.child('state').remove(); });
   const me=ROOM.child('presence/'+CID);
   me.set({name:myName, ts:firebase.database.ServerValue.TIMESTAMP});
@@ -592,12 +592,13 @@ function electHost(){
 function presenceList(){ return Object.keys(presence).map(k=>({cid:k,name:(presence[k]&&presence[k].name)||'Spieler',ts:(presence[k]&&presence[k].ts)||0})).sort((a,b)=>a.ts-b.ts); }
 function renderWaiting(){
   const list = ONLINE? presenceList() : roomPlayersLocal.map((n,i)=>({cid:'L'+i,name:n}));
+  const hostIdx = list.findIndex(x=>!(typeof x.cid==='string' && x.cid.indexOf('test_')===0));
   $('waitCount').textContent=seatCount;
   const box=$('seats'); box.innerHTML='';
   for(let i=0;i<seatCount;i++){
     const h=list[i]; const seat=document.createElement('div'); seat.className='seat'+(h?' filled':'');
     seat.innerHTML = h
-      ? `<span class="snum">${i+1}</span><span class="snm">${h.name}${i===0?' <span class="badge">Host</span>':''}${h.cid===CID?' <span class="badge" style="background:var(--cyan)">Du</span>':''}</span><span class="sok">✓</span>`
+      ? `<span class="snum">${i+1}</span><span class="snm">${h.name}${i===hostIdx?' <span class="badge">Host</span>':''}${h.cid===CID?' <span class="badge" style="background:var(--cyan)">Du</span>':''}</span><span class="sok">✓</span>`
       : `<span class="snum">${i+1}</span><span class="snm wait">wartet auf Spieler <span class="dots"><i>.</i><i>.</i><i>.</i></span></span><span class="shint">→ wird KI</span>`;
     box.appendChild(seat);
   }
@@ -609,7 +610,8 @@ function addTestPlayer(){
   if(!ONLINE){ if(roomPlayersLocal.length>=seatCount){toast('Alle Plätze belegt.','warn');return;} const used=roomPlayersLocal.map(n=>n.toLowerCase()); const p=AI_POOL.filter(n=>!used.includes(n.toLowerCase())); roomPlayersLocal.push(p.length?pick(p):'Gast'+(roomPlayersLocal.length+1)); renderWaiting(); return; }
   const used=presenceList().map(x=>x.name.toLowerCase()); const p=AI_POOL.filter(n=>!used.includes(n.toLowerCase()));
   const nm=p.length?pick(p):('Gast'+Date.now()%100);
-  ROOM.child('presence/test_'+Math.random().toString(36).slice(2,7)).set({name:nm,ts:Date.now()});
+  const ref=ROOM.child('presence/test_'+Math.random().toString(36).slice(2,7));
+  ref.set({name:nm,ts:Date.now()}); ref.onDisconnect().remove();
 }
 function leaveRoom(){
   if(ONLINE){ try{ ROOM.child('presence/'+CID).remove(); ROOM.off(); }catch(e){} }

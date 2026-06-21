@@ -1,7 +1,7 @@
 // Service Worker — Ingo's Schock Doof
 // Cache-Version IMMER zusammen mit der VERSION-Konstante in index.html hochzählen,
 // sonst bekommen Spieler nach einem Update weiter die alte gecachte Version.
-const CACHE_VERSION = 'v5.59';
+const CACHE_VERSION = 'v5.60';
 const CACHE_NAME = 'schock-doof-' + CACHE_VERSION;
 
 const CORE_ASSETS = [
