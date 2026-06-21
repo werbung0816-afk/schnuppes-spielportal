@@ -573,22 +573,29 @@ header{
 .fertig-btn{background:linear-gradient(135deg,#ffe26b,var(--gold))!important;color:#1a1500!important;}
 .m-title{background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
 /* Ingo-Foto: gelber Rahmen + dauerhaftes Pulsieren */
-#ingo-lobby,.logo-row img{border:3px solid var(--gold)!important;border-radius:50%!important;animation:ingoPulse 3.4s ease-in-out infinite;}
+.logo-row img{border:3px solid var(--gold)!important;border-radius:50%!important;animation:ingoPulse 3.4s ease-in-out infinite;}
 @keyframes ingoPulse{0%,100%{box-shadow:0 0 18px #ffd40088;}50%{box-shadow:0 0 36px #ffd400dd;}}
-/* Intro */
-#intro{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
-  background:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,.04) 0 1px,transparent 1px 44px),radial-gradient(ellipse 130% 110% at 50% 38%,#2178d8 0%,#0e52a0 40%,#062d6a 75%,#041428 100%);
-  transition:opacity .35s;}
+/* Intro (CI aus Schock Doof) */
+#intro{position:fixed;inset:0;z-index:1000;
+  background:repeating-radial-gradient(circle at 50% 50%,transparent 0px,transparent 70px,rgba(0,0,0,.22) 70px,rgba(0,0,0,.22) 73px,rgba(255,255,255,.06) 73px,rgba(255,255,255,.06) 75px,transparent 75px,transparent 145px),radial-gradient(ellipse 130% 110% at 50% 38%,#2178d8 0%,#0e52a0 40%,#062d6a 75%,#041428 100%);
+  animation:intro-fade .55s ease both;transition:opacity .35s;}
 #intro.hide{opacity:0;}
-.intro-logo{width:150px;height:150px;border-radius:50%;object-fit:cover;border:4px solid var(--gold);
-  box-shadow:0 0 42px #ffd400aa,0 12px 44px rgba(0,0,0,.5);transform:scale(.55);opacity:0;
-  animation:introLogo .5s cubic-bezier(.3,1.4,.4,1) .1s forwards;}
-.intro-textwrap{opacity:0;transform:translateY(16px);animation:introText .45s ease-out .32s forwards;text-align:center;}
-.intro-badge{font-family:'Outfit',sans-serif;font-weight:800;letter-spacing:6px;font-size:13px;color:#ffd400;
-  background:rgba(255,212,0,.12);border:1px solid rgba(255,212,0,.4);padding:3px 16px;border-radius:30px;display:inline-block;margin-bottom:12px;}
-.intro-title{font-family:'Outfit',sans-serif;font-weight:900;font-size:clamp(34px,9vw,56px);letter-spacing:1px;line-height:1;}
-@keyframes introLogo{to{transform:scale(1);opacity:1;}}
-@keyframes introText{to{transform:translateY(0);opacity:1;}}
+@keyframes intro-fade{from{opacity:0}to{opacity:1}}
+.intro-logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:clamp(90px,20vw,120px);height:clamp(90px,20vw,120px);border-radius:50%;object-fit:cover;object-position:50% 16%;border:4px solid #ffd400;box-shadow:0 0 40px #ffd400aa;opacity:0;animation:intro-logo-in .5s cubic-bezier(.3,1.4,.4,1) .1s both}
+@keyframes intro-logo-in{from{opacity:0;transform:translate(-50%,-50%) scale(.55)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.intro-textwrap{position:absolute;left:50%;top:calc(50% + clamp(45px,10vw,60px) + 10px);transform:translateX(-50%);display:flex;flex-direction:column;align-items:flex-start;opacity:0;animation:intro-text-in .45s ease-out .32s both}
+@keyframes intro-text-in{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.intro-sup{font-family:'Outfit',sans-serif;font-size:clamp(.95rem,3.4vw,1.3rem);letter-spacing:.32em;font-weight:900;color:#173fb0;background:#ffd400;padding:3px 10px;border-radius:5px;margin-bottom:4px}
+.intro-title{font-family:'Outfit',sans-serif;white-space:nowrap;font-size:clamp(2rem,10vw,3.8rem);font-weight:900;line-height:1}
+.intro-title span.grad{background:linear-gradient(90deg,#fff 30%,#ffd400);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+/* Lobby-Branding (brand2 aus Schock Doof) */
+.brand2{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.brand2-photo{width:clamp(54px,15vw,76px);height:clamp(54px,15vw,76px);border-radius:50%;object-fit:cover;object-position:50% 16%;border:4px solid #ffd400;box-shadow:0 0 24px #ffd400aa;flex:none;animation:ingo-glow-pulse 3.4s ease-in-out infinite}
+@keyframes ingo-glow-pulse{0%,100%{box-shadow:0 0 18px #ffd40088}50%{box-shadow:0 0 36px #ffd400dd}}
+.brand2-text{line-height:.92;display:flex;flex-direction:column;align-items:flex-start}
+.brand2-sup{font-family:'Outfit',sans-serif;font-size:clamp(.55rem,2.2vw,.72rem);letter-spacing:.28em;font-weight:900;color:#173fb0;background:#ffd400;padding:2px 8px;border-radius:5px;margin-bottom:3px}
+.brand2-title{font-family:'Outfit',sans-serif;white-space:nowrap;font-size:clamp(1.7rem,8vw,3.1rem);font-weight:900;line-height:1}
+.brand2-title .grad{background:linear-gradient(90deg,#fff 30%,#ffd400);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 /* Spruch-Zeilen */
 .go-spruch{font-family:'Outfit',sans-serif;font-weight:900;font-size:clamp(18px,5vw,26px);line-height:1.15;margin:2px 0 16px;text-align:center;}
 .notice-spruch{font-family:'Outfit',sans-serif;font-weight:500;font-size:14px;color:var(--gold);opacity:.92;text-align:center;margin:6px 0 14px;font-style:italic;}
@@ -636,8 +643,8 @@ header{
 <div id="intro" onclick="hideIntro()">
   <img id="ingo-intro" class="intro-logo" alt="Ingo">
   <div class="intro-textwrap">
-    <div class="intro-badge">INGO'S</div>
-    <div class="intro-title grad">Rommé Hand</div>
+    <div class="intro-sup">INGO'S</div>
+    <div class="intro-title"><span class="grad">Rommé Hand</span></div>
   </div>
 </div>
 <div class="ver-tag" id="ver-tag"></div>
@@ -646,17 +653,11 @@ header{
 <!-- LOBBY -->
 <div id="screen-lobby">
   <div class="lb-card">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div style="position:relative;flex-shrink:0">
-        <img id="ingo-lobby" class="lb-photo" src="" alt="Ingo">
-        <div style="position:absolute;bottom:-2px;right:-2px;background:linear-gradient(135deg,var(--gold3),var(--gold));border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:8px">&#9733;</div>
-      </div>
-      <div>
-        <div style="font-family:'Outfit',system-ui,sans-serif;font-size:9px;letter-spacing:5px;color:rgba(212,175,55,.55)">I N G O 'S</div>
-        <div style="display:flex;align-items:baseline;gap:8px">
-          <span style="font-family:'Outfit',system-ui,sans-serif;font-size:26px;font-weight:900;letter-spacing:8px;color:var(--gold)">ROMM&#201;</span>
-          <span style="font-family:'Outfit',system-ui,sans-serif;font-size:11px;letter-spacing:5px;color:rgba(212,175,55,.45)">HAND</span>
-        </div>
+    <div class="brand2">
+      <img id="ingo-lobby" class="brand2-photo" src="" alt="Ingo">
+      <div class="brand2-text">
+        <div class="brand2-sup">INGO'S</div>
+        <div class="brand2-title"><span class="grad">Romm&#233; Hand</span></div>
       </div>
     </div>
     <div id="room-status-badge" style="text-align:center;padding:10px 14px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid rgba(212,175,55,.15);margin-bottom:8px;font-size:13px;color:rgba(232,224,208,.7);min-height:38px;display:flex;align-items:center;justify-content:center;">Verbinde&#8230;</div>
@@ -672,15 +673,6 @@ header{
       </div>
     </div>
     <button class="lb-prim" id="btn-connect" style="margin-top:14px">LOS &#8594;</button>
-    <a href="https://meet.jit.si/ingos-rommehand" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;padding:9px;border-radius:8px;border:1px solid rgba(212,175,55,.2);color:var(--gold);text-decoration:none;font-family:'Outfit',system-ui,sans-serif;font-size:9px;letter-spacing:2px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>SPRACHANRUF
-    </a>
-    <div style="border-top:1px solid rgba(212,175,55,.1);margin-top:14px;padding-top:12px;">
-      <div style="font-family:'Outfit',system-ui,sans-serif;font-size:9px;letter-spacing:3px;color:rgba(212,175,55,.4);margin-bottom:6px">&#128172; CHAT</div>
-      <div id="lobby-chat-msgs" style="height:80px;overflow-y:auto;background:rgba(0,0,0,.2);border:1px solid rgba(212,175,55,.1);border-radius:8px;padding:6px 10px;display:flex;flex-direction:column;gap:3px;margin-bottom:6px;font-size:12px;color:rgba(232,224,208,.8);scrollbar-width:thin;"></div>
-      <div id="lobby-emoji-bar" style="display:flex;flex-wrap:wrap;gap:2px;margin-bottom:5px;"></div>
-      <div style="display:flex;gap:6px;"><input id="lobby-chat-input" class="lb-input" placeholder="Nachricht&#8230;" maxlength="120" style="flex:1;padding:8px 10px;" autocomplete="off"><button id="lobby-chat-send" style="background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:14px;">&#8594;</button></div>
-    </div>
   </div>
 </div>
 
@@ -696,15 +688,6 @@ header{
     </div>
     <button class="lb-prim" id="btn-start" style="display:none">SPIEL STARTEN &#8594;</button>
     <button class="lb-ghost" id="btn-leave">&#8592; Verlassen</button>
-    <div id="wt-chat" style="margin-top:16px;border:1px solid rgba(212,175,55,.15);border-radius:12px;overflow:hidden;display:none;flex-direction:column;">
-      <div style="font-family:'Outfit',system-ui,sans-serif;font-size:9px;letter-spacing:3px;color:rgba(212,175,55,.45);padding:8px 12px 6px;border-bottom:1px solid rgba(255,255,255,.05);">&#128172; CHAT</div>
-      <div id="wt-chat-msgs" style="height:120px;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:5px;scrollbar-width:thin;"></div>
-      <div id="wt-emoji-bar" style="display:flex;flex-wrap:wrap;gap:3px;padding:5px 10px 2px;border-top:1px solid rgba(255,255,255,.04);"></div>
-      <div style="display:flex;gap:6px;padding:7px 10px;border-top:1px solid rgba(255,255,255,.05);">
-        <input id="wt-chat-input" placeholder="Nachricht&#8230;" maxlength="120" autocomplete="off" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:7px 10px;color:#e8e0d0;font-size:13px;outline:none;">
-        <button id="wt-chat-send" style="background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;font-size:13px;">&#8594;</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -727,11 +710,6 @@ header{
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <a href="https://meet.jit.si/ingos-rommehand" target="_blank" rel="noopener" title="Sprachanruf"
-        style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;
-        border-radius:50%;border:1px solid rgba(212,175,55,.3);color:var(--gold);text-decoration:none;flex-shrink:0;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-      </a>
       <button onclick="retrySync()" title="Spiel neu synchronisieren"
         style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;
         border-radius:50%;border:1px solid rgba(212,175,55,.3);background:none;color:var(--gold);
@@ -776,7 +754,6 @@ header{
       </div>
       <button class="fertig-btn" id="btn-fertig">★ FERTIG!</button>
     </div>
-    <div class="go-hint" id="go-hint">Karte antippen zum Ablegen → Runde gewonnen!</div>
   </div>
 
   <div class="hand-wrap">
@@ -790,7 +767,6 @@ header{
         <button class="sort-btn" id="btn-vsort">A → 2</button>
       </div>
     </div>
-    <div class="hint" id="hint">Karte antippen zum Ablegen · Ziehen zum Umsortieren</div>
     <div class="cards" id="hand-cards"></div>
   </div>
 </div>
@@ -839,7 +815,7 @@ header{
 let ME = 0;
 
 // ═══ CI v3.10 — Intro / Sound / Sprueche (Eintracht-CI aus 20.html) ═══
-const VERSION='v3.10';
+const VERSION='v3.12';
 try{ document.title="Ingo's Romm\u00e9 Hand "+VERSION; var _vt=document.getElementById('ver-tag'); if(_vt)_vt.textContent=VERSION; }catch(e){}
 
 const INGO_SRC='data:image/jpeg;base64,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';
@@ -1842,8 +1818,6 @@ function renderHandOnly(){
   const goOut=G.phase==='goOutDiscard';
   const clickable=myTurn&&G.mustDiscard;
   document.getElementById('hand-count').textContent=`${(G.hands[ME]||[]).length} Karten`;
-  const hint=document.getElementById('hint');
-  hint.className='hint'+(clickable&&!goOut?' visible':'');
   const cardsEl=document.getElementById('hand-cards');
   // Prevent context menu on long-press (iOS "Print", Android share sheet)
   cardsEl.addEventListener('contextmenu',e=>e.preventDefault());
@@ -2018,15 +1992,9 @@ function render(){
   const showFertig=Number(G.currentPlayer)===ME&&G.mustDiscard&&G.phase==='playing';
   fertigBtn.className='fertig-btn'+(showFertig?' visible':'');
 
-  // Go-out hint
-  const goHint=document.getElementById('go-hint');
-  goHint.className='go-hint'+(goOut?' visible':'');
-
   // Hand
   const clickable=myTurn&&G.mustDiscard;
   document.getElementById('hand-count').textContent=`${(G.hands[ME]||[]).length} Karten`;
-  const hint=document.getElementById('hint');
-  hint.className='hint'+(clickable&&!goOut?' visible':'');
 
   const cardsEl=document.getElementById('hand-cards');
   cardsEl.innerHTML='';
@@ -2597,195 +2565,14 @@ window.addEventListener('DOMContentLoaded',()=>{
 // ═══════════════════════════════════════
 // CHAT
 // ═══════════════════════════════════════
-let _chatRef=null,_chatListener=null,_chatOpen=false,_chatUnread=0;
-function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-function chatMsgHtml(msg,myName){
-  const mine=msg.sender===myName;
-  const col=mine?'#2ecc71':'#d4af37';
-  // Format: message text — Name
-  return `<div class="wt-chat-msg"><span class="ct">${escH(msg.text)}</span><span class="cn" style="color:${col};margin-left:6px;">— ${escH(msg.sender)}</span></div>`;
-}
-
-function initWaitChat(){
-  if(!MP.roomRef)return;
-  _chatRef=getDB().ref('rooms/rm_lobby');
-  const chatDiv=document.getElementById('wt-chat');
-  if(chatDiv)chatDiv.classList.add('show');
-  const msgs=document.getElementById('wt-chat-msgs');
-  if(msgs)msgs.innerHTML='';
-  // Emoji bar
-  const eb=document.getElementById('wt-emoji-bar');
-  if(eb){eb.innerHTML='';
-    ['😁', '🥲', '😰', '🥳', '🫣', '🤔', '🤓', '🤪', '💩', '👌', '🥱', '🍻', '🍺', '😂', '🎲', '🙏', '👀', '🪩', '🕺', '😎', '🎁', '🧐', '🙌'].forEach(em=>{const b=document.createElement('button');b.className='wt-emoji-btn';b.textContent=em;
-      b.onclick=()=>{const i=document.getElementById('wt-chat-input');if(i){i.value+=em;i.focus();}};eb.appendChild(b);});
-  }
-  // Listen
-  if(_chatListener)_chatRef.off('child_added',_chatListener);
-  _chatListener=_chatRef.on('child_added',snap=>{
-    const msg=snap.val();if(!msg)return;
-    const m=document.getElementById('wt-chat-msgs');
-    if(m){m.insertAdjacentHTML('beforeend',chatMsgHtml(msg,MP.myName));m.scrollTop=m.scrollHeight;}
-    const gm=document.getElementById('chat-msgs');
-    if(gm){gm.insertAdjacentHTML('beforeend',chatMsgHtml(msg,MP.myName));gm.scrollTop=gm.scrollHeight;}
-    if(!_chatOpen){_chatUnread++;const badge=document.getElementById('chat-badge');
-      if(badge){badge.textContent=_chatUnread>9?'9+':_chatUnread;badge.classList.add('has-new');}}
-  });
-  function sendWt(){
-    const inp=document.getElementById('wt-chat-input');
-    const t=inp?inp.value.trim():'';if(!t||!_chatRef)return;
-    _chatRef.push({sender:MP.myName||'?',text:t,ts:Date.now()});if(inp)inp.value='';
-  }
-  const sb=document.getElementById('wt-chat-send');
-  const inp=document.getElementById('wt-chat-input');
-  if(sb){const sb2=sb.cloneNode(true);sb.replaceWith(sb2);sb2.onclick=sendWt;}
-  if(inp){const i2=inp.cloneNode(true);inp.replaceWith(i2);i2.addEventListener('keydown',e=>{if(e.key==='Enter')sendWt();});}
-}
-
-var _chatPanelOpen=false;
-function toggleChatPanel(){
-  _chatPanelOpen=!_chatPanelOpen;
-  var p=document.getElementById('chat-panel');
-  if(p)p.style.display=_chatPanelOpen?'flex':'none';
-  if(_chatPanelOpen){var m=document.getElementById('chat-msgs');if(m)m.scrollTop=m.scrollHeight;}
-}
-function initGameChat(){
-  const cw=document.getElementById('chat-wrap');
-  if(cw)cw.style.display='flex';
-  // Reset bar text
-  var barEl=document.getElementById('chat-bar-text');if(barEl)barEl.textContent='Antippen zum Chatten…';
-  // Clear old messages
-  var oldMsgs=document.getElementById('chat-msgs');if(oldMsgs)oldMsgs.innerHTML='';
-  window._lastChatHtml=window._lastChatHtml||'';
-  // Emoji bar
-  const eb=document.getElementById('chat-emoji-bar');
-  if(eb){eb.innerHTML='';
-    ['😁', '🥲', '😰', '🥳', '🫣', '🤔', '🤓', '🤪', '💩', '👌', '🥱', '🍻', '🍺', '😂', '🎲', '🙏', '👀', '🪩', '🕺', '😎', '🎁', '🧐', '🙌'].forEach(em=>{const b=document.createElement('button');b.className='chat-emoji-btn';b.textContent=em;
-      b.onclick=()=>{const i=document.getElementById('chat-input');if(i){i.value+=em;i.focus();}};eb.appendChild(b);});
-  }
-  // Always point to game chat ref and reattach listener
-  if(_chatListener&&_chatRef){_chatRef.off('child_added',_chatListener);_chatListener=null;}
-  _chatRef=getDB().ref('rooms/rm_lobby'); // same path as lobby/waiting room
-  if(_chatRef){
-    _chatListener=_chatRef.on('child_added',snap=>{
-      const msg=snap.val();if(!msg)return;
-      // Store last msg globally
-      var safe=(msg.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-      var senderSafe=(msg.sender||'?').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-      window._lastChatHtml='💬 <span style="color:rgba(232,224,208,.85)">'+safe+'</span><span style="color:#d4af37;font-weight:600;margin-left:4px">— '+senderSafe+'</span>';
-      // Update bottom bar text
-      var barEl=document.getElementById('chat-bar-text');
-      if(barEl){barEl.innerHTML='<span style="color:rgba(232,224,208,.95)">'+safe+'</span><span style="color:#d4af37;font-weight:700;margin-left:6px">— '+senderSafe+'</span>';}
-      // Call render() so status-msg gets updated immediately
-      if(typeof render==='function')render();
-      // Flash bar
-      var chatBarEl=document.getElementById('chat-bar');
-      if(chatBarEl){
-        chatBarEl.style.background='rgba(212,175,55,.18)';
-        setTimeout(function(){if(chatBarEl)chatBarEl.style.background='';},2000);
-      }
-      // Ensure chat-wrap visible
-      var cwEl=document.getElementById('chat-wrap');
-      if(cwEl&&cwEl.style.display==='none')cwEl.style.display='flex';
-      const gm=document.getElementById('chat-msgs');
-      if(gm){gm.insertAdjacentHTML('beforeend',chatMsgHtml(msg,MP.myName));gm.scrollTop=gm.scrollHeight;}
-    });
-  }
-  function sendGame(){
-    const inp=document.getElementById('chat-input');
-    const t=inp?inp.value.trim():'';if(!t||!_chatRef)return;
-    _chatRef.push({sender:MP.myName||'?',text:t,ts:Date.now()});if(inp)inp.value='';
-  }
-  const sb=document.getElementById('chat-send');const inp=document.getElementById('chat-input');
-  if(sb){const sb2=sb.cloneNode(true);sb.replaceWith(sb2);sb2.onclick=sendGame;}
-  if(inp){const i2=inp.cloneNode(true);inp.replaceWith(i2);i2.addEventListener('keydown',e=>{if(e.key==='Enter')sendGame();});}
-  const tog=document.getElementById('chat-toggle');
-  if(tog){const tog2=tog.cloneNode(true);tog.replaceWith(tog2);
-    tog2.onclick=()=>{_chatOpen=!_chatOpen;
-      const panel=document.getElementById('chat-panel');if(panel)panel.classList.toggle('open',_chatOpen);
-      if(_chatOpen){_chatUnread=0;const badge=document.getElementById('chat-badge');
-        if(badge){badge.textContent='';badge.classList.remove('has-new');}
-        const gm=document.getElementById('chat-msgs');if(gm)gm.scrollTop=gm.scrollHeight;}
-    };
-  }
-}
-
-function stopChat(){
-  if(_chatRef&&_chatListener){_chatRef.off('child_added',_chatListener);_chatListener=null;}
-  _chatRef=null;_chatOpen=false;_chatUnread=0;
-  const cw=document.getElementById('chat-wrap');if(cw)cw.style.display='none';
-  const cp=document.getElementById('chat-panel');if(cp)cp.classList.remove('open');
-  const gm=document.getElementById('chat-msgs');if(gm)gm.innerHTML='';
-  const wc=document.getElementById('wt-chat');if(wc)wc.classList.remove('show');
-  const wm=document.getElementById('wt-chat-msgs');if(wm)wm.innerHTML='';
-  const badge=document.getElementById('chat-badge');if(badge)badge.classList.remove('has-new');
-}
-
-
-// ── LOBBY CHAT (Rommé Hand) ──
-function initLobbyChat(){
-  var db;try{db=getDB();}catch(e){return;}if(!db)return;
-  var ref=db.ref('rooms/rm_lobby');
-  var msgsEl=document.getElementById('lobby-chat-msgs');
-  var inpEl=document.getElementById('lobby-chat-input');
-  var sendEl=document.getElementById('lobby-chat-send');
-  var emojiEl=document.getElementById('lobby-emoji-bar');
-  if(!msgsEl||!inpEl||!sendEl)return;
-  if(emojiEl&&!emojiEl.children.length){
-    ['😁', '🥲', '😰', '🥳', '🫣', '🤔', '🤓', '🤪', '💩', '👌', '🥱', '🍻', '🍺', '😂', '🎲', '🙏', '👀', '🪩', '🕺', '😎', '🎁', '🧐', '🙌'].forEach(function(em){
-      var b=document.createElement('button');b.textContent=em;
-      b.style.cssText='background:none;border:none;cursor:pointer;font-size:15px;padding:2px 3px;';
-      b.onclick=function(){inpEl.value+=em;inpEl.focus();};
-      emojiEl.appendChild(b);
-    });
-  }
-  ref.remove(function(){
-    ref.push({sender:'Ingo',text:'Na? Kannste auch nicht schlafen?',ts:Date.now()});
-  });
-  ref.limitToLast(20).on('child_added',function(snap){
-    var msg=snap.val();if(!msg)return;
-    var d=document.createElement('div');d.style.cssText='line-height:1.4;';
-    var t=String(msg.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-    var n=String(msg.sender||'?').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-    var reCode=/\b(\d{4})\b/;
-    var cm=t.match(reCode);
-    if(cm){
-      var c4=cm[1];
-      var linked=t.replace(c4,'<b class="lobby-code" data-code="'+c4+'" style="color:#f0d060;cursor:pointer;border-bottom:1px solid #d4af37">'+c4+'</b>');
-      d.innerHTML='<span>'+linked+'</span><span style="color:#d4af37;font-weight:600;margin-left:5px;">— '+n+'</span>';
-    } else {
-      d.innerHTML='<span>'+t+'</span><span style="color:#d4af37;font-weight:600;margin-left:5px;">— '+n+'</span>';
-    }
-    msgsEl.appendChild(d);msgsEl.scrollTop=msgsEl.scrollHeight;
-  });
-  msgsEl.addEventListener('click',function(e){
-    var el=e.target.closest&&e.target.closest('.lobby-code');
-    if(el){var jc=document.getElementById('lb-join-code');if(jc){jc.value=el.dataset.code;jc.focus();}}
-  });
-  function send(){
-    var t=inpEl.value.trim();if(!t)return;
-    var nm=(document.getElementById('lb-name')&&document.getElementById('lb-name').value.trim())||'Gast';
-    ref.push({sender:nm,text:t,ts:Date.now()});inpEl.value='';
-  }
-  sendEl.onclick=send;
-  inpEl.addEventListener('keydown',function(e){if(e.key==='Enter')send();});
-}
+let _chatRef=null;
+// ── Chat entfernt (v3.11) ──
+function initLobbyChat(){}
+function initWaitChat(){}
+function initGameChat(){}
+function toggleChatPanel(){}
+function stopChat(){}
 </script>
 
-<div id="chat-wrap">
-  <div id="chat-bar" onclick="toggleChatPanel()" style="display:flex;align-items:center;gap:8px;padding:8px 14px 7px;cursor:pointer;min-height:36px;transition:background .3s;">
-    <span style="font-size:16px;flex-shrink:0">💬</span>
-    <span id="chat-bar-text" style="font-size:13px;color:rgba(232,224,208,.75);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">Antippen zum Chatten…</span>
-    <span id="chat-badge" style="background:#e74c3c;color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;display:none;align-items:center;justify-content:center;font-weight:700;flex-shrink:0"></span>
-  </div>
-  <div id="chat-panel" style="display:none;flex-direction:column;border-top:1px solid rgba(255,255,255,.06);max-height:45vh;">
-    <div id="chat-msgs" style="flex:1;overflow-y:auto;padding:10px 16px 6px;display:flex;flex-direction:column;gap:5px;scrollbar-width:thin;scrollbar-color:rgba(212,175,55,.2) transparent;"></div>
-    <div id="chat-emoji-bar" style="display:flex;flex-wrap:wrap;gap:4px;padding:6px 12px 4px;border-top:1px solid rgba(255,255,255,.05);"></div>
-    <div id="chat-input-row" style="display:flex;gap:8px;padding:8px 12px 12px;">
-      <input id="chat-input" placeholder="Nachricht…" maxlength="120" autocomplete="off" style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:9px 12px;color:#e8e0d0;font-size:14px;font-family:inherit;outline:none;">
-      <button id="chat-send" style="background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;border:none;border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:15px;">→</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
