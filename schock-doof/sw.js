@@ -58,8 +58,10 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(req)
         .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(req, copy));
+          if (res.ok && res.status === 200) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
+          }
           return res;
         })
         .catch(() => caches.match(req).then((r) => r || caches.match('./index.html')))
@@ -68,12 +70,16 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Alles andere (Icons, Sounds, Manifest): Cache-first, im Hintergrund auffrischen.
+  // Audio-Elemente fordern mp3s oft per HTTP-Range an (Status 206) — solche Teilantworten
+  // dürfen NICHT in den Cache (die Cache API wirft sonst einen TypeError), daher Status pruefen.
   event.respondWith(
     caches.match(req).then((cached) => {
       const fetchPromise = fetch(req)
         .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(req, copy));
+          if (res.ok && res.status === 200) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
+          }
           return res;
         })
         .catch(() => cached);
