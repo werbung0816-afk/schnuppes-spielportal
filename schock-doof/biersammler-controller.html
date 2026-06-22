@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Biersammler-Controller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#173fb0;--blue-2:#2e6bff;--blue-deep:#0a1f5c;--gold:#ffd400;--panel:rgba(8,18,52,.86);--line:rgba(255,255,255,.12);--danger:#e2231a;--ok:#39d98a;--text:#eef2ff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',system-ui,sans-serif;background:radial-gradient(ellipse 130% 110% at 50% 0%,#2178d8 0%,#0e52a0 40%,#062d6a 75%,#041428 100%);min-height:100vh;color:var(--text);padding:20px;display:flex;flex-direction:column;align-items:center}
+h1{font-weight:900;font-size:clamp(1.4rem,5vw,1.9rem);display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.sub{color:rgba(255,255,255,.55);font-size:.85rem;margin-bottom:20px}
+.wrap{width:100%;max-width:560px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;backdrop-filter:blur(16px);margin-bottom:18px}
+.panel h2{font-size:.95rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.6);margin-bottom:14px;font-weight:700}
+.total{font-size:2rem;font-weight:900;color:var(--gold);text-align:center;padding:6px 0 14px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);gap:10px}
+.row:last-child{border-bottom:none}
+.row .name{font-weight:700}
+.row .meta{color:rgba(255,255,255,.5);font-size:.85rem;font-weight:400}
+.row .amt{font-weight:800;color:var(--gold);white-space:nowrap}
+.row-right{display:flex;align-items:center;gap:10px}
+.empty{color:rgba(255,255,255,.45);font-size:.88rem;text-align:center;padding:10px 0}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:10px;font-weight:700}
+.btn{background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;padding:11px 16px;width:100%;font-size:.95rem}
+.btn.gold{background:linear-gradient(135deg,#ffe26b,var(--gold));color:#1a1500}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.btn.danger{background:transparent;border:1px solid var(--danger);color:#ff8c84}
+.del{background:none;color:rgba(255,255,255,.4);font-size:1.05rem;padding:4px 7px;border-radius:8px;line-height:1}
+.del:hover{color:var(--danger);background:rgba(255,255,255,.08)}
+.formrow{display:flex;gap:8px;margin-bottom:10px}
+input{font-family:inherit;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px;font-size:.92rem;width:100%}
+input:focus{outline:2px solid var(--blue-2)}
+.col2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+textarea{font-family:'Outfit',monospace;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px;width:100%;font-size:.82rem;min-height:120px;resize:vertical}
+.note{font-size:.78rem;color:rgba(255,255,255,.45);margin-top:8px;line-height:1.5}
+.confirm-box{display:none;background:rgba(226,35,26,.12);border:1px solid var(--danger);border-radius:10px;padding:12px;margin-top:10px}
+.confirm-box.on{display:block}
+.confirm-box p{font-size:.88rem;margin-bottom:10px}
+.confirm-actions{display:flex;gap:8px}
+#gate{position:fixed;inset:0;background:#04102c;display:flex;align-items:center;justify-content:center;z-index:50;flex-direction:column;gap:14px;padding:20px}
+#gate .panel{max-width:320px;text-align:center}
+#gate input{text-align:center;margin-bottom:10px}
+#app{display:none}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(10,20,50,.95);border:1px solid var(--line);border-radius:12px;padding:11px 18px;font-size:.88rem;z-index:60;opacity:0;transition:opacity .25s}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="panel">
+    <h2 style="margin-bottom:14px">🔒 Zugang</h2>
+    <input type="password" id="pw" placeholder="Passwort">
+    <button class="btn" id="unlockBtn">Entsperren</button>
+  </div>
+</div>
+
+<div id="app">
+  <h1>🍺 Biersammler-Controller</h1>
+  <div class="sub">Unabhängig vom Spiel — direkter Zugriff auf die Firebase-Liste</div>
+  <div class="wrap">
+
+    <div class="panel">
+      <h2>Übersicht</h2>
+      <div class="total" id="total">0,00 €</div>
+      <div id="list"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Eintrag hinzufügen / korrigieren</h2>
+      <div class="formrow">
+        <input type="text" id="addName" placeholder="Name">
+        <input type="number" id="addCount" placeholder="Anzahl" min="0" style="max-width:110px">
+      </div>
+      <button class="btn gold" id="saveBtn">Speichern</button>
+      <div class="note">Setzt die Anzahl für diesen Namen direkt (überschreibt einen vorhandenen Wert, statt ihn zu erhöhen).</div>
+    </div>
+
+    <div class="panel">
+      <h2>Exportieren</h2>
+      <button class="btn ghost" id="exportBtn">Als Text/CSV exportieren</button>
+      <textarea id="exportArea" style="display:none;margin-top:10px" readonly></textarea>
+    </div>
+
+    <div class="panel">
+      <h2>Zurücksetzen</h2>
+      <button class="btn danger" id="resetBtn">Alles zurücksetzen</button>
+      <div class="confirm-box" id="confirmBox">
+        <p>⚠️ Das löscht wirklich <strong>alle</strong> Einträge unwiderruflich. Sicher?</p>
+        <div class="confirm-actions">
+          <button class="btn danger" id="confirmYes" style="flex:1">Ja, alles löschen</button>
+          <button class="btn ghost" id="confirmNo" style="flex:1">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+/* ====== Zugangsschutz (rein client-seitig, nur ein Hindernis gegen zufälliges Finden) ====== */
+const PASSWORD = '610146'; // <- hier nach Bedarf selbst ändern
+if(sessionStorage.getItem('bsc_unlocked')==='1'){ $('gate').remove(); $('app').style.display='block'; init(); }
+function $(id){ return document.getElementById(id); }
+$('unlockBtn').addEventListener('click', tryUnlock);
+$('pw').addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
+function tryUnlock(){
+  if($('pw').value === PASSWORD){
+    sessionStorage.setItem('bsc_unlocked','1');
+    $('gate').remove(); $('app').style.display='block'; init();
+  } else { toast('Falsches Passwort','warn'); $('pw').value=''; $('pw').focus(); }
+}
+
+/* ====== Firebase (gleiche Datenbank wie das Spiel) ====== */
+const firebaseConfig={apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",authDomain:"schnuppes-spielportal.firebaseapp.com",databaseURL:"https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",projectId:"schnuppes-spielportal",storageBucket:"schnuppes-spielportal.firebasestorage.app",messagingSenderId:"1022973500272",appId:"1:1022973500272:web:f9e39d0dfd3c61c3c88db5"};
+let BIER=null;
+let SZ={settled:{},games:[]};
+
+function init(){
+  firebase.initializeApp(firebaseConfig);
+  BIER = firebase.database().ref('schock-doof/room/biersammler');
+  BIER.on('value', s=>{ const v=s.val(); SZ = v ? {settled:v.settled||{}, games:v.games||[]} : {settled:{},games:[]}; render(); });
+}
+
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2200); }
+function total(){ let n=0; for(const k in SZ.settled) n+=SZ.settled[k]; return n*0.5; }
+
+function render(){
+  const names = Object.keys(SZ.settled||{});
+  $('total').textContent = total().toFixed(2)+' €';
+  const list = $('list');
+  if(!names.length){ list.innerHTML = '<div class="empty">Noch keine Einträge.</div>'; return; }
+  list.innerHTML = names.sort((a,b)=>SZ.settled[b]-SZ.settled[a]).map(n=>{
+    const c = SZ.settled[n];
+    return `<div class="row"><span class="name">${esc(n)} <span class="meta">· ${c}x à 0,50 €</span></span>
+      <span class="row-right"><span class="amt">${(c*0.5).toFixed(2)} €</span>
+      <button class="del" data-name="${escAttr(n)}" title="Löschen">✕</button></span></div>`;
+  }).join('');
+  list.querySelectorAll('.del').forEach(b=>b.addEventListener('click', ()=>deleteEntry(b.dataset.name)));
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
+
+function writeBack(){ if(BIER) BIER.set(SZ); }
+
+function deleteEntry(name){
+  delete SZ.settled[name];
+  SZ.games = (SZ.games||[]).filter(g=>g.loser!==name);
+  writeBack();
+  toast(`„${name}" entfernt`);
+}
+
+$('saveBtn').addEventListener('click', ()=>{
+  const name = $('addName').value.trim();
+  const count = parseInt($('addCount').value, 10);
+  if(!name){ toast('Bitte einen Namen eingeben'); return; }
+  if(isNaN(count) || count < 0){ toast('Bitte eine gültige Anzahl eingeben'); return; }
+  if(count === 0){ delete SZ.settled[name]; SZ.games=(SZ.games||[]).filter(g=>g.loser!==name); }
+  else { SZ.settled[name] = count; }
+  writeBack();
+  $('addName').value=''; $('addCount').value='';
+  toast(`„${name}" gespeichert`);
+});
+
+$('exportBtn').addEventListener('click', ()=>{
+  const names = Object.keys(SZ.settled||{}).sort((a,b)=>SZ.settled[b]-SZ.settled[a]);
+  let csv = 'Name,Anzahl,Betrag\n';
+  names.forEach(n=>{ csv += `${n},${SZ.settled[n]},${(SZ.settled[n]*0.5).toFixed(2)}\n`; });
+  csv += `Gesamt,,${total().toFixed(2)}\n`;
+  const area = $('exportArea');
+  area.style.display='block'; area.value = csv; area.focus(); area.select();
+  toast('Exportiert — markiert zum Kopieren');
+});
+
+$('resetBtn').addEventListener('click', ()=>$('confirmBox').classList.add('on'));
+$('confirmNo').addEventListener('click', ()=>$('confirmBox').classList.remove('on'));
+$('confirmYes').addEventListener('click', ()=>{
+  SZ = {settled:{}, games:[]};
+  writeBack();
+  $('confirmBox').classList.remove('on');
+  toast('Alles zurückgesetzt');
+});
+</script>
+</body>
+</html>
