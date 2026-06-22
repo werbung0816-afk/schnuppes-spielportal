@@ -347,7 +347,6 @@ body{-webkit-user-select:none;user-select:none}
     <div class="help" id="waitHostNote" style="display:none">⏳ Warte auf den Host – er startet, wenn alle da sind.</div>
     <button class="btn" id="startMatchBtn">▶ Spiel starten</button>
     <div class="row" style="margin-top:10px">
-      <button class="btn ghost sm" id="addTestBtn">＋ Test‑Mitspieler</button>
       <button class="btn ghost sm" id="leaveRoomBtn">← Verlassen</button>
     </div>
   </section>
@@ -394,7 +393,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.60';
+const VERSION='v5.61';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -603,15 +602,7 @@ function renderWaiting(){
     box.appendChild(seat);
   }
   $('startMatchBtn').style.display=amHost?'':'none';
-  $('addTestBtn').style.display=amHost?'':'none';
   const note=$('waitHostNote'); if(note) note.style.display=amHost?'none':'';
-}
-function addTestPlayer(){
-  if(!ONLINE){ if(roomPlayersLocal.length>=seatCount){toast('Alle Plätze belegt.','warn');return;} const used=roomPlayersLocal.map(n=>n.toLowerCase()); const p=AI_POOL.filter(n=>!used.includes(n.toLowerCase())); roomPlayersLocal.push(p.length?pick(p):'Gast'+(roomPlayersLocal.length+1)); renderWaiting(); return; }
-  const used=presenceList().map(x=>x.name.toLowerCase()); const p=AI_POOL.filter(n=>!used.includes(n.toLowerCase()));
-  const nm=p.length?pick(p):('Gast'+Date.now()%100);
-  const ref=ROOM.child('presence/test_'+Math.random().toString(36).slice(2,7));
-  ref.set({name:nm,ts:Date.now()}); ref.onDisconnect().remove();
 }
 function leaveRoom(){
   if(ONLINE){ try{ ROOM.child('presence/'+CID).remove(); ROOM.off(); }catch(e){} }
@@ -1077,7 +1068,6 @@ let lobbyCount=2;
 $('counts').querySelectorAll('.opt').forEach(o=>o.addEventListener('click',()=>{ $('counts').querySelectorAll('.opt').forEach(x=>x.classList.remove('on')); o.classList.add('on'); lobbyCount=+o.dataset.c; }));
 $('startBtn').addEventListener('click',enterRoom);
 $('startMatchBtn').addEventListener('click',startMatch);
-$('addTestBtn').addEventListener('click',addTestPlayer);
 $('leaveRoomBtn').addEventListener('click',leaveRoom);
 
 $('homeBtn').addEventListener('click',()=>{ if(ONLINE){ leaveRoom(); } else { showScreen('lobby'); } });
