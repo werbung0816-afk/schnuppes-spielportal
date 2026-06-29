@@ -856,6 +856,9 @@ function playChain(list){ let i=0; (function next(){ if(i>=list.length)return; v
 function playJingle1(){ try{ if(jingleAudio){ jingleAudio.currentTime=0; jingleAudio.play().catch(function(){}); } }catch(e){} }
 // Audio bei erster Nutzer-Geste freischalten
 (function(){ function ua(){ [jingleAudio,applauseAudio].forEach(function(a){ if(!a)return; try{ a.muted=true; var p=a.play(); if(p&&p.then){ p.then(function(){ a.pause(); a.currentTime=0; a.muted=false; }).catch(function(){ a.muted=false; }); } else { a.muted=false; } }catch(e){} });
+  // WebAudio-Kontext (playTone/Fanfaren) MUSS ebenfalls innerhalb der Geste aufgeweckt werden,
+  // sonst bleibt er bei Zuschauern (die nicht aktiv klicken) für immer 'suspended' und stumm.
+  try{ var ac=getAC(); if(ac&&ac.state==='suspended')ac.resume(); }catch(e){}
   document.removeEventListener('touchstart',ua); document.removeEventListener('click',ua); }
   document.addEventListener('touchstart',ua,{once:true,passive:true}); document.addEventListener('click',ua,{once:true}); })();
 
@@ -1058,6 +1061,7 @@ function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)()
 function playTone(freq,dur,vol,type='sine',delay=0){
   try{
     const ac=getAC();
+    if(ac.state==='suspended')ac.resume().catch(function(){});
     const o=ac.createOscillator(),g=ac.createGain();
     o.connect(g);g.connect(ac.destination);
     o.type=type;
