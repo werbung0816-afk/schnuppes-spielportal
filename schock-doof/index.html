@@ -393,7 +393,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.61';
+const VERSION='v5.62';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -700,8 +700,8 @@ async function animRoll(idx){
   $('cup').classList.add('shake'); playDice(); G.soundCue={type:'dice',ts:Date.now()}; vibe([10,30,10]);
   if(me){ $('dice').innerHTML=ps.dice.map((d,i)=>`<div class="die${ps.kept[i]?' kept':''}" data-i="${i}">${pips(d)}</div>`).join('');
     const els=[...$('dice').children]; els.forEach((el,i)=>{ if(!ps.kept[i]) el.classList.add('roll'); });
-    for(let f=0;f<5;f++){ els.forEach((el)=>{ const i=Number(el.dataset.i); if(!ps.kept[i]) el.innerHTML=pips(rollDie()); }); await sleep(70); } }
-  else { await sleep(420); }
+    for(let f=0;f<5;f++){ if(document.hidden)break; els.forEach((el)=>{ const i=Number(el.dataset.i); if(!ps.kept[i]) el.innerHTML=pips(rollDie()); }); await sleep(70); } }
+  else { if(!document.hidden) await sleep(420); }
   for(let i=0;i<3;i++){ if(!ps.kept[i]) ps.dice[i]=rollDie(); }
   ps.throwNum++; ps.mustRoll=false; $('cup').classList.remove('shake'); renderDice(); $('thr').textContent=`Wurf ${ps.throwNum} / ${curMax()}`;
 }
@@ -766,7 +766,7 @@ function aiKeep(idx){ const ps=G.playerStates[idx]; const c=[0,0,0,0,0,0,0]; ps.
   let hi=0,hii=0; ps.dice.forEach((d,i)=>{ if(d>hi){hi=d;hii=i;} }); if(hi>=5)ps.kept[hii]=true; }
 
 /* ---------- Runde auswerten (Host) ---------- */
-function giveLids(toIdx,amount,fromIdx){ for(let k=0;k<amount;k++){ if(G.middleLids>0)G.middleLids--; else if(fromIdx!=null&&G.players[fromIdx].lids>0)G.players[fromIdx].lids--; else break; G.players[toIdx].lids++; if(G.players[toIdx].lids>=TOTAL_LIDS){G.players[toIdx].lids=TOTAL_LIDS;break;} } }
+function giveLids(toIdx,amount,fromIdx){ for(let k=0;k<amount;k++){ if(G.middleLids>0)G.middleLids--; else break; /* Mitte leer → keine Deckel vom Gewinner nehmen */ G.players[toIdx].lids++; if(G.players[toIdx].lids>=TOTAL_LIDS){G.players[toIdx].lids=TOTAL_LIDS;break;} } }
 function resolveRound(){
   G.phase='summary'; const ids=G.turnOrder.slice();
   ids.forEach(i=>{ const ps=G.playerStates[i]; if(!ps.combo)ps.combo=evalDice(ps.dice,ps.throwNum||1); ps.concealed=false; });
@@ -781,11 +781,9 @@ function resolveRound(){
   const _le=LOSE_EMOJIS[Math.floor(Math.random()*LOSE_EMOJIS.length)];
   G.banner=`<span style="color:${playerColor(win)}">${_we} ${G.players[win].name} gewinnt!${ev?' · '+ev:''}</span><br><span style="color:${playerColor(lose)};font-size:.85em">${_le} ${G.players[lose].name} +${amountTxt}</span>`;
   paint(); pushState();
-  // Bei Schock Aus mit vollem Brett: sofort prüfen ob Spiel vorbei
-  // Alle Geräte setzen Timer (amHost-Check im Callback, nicht davor)
-  const immediateEnd=wc.type==='schockaus'&&leader()>=0;
-  const delay=immediateEnd?500:2700;
-  setTimeout(()=>{ const _ended=checkPhaseEnd(); if(_ended&&_gameOverConfirmed){ try{_showGameOverOverlay();}catch(e){} } if(_ended)return; if(amHost){ G.starter=lose; G.round++; beginRound(); } },delay);
+  // Immer 3000ms warten — Spieler sollen das Würfelergebnis sehen können,
+  // auch wenn das Spiel direkt endet (Schock-Aus, letzte Deckel).
+  setTimeout(()=>{ const _ended=checkPhaseEnd(); if(_ended)return; if(amHost){ G.starter=lose; G.round++; beginRound(); } },3000);
 }
 
 /* ---------- Phasen-Ende (Host) ---------- */
@@ -826,7 +824,9 @@ function onGameComplete(loserIdx,extra,isDoubleLoss){
   vibe([60,40,60,40,120]); confetti();
   G.soundCue={type:isDoubleLoss?'doubleloss':(kind==='final'?'kaiserover':'gameover'),ts:Date.now()};
   if(isDoubleLoss) playChain([oopsAudio,applauseAudio]); else playChain([jingle2Audio,applauseAudio,beerAudio]);
-  paint(); pushState(); _ensureOverlay();
+  paint(); pushState();
+  // Overlay erst nach 1800ms zeigen — Spieler sehen erst Konfetti + Würfelergebnis
+  setTimeout(()=>{ _ensureOverlay(); }, 1800);
 }
 function newGameHost(){ _gameOverConfirmed=false; if(!amHost)return; if(G.over&&G.over.kind==='final'){ G.kaiserrunde=false; G.kaiserGamesPlayed=0; G.kaiserrundeBy=null; }
   const keep=G.kaiserrunde,by=G.kaiserrundeBy,pl=G.kaiserGamesPlayed; const players=G.players.map(p=>({name:p.name,isAI:p.isAI,cid:p.cid}));
@@ -929,8 +929,11 @@ function advanceStuck(){
   }
   return false;
 }
-function startRecovery(){ stopRecovery(); if(!amHost)return;
+function startRecovery(){ stopRecovery();
   recoveryTimer=setInterval(()=>{ if(!G)return;
+    // _rolling-Hänger beheben (auf jedem Gerät)
+    if(_rolling){ _rolling=false; if(G.phase==='rolling'){ try{renderTurnUI();renderDice();}catch(e){} } }
+    if(!amHost)return;
     const age=Date.now()-(G.ts||0);
     if((G.phase==='summary'||G.phase==='notice'||G.phase==='gameover'||G.phase==='kaiserover')&&age>5000) advanceStuck();
     else if(G.phase==='rolling'||G.phase==='laden') advanceStuck();
@@ -1086,7 +1089,21 @@ $('startMatchBtn').addEventListener('click',startMatch);
 $('leaveRoomBtn').addEventListener('click',leaveRoom);
 
 $('homeBtn').addEventListener('click',()=>{ if(ONLINE){ leaveRoom(); } else { showScreen('lobby'); } });
-$('resyncBtn').addEventListener('click',()=>{ if(!amHost){ toast('Nur der Host kann synchronisieren.',''); return; } if(!G){ toast('Kein Spiel aktiv.',''); return; } if(!advanceStuck()) toast('Kein Festhänger erkannt.','ok'); });
+$('resyncBtn').addEventListener('click',()=>{
+  _rolling=false; // stuck-roll immer zuerst freigeben
+  if(!G){ toast('Kein Spiel aktiv.',''); return; }
+  if(!amHost){
+    // Gast: State frisch von Firebase laden
+    if(ONLINE){ try{ ROOM.child('state').once('value',s=>{ const raw=s.val(); if(raw){ G=hydrate(raw); paint(); toast('↺ Neu synchronisiert.','ok'); } }); }catch(e){ toast('⚠ Sync fehlgeschlagen.','warn'); } }
+    else { paint(); toast('↺ Angezeigt aktualisiert.','ok'); }
+    return;
+  }
+  // Host: stuck prüfen, dann State aktiv re-pushen
+  if(!advanceStuck()){
+    if(ONLINE){ G.ts=Date.now(); try{ ROOM.child('state').set(sanitize(G)); }catch(e){} }
+    paint(); toast('↺ Zustand gepusht.','ok');
+  }
+});
 $('cup').addEventListener('click',()=>{ if(!G||G.phase!=='rolling')return; const idx=cur(); if(!isMe(idx))return; const ps=G.playerStates[idx]; if(ps.mustRoll){ actRoll(); return; } if(ps.throwNum>=curMax())return; actRoll(); });
 (function(){ const chip=$('middleBox'); let t=null; const s=()=>{ t=setTimeout(()=>{ if(amHost&&G){ const pool=participants(); const li=pool[Math.floor(Math.random()*pool.length)]; G.players[li].lids=TOTAL_LIDS; toast('⚙️ Spielende simuliert.','warn'); paint(); checkPhaseEnd(); } t=null; },800); }; const c=()=>{ if(t){clearTimeout(t);t=null;} };
   chip.addEventListener('pointerdown',s); chip.addEventListener('pointerup',c); chip.addEventListener('pointerleave',c); chip.addEventListener('pointercancel',c); })();
@@ -1110,6 +1127,30 @@ const _kt=$('kaiserToggle'); if(_kt) _kt.addEventListener('click',()=>{
     const by=(G.players.find(p=>!p.isAI)||G.players[0]).name;
     G.kaiserrunde=true; G.kaiserrundeBy=by; G.kaiserGamesPlayed=0; updateKaiser(); pushState(); flashKaiser(by);
   }
+});
+
+// ── Stabilisierung nach App-Wechsel ──────────────────────────────────────────
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState!=='visible') return;
+  // 1) _rolling-Lock sofort freigeben (war vielleicht mitten in animRoll)
+  _rolling=false;
+  // 2) Firebase-Verbindung neu aufwecken
+  try{ if(ONLINE && firebase && firebase.database) firebase.database().goOnline(); }catch(e){}
+  // 3) AudioContext reaktivieren (iOS/Android frieren ihn ein)
+  try{ if(typeof AudioContext!=='undefined'){ const _ac=new AudioContext(); if(_ac.state==='suspended') _ac.resume(); } }catch(e){}
+  if(!G) return;
+  // 4) Gast: State frisch lesen
+  if(ONLINE && !amHost){
+    try{ ROOM.child('state').once('value',s=>{ const raw=s.val();
+      if(raw&&(!G.ts||raw.ts>=G.ts)){ G=hydrate(raw); paint(); }
+    }); }catch(e){}
+  }
+  // 5) Host: Recovery-Timer neu starten, State re-pushen
+  if(amHost){
+    stopRecovery(); startRecovery();
+    if(ONLINE){ G.ts=Date.now(); try{ ROOM.child('state').set(sanitize(G)); }catch(e){} }
+  }
+  paint();
 });
 
 if('serviceWorker' in navigator){
