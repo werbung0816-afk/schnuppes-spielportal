@@ -712,11 +712,12 @@ function loadSongs(){
         } else {
           if(hasImg && !artistMap[key].img) artistMap[key].img=imgUrl;
           if((s.fo||0)>artistMap[key].followers) artistMap[key].followers=s.fo||0;
+          if((s.p||99)<artistMap[key].bestPos) artistMap[key].bestPos=s.p||99;
           if(inTop20) artistMap[key].inTop20=true;
         }
       });
       // Nur Künstler MIT Bild UND mindestens einmal in Top 20
-      var pool=Object.values(artistMap).filter(function(a){ return !!a.img && a.inTop20; });
+      var pool=Object.values(artistMap).filter(function(a){ return !!a.img && a.inTop20 && a.bestPos<=5; });
       G.artists=shuffle(pool);
 
       if(G.artists.length===0){

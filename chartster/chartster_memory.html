@@ -465,7 +465,9 @@ function startGame(){
     G.playerOrigIdx=G.players.map((_,i)=>i);
   }
 
-  var pool=filteredSongs();
+  var pool=EMBEDDED_MODE
+    ? filteredSongs().filter(function(s){return s.p&&s.p<=5;})
+    : filteredSongs();
   if(pool.length<G.pairs){
     showHint('Nicht genug Songs mit Cover für '+G.pairs+' Paare!');
     return;
