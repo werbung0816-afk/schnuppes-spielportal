@@ -420,18 +420,23 @@ canvas#bgCanvas {
 <div class="app">
   <header>
     <h1>🎲 Backgammon</h1>
+    <div class="portal-tag">Schnuppes Spielportal</div>
   </header>
 
   <!-- SETUP SCREEN -->
   <div id="screen-setup" class="screen active">
     <div class="glass setup-card">
       <h2>Bereit zum Spielen?</h2>
-      <p>Gib deinen Namen ein und betritt den Spielraum.<br>Der erste Spieler erstellt das Spiel, der zweite tritt bei.</p>
+      <p>Gib deinen Namen ein und wähle deine Farbe.<br>Der erste Spieler erstellt das Spiel, der zweite tritt bei.</p>
       <input type="text" id="player-name" class="input-field" placeholder="Dein Name..." maxlength="20">
+      <div id="color-choice" style="display:flex; gap:10px; margin-bottom:16px;">
+        <button id="btn-color-white" style="flex:1; padding:12px; border-radius:12px; border:2px solid rgba(255,255,255,0.5); background:rgba(240,240,255,0.15); color:#fff; font-family:Outfit,sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s;">⚪ Weiß</button>
+        <button id="btn-color-black" style="flex:1; padding:12px; border-radius:12px; border:2px solid rgba(100,100,255,0.5); background:rgba(74,74,255,0.15); color:#fff; font-family:Outfit,sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s;">🔵 Blau</button>
+      </div>
       <button class="btn btn-primary" id="btn-enter" style="width:100%">Raum betreten →</button>
       <div style="text-align:right; margin-top:8px;">
         <button id="btn-hard-reset-lobby" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.1</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.2</span>
       </div>
     </div>
   </div>
@@ -447,7 +452,7 @@ canvas#bgCanvas {
       <button class="btn btn-secondary" id="btn-leave" style="width:100%; margin-top:8px; opacity:0.7;">← Verlassen</button>
       <div style="text-align:right; margin-top:10px;">
         <button id="btn-hard-reset" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.1</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.2</span>
       </div>
     </div>
   </div>
@@ -529,7 +534,7 @@ canvas#bgCanvas {
 <!-- Firebase SDKs -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, remove, update, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+import { getDatabase, ref, set, get, onValue, remove, update, onDisconnect } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",
@@ -544,9 +549,32 @@ const firebaseConfig = {
 const fireApp = initializeApp(firebaseConfig);
 const db = getDatabase(fireApp);
 const ROOM_PATH = 'backgammon/room';
-const HEARTBEAT_INTERVAL = 8000;  // 8s ping
-const HEARTBEAT_TIMEOUT  = 20000; // 20s stale = zombie
+const HEARTBEAT_INTERVAL = 8000;
+const HEARTBEAT_TIMEOUT  = 20000;
 let heartbeatTimer = null;
+
+function startHeartbeat() {
+  stopHeartbeat();
+  const hbRef = ref(db, `${ROOM_PATH}/heartbeats/${myColor}`);
+  onDisconnect(hbRef).remove();
+  const ping = () => set(hbRef, Date.now()).catch(() => {});
+  ping();
+  heartbeatTimer = setInterval(ping, HEARTBEAT_INTERVAL);
+}
+function stopHeartbeat() {
+  if (heartbeatTimer) { clearInterval(heartbeatTimer); heartbeatTimer = null; }
+}
+async function hardResetRoom(confirm = false) {
+  if (confirm && !window.confirm('Raum komplett löschen?')) return;
+  stopHeartbeat();
+  if (roomListener) { roomListener(); roomListener = null; }
+  try { await remove(ref(db, ROOM_PATH)); } catch(e) {}
+  G = null; myColor = null; isAIGame = false;
+  selectedPoint = -1; validMoves = [];
+  document.getElementById('win-overlay').classList.remove('show');
+  showToast('Raum gelöscht ✓');
+  showScreen('setup');
+}
 
 // =============== SOUNDS ===============
 const BASE_SOUND_URL = 'https://werbung0816-afk.github.io/schnuppes-spielportal/backgammon/';
@@ -946,8 +974,10 @@ function canSelectPoint(pt) {
 }
 
 function isMyTurn() {
-  if (!G || !myColor) return false;
-  return myColor === G.turn;
+  if (!G) return false;
+  if (isAIGame && myColor === G.turn) return true;
+  if (!isAIGame && myColor === G.turn) return true;
+  return false;
 }
 
 // =============== GAME LOGIC ===============
@@ -998,23 +1028,21 @@ function getValidMoves(state, color) {
       if (canBearOff) {
         const atEdge = color === 'white' ? dest > 23 : dest < 0;
         if (atEdge) {
-          // White home: board[18]=pt6, board[19]=pt5, ..., board[23]=pt1
-          //   → home position number = 24 - bi  (board[18]→6, board[23]→1)
-          // Black home: board[0]=pt24, board[1]=pt23, ..., board[5]=pt19
-          //   → home position number = bi + 1 is wrong; black bears off toward board[-1]
-          //   black home pts from black's bearing perspective: board[5]=nearest(1), board[0]=furthest(6)
-          //   → ptNo = 6 - bi  (board[0]→6, board[5]→1)
+          // White home: board[18]=pt6 .. board[23]=pt1 → ptNo = 24 - bi
+          // Black home: board[0]=pt24(black-pt6) .. board[5]=pt19(black-pt1) → ptNo = 6 - bi
           const ptNo = color === 'white' ? (24 - bi) : (6 - bi);
           if (d === ptNo || (d > ptNo && !hasHigherPoint(state, color, bi))) {
             moves.push({ from: bi, to: -1, die: d, dieIdx: i });
           }
-          continue;
+          continue; // can't move further off the board, skip normal move check
         }
+        // Not at edge: allow normal move within home board (e.g. pt4→pt1 with die 3)
+        if (dest >= 0 && dest <= 23) {
+          const blocked = color === 'white' ? state.board[dest] <= -2 : state.board[dest] >= 2;
+          if (!blocked) moves.push({ from: bi, to: dest, die: d, dieIdx: i });
+        }
+        continue; // handled above, skip duplicate check below
       }
-
-      if (dest < 0 || dest > 23) continue;
-      const blocked = color === 'white' ? state.board[dest] <= -2 : state.board[dest] >= 2;
-      if (!blocked) moves.push({ from: bi, to: dest, die: d, dieIdx: i });
     }
   });
   return moves;
@@ -1150,7 +1178,7 @@ function listenRoom() {
     if (!data) { handleRoomGone(); return; }
 
     // WHITE: second player joined → auto-create game
-    if (myColor === 'white' && data.players?.black && !data.state) {
+    if (myColor === 'white' && data.players?.white && data.players?.black && !data.state) {
       const blackName = data.players.black;
       showToast(`${blackName} ist beigetreten! Spiel startet…`);
       const state = newGameState(myName, blackName);
@@ -1158,43 +1186,35 @@ function listenRoom() {
       set(ref(db, ROOM_PATH + '/state'), state);
       return;
     }
+    // BLUE first: white joined → auto-create game (blue created room first)
+    if (myColor === 'black' && data.players?.white && data.players?.black && !data.state) {
+      const whiteName = data.players.white;
+      showToast(`${whiteName} ist beigetreten! Spiel startet…`);
+      const state = newGameState(whiteName, myName);
+      state.turn = 'white'; state.phase = 'rolling';
+      set(ref(db, ROOM_PATH + '/state'), state);
+      return;
+    }
 
-    // State exists → sync game
     if (data.state) {
       const wasWinner = G && G.winner;
       const wasTurn = G && G.turn;
       G = data.state;
-      // Normalize arrays that Firebase might omit when empty
       G.usedDice = G.usedDice || [];
       G.dice = G.dice || [];
 
-      // Reset selection when turn changes
-      if (wasTurn !== G.turn) {
-        selectedPoint = -1;
-        validMoves = [];
-      }
+      if (wasTurn !== G.turn) { selectedPoint = -1; validMoves = []; }
 
-      // Fix black player name if updated after state creation
-      if (myColor === 'white' && data.players?.black &&
-          G.players.black !== data.players.black) {
-        const newG = deepClone(G);
-        newG.players.black = data.players.black;
-        set(ref(db, ROOM_PATH + '/state'), newG);
-        return;
-      }
-
-      // Both players confirmed → enter game (G is already set above)
       if (data.players?.white && data.players?.black) {
         if (document.getElementById('screen-wait').classList.contains('active')) {
           showScreen('game');
         }
       }
-
       if (!wasWinner) updateUI();
       if (G.winner && !wasWinner) showWin(G);
     }
 
-    // Opponent heartbeat timeout → replace with AI
+    // Heartbeat timeout → AI replacement
     if (data.heartbeats && myColor && G && !G.winner && !isAIGame) {
       const opp = myColor === 'white' ? 'black' : 'white';
       const oppHb = data.heartbeats[opp];
@@ -1206,103 +1226,10 @@ function listenRoom() {
   });
 }
 
-function startHeartbeat() {
-  stopHeartbeat();
-  const hbRef = ref(db, ROOM_PATH + '/heartbeats/' + myColor);
-  // Auto-remove heartbeat on disconnect
-  onDisconnect(hbRef).remove();
-  const ping = () => set(hbRef, Date.now()).catch(() => {});
-  ping();
-  heartbeatTimer = setInterval(ping, HEARTBEAT_INTERVAL);
-}
-
-function stopHeartbeat() {
-  if (heartbeatTimer) { clearInterval(heartbeatTimer); heartbeatTimer = null; }
-}
-
-async function joinRoom() {
-  const snap = await get(ref(db, ROOM_PATH));
-  const data = snap.val();
-
-  // Zombie detection: only if BOTH heartbeats are stale (not just missing)
-  if (data && data.heartbeats && data.players) {
-    const now = Date.now();
-    const whiteHb = data.heartbeats.white;
-    const whiteZombie = whiteHb && (now - whiteHb > HEARTBEAT_TIMEOUT);
-    if (whiteZombie) {
-      await hardResetRoom(false);
-      return joinRoom();
-    }
-  }
-
-  if (!data || !data.players) {
-    // Create fresh room as white
-    myColor = 'white';
-    await set(ref(db, ROOM_PATH), {
-      players: { white: myName },
-      createdAt: Date.now(),
-      heartbeats: { white: Date.now() }
-    });
-    // Only remove our heartbeat on disconnect, not the whole room
-    onDisconnect(ref(db, ROOM_PATH + '/heartbeats/white')).remove();
-    showScreen('wait');
-    document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Weiß)`;
-  } else if (data.players.white && !data.players.black) {
-    // Join as black
-    myColor = 'black';
-    await update(ref(db, ROOM_PATH + '/players'), { black: myName });
-    await set(ref(db, ROOM_PATH + '/heartbeats/black'), Date.now());
-    onDisconnect(ref(db, ROOM_PATH + '/heartbeats/black')).remove();
-    showScreen('wait');
-    document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Schwarz)`;
-    // If game already created, go straight in
-    if (data.state) { showScreen('game'); }
-  } else {
-    showToast('Raum ist voll — KI-Spiel wird gestartet.', 'error');
-    startAIGame();
-    return;
-  }
-  startHeartbeat();
-  listenRoom();
-}
-
-async function createGame() {
-  const snap = await get(ref(db, ROOM_PATH));
-  const data = snap.val();
-  const blackName = data?.players?.black || '…wartet';
-  const state = newGameState(myName, blackName);
-  state.turn = 'white';
-  state.phase = 'rolling';
-  await update(ref(db, ROOM_PATH), { state });
-  showScreen('game');
-}
-
-function joinAsPlayer(data) {
-  if (myColor === 'black' && data.state) {
-    const newState = deepClone(data.state);
-    newState.players.black = myName;
-    set(ref(db, ROOM_PATH + '/state'), newState);
-  }
-}
-
 function handleRoomGone() {
   stopHeartbeat();
   if (G) return;
   showToast('Raum nicht mehr verfügbar.', 'error');
-  showScreen('setup');
-}
-
-async function hardResetRoom(showConfirm = true) {
-  if (showConfirm) {
-    if (!confirm('Raum komplett löschen? Beide Spieler werden getrennt.')) return;
-  }
-  stopHeartbeat();
-  if (roomListener) { roomListener(); roomListener = null; }
-  try { await remove(ref(db, ROOM_PATH)); } catch(e) {}
-  G = null; myColor = null; isAIGame = false;
-  selectedPoint = -1; validMoves = [];
-  document.getElementById('win-overlay').classList.remove('show');
-  showToast('Raum gelöscht ✓');
   showScreen('setup');
 }
 
@@ -1451,9 +1378,9 @@ function updateUI() {
   const activeName = G.players[activeColor];
   const isMe = activeColor === myColor;
   document.getElementById('status-bar').innerHTML =
-    `${G.players.white} ⚪ vs 🔵 ${G.players.black} &nbsp;|&nbsp; ` +
+    `${G.players.white} ⚪ vs ⚫ ${G.players.black} &nbsp;|&nbsp; ` +
     `<span class="active-player">${activeName}</span> — ${isMe ? 'du bist dran ✦' : 'am Zug'} &nbsp;|&nbsp; ` +
-    `🎲 ${G.phase === 'rolling' ? 'Würfeln!' : `Würfel: ${(G.dice||[]).filter((_,i)=>!(G.usedDice||[]).includes(i)).join(', ')}`}`;
+    `🎲 ${G.phase === 'rolling' ? 'Würfeln!' : `Würfel: ${(G.dice||[]).filter((_,i)=>!G.usedDice.includes(i)).join(', ')}`}`;
 
   // Round info
   document.getElementById('round-info').innerHTML =
@@ -1461,7 +1388,7 @@ function updateUI() {
 
   // Panels
   document.getElementById('name-white').textContent = G.players.white || 'Weiß';
-  document.getElementById('name-black').textContent = G.players.black || 'Blau';
+  document.getElementById('name-black').textContent = G.players.black || 'Schwarz';
   document.getElementById('score-white').textContent = roundScores.white;
   document.getElementById('score-black').textContent = roundScores.black;
   document.getElementById('bar-white').textContent = G.barWhite;
@@ -1478,8 +1405,7 @@ function updateUI() {
   updateDiceDisplay('black', G.turn === 'black');
 
   // Roll button
-  const canRoll = !!(myColor && G && myColor === G.turn && G.phase === 'rolling' && !G.winner);
-  document.getElementById('btn-roll').disabled = !canRoll;
+  document.getElementById('btn-roll').disabled = !(myTurn && G.phase === 'rolling' && !G.winner);
 
   drawBoard();
 }
@@ -1499,14 +1425,11 @@ function calcPips(state, color) {
 function updateDiceDisplay(color, active) {
   const container = document.getElementById(`dice-${color}`);
   container.innerHTML = '';
-  if (!G) return;
-  // Show dice whenever it's this color's turn AND dice exist (both players see them)
-  if (G.turn !== color || !G.dice || G.dice.length === 0) return;
-  const usedDice = G.usedDice || [];
-  G.dice.forEach((d, i) => {
+  if (!G || G.turn !== color) return;
+  (G.dice || []).forEach((d, i) => {
     const div = document.createElement('div');
-    div.className = `die ${color}-die ${usedDice.includes(i) ? 'used' : ''}`;
-    if (G.phase === 'moving' && !usedDice.includes(i)) div.classList.add('rolling');
+    div.className = `die ${color}-die ${G.usedDice.includes(i) ? 'used' : ''}`;
+    if (G.phase === 'moving' && !G.usedDice.includes(i)) div.classList.add('rolling');
     div.innerHTML = buildDiceDots(d);
     container.appendChild(div);
   });
@@ -1595,6 +1518,21 @@ async function resetRoom() {
 }
 
 // =============== EVENT LISTENERS ===============
+let preferredColor = null;
+
+function selectColor(color) {
+  preferredColor = preferredColor === color ? null : color;
+  const wBtn = document.getElementById('btn-color-white');
+  const bBtn = document.getElementById('btn-color-black');
+  wBtn.style.boxShadow = preferredColor === 'white' ? '0 0 16px rgba(255,255,255,0.6)' : 'none';
+  wBtn.style.borderColor = preferredColor === 'white' ? '#fff' : 'rgba(255,255,255,0.5)';
+  bBtn.style.boxShadow = preferredColor === 'black' ? '0 0 16px rgba(83,246,255,0.6)' : 'none';
+  bBtn.style.borderColor = preferredColor === 'black' ? '#53f6ff' : 'rgba(100,100,255,0.5)';
+}
+
+document.getElementById('btn-color-white').addEventListener('click', () => selectColor('white'));
+document.getElementById('btn-color-black').addEventListener('click', () => selectColor('black'));
+
 document.getElementById('btn-enter').addEventListener('click', () => {
   const name = document.getElementById('player-name').value.trim();
   if (!name) { showToast('Bitte einen Namen eingeben!', 'error'); return; }
@@ -1606,7 +1544,10 @@ document.getElementById('player-name').addEventListener('keypress', e => {
   if (e.key === 'Enter') document.getElementById('btn-enter').click();
 });
 
-document.getElementById('btn-hard-reset').addEventListener('click', () => hardResetRoom(false));
+document.getElementById('btn-hard-reset-lobby').addEventListener('click', async () => {
+  try { await remove(ref(db, ROOM_PATH)); } catch(e){}
+  showToast('Raum gelöscht ✓');
+});
 
 document.getElementById('btn-vs-ai').addEventListener('click', () => {
   stopHeartbeat();
@@ -1615,10 +1556,7 @@ document.getElementById('btn-vs-ai').addEventListener('click', () => {
   startAIGame();
 });
 
-document.getElementById('btn-hard-reset-lobby').addEventListener('click', async () => {
-  try { await remove(ref(db, ROOM_PATH)); } catch(e){}
-  showToast('Raum gelöscht ✓');
-});
+document.getElementById('btn-hard-reset').addEventListener('click', () => hardResetRoom(true));
 
 document.getElementById('btn-leave').addEventListener('click', () => {
   stopHeartbeat();
@@ -1629,7 +1567,6 @@ document.getElementById('btn-leave').addEventListener('click', () => {
 });
 
 document.getElementById('btn-roll').addEventListener('click', rollDice);
-
 document.getElementById('btn-reset').addEventListener('click', resetRoom);
 
 document.getElementById('btn-new-game').addEventListener('click', () => {
@@ -1644,6 +1581,7 @@ document.getElementById('btn-new-game').addEventListener('click', () => {
   } else {
     const newState = newGameState(G.players.white, G.players.black);
     newState.turn = 'white'; newState.phase = 'rolling';
+    newState.usedDice = []; newState.dice = [];
     saveState(newState);
   }
 });
@@ -1653,14 +1591,7 @@ document.getElementById('btn-leave-win').addEventListener('click', () => {
   resetRoom();
 });
 
-// Clean up on tab close
-window.addEventListener('beforeunload', () => {
-  stopHeartbeat();
-  if (!isAIGame && myColor) {
-    // Remove our heartbeat synchronously if possible
-    navigator.sendBeacon && navigator.sendBeacon(''); // just triggers beforeunload
-  }
-});
+window.addEventListener('beforeunload', () => { stopHeartbeat(); });
 
 // =============== INIT ===============
 resizeCanvas();
