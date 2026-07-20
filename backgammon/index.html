@@ -438,7 +438,7 @@ canvas#bgCanvas {
       <button class="btn btn-primary" id="btn-enter" style="width:100%">Raum betreten →</button>
       <div style="text-align:right; margin-top:8px;">
         <button id="btn-hard-reset-lobby" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.6</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.7</span>
       </div>
     </div>
   </div>
@@ -454,7 +454,7 @@ canvas#bgCanvas {
       <button class="btn btn-secondary" id="btn-leave" style="width:100%; margin-top:8px; opacity:0.7;">← Verlassen</button>
       <div style="text-align:right; margin-top:10px;">
         <button id="btn-hard-reset" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.6</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.7</span>
       </div>
     </div>
   </div>
@@ -1153,11 +1153,18 @@ function rollDice() {
   // Check if any moves available
   const moves = getValidMoves(newG, myColor);
   if (moves.length === 0) {
-    showToast('Kein Zug möglich – Runde überspringen!', 'error');
-    newG.turn = myColor === 'white' ? 'black' : 'white';
-    newG.dice = [];
-    newG.usedDice = [];
-    newG.phase = 'rolling';
+    playSound('dice.mp3');
+    saveState(newG); // show dice first
+    setTimeout(() => {
+      showToast('Kein Zug möglich – Runde überspringen!', 'error');
+      const skipG = deepClone(newG);
+      skipG.turn = myColor === 'white' ? 'black' : 'white';
+      skipG.dice = [];
+      skipG.usedDice = [];
+      skipG.phase = 'rolling';
+      saveState(skipG);
+    }, 1800);
+    return;
   }
 
   playSound('dice.mp3');
@@ -1367,12 +1374,15 @@ function aiExecuteMoves() {
   const color = G.turn;
   const moves = getValidMoves(G, color);
   if (moves.length === 0) {
-    const newG = deepClone(G);
-    newG.turn = myColor;
-    newG.dice = []; newG.usedDice = [];
-    newG.phase = 'rolling';
-    G = newG;
-    updateUI();
+    showToast(`${G.players[G.turn]}: Kein Zug möglich – überspringen!`, 'error');
+    setTimeout(() => {
+      const newG = deepClone(G);
+      newG.turn = myColor;
+      newG.dice = []; newG.usedDice = [];
+      newG.phase = 'rolling';
+      G = newG;
+      updateUI();
+    }, 1500);
     return;
   }
   // Pick best move (simple: prefer hits, then bear-off, then advance)
