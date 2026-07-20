@@ -431,14 +431,14 @@ canvas#bgCanvas {
       <input type="text" style="display:none" aria-hidden="true">
       <input type="password" style="display:none" aria-hidden="true">
       <input type="text" id="player-name" class="input-field" placeholder="Dein Name..." maxlength="20" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false">
-      <div id="color-choice" style="display:flex; gap:10px; margin-bottom:16px;">
+      <div style="display:flex; gap:10px; margin-bottom:16px;">
         <button id="btn-color-white" style="flex:1; padding:12px; border-radius:12px; border:2px solid rgba(255,255,255,0.5); background:rgba(240,240,255,0.15); color:#fff; font-family:Outfit,sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s;">⚪ Weiß</button>
         <button id="btn-color-black" style="flex:1; padding:12px; border-radius:12px; border:2px solid rgba(100,100,255,0.5); background:rgba(74,74,255,0.15); color:#fff; font-family:Outfit,sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s;">🔵 Blau</button>
       </div>
       <button class="btn btn-primary" id="btn-enter" style="width:100%">Raum betreten →</button>
       <div style="text-align:right; margin-top:8px;">
         <button id="btn-hard-reset-lobby" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.7</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.11</span>
       </div>
     </div>
   </div>
@@ -454,7 +454,7 @@ canvas#bgCanvas {
       <button class="btn btn-secondary" id="btn-leave" style="width:100%; margin-top:8px; opacity:0.7;">← Verlassen</button>
       <div style="text-align:right; margin-top:10px;">
         <button id="btn-hard-reset" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.7</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.11</span>
       </div>
     </div>
   </div>
@@ -987,17 +987,20 @@ function getValidMoves(state, color) {
   const moves = [];
   if (!state.dice || state.dice.length === 0) return moves;
 
+  const usedDice = state.usedDice || [];
+
   // Build list of available dice with their original indices
   const avail = state.dice
     .map((d, i) => ({ d, i }))
-    .filter(x => !state.usedDice.includes(x.i));
+    .filter(x => x.d > 0 && !usedDice.includes(x.i));
   if (avail.length === 0) return moves;
 
-  // Deduplicate by value to avoid identical move duplicates
-  const seen = new Set();
+  // For move generation, deduplicate by value so we don't get duplicate move listings.
+  // But keep ONE entry per unique die VALUE (with its dieIdx).
+  const seenVal = new Set();
   const availUniq = avail.filter(x => {
-    if (seen.has(x.d)) return false;
-    seen.add(x.d); return true;
+    if (seenVal.has(x.d)) return false;
+    seenVal.add(x.d); return true;
   });
 
   const dir    = color === 'white' ? +1 : -1;
@@ -1007,8 +1010,6 @@ function getValidMoves(state, color) {
   // ── Bar entry ──
   if (barCount > 0) {
     availUniq.forEach(({ d, i }) => {
-      // White: die d → pt(25-d) = board[d-1]   (1→pt24=board[0], 6→pt19=board[5])
-      // Black: die d → pt(d)    = board[24-d]  (1→pt1=board[23],  6→pt6=board[18])
       const to = color === 'white' ? d - 1 : 24 - d;
       if (to < 0 || to > 23) return;
       const blocked = color === 'white' ? state.board[to] <= -2 : state.board[to] >= 2;
@@ -1030,15 +1031,18 @@ function getValidMoves(state, color) {
       if (canBearOff) {
         const atEdge = color === 'white' ? dest > 23 : dest < 0;
         if (atEdge) {
-          // White home: board[18]=pt6..board[23]=pt1 → ptNo = 24 - bi
-          // Black home: board[0]=black-pt6..board[5]=black-pt1 → ptNo = 6 - bi
-          const ptNo = color === 'white' ? (24 - bi) : (6 - bi);
+          // White home: board[18..23], pt6..pt1
+          //   board[18]=pt6 needs die 6, board[23]=pt1 needs die 1
+          //   ptNo = 24 - bi  (board[18]→6, board[23]→1) ✓
+          // Black home: board[0..5], pt24..pt19
+          //   board[0]=pt24 needs die 1, board[5]=pt19 needs die 6
+          //   ptNo = bi + 1  (board[0]→1, board[5]→6) ✓
+          const ptNo = color === 'white' ? (24 - bi) : (bi + 1);
           if (d === ptNo || (d > ptNo && !hasHigherPoint(state, color, bi))) {
             moves.push({ from: bi, to: -1, die: d, dieIdx: i });
           }
           continue;
         }
-        // Normal move within home board (e.g. pt4→pt1 with die 3)
         if (dest >= 0 && dest <= 23) {
           const blocked = color === 'white' ? state.board[dest] <= -2 : state.board[dest] >= 2;
           if (!blocked) moves.push({ from: bi, to: dest, die: d, dieIdx: i });
@@ -1046,7 +1050,7 @@ function getValidMoves(state, color) {
         continue;
       }
 
-      // Normal move (not bearing off)
+      // Normal move
       if (dest < 0 || dest > 23) continue;
       const blocked = color === 'white' ? state.board[dest] <= -2 : state.board[dest] >= 2;
       if (!blocked) moves.push({ from: bi, to: dest, die: d, dieIdx: i });
@@ -1056,12 +1060,12 @@ function getValidMoves(state, color) {
 }
 
 function hasHigherPoint(state, color, boardIdx) {
-  // "Higher point" = further from bearing off = further from home
-  // White home = board[18..23], so higher point = lower board index
+  // "Higher point" = further from bearing off
+  // White home = board[18..23]: further = lower board index
   if (color === 'white') {
     for (let i = 0; i < boardIdx; i++) if (state.board[i] > 0) return true;
   } else {
-    // Black home = board[0..5], so higher point = higher board index
+    // Black home = board[0..5]: further = higher board index
     for (let i = boardIdx + 1; i < 24; i++) if (state.board[i] < 0) return true;
   }
   return false;
@@ -1254,7 +1258,7 @@ async function joinRoom() {
   const snap = await get(ref(db, ROOM_PATH));
   const data = snap.val();
 
-  // Zombie check: white heartbeat stale
+  // Zombie check
   if (data && data.heartbeats) {
     const whiteHb = data.heartbeats.white;
     if (whiteHb && (Date.now() - whiteHb > HEARTBEAT_TIMEOUT)) {
@@ -1263,50 +1267,43 @@ async function joinRoom() {
     }
   }
 
-  const wantWhite = preferredColor === 'white' || preferredColor === null;
-  const wantBlack = preferredColor === 'black' || preferredColor === null;
+  // Determine desired color (default white)
+  const want = preferredColor || 'white';
+  const other = want === 'white' ? 'black' : 'white';
 
   if (!data || !data.players) {
-    // Empty room
-    myColor = wantWhite ? 'white' : 'black';
-    const roomData = { createdAt: Date.now(), heartbeats: { [myColor]: Date.now() } };
-    roomData.players = myColor === 'white' ? { white: myName } : { black: myName };
-    await set(ref(db, ROOM_PATH), roomData);
+    // Empty room — take preferred color
+    myColor = want;
+    const players = { [myColor]: myName };
+    await set(ref(db, ROOM_PATH), { players, createdAt: Date.now(), heartbeats: { [myColor]: Date.now() } });
     onDisconnect(ref(db, `${ROOM_PATH}/heartbeats/${myColor}`)).remove();
     showScreen('wait');
     document.getElementById('wait-name-display').textContent =
       `Du spielst als: ${myName} (${myColor === 'white' ? 'Weiß' : 'Blau'})`;
-  } else if (data.players.white && !data.players.black && wantBlack) {
+  } else if (data.players.white && !data.players.black) {
+    // White taken — join as black
     myColor = 'black';
     await update(ref(db, `${ROOM_PATH}/players`), { black: myName });
     await set(ref(db, `${ROOM_PATH}/heartbeats/black`), Date.now());
     onDisconnect(ref(db, `${ROOM_PATH}/heartbeats/black`)).remove();
+    if (want === 'white') showToast('Weiß bereits vergeben — du spielst als Blau');
     showScreen('wait');
     document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Blau)`;
     if (data.state) showScreen('game');
-  } else if (!data.players.white && data.players.black && wantWhite) {
+  } else if (!data.players.white && data.players.black) {
+    // Black taken — join as white
     myColor = 'white';
     await update(ref(db, `${ROOM_PATH}/players`), { white: myName });
     await set(ref(db, `${ROOM_PATH}/heartbeats/white`), Date.now());
     onDisconnect(ref(db, `${ROOM_PATH}/heartbeats/white`)).remove();
+    if (want === 'black') showToast('Blau bereits vergeben — du spielst als Weiß');
     showScreen('wait');
     document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Weiß)`;
     if (data.state) showScreen('game');
-  } else if (data.players.white && data.players.black) {
+  } else {
     showToast('Raum ist voll — KI-Spiel wird gestartet.', 'error');
     startAIGame();
     return;
-  } else {
-    // Color conflict: take whatever is free
-    const taken = data.players.white ? 'white' : 'black';
-    myColor = taken === 'white' ? 'black' : 'white';
-    await update(ref(db, `${ROOM_PATH}/players`), { [myColor]: myName });
-    await set(ref(db, `${ROOM_PATH}/heartbeats/${myColor}`), Date.now());
-    onDisconnect(ref(db, `${ROOM_PATH}/heartbeats/${myColor}`)).remove();
-    showToast(`Du spielst als ${myColor === 'white' ? 'Weiß' : 'Blau'}`);
-    showScreen('wait');
-    document.getElementById('wait-name-display').textContent =
-      `Du spielst als: ${myName} (${myColor === 'white' ? 'Weiß' : 'Blau'})`;
   }
   startHeartbeat();
   listenRoom();
@@ -1338,7 +1335,6 @@ function startAIGame() {
   }
   isAIGame = true;
   myColor = preferredColor || 'white';
-  const aiColor = myColor === 'white' ? 'black' : 'white';
   const aiName = getAIName() + ' (KI)';
   G = myColor === 'white'
     ? newGameState(myName, aiName)
@@ -1618,7 +1614,6 @@ function selectColor(color) {
   bBtn.style.boxShadow = preferredColor === 'black' ? '0 0 16px rgba(83,246,255,0.6)' : 'none';
   bBtn.style.borderColor = preferredColor === 'black' ? '#53f6ff' : 'rgba(100,100,255,0.5)';
 }
-
 document.getElementById('btn-color-white').addEventListener('click', () => selectColor('white'));
 document.getElementById('btn-color-black').addEventListener('click', () => selectColor('black'));
 
