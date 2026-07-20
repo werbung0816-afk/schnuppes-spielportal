@@ -428,6 +428,8 @@ canvas#bgCanvas {
     <div class="glass setup-card">
       <h2>Bereit zum Spielen?</h2>
       <p>Gib deinen Namen ein und wähle deine Farbe.<br>Der erste Spieler erstellt das Spiel, der zweite tritt bei.</p>
+      <input type="text" style="display:none" aria-hidden="true">
+      <input type="password" style="display:none" aria-hidden="true">
       <input type="text" id="player-name" class="input-field" placeholder="Dein Name..." maxlength="20" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false">
       <div id="color-choice" style="display:flex; gap:10px; margin-bottom:16px;">
         <button id="btn-color-white" style="flex:1; padding:12px; border-radius:12px; border:2px solid rgba(255,255,255,0.5); background:rgba(240,240,255,0.15); color:#fff; font-family:Outfit,sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s;">⚪ Weiß</button>
@@ -436,7 +438,7 @@ canvas#bgCanvas {
       <button class="btn btn-primary" id="btn-enter" style="width:100%">Raum betreten →</button>
       <div style="text-align:right; margin-top:8px;">
         <button id="btn-hard-reset-lobby" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.4</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.5</span>
       </div>
     </div>
   </div>
@@ -452,7 +454,7 @@ canvas#bgCanvas {
       <button class="btn btn-secondary" id="btn-leave" style="width:100%; margin-top:8px; opacity:0.7;">← Verlassen</button>
       <div style="text-align:right; margin-top:10px;">
         <button id="btn-hard-reset" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.4</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.5</span>
       </div>
     </div>
   </div>
@@ -1159,6 +1161,9 @@ function rollDice() {
 
 // =============== FIREBASE ===============
 function saveState(state) {
+  // Normalize arrays before saving — Firebase turns sparse arrays into objects with null gaps
+  state.dice = (state.dice || []).filter(x => x && x > 0);
+  state.usedDice = (state.usedDice || []).filter(x => x !== undefined && x !== null);
   if (isAIGame) {
     G = state;
     updateUI();
@@ -1200,8 +1205,8 @@ function listenRoom() {
       const wasWinner = G && G.winner;
       const wasTurn = G && G.turn;
       G = data.state;
-      G.usedDice = G.usedDice || [];
-      G.dice = G.dice || [];
+      G.usedDice = Array.isArray(G.usedDice) ? G.usedDice.filter(x => x !== undefined) : [];
+      G.dice = Array.isArray(G.dice) ? G.dice.filter(x => x && x > 0) : [];
 
       if (wasTurn !== G.turn) { selectedPoint = -1; validMoves = []; }
 
