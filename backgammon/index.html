@@ -428,7 +428,7 @@ canvas#bgCanvas {
     <div class="glass setup-card">
       <h2>Bereit zum Spielen?</h2>
       <p>Gib deinen Namen ein und wähle deine Farbe.<br>Der erste Spieler erstellt das Spiel, der zweite tritt bei.</p>
-      <input type="text" id="player-name" class="input-field" placeholder="Dein Name..." maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <input type="text" id="player-name" class="input-field" placeholder="Dein Name..." maxlength="20" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false">
       <div id="color-choice" style="display:flex; gap:10px; margin-bottom:16px;">
         <button id="btn-color-white" style="flex:1; padding:12px; border-radius:12px; border:2px solid rgba(255,255,255,0.5); background:rgba(240,240,255,0.15); color:#fff; font-family:Outfit,sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s;">⚪ Weiß</button>
         <button id="btn-color-black" style="flex:1; padding:12px; border-radius:12px; border:2px solid rgba(100,100,255,0.5); background:rgba(74,74,255,0.15); color:#fff; font-family:Outfit,sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s;">🔵 Blau</button>
@@ -436,7 +436,7 @@ canvas#bgCanvas {
       <button class="btn btn-primary" id="btn-enter" style="width:100%">Raum betreten →</button>
       <div style="text-align:right; margin-top:8px;">
         <button id="btn-hard-reset-lobby" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.3</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.4</span>
       </div>
     </div>
   </div>
@@ -452,7 +452,7 @@ canvas#bgCanvas {
       <button class="btn btn-secondary" id="btn-leave" style="width:100%; margin-top:8px; opacity:0.7;">← Verlassen</button>
       <div style="text-align:right; margin-top:10px;">
         <button id="btn-hard-reset" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.3</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.4</span>
       </div>
     </div>
   </div>
@@ -1231,6 +1231,68 @@ function handleRoomGone() {
   if (G) return;
   showToast('Raum nicht mehr verfügbar.', 'error');
   showScreen('setup');
+}
+
+async function joinRoom() {
+  const snap = await get(ref(db, ROOM_PATH));
+  const data = snap.val();
+
+  // Zombie check: white heartbeat stale
+  if (data && data.heartbeats) {
+    const whiteHb = data.heartbeats.white;
+    if (whiteHb && (Date.now() - whiteHb > HEARTBEAT_TIMEOUT)) {
+      await hardResetRoom(false);
+      return joinRoom();
+    }
+  }
+
+  const wantWhite = preferredColor === 'white' || preferredColor === null;
+  const wantBlack = preferredColor === 'black' || preferredColor === null;
+
+  if (!data || !data.players) {
+    // Empty room
+    myColor = wantWhite ? 'white' : 'black';
+    const roomData = { createdAt: Date.now(), heartbeats: { [myColor]: Date.now() } };
+    roomData.players = myColor === 'white' ? { white: myName } : { black: myName };
+    await set(ref(db, ROOM_PATH), roomData);
+    onDisconnect(ref(db, `${ROOM_PATH}/heartbeats/${myColor}`)).remove();
+    showScreen('wait');
+    document.getElementById('wait-name-display').textContent =
+      `Du spielst als: ${myName} (${myColor === 'white' ? 'Weiß' : 'Blau'})`;
+  } else if (data.players.white && !data.players.black && wantBlack) {
+    myColor = 'black';
+    await update(ref(db, `${ROOM_PATH}/players`), { black: myName });
+    await set(ref(db, `${ROOM_PATH}/heartbeats/black`), Date.now());
+    onDisconnect(ref(db, `${ROOM_PATH}/heartbeats/black`)).remove();
+    showScreen('wait');
+    document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Blau)`;
+    if (data.state) showScreen('game');
+  } else if (!data.players.white && data.players.black && wantWhite) {
+    myColor = 'white';
+    await update(ref(db, `${ROOM_PATH}/players`), { white: myName });
+    await set(ref(db, `${ROOM_PATH}/heartbeats/white`), Date.now());
+    onDisconnect(ref(db, `${ROOM_PATH}/heartbeats/white`)).remove();
+    showScreen('wait');
+    document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Weiß)`;
+    if (data.state) showScreen('game');
+  } else if (data.players.white && data.players.black) {
+    showToast('Raum ist voll — KI-Spiel wird gestartet.', 'error');
+    startAIGame();
+    return;
+  } else {
+    // Color conflict: take whatever is free
+    const taken = data.players.white ? 'white' : 'black';
+    myColor = taken === 'white' ? 'black' : 'white';
+    await update(ref(db, `${ROOM_PATH}/players`), { [myColor]: myName });
+    await set(ref(db, `${ROOM_PATH}/heartbeats/${myColor}`), Date.now());
+    onDisconnect(ref(db, `${ROOM_PATH}/heartbeats/${myColor}`)).remove();
+    showToast(`Du spielst als ${myColor === 'white' ? 'Weiß' : 'Blau'}`);
+    showScreen('wait');
+    document.getElementById('wait-name-display').textContent =
+      `Du spielst als: ${myName} (${myColor === 'white' ? 'Weiß' : 'Blau'})`;
+  }
+  startHeartbeat();
+  listenRoom();
 }
 
 function startAIReplacement(aiColor) {
