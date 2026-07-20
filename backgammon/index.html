@@ -438,7 +438,7 @@ canvas#bgCanvas {
       <button class="btn btn-primary" id="btn-enter" style="width:100%">Raum betreten →</button>
       <div style="text-align:right; margin-top:8px;">
         <button id="btn-hard-reset-lobby" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.5</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.6</span>
       </div>
     </div>
   </div>
@@ -454,7 +454,7 @@ canvas#bgCanvas {
       <button class="btn btn-secondary" id="btn-leave" style="width:100%; margin-top:8px; opacity:0.7;">← Verlassen</button>
       <div style="text-align:right; margin-top:10px;">
         <button id="btn-hard-reset" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.5</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.6</span>
       </div>
     </div>
   </div>
@@ -1030,21 +1030,26 @@ function getValidMoves(state, color) {
       if (canBearOff) {
         const atEdge = color === 'white' ? dest > 23 : dest < 0;
         if (atEdge) {
-          // White home: board[18]=pt6 .. board[23]=pt1 → ptNo = 24 - bi
-          // Black home: board[0]=pt24(black-pt6) .. board[5]=pt19(black-pt1) → ptNo = 6 - bi
+          // White home: board[18]=pt6..board[23]=pt1 → ptNo = 24 - bi
+          // Black home: board[0]=black-pt6..board[5]=black-pt1 → ptNo = 6 - bi
           const ptNo = color === 'white' ? (24 - bi) : (6 - bi);
           if (d === ptNo || (d > ptNo && !hasHigherPoint(state, color, bi))) {
             moves.push({ from: bi, to: -1, die: d, dieIdx: i });
           }
-          continue; // can't move further off the board, skip normal move check
+          continue;
         }
-        // Not at edge: allow normal move within home board (e.g. pt4→pt1 with die 3)
+        // Normal move within home board (e.g. pt4→pt1 with die 3)
         if (dest >= 0 && dest <= 23) {
           const blocked = color === 'white' ? state.board[dest] <= -2 : state.board[dest] >= 2;
           if (!blocked) moves.push({ from: bi, to: dest, die: d, dieIdx: i });
         }
-        continue; // handled above, skip duplicate check below
+        continue;
       }
+
+      // Normal move (not bearing off)
+      if (dest < 0 || dest > 23) continue;
+      const blocked = color === 'white' ? state.board[dest] <= -2 : state.board[dest] >= 2;
+      if (!blocked) moves.push({ from: bi, to: dest, die: d, dieIdx: i });
     }
   });
   return moves;
