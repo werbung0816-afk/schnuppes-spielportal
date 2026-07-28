@@ -277,6 +277,36 @@ body{-webkit-user-select:none;user-select:none}
 #devMenu{position:fixed;bottom:116px;right:12px;z-index:600;background:rgba(10,5,30,.95);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px;display:none;flex-direction:column;gap:6px;min-width:190px}
 #devMenu.on{display:flex}
 #devMenu button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;padding:7px 12px;border-radius:9px;font-size:.82rem;cursor:pointer;text-align:left}
+
+/* ---------- Chat ---------- */
+#chatBtn{opacity:.42;font-size:.82rem;transition:opacity .2s}
+#chatBtn:active{opacity:1}
+#chatMsg{position:fixed;left:50%;transform:translateX(-50%);top:48vh;z-index:300;text-align:center;pointer-events:none;max-width:88vw;display:none}
+#chatMsg.on{display:block;animation:chatFade 5.2s forwards}
+@keyframes chatFade{0%{opacity:0;transform:translateX(-50%) translateY(6px) scale(.86)}8%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}80%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-6px) scale(.95)}}
+.chat-bubble{background:rgba(15,5,45,.82);backdrop-filter:blur(10px);border:1px solid rgba(255,212,0,.32);border-radius:18px;padding:9px 18px;display:inline-block;max-width:100%;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+.chat-sender{font-size:.68rem;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:3px}
+.chat-text{font-size:.98rem;font-weight:700;color:#fff;word-break:break-word;display:block}
+#chatModal{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center}
+#chatModal.on{display:flex}
+.chat-sheet{background:linear-gradient(170deg,#0e1f60,#07000f);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;padding:14px 16px 32px;border-top:1px solid rgba(255,255,255,.13);display:flex;flex-direction:column;gap:10px;box-sizing:border-box}
+.chat-sheet-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.chat-sheet-top h3{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);margin:0}
+#chatClose{background:none;border:none;color:rgba(255,255,255,.45);font-size:1.05rem;cursor:pointer;padding:0;line-height:1}
+.chat-lbl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:3px}
+.chat-pills{display:flex;flex-wrap:wrap;gap:5px}
+.chat-pill{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:5px 11px;font-size:.78rem;color:rgba(255,255,255,.8);cursor:pointer;transition:background .12s,border-color .12s;font-family:inherit}
+.chat-pill:active,.chat-pill:hover{background:rgba(83,246,255,.14);border-color:rgba(83,246,255,.4)}
+.chat-emojis{display:flex;flex-wrap:wrap;gap:3px}
+.chat-emoji{font-size:1.35rem;cursor:pointer;padding:4px 5px;border-radius:7px;line-height:1;transition:background .12s}
+.chat-emoji:active{background:rgba(255,255,255,.15)}
+.chat-input-row{display:flex;gap:7px;margin-top:2px}
+#chatInput{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:13px;padding:10px 14px;color:#fff;font-family:inherit;font-size:.92rem;outline:none;min-width:0}
+#chatInput::placeholder{color:rgba(255,255,255,.3)}
+#chatInput:focus{border-color:rgba(83,246,255,.5);background:rgba(83,246,255,.06)}
+#chatSend{width:44px;height:44px;flex:0 0 44px;border-radius:12px;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.35);color:var(--cyan);font-size:1.1rem;cursor:pointer;display:grid;place-items:center}
+#chatSend:active{background:rgba(83,246,255,.3)}
+#chatRecentSection{display:none}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
@@ -354,7 +384,7 @@ body{-webkit-user-select:none;user-select:none}
   <!-- ============ GAME ============ -->
   <section id="game" class="screen">
     <div class="ghead">
-      <button class="icon-btn" id="homeBtn" title="Lobby">⌂</button>
+      <div style="display:flex;gap:4px"><button class="icon-btn" id="homeBtn" title="Lobby">⌂</button><button class="icon-btn" id="chatBtn" title="Chat">💬</button></div>
       <div class="mid">
         <div class="ph grad" id="phaseLabel">Hälfte 1</div>
         <div id="middleBox" style="display:flex;flex-direction:column;align-items:center;background:rgba(255,212,0,.08);border:1px solid rgba(255,212,0,.3);border-radius:12px;padding:4px 8px"><span class="num" id="middleNum" style="font-weight:900;color:var(--gold);font-size:1.2rem">13</span><div id="middleLids" class="lids" style="justify-content:center;margin-top:2px"></div></div>
@@ -393,7 +423,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.62';
+const VERSION='v5.67';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -479,6 +509,19 @@ function playChain(list){
 /* ---------- Helpers ---------- */
 function vibe(p){ try{ if('vibrate' in navigator) navigator.vibrate(p); }catch(e){} }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+// Abbrechbare Sleep-Variante nur für animRoll:
+// bei App-Wechsel sofort auflösen statt minutenlang warten
+const _animTimers=new Map();
+function animSleep(ms){
+  return new Promise(r=>{
+    const t=setTimeout(()=>{ _animTimers.delete(t); r(); },ms);
+    _animTimers.set(t,r);
+  });
+}
+function abortAnimSleeps(){
+  _animTimers.forEach((resolve,t)=>{ clearTimeout(t); resolve(); });
+  _animTimers.clear();
+}
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function toast(msg,type){ /* Hinweis-Popups deaktiviert */ }
 function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); curScreen=id; if(typeof _syncDevBtn==='function')_syncDevBtn(); }
@@ -549,7 +592,8 @@ function pushState(){
 
 /* ---------- Firebase: Präsenz / Raum ---------- */
 function enterRoom(){
-  myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount; G=null; roomEnteredAt=Date.now(); _lastCueTs=Date.now();
+  myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount; G=null; roomEnteredAt=Date.now(); _lastCueTs=Date.now(); _lastChatTs=Date.now();
+  if(ONLINE) try{ ROOM.child('chat').on('value',s=>{ const msg=s.val(); if(msg&&msg.ts>_lastChatTs){ _lastChatTs=msg.ts; showChatMsg(msg.sender,msg.text); } }); }catch(e){}
   try{ if(myName&&myName!=='Spieler') localStorage.setItem('schock_name',myName); }catch(e){}
   showScreen('waiting');
   if(!ONLINE){ amHost=true; roomPlayersLocal=[myName]; renderWaiting(); return; }
@@ -700,8 +744,8 @@ async function animRoll(idx){
   $('cup').classList.add('shake'); playDice(); G.soundCue={type:'dice',ts:Date.now()}; vibe([10,30,10]);
   if(me){ $('dice').innerHTML=ps.dice.map((d,i)=>`<div class="die${ps.kept[i]?' kept':''}" data-i="${i}">${pips(d)}</div>`).join('');
     const els=[...$('dice').children]; els.forEach((el,i)=>{ if(!ps.kept[i]) el.classList.add('roll'); });
-    for(let f=0;f<5;f++){ if(document.hidden)break; els.forEach((el)=>{ const i=Number(el.dataset.i); if(!ps.kept[i]) el.innerHTML=pips(rollDie()); }); await sleep(70); } }
-  else { if(!document.hidden) await sleep(420); }
+    for(let f=0;f<5;f++){ els.forEach((el)=>{ const i=Number(el.dataset.i); if(!ps.kept[i]) el.innerHTML=pips(rollDie()); }); await animSleep(70); } }
+  else { await animSleep(420); }
   for(let i=0;i<3;i++){ if(!ps.kept[i]) ps.dice[i]=rollDie(); }
   ps.throwNum++; ps.mustRoll=false; $('cup').classList.remove('shake'); renderDice(); $('thr').textContent=`Wurf ${ps.throwNum} / ${curMax()}`;
 }
@@ -766,7 +810,21 @@ function aiKeep(idx){ const ps=G.playerStates[idx]; const c=[0,0,0,0,0,0,0]; ps.
   let hi=0,hii=0; ps.dice.forEach((d,i)=>{ if(d>hi){hi=d;hii=i;} }); if(hi>=5)ps.kept[hii]=true; }
 
 /* ---------- Runde auswerten (Host) ---------- */
-function giveLids(toIdx,amount,fromIdx){ for(let k=0;k<amount;k++){ if(G.middleLids>0)G.middleLids--; else break; /* Mitte leer → keine Deckel vom Gewinner nehmen */ G.players[toIdx].lids++; if(G.players[toIdx].lids>=TOTAL_LIDS){G.players[toIdx].lids=TOTAL_LIDS;break;} } }
+function giveLids(toIdx,amount,fromIdx){
+  if(G.middleLids>0){
+    // Mitte hat noch Deckel → nur aus der Mitte, gedeckelt auf Vorrat
+    const take=Math.min(amount,G.middleLids);
+    G.middleLids-=take;
+    G.players[toIdx].lids=Math.min(G.players[toIdx].lids+take,TOTAL_LIDS);
+  } else {
+    // Mitte bereits leer → vom Gewinner (activePlayers filtert schon, dass nur Spieler mit Deckeln mitspielen)
+    for(let k=0;k<amount;k++){
+      if(G.players[fromIdx]&&G.players[fromIdx].lids>0){ G.players[fromIdx].lids--; } else break;
+      G.players[toIdx].lids++;
+      if(G.players[toIdx].lids>=TOTAL_LIDS){G.players[toIdx].lids=TOTAL_LIDS;break;}
+    }
+  }
+}
 function resolveRound(){
   G.phase='summary'; const ids=G.turnOrder.slice();
   ids.forEach(i=>{ const ps=G.playerStates[i]; if(!ps.combo)ps.combo=evalDice(ps.dice,ps.throwNum||1); ps.concealed=false; });
@@ -932,7 +990,7 @@ function advanceStuck(){
 function startRecovery(){ stopRecovery();
   recoveryTimer=setInterval(()=>{ if(!G)return;
     // _rolling-Hänger beheben (auf jedem Gerät)
-    if(_rolling){ _rolling=false; if(G.phase==='rolling'){ try{renderTurnUI();renderDice();}catch(e){} } }
+    if(_rolling){ abortAnimSleeps(); _rolling=false; if(G.phase==='rolling'){ try{renderTurnUI();renderDice();}catch(e){} } }
     if(!amHost)return;
     const age=Date.now()-(G.ts||0);
     if((G.phase==='summary'||G.phase==='notice'||G.phase==='gameover'||G.phase==='kaiserover')&&age>5000) advanceStuck();
@@ -1088,9 +1146,19 @@ $('startBtn').addEventListener('click',enterRoom);
 $('startMatchBtn').addEventListener('click',startMatch);
 $('leaveRoomBtn').addEventListener('click',leaveRoom);
 
+// Chat-Events via Delegation (Elemente liegen nach </script>)
+document.addEventListener('click',e=>{
+  if(e.target.closest('#chatBtn'))              openChatModal();
+  if(e.target.id==='chatClose')                 closeChatModal();
+  if(e.target.id==='chatModal')                 closeChatModal();
+  if(e.target.id==='chatSend')                  sendChat($('chatInput').value);
+});
+document.addEventListener('keydown',e=>{
+  if(e.target.id==='chatInput'&&e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat($('chatInput').value); }
+});
 $('homeBtn').addEventListener('click',()=>{ if(ONLINE){ leaveRoom(); } else { showScreen('lobby'); } });
 $('resyncBtn').addEventListener('click',()=>{
-  _rolling=false; // stuck-roll immer zuerst freigeben
+  abortAnimSleeps(); _rolling=false; // stuck-roll immer zuerst freigeben
   if(!G){ toast('Kein Spiel aktiv.',''); return; }
   if(!amHost){
     // Gast: State frisch von Firebase laden
@@ -1108,6 +1176,56 @@ $('cup').addEventListener('click',()=>{ if(!G||G.phase!=='rolling')return; const
 (function(){ const chip=$('middleBox'); let t=null; const s=()=>{ t=setTimeout(()=>{ if(amHost&&G){ const pool=participants(); const li=pool[Math.floor(Math.random()*pool.length)]; G.players[li].lids=TOTAL_LIDS; toast('⚙️ Spielende simuliert.','warn'); paint(); checkPhaseEnd(); } t=null; },800); }; const c=()=>{ if(t){clearTimeout(t);t=null;} };
   chip.addEventListener('pointerdown',s); chip.addEventListener('pointerup',c); chip.addEventListener('pointerleave',c); chip.addEventListener('pointercancel',c); })();
 
+
+
+// ── Chat ──────────────────────────────────────────────────────────────────
+let _lastChatTs=0, _chatHideTimer=null;
+const CHAT_QUICK=['Prost! 🍻','Schock Doof! 😱','Zum Wohl! 🥂','Glück gehabt 😅','Nochmal! 🎲','Nicht schlecht 👀','Ich bin dran ✋','Hä?? 🤔'];
+const CHAT_EMOJIS='😂😅😱😏🤦🤷😴💀🍺🍻🥂🎉🔥💪👍👎🎲🏆😈🤬😤🥳🤩😭'.split('');
+
+function sendChat(text){
+  if(!text||!text.trim()) return;
+  text=text.trim().slice(0,80);
+  const name=(G&&myIdx()>=0&&G.players[myIdx()])?G.players[myIdx()].name:(typeof myName!=='undefined'?myName:'?');
+  const msg={text,sender:name,ts:Date.now()};
+  if(ONLINE){ try{ ROOM.child('chat').set(msg); }catch(e){} }
+  _lastChatTs=msg.ts;
+  showChatMsg(name,text);
+  saveRecentChat(text);
+  closeChatModal();
+}
+
+function showChatMsg(sender,text){
+  const el=$('chatMsg'); if(!el) return;
+  clearTimeout(_chatHideTimer);
+  el.innerHTML='<div class="chat-bubble"><span class="chat-sender">💬 '+sender+'</span><span class="chat-text">'+text+'</span></div>';
+  el.classList.remove('on');
+  void el.offsetWidth;
+  el.classList.add('on');
+  _chatHideTimer=setTimeout(()=>{ el.classList.remove('on'); },5200);
+}
+
+function saveRecentChat(text){
+  try{ let r=JSON.parse(localStorage.getItem('sd_chat_recent')||'[]');
+    r=[text,...r.filter(t=>t!==text)].slice(0,5);
+    localStorage.setItem('sd_chat_recent',JSON.stringify(r)); }catch(e){}
+}
+
+function openChatModal(){
+  $('chatQuickPills').innerHTML=CHAT_QUICK.map(t=>'<button class="chat-pill" onclick="fillChat(this.textContent)">'+t+'</button>').join('');
+  try{ const r=JSON.parse(localStorage.getItem('sd_chat_recent')||'[]');
+    const sec=$('chatRecentSection');
+    if(r.length){ sec.style.display=''; $('chatRecentPills').innerHTML=r.map(t=>'<button class="chat-pill" onclick="fillChat(this.textContent)">'+t+'</button>').join(''); }
+    else sec.style.display='none'; }catch(e){ $('chatRecentSection').style.display='none'; }
+  const _er=$('chatEmojiRow'); _er.innerHTML=''; CHAT_EMOJIS.forEach(e=>{ const _s=document.createElement('span'); _s.className='chat-emoji'; _s.textContent=e; _s.addEventListener('click',()=>appendChat(e)); _er.appendChild(_s); });
+  $('chatInput').value='';
+  $('chatModal').classList.add('on');
+  setTimeout(()=>{ try{$('chatInput').focus();}catch(e){} },120);
+}
+
+function closeChatModal(){ $('chatModal').classList.remove('on'); }
+function fillChat(text){ $('chatInput').value=text; try{$('chatInput').focus();}catch(e){} }
+function appendChat(emoji){ const i=$('chatInput'); i.value=(i.value+emoji).slice(0,80); try{i.focus();}catch(e){} }
 
 // Biersammler Modal
 document.addEventListener('click',e=>{
@@ -1132,8 +1250,8 @@ const _kt=$('kaiserToggle'); if(_kt) _kt.addEventListener('click',()=>{
 // ── Stabilisierung nach App-Wechsel ──────────────────────────────────────────
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState!=='visible') return;
-  // 1) _rolling-Lock sofort freigeben (war vielleicht mitten in animRoll)
-  _rolling=false;
+  // 1) Animationssleeps sofort auflösen → animRoll beendet sich, hostRoll setzt _rolling=false
+  abortAnimSleeps();
   // 2) Firebase-Verbindung neu aufwecken
   try{ if(ONLINE && firebase && firebase.database) firebase.database().goOnline(); }catch(e){}
   // 3) AudioContext reaktivieren (iOS/Android frieren ihn ein)
@@ -1160,6 +1278,8 @@ if('serviceWorker' in navigator){
 }
 
 </script>
+<div id="chatMsg"></div>
+<div id="chatModal"><div class="chat-sheet"><div class="chat-sheet-top"><h3>Chat</h3><button id="chatClose">✕</button></div><div class="chat-lbl">Schnell</div><div class="chat-pills" id="chatQuickPills"></div><div id="chatRecentSection"><div class="chat-lbl">Zuletzt</div><div class="chat-pills" id="chatRecentPills"></div></div><div class="chat-lbl">Emoji</div><div class="chat-emojis" id="chatEmojiRow"></div><div class="chat-input-row"><input id="chatInput" placeholder="Nachricht…" maxlength="80" autocomplete="off"><button id="chatSend">➤</button></div></div></div>
 <div id="bierModal"><div class="bier-sheet"><button class="bier-close" id="bierClose">✕</button><h2>🍺 Biersammler</h2><div id="bierModalContent"></div></div></div>
 </body>
 </html>
