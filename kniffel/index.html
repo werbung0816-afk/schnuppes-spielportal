@@ -375,7 +375,12 @@ function soloStart(){
   const pool=shuffle(AI_POOL.filter(x=>!taken.includes(x.toLowerCase())));
   players=[{name,isAI:F,left:F,sc:newSC()}];
   for(let i=0;i<_aiCnt;i++)players.push({name:pool[i]+' (KI)',isAI:T,left:F,sc:newSC()});
-  cp=0;dice=[];held=[F,F,F,F,F];rc=0;go=F;prevBon={};
+  cp=0;dice=[];held=[F,F,F,F,F];rc=0;go=F;prevBon={};aiBusy=F;_aiTid++;
+  // Reset ALL UI: restore dice area, hide victory zone
+  const vz=document.getElementById('vicZone');if(vz){vz.style.display='none';vz.innerHTML='';}
+  const da=document.querySelector('.dice-area');if(da)da.style.display='';
+  const rb2=document.getElementById('rollBtn');if(rb2)rb2.style.display='';
+  const rd2=document.getElementById('rollDots');if(rd2)rd2.style.display='';
   document.getElementById('mpOv').style.display='none';
   document.getElementById('GL').style.display='grid';
   renderAll();renderDots();updBtn();
@@ -383,6 +388,8 @@ function soloStart(){
   checkSignal(Date.now());
   ss(esc(players[0].name)+' beginnt!');
   if(players[0].isAI)setTimeout(()=>aiTurn(),1800);
+  // Show invite button for solo games
+  const inv=document.getElementById('inviteBtn');if(inv)inv.style.display='block';
 }
 
 // GAME ACTIONS
@@ -825,14 +832,19 @@ setTimeout(()=>dismissSplash(), 2500); // auto-dismiss after 2.5s (total ~3s wit
 
 // NEUES SPIEL: proper room cleanup
 window.newGame=async function(){
-  // Restore game UI (in case user clicks before full reload)
+  // Reset local state immediately
+  go=F;aiBusy=F;_aiTid++;
+  players=[];cp=0;dice=[];held=[F,F,F,F,F];rc=0;prevBon={};
+  const vz=document.getElementById('vicZone');if(vz){vz.style.display='none';vz.innerHTML='';}
   const da=document.querySelector('.dice-area');if(da)da.style.display='';
   const rb=document.getElementById('rollBtn');if(rb)rb.style.display='';
   const rd=document.getElementById('rollDots');if(rd)rd.style.display='';
-  const vz=document.getElementById('vicZone');if(vz){vz.style.display='none';vz.innerHTML='';}
   if(typeof MP!=='undefined'&&MP.on&&MP.host&&MP._ref){
-    try{await MP._ref.child('resetSig').set(Date.now());}catch(e){}
-    return;
+    try{
+      await MP._ref.child('state').remove(); // wipe old scores first
+      await MP._ref.child('resetSig').set(Date.now()); // signal all clients
+    }catch(e){}
+    return; // listener triggers reload
   }
   location.reload();
 };
@@ -1025,15 +1037,29 @@ window.mpLeave=async function(){
 window.mpLeaveWait=function(){location.reload();};
 window.mpResetGame=async function(){
   if(!MP.host||!MP._ref)return;
-  try{await MP._ref.child('resetSig').set(Date.now());}catch(e){}
+  try{
+    await MP._ref.child('state').remove(); // clear old state first
+    await MP._ref.child('resetSig').set(Date.now());
+  }catch(e){}
 };
 window.mpResync=function(){
-  if(!MP.on||!MP.host)return;
-  aiBusy=F;rc=0;dice=[];held=[F,F,F,F,F];
-  let safe=0;while((players[cp]?.isAI||players[cp]?.left)&&safe++<players.length)cp=(cp+1)%players.length;
+  if(MP.on&&!MP.host)return; // block only for non-host MP clients
+  aiBusy=F;rc=0;dice=[];held=[F,F,F,F,F];_aiTid++;
+  // Also reset go if stuck
+  if(go){
+    go=F;
+    const vz=document.getElementById('vicZone');if(vz){vz.style.display='none';vz.innerHTML='';}
+    const da=document.querySelector('.dice-area');if(da)da.style.display='';
+    const rb2=document.getElementById('rollBtn');if(rb2)rb2.style.display='';
+    const rd2=document.getElementById('rollDots');if(rd2)rd2.style.display='';
+  }
+  let safe=0;
+  while((players[cp]?.isAI||players[cp]?.left)&&safe++<players.length)cp=(cp+1)%players.length;
   renderAll();renderDots();updBtn();
-  ss(esc(players[cp]?.name||'?')+' ist am Zug. Jetzt würfeln!');MP.push();
-  const btn=document.getElementById('resyncBtn');if(btn){btn.textContent='✅ Synced!';setTimeout(()=>btn.textContent='🔄 Re-Sync',2000);}
+  ss(esc(players[cp]?.name||'?')+' ist am Zug. Jetzt würfeln!');
+  if(MP.on)MP.push();
+  if(players[cp]?.isAI)setTimeout(()=>aiTurn(),1000);
+  const btn=document.getElementById('resyncBtn');if(btn){btn.textContent='✅ Synced!';setTimeout(()=>btn.textContent='↺ Re-Sync',2000);}
 };
 
 window.addEventListener('load',()=>{
