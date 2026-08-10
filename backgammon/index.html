@@ -438,7 +438,7 @@ canvas#bgCanvas {
       <button class="btn btn-primary" id="btn-enter" style="width:100%">Raum betreten →</button>
       <div style="text-align:right; margin-top:8px;">
         <button id="btn-hard-reset-lobby" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.11</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.12</span>
       </div>
     </div>
   </div>
@@ -454,7 +454,7 @@ canvas#bgCanvas {
       <button class="btn btn-secondary" id="btn-leave" style="width:100%; margin-top:8px; opacity:0.7;">← Verlassen</button>
       <div style="text-align:right; margin-top:10px;">
         <button id="btn-hard-reset" title="Zombie-Raum löschen" style="background:none;border:none;cursor:pointer;opacity:0.35;font-size:1.1rem;padding:4px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.35'">⚙️</button>
-        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.11</span>
+        <span style="font-size:0.65rem;opacity:0.3;vertical-align:middle;">v1.12</span>
       </div>
     </div>
   </div>
@@ -1258,18 +1258,34 @@ async function joinRoom() {
   const snap = await get(ref(db, ROOM_PATH));
   const data = snap.val();
 
-  // Zombie check
-  if (data && data.heartbeats) {
-    const whiteHb = data.heartbeats.white;
-    if (whiteHb && (Date.now() - whiteHb > HEARTBEAT_TIMEOUT)) {
+  // Zombie check: room exists but all active heartbeats are stale
+  if (data && data.players) {
+    const now = Date.now();
+    const hb = data.heartbeats || {};
+    const whiteAlive = hb.white && (now - hb.white < HEARTBEAT_TIMEOUT);
+    const blackAlive = hb.black && (now - hb.black < HEARTBEAT_TIMEOUT);
+    const hasWhite = !!data.players.white;
+    const hasBlack = !!data.players.black;
+
+    // If nobody's heartbeat is alive → zombie room, hard reset
+    if (!whiteAlive && !blackAlive) {
       await hardResetRoom(false);
+      return joinRoom();
+    }
+    // If white slot taken but white is dead → free it
+    if (hasWhite && !whiteAlive && blackAlive) {
+      await update(ref(db, `${ROOM_PATH}/players`), { white: null });
+      return joinRoom();
+    }
+    // If black slot taken but black is dead → free it
+    if (hasBlack && !blackAlive && whiteAlive) {
+      await update(ref(db, `${ROOM_PATH}/players`), { black: null });
       return joinRoom();
     }
   }
 
   // Determine desired color (default white)
   const want = preferredColor || 'white';
-  const other = want === 'white' ? 'black' : 'white';
 
   if (!data || !data.players) {
     // Empty room — take preferred color
@@ -1301,6 +1317,7 @@ async function joinRoom() {
     document.getElementById('wait-name-display').textContent = `Du spielst als: ${myName} (Weiß)`;
     if (data.state) showScreen('game');
   } else {
+    // Both slots taken and both alive → room full
     showToast('Raum ist voll — KI-Spiel wird gestartet.', 'error');
     startAIGame();
     return;
