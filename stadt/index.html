@@ -239,16 +239,16 @@ input{outline:none;-webkit-appearance:none}
 .rev-pts{font-size:15px;font-weight:800;width:52px;text-align:right;flex-shrink:0}
 .pts-20{color:#ffd700}.pts-10{color:var(--cyan)}.pts-5{color:var(--muted)}.pts-0{color:rgba(255,255,255,.18)}
 /* ── Vote buttons ── */
-.vote-btns{display:flex;gap:6px;width:100%;margin-top:4px}
-.vote-btn{flex:1;padding:8px 4px;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.35);font-size:13px;font-weight:800;cursor:pointer;transition:all .15s;white-space:nowrap}
-.vote-btn:hover{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.6)}
-.vote-btn.v0.sel,.vote-btn.v0:active{background:rgba(255,60,60,.18);border-color:#ff5050;color:#ff7070}
-.vote-btn.v5.sel,.vote-btn.v5:active{background:rgba(200,200,200,.12);border-color:rgba(200,200,200,.5);color:#ccc}
-.vote-btn.v10.sel,.vote-btn.v10:active{background:rgba(83,246,255,.18);border-color:var(--cyan);color:var(--cyan)}
-.vote-btn.v20.sel,.vote-btn.v20:active{background:rgba(255,215,0,.18);border-color:#ffd700;color:#ffd700}
-.vote-btn:disabled{opacity:.4;cursor:default;pointer-events:none}
+.vote-row{display:flex;gap:8px;padding:10px 16px 14px;background:rgba(83,246,255,.025);border-bottom:1px solid var(--glass-b)}
+.vote-btn{flex:1;min-height:54px;padding:10px 4px;border-radius:12px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.38);font-size:15px;font-weight:800;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.vote-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:#fff}
+.vote-btn:active{transform:scale(.96)}
+.vote-btn.v0.sel{background:rgba(255,60,60,.2);border-color:#ff5050;color:#ff7070}
+.vote-btn.v5.sel{background:rgba(200,200,200,.14);border-color:rgba(200,200,200,.55);color:#ccc}
+.vote-btn.v10.sel{background:rgba(83,246,255,.2);border-color:var(--cyan);color:var(--cyan)}
+.vote-btn.v20.sel{background:rgba(255,215,0,.2);border-color:#ffd700;color:#ffd700}
+.vote-btn:disabled{opacity:.35;cursor:default;pointer-events:none}
 .vote-status{font-size:13px;color:var(--muted);text-align:center;padding:6px 0}
-.rev-hint{font-size:11px;color:rgba(255,255,255,.2);font-style:italic;margin-bottom:2px}
 
 /* ─── SCORE TABLE ─── */
 .score-table{width:100%;display:flex;flex-direction:column;gap:7px}
@@ -362,13 +362,14 @@ input{outline:none;-webkit-appearance:none}
 <div id="confetti"></div>
 
 <!-- VERSION -->
-<div class="version">Stadt, Land, Sonstwas v1.0.0</div>
+<div id="version-tag" class="version">Stadt, Land, Sonstwas</div>
 
 <!-- ═══════════════ SETUP ═══════════════ -->
 <div id="scr-setup" class="scr active">
   <div class="card">
     <div class="game-title">🌍 Stadt, Land, Sonstwas</div>
     <div class="status-text" style="margin-top:-6px">Das klassische Wortspiel – jetzt Multiplayer</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.2);text-align:center;margin-top:2px" id="setup-version"></div>
     <div class="sep"></div>
     <div class="full-w" style="display:flex;flex-direction:column;gap:10px">
       <div class="label">Dein Name</div>
@@ -415,9 +416,8 @@ input{outline:none;-webkit-appearance:none}
         </div>
       </div>
 
-      <!-- AI + Start -->
+      <!-- Start -->
       <div class="sep"></div>
-      <button class="btn btn-ghost" id="btn-ai" onclick="addAI()">🤖 KI-Spieler hinzufügen</button>
       <button class="btn btn-primary" id="btn-start" onclick="startGame()" disabled>▶️ Spiel starten</button>
       <div id="start-hint" class="status-text"></div>
     </div>
@@ -580,7 +580,7 @@ input{outline:none;-webkit-appearance:none}
 
 <script>
 // ═══════════════════════════════════════════════════
-//   STADT, LAND, SONSTWAS — v1.0.0
+//   STADT, LAND, SONSTWAS — v1.3.0
 // ═══════════════════════════════════════════════════
 
 // ── Firebase ────────────────────────────────────────
@@ -603,10 +603,10 @@ const scoresRef  = db.ref(ROOM+'/scores');
 const votesRef   = db.ref(ROOM+'/votes');
 
 // ── Constants ───────────────────────────────────────
+const VERSION   = 'v1.3.0';
 const LETTERS   = 'ABCDEFGHIJKLMNOPRSTUVWZ'.split('');
 const DEF_CATS  = ['Stadt','Land','Fluss','Name','Beruf','Tier'];
 const SUG_CATS  = ['Pflanze','Musikinstrument','Firma','Prominenter','im Kino','Fahrzeug','Sportart','Filmtitel','Lebensmittel','Farbe'];
-const AI_NAMES  = ['Nici','Marco','Leni','Mia','Nele','Dani','Finn','Jonas','Sascha'];
 const AV_COLORS = ['#53f6ff','#ff4fd8','#8f5fff','#ffd700','#ff6060','#44ff88','#ff9944','#00ccff','#ff44cc','#88ff44'];
 const TIMER_MS  = 180000; // 3 min
 const CD60_MS   = 60000;  // 60 s extra
@@ -622,17 +622,6 @@ const V_COMMENTS = [
 ];
 const GRAFFITI = ['BOSS! 🔥','LEGEND! ✨','GENIUS! 💡','MEISTER! 👑','KRASS! 💥','UNREAL! 🌟','BOMBE! 💣'];
 
-// ── AI Answer Bank ──────────────────────────────────
-const BANK = {
-  Stadt:{A:['Augsburg','Aachen'],B:['Berlin','Bremen','Bonn'],C:['Chemnitz','Celle'],D:['Dresden','Dortmund','Düsseldorf'],E:['Essen','Erfurt'],F:['Frankfurt','Freiburg'],G:['Göttingen','Gelsenkirchen'],H:['Hamburg','Heidelberg','Hannover'],I:['Ingolstadt'],J:['Jena'],K:['Köln','Karlsruhe','Kassel'],L:['Leipzig','Lübeck'],M:['München','Mannheim','Mainz'],N:['Nürnberg','Neuss'],O:['Oldenburg','Osnabrück'],P:['Potsdam','Paderborn'],R:['Rostock','Regensburg'],S:['Stuttgart','Saarbrücken'],T:['Tübingen','Trier'],U:['Ulm'],V:['Viersen'],W:['Wuppertal','Wolfsburg','Würzburg'],Z:['Zwickau']},
-  Land:{A:['Australien','Argentinien','Ägypten'],B:['Brasilien','Belgien'],C:['China','Chile'],D:['Dänemark'],E:['England','Ecuador'],F:['Frankreich','Finnland'],G:['Griechenland','Ghana'],H:['Ungarn'],I:['Italien','Indien','Irland'],J:['Japan','Jordanien'],K:['Kanada','Kenia','Kroatien'],L:['Luxemburg'],M:['Mexiko','Malta','Marokko'],N:['Norwegen','Niederlande'],O:['Österreich','Oman'],P:['Portugal','Peru','Polen'],R:['Russland','Rumänien'],S:['Spanien','Schweden','Schweiz'],T:['Thailand','Türkei'],U:['Ukraine'],V:['Vietnam','Venezuela'],W:['Wales'],Z:['Zypern']},
-  Fluss:{A:['Amazonas','Alster','Aller'],B:['Brigach'],C:['Colorado'],D:['Donau'],E:['Elbe','Eger'],F:['Fulda'],G:['Ganges'],H:['Hudson'],I:['Inn','Isar'],J:['Jordan'],K:['Kongo'],L:['Loire','Lahn'],M:['Main','Mosel','Mississippi'],N:['Neckar','Nil'],O:['Oder'],P:['Po'],R:['Rhein','Ruhr'],S:['Saar','Spree'],T:['Trave'],U:['Ural'],V:['Volga'],W:['Weser','Werra'],Z:['Zambezi']},
-  Name:{A:['Anna','Andreas'],B:['Benjamin','Birgit'],C:['Christina'],D:['Daniel','Diana','David'],E:['Eva','Emil'],F:['Felix','Franziska'],G:['Georg','Gabi'],H:['Hans','Helena'],I:['Ilse','Ingo'],J:['Jonas','Julia','Jana'],K:['Karl','Katharina'],L:['Lena','Lars'],M:['Maria','Markus','Max'],N:['Nicole','Norbert'],O:['Oliver','Olivia'],P:['Peter','Paula'],R:['Robert','Rosa'],S:['Sascha','Sabine','Stefan'],T:['Thomas','Tina'],U:['Ulrich','Ursula'],V:['Viktor','Vera'],W:['Wolfgang','Wanda'],Z:['Zacharias','Zoe']},
-  Beruf:{A:['Arzt','Architekt'],B:['Bäcker','Busfahrer'],C:['Chemiker'],D:['Designer','Dachdecker'],E:['Elektriker','Erzieher'],F:['Friseur','Förster'],G:['Gärtner','Grafiker'],H:['Handwerker'],I:['Ingenieur'],J:['Journalist'],K:['Koch','Kellner'],L:['Lehrer'],M:['Mechaniker','Maler'],N:['Notar'],O:['Optiker'],P:['Pilot','Pfleger'],R:['Richter'],S:['Schreiner','Schauspieler'],T:['Tischler','Tierarzt'],U:['Uhrmacher'],V:['Verkäufer'],W:['Wissenschaftler'],Z:['Zahnarzt']},
-  Tier:{A:['Affe','Adler','Ameise'],B:['Bär','Biber'],C:['Chamäleon'],D:['Dachs','Delphin'],E:['Elefant','Ente'],F:['Fuchs','Frosch'],G:['Giraffe','Gorilla'],H:['Hase','Hirsch'],I:['Igel'],J:['Jaguar'],K:['Krokodil','Katze'],L:['Löwe','Luchs'],M:['Maus','Murmeltier'],N:['Nashorn'],O:['Otter'],P:['Pferd','Pinguin'],R:['Reh','Rabe'],S:['Schaf','Schlange'],T:['Tiger','Taube'],U:['Uhu'],V:['Vogel'],W:['Wolf','Waschbär'],Z:['Zebra','Ziege']},
-  Pflanze:{A:['Aloe','Ahorn'],B:['Buche','Birke'],C:['Chrysantheme'],D:['Dahlie','Distel'],E:['Eiche'],F:['Farn','Fichte'],G:['Geranie'],H:['Hortensie'],I:['Iris'],J:['Jasmin'],K:['Kastanie'],L:['Linde','Lavendel'],M:['Mohn'],N:['Nelke'],O:['Orchidee'],P:['Pinie'],R:['Rose'],S:['Sonnenblume'],T:['Tulpe'],V:['Veilchen'],W:['Walnuss'],Z:['Zeder']},
-  Musikinstrument:{A:['Akkordeon'],B:['Banjo'],C:['Cello'],D:['Dudelsack'],F:['Flöte'],G:['Gitarre'],H:['Harfe'],K:['Klarinette'],L:['Laute'],M:['Mandoline'],O:['Orgel'],P:['Posaune','Piano'],S:['Saxophon'],T:['Trompete','Tuba'],V:['Violine'],Z:['Zither']},
-};
 
 // ── Sound ───────────────────────────────────────────
 const sndSlot     = new Audio('https://raw.githubusercontent.com/werbung0816-afk/schnuppes-spielportal/main/slot machine zu kurz.mp3');
@@ -648,7 +637,6 @@ let writingTimerIv=null, cd60Iv=null;
 let mainTimerRunning=false, cd60Running=false;
 let calcRevealCalled=false;
 let slotSpinning=false;
-let aiTimers=[];
 let currentScreen='';
 let pendingRevealCalc=false;
 
@@ -725,7 +713,6 @@ async function joinGame(){
     await playersRef.child(myId).set({
       name:myName,
       score:existP[myId]?existP[myId].score:0,
-      isAI:false,
       joined:existP[myId]?existP[myId].joined:firebase.database.ServerValue.TIMESTAMP,
       done:false,
       color:existP[myId]?existP[myId].color:count
@@ -779,7 +766,6 @@ function onStateChange(state){
   writingTimerIv=null;cd60Iv=null;
   mainTimerRunning=false;cd60Running=false;
   calcRevealCalled=false;
-  aiTimers.forEach(t=>clearTimeout(t));aiTimers=[];
 
   if(state!=='writing'){
     document.getElementById('overlay-input').classList.remove('show');
@@ -826,7 +812,7 @@ function renderLobby(){
   players.forEach(([id,p],idx)=>{
     const row=document.createElement('div');
     row.className='player-row';
-    row.innerHTML=`<div class="p-avatar" style="background:${avColor(p.color??idx)}">${avInitial(p.name)}</div><div class="p-name">${esc(p.name)}</div>${p.isAI?'<span class="ai-tag">🤖 KI</span>':''}${id===gameState.host?'<span class="host-badge">HOST</span>':''}${p.score>0?`<div class="p-score-sm">${p.score}</div>`:''}`;
+    row.innerHTML=`<div class="p-avatar" style="background:${avColor(p.color??idx)}">${avInitial(p.name)}</div><div class="p-name">${esc(p.name)}</div>${id===gameState.host?'<span class="host-badge">HOST</span>':''}${p.score>0?`<div class="p-score-sm">${p.score}</div>`:''}`;
     pl.appendChild(row);
   });
 
@@ -904,16 +890,6 @@ function addCustomCat(){
   const inp=document.getElementById('inp-cat');
   const v=inp.value.trim();
   if(v){addCat(v);inp.value='';}
-}
-
-async function addAI(){
-  const takenNames=Object.values(allPlayers).map(p=>p.name.toLowerCase().replace(/ \(ki\)$/,''));
-  const avail=AI_NAMES.filter(n=>!takenNames.includes(n.toLowerCase()));
-  if(!avail.length){toast('Alle KI-Namen vergeben!');return;}
-  const picked=avail.sort(()=>Math.random()-.5)[0];
-  const aiId='ai_'+Math.random().toString(36).slice(2,8);
-  const count=Object.keys(allPlayers).length;
-  await playersRef.child(aiId).set({name:picked+' (KI)',score:0,isAI:true,joined:firebase.database.ServerValue.TIMESTAMP,done:false,color:count});
 }
 
 async function startGame(){
@@ -1029,8 +1005,6 @@ function initWritingScreen(){
   renderCatGrid(cats,letter);
   refreshWritingSidePanels();
   startMainTimer();
-
-  if(isHost) scheduleAI(cats,letter);
 }
 
 function updateWritingScreen(){
@@ -1217,66 +1191,12 @@ async function pressDone(auto=false){
 }
 
 // ── AI ────────────────────────────────────────────────
-function scheduleAI(cats,letter){
-  aiTimers.forEach(t=>clearTimeout(t));aiTimers=[];
-  const aiPs=Object.entries(allPlayers).filter(([,p])=>p.isAI);
-
-  aiPs.forEach(([aiId])=>{
-    const delay=15000+Math.random()*70000;
-    const t=setTimeout(async()=>{
-      if(gameState.state!=='writing'||gameState.stopCalled)return;
-      const obj={};
-      const shuffled=[...cats].sort(()=>Math.random()-.5);
-      const fillN=Math.floor(cats.length*(0.55+Math.random()*0.45));
-      shuffled.slice(0,fillN).forEach(cat=>{
-        const b=BANK[cat]&&BANK[cat][letter];
-        if(b&&b.length) obj[cat]=b[Math.floor(Math.random()*b.length)];
-      });
-      await answersRef.child(gameState.round).child(aiId).set(obj);
-      await playersRef.child(aiId).child('done').set(true);
-    },delay);
-    aiTimers.push(t);
-  });
-}
-
 // ══════════════════════════════════════════════════════
 //   GO TO REVEAL (host: auto-vote AI, then switch state)
 // ══════════════════════════════════════════════════════
 async function goToReveal(){
   if(!isHost||gameState.state!=='writing')return;
   calcRevealCalled=true;
-
-  const round=gameState.round;
-  const cats=gameState.categories||DEF_CATS;
-  const pids=Object.keys(allPlayers);
-
-  const aSnap=await answersRef.child(round).once('value');
-  const allAns=aSnap.val()||{};
-
-  // Auto-vote for AI players using comparison algorithm
-  const aiPids=pids.filter(pid=>allPlayers[pid]?.isAI);
-  if(aiPids.length>0){
-    const voteUpd={};
-    aiPids.forEach(pid=>{
-      const aiVote={};
-      cats.forEach(cat=>{
-        const ans=((allAns[pid]||{})[cat]||'').trim().toLowerCase();
-        if(!ans){aiVote[cat]=0;return;}
-        const catAns={};
-        pids.forEach(p=>{catAns[p]=((allAns[p]||{})[cat]||'').trim().toLowerCase();});
-        const freq={};
-        pids.forEach(p=>{const a=catAns[p];if(a)freq[a]=(freq[a]||0)+1;});
-        const totalAnswerers=Object.values(catAns).filter(a=>a).length;
-        if(totalAnswerers===1) aiVote[cat]=20;
-        else if(freq[ans]===1) aiVote[cat]=10;
-        else aiVote[cat]=5;
-      });
-      aiVote._submitted=true;
-      voteUpd[round+'/'+pid]=aiVote;
-    });
-    await votesRef.update(voteUpd);
-  }
-
   await gameRef.update({state:'reveal'});
 }
 
@@ -1317,46 +1237,49 @@ async function renderReveal(){
     players.forEach(([pid,p])=>{
       const ans=((allAns[pid]||{})[cat]||'').trim();
       const isMine=pid===myId;
-      const isAI=allPlayers[pid]?.isAI;
 
+      // Player + Answer row
       html+=`<div class="rev-row${isMine?' rev-mine':''}">`;
       html+=`<div class="rev-player">${esc(p.name)}</div>`;
       html+=`<div class="rev-answer${!ans?' pts-0':''}">${ans||'<em style="opacity:.3">–</em>'}</div>`;
 
       if(isMine){
         if(!ans){
-          myVotes[cat]=0;
+          myVotes[cat]=myVotes[cat]??0;
           html+=`<div class="rev-pts pts-0">0</div>`;
         } else if(myVotesSubmitted){
           const pts=myVotes[cat]??0;
           const cls=pts===20?'pts-20':pts===10?'pts-10':pts===5?'pts-5':'pts-0';
           html+=`<div class="rev-pts ${cls}">${pts===20?'⭐ 20':pts===10?'10':pts===5?'5':'0'}</div>`;
         } else {
-          const sv=myVotes[cat];
-          html+=`<div class="vote-btns" data-cat="${esc(cat)}">
-            <button class="vote-btn v0${sv===0?' sel':''}" onclick="setVote(${JSON.stringify(cat)},0,this)">✗&thinsp;0</button>
-            <button class="vote-btn v5${sv===5?' sel':''}" onclick="setVote(${JSON.stringify(cat)},5,this)">🤝&thinsp;5</button>
-            <button class="vote-btn v10${sv===10?' sel':''}" onclick="setVote(${JSON.stringify(cat)},10,this)">✅&thinsp;10</button>
-            <button class="vote-btn v20${sv===20?' sel':''}" onclick="setVote(${JSON.stringify(cat)},20,this)">⭐&thinsp;20</button>
-          </div>`;
+          // Points will be shown in vote-row below
+          html+=`<div class="rev-pts" style="opacity:.25;font-size:18px">?</div>`;
         }
-      } else if(isAI){
-        html+=`<div class="rev-pts" style="opacity:.3;font-size:11px">KI</div>`;
       } else {
-        html+=`<div class="rev-pts" style="opacity:.2;font-size:20px">…</div>`;
+        html+=`<div class="rev-pts" style="opacity:.2;font-size:18px">…</div>`;
       }
       html+=`</div>`;
+
+      // Vote buttons in separate row (only for my non-empty answer, not yet submitted)
+      if(isMine && ans && !myVotesSubmitted){
+        const sv=myVotes[cat];
+        html+=`<div class="vote-row" data-cat="${esc(cat)}">
+          <button class="vote-btn v0${sv===0?' sel':''}" onclick="setVote(${JSON.stringify(cat)},0,this)">✗&ensp;0</button>
+          <button class="vote-btn v5${sv===5?' sel':''}" onclick="setVote(${JSON.stringify(cat)},5,this)">🤝&ensp;5</button>
+          <button class="vote-btn v10${sv===10?' sel':''}" onclick="setVote(${JSON.stringify(cat)},10,this)">✅&ensp;10</button>
+          <button class="vote-btn v20${sv===20?' sel':''}" onclick="setVote(${JSON.stringify(cat)},20,this)">⭐&ensp;20</button>
+        </div>`;
+      }
     });
 
     block.innerHTML=html;
     content.appendChild(block);
   });
 
-  // Submit button
-  const isAIMe=allPlayers[myId]?.isAI;
+  // Submit button state
   const btnSubmit=document.getElementById('btn-submit-votes');
   const sep2=document.getElementById('reveal-sep2');
-  if(!isAIMe&&!myVotesSubmitted){
+  if(!myVotesSubmitted){
     btnSubmit.disabled=false;
     btnSubmit.textContent='✅ Bewertung abschicken';
     checkAllVoted();
@@ -1364,7 +1287,7 @@ async function renderReveal(){
     btnSubmit.style.display='';
     if(sep2) sep2.style.display='';
     btnSubmit.disabled=true;
-    btnSubmit.textContent=myVotesSubmitted?'✅ Abgestimmt!':'–';
+    btnSubmit.textContent='✅ Abgestimmt!';
   }
 
   const btnNext=document.getElementById('btn-reveal-next');
@@ -1378,7 +1301,7 @@ async function renderReveal(){
 function setVote(cat,pts,btn){
   if(myVotesSubmitted)return;
   myVotes[cat]=pts;
-  const group=btn.closest('.vote-btns');
+  const group=btn.closest('.vote-row');
   group.querySelectorAll('.vote-btn').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel');
   checkAllVoted();
@@ -1401,7 +1324,7 @@ async function submitMyVotes(){
   const saveObj={...myVotes,_submitted:true};
   await votesRef.child(round).child(myId).set(saveObj);
   myVotesSubmitted=true;
-  document.querySelectorAll('.vote-btn').forEach(b=>{b.disabled=true;});
+  document.querySelectorAll('.vote-row .vote-btn').forEach(b=>{b.disabled=true;});
   const btnSubmit=document.getElementById('btn-submit-votes');
   if(btnSubmit){btnSubmit.disabled=true;btnSubmit.textContent='✅ Abgestimmt!';}
 }
@@ -1409,7 +1332,7 @@ async function submitMyVotes(){
 function updateRevealVoteStatus(){
   const round=gameState.round;
   const roundVotes=(allVotes[round])||{};
-  const humanPlayers=Object.entries(allPlayers).filter(([,p])=>!p.isAI);
+  const humanPlayers=Object.entries(allPlayers);
   const submitted=humanPlayers.filter(([pid])=>roundVotes[pid]?._submitted).length;
   const total=humanPlayers.length;
 
@@ -1430,7 +1353,7 @@ function updateRevealVoteStatus(){
   // Reconnect: I already voted on another tab
   if(roundVotes[myId]?._submitted&&!myVotesSubmitted){
     myVotesSubmitted=true;
-    document.querySelectorAll('.vote-btn').forEach(b=>{b.disabled=true;});
+    document.querySelectorAll('.vote-row .vote-btn').forEach(b=>{b.disabled=true;});
     const btnSubmit=document.getElementById('btn-submit-votes');
     if(btnSubmit){btnSubmit.disabled=true;btnSubmit.textContent='✅ Abgestimmt!';}
   }
@@ -1568,6 +1491,10 @@ function launchConfetti(){
 const savedN=localStorage.getItem('slrf_name');
 if(savedN)document.getElementById('inp-name').value=savedN;
 document.getElementById('inp-name').addEventListener('keydown',e=>{if(e.key==='Enter')joinGame();});
+// Version display
+document.getElementById('version-tag').textContent=`Stadt, Land, Sonstwas ${VERSION}`;
+const sv=document.getElementById('setup-version');
+if(sv)sv.textContent=VERSION;
 document.getElementById('inp-cat').addEventListener('keydown',e=>{if(e.key==='Enter')addCustomCat();});
 
 // Cleanup on unload (don't remove player - let them reconnect)
