@@ -318,7 +318,7 @@ input{outline:none;-webkit-appearance:none}
 @keyframes cf-fall{0%{opacity:1;transform:translateY(-20px) rotate(0deg)}100%{opacity:0;transform:translateY(105vh) rotate(720deg)}}
 
 /* ─── VERSION ─── */
-.version{position:fixed;bottom:8px;right:14px;font-size:10px;font-weight:700;color:rgba(255,255,255,.2);pointer-events:none}
+.version{position:fixed;bottom:10px;right:16px;font-size:11px;font-weight:700;color:rgba(83,246,255,.55);pointer-events:none;letter-spacing:.04em}
 
 /* ─── MISC ─── */
 .full-w{width:100%}
@@ -369,7 +369,7 @@ input{outline:none;-webkit-appearance:none}
   <div class="card">
     <div class="game-title">🌍 Stadt, Land, Sonstwas</div>
     <div class="status-text" style="margin-top:-6px">Das klassische Wortspiel – jetzt Multiplayer</div>
-    <div style="font-size:11px;color:rgba(255,255,255,.2);text-align:center;margin-top:2px" id="setup-version"></div>
+    <div style="font-size:12px;color:rgba(83,246,255,.5);text-align:center;margin-top:2px;font-weight:600;letter-spacing:.04em" id="setup-version"></div>
     <div class="sep"></div>
     <div class="full-w" style="display:flex;flex-direction:column;gap:10px">
       <div class="label">Dein Name</div>
@@ -580,7 +580,7 @@ input{outline:none;-webkit-appearance:none}
 
 <script>
 // ═══════════════════════════════════════════════════
-//   STADT, LAND, SONSTWAS — v1.4.0
+//   STADT, LAND, SONSTWAS — v1.5.0
 // ═══════════════════════════════════════════════════
 
 // ── Firebase ────────────────────────────────────────
@@ -603,7 +603,7 @@ const scoresRef  = db.ref(ROOM+'/scores');
 const votesRef   = db.ref(ROOM+'/votes');
 
 // ── Constants ───────────────────────────────────────
-const VERSION   = 'v1.4.0';
+const VERSION   = 'v1.5.0';
 const LETTERS   = 'ABCDEFGHIJKLMNOPRSTUVWZ'.split('');
 const DEF_CATS  = ['Stadt','Land','Fluss','Name','Beruf','Tier'];
 const SUG_CATS  = ['Pflanze','Musikinstrument','Firma','Prominenter','im Kino','Fahrzeug','Sportart','Filmtitel','Lebensmittel','Farbe'];
@@ -624,8 +624,17 @@ const GRAFFITI = ['BOSS! 🔥','LEGEND! ✨','GENIUS! 💡','MEISTER! 👑','KRA
 
 
 // ── Sound ───────────────────────────────────────────
-const sndSlot     = new Audio('https://raw.githubusercontent.com/werbung0816-afk/schnuppes-spielportal/main/slot machine zu kurz.mp3');
+const sndSlot     = new Audio('https://raw.githubusercontent.com/werbung0816-afk/schnuppes-spielportal/main/slot%20machine%20zu%20kurz.mp3');
 const sndApplause = new Audio('https://raw.githubusercontent.com/werbung0816-afk/schnuppes-spielportal/main/applause.mp3');
+// Preload
+sndSlot.preload='auto';
+sndApplause.preload='auto';
+// Unlock audio context on first user gesture (browser autoplay policy)
+function unlockAudio(){
+  [sndSlot,sndApplause].forEach(s=>{const p=s.play();if(p)p.then(()=>{s.pause();s.currentTime=0;}).catch(()=>{});});
+}
+document.addEventListener('click',unlockAudio,{once:true});
+document.addEventListener('touchstart',unlockAudio,{once:true,passive:true});
 function play(s){try{s.currentTime=0;s.play().catch(()=>{})}catch(e){}}
 
 // ── State ───────────────────────────────────────────
@@ -977,13 +986,13 @@ function spinSlot(){
   reel.style.transition='none';reel.style.transform='translateY(0)';
   // Force reflow
   void reel.offsetWidth;
-  reel.style.transition='transform 3s cubic-bezier(0.17,0.67,0.3,1)';
+  reel.style.transition='transform 1.4s cubic-bezier(0.05,0.82,0.165,1)';
   reel.style.transform=`translateY(${targetY}px)`;
 
   setTimeout(async()=>{
     await gameRef.child('letter').set(pickedLetter);
     slotSpinning=false;
-  },3200);
+  },1500);
 }
 
 // ══════════════════════════════════════════════════════
