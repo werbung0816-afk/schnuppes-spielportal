@@ -580,7 +580,7 @@ input{outline:none;-webkit-appearance:none}
 
 <script>
 // ═══════════════════════════════════════════════════
-//   STADT, LAND, SONSTWAS — v1.3.0
+//   STADT, LAND, SONSTWAS — v1.4.0
 // ═══════════════════════════════════════════════════
 
 // ── Firebase ────────────────────────────────────────
@@ -603,7 +603,7 @@ const scoresRef  = db.ref(ROOM+'/scores');
 const votesRef   = db.ref(ROOM+'/votes');
 
 // ── Constants ───────────────────────────────────────
-const VERSION   = 'v1.3.0';
+const VERSION   = 'v1.4.0';
 const LETTERS   = 'ABCDEFGHIJKLMNOPRSTUVWZ'.split('');
 const DEF_CATS  = ['Stadt','Land','Fluss','Name','Beruf','Tier'];
 const SUG_CATS  = ['Pflanze','Musikinstrument','Firma','Prominenter','im Kino','Fahrzeug','Sportart','Filmtitel','Lebensmittel','Farbe'];
@@ -1007,6 +1007,7 @@ function initWritingScreen(){
   startMainTimer();
 }
 
+
 function updateWritingScreen(){
   isHost=gameState.host===myId;
   refreshWritingSidePanels();
@@ -1024,16 +1025,34 @@ function updateWritingScreen(){
     document.getElementById('btn-done').disabled=true;
     const fc=document.getElementById('fill-count');if(fc)fc.textContent='';
     lockCatGrid();
-    closeInput();
+
+    // Save answers for this player if they haven't pressed FERTIG themselves
+    if(!localDone){
+      localDone=true;
+      // Capture any text currently typed in the open overlay
+      if(currentCat){
+        const overlayVal=(document.getElementById('oi-field')?.value||'').trim();
+        if(overlayVal) myAnswers[currentCat]=overlayVal;
+      }
+      closeInput();
+      // Write all local answers to Firebase so they appear in the reveal
+      const saveCats=gameState.categories||DEF_CATS;
+      const saveObj={};
+      saveCats.forEach(c=>{saveObj[c]=(myAnswers[c]||'').trim();});
+      answersRef.child(gameState.round).child(myId).set(saveObj).catch(()=>{});
+    } else {
+      closeInput();
+    }
+
     if(isHost && !calcRevealCalled){
       calcRevealCalled=true;
+      // Longer delay: give all clients time to write their answers to Firebase
       setTimeout(async()=>{
         if(gameState.state==='writing') await goToReveal();
-      },4000);
+      },6000);
     }
   }
 }
-
 function refreshWritingSidePanels(){
   const players=sortedPlayers();
 
@@ -1264,10 +1283,10 @@ async function renderReveal(){
       if(isMine && ans && !myVotesSubmitted){
         const sv=myVotes[cat];
         html+=`<div class="vote-row" data-cat="${esc(cat)}">
-          <button class="vote-btn v0${sv===0?' sel':''}" onclick="setVote(${JSON.stringify(cat)},0,this)">✗&ensp;0</button>
-          <button class="vote-btn v5${sv===5?' sel':''}" onclick="setVote(${JSON.stringify(cat)},5,this)">🤝&ensp;5</button>
-          <button class="vote-btn v10${sv===10?' sel':''}" onclick="setVote(${JSON.stringify(cat)},10,this)">✅&ensp;10</button>
-          <button class="vote-btn v20${sv===20?' sel':''}" onclick="setVote(${JSON.stringify(cat)},20,this)">⭐&ensp;20</button>
+          <button class="vote-btn v0${sv===0?' sel':''}" onclick='setVote(${JSON.stringify(cat)},0,this)'>✗&ensp;0</button>
+          <button class="vote-btn v5${sv===5?' sel':''}" onclick='setVote(${JSON.stringify(cat)},5,this)'>🤝&ensp;5</button>
+          <button class="vote-btn v10${sv===10?' sel':''}" onclick='setVote(${JSON.stringify(cat)},10,this)'>✅&ensp;10</button>
+          <button class="vote-btn v20${sv===20?' sel':''}" onclick='setVote(${JSON.stringify(cat)},20,this)'>⭐&ensp;20</button>
         </div>`;
       }
     });
