@@ -580,7 +580,7 @@ input{outline:none;-webkit-appearance:none}
 
 <script>
 // ═══════════════════════════════════════════════════
-//   STADT, LAND, SONSTWAS — v1.5.0
+//   STADT, LAND, SONSTWAS — v1.6.0
 // ═══════════════════════════════════════════════════
 
 // ── Firebase ────────────────────────────────────────
@@ -603,7 +603,7 @@ const scoresRef  = db.ref(ROOM+'/scores');
 const votesRef   = db.ref(ROOM+'/votes');
 
 // ── Constants ───────────────────────────────────────
-const VERSION   = 'v1.5.0';
+const VERSION   = 'v1.6.0';
 const LETTERS   = 'ABCDEFGHIJKLMNOPRSTUVWZ'.split('');
 const DEF_CATS  = ['Stadt','Land','Fluss','Name','Beruf','Tier'];
 const SUG_CATS  = ['Pflanze','Musikinstrument','Firma','Prominenter','im Kino','Fahrzeug','Sportart','Filmtitel','Lebensmittel','Farbe'];
@@ -629,11 +629,14 @@ const sndApplause = new Audio('https://raw.githubusercontent.com/werbung0816-afk
 // Preload
 sndSlot.preload='auto';
 sndApplause.preload='auto';
-// Unlock audio context on first user gesture (browser autoplay policy)
+// Unlock audio context on first user gesture BEFORE onclick fires
 function unlockAudio(){
-  [sndSlot,sndApplause].forEach(s=>{const p=s.play();if(p)p.then(()=>{s.pause();s.currentTime=0;}).catch(()=>{});});
+  [sndSlot,sndApplause].forEach(s=>{
+    const p=s.play();
+    if(p) p.then(()=>{s.pause();s.currentTime=0;}).catch(()=>{});
+  });
 }
-document.addEventListener('click',unlockAudio,{once:true});
+document.addEventListener('mousedown',unlockAudio,{once:true});
 document.addEventListener('touchstart',unlockAudio,{once:true,passive:true});
 function play(s){try{s.currentTime=0;s.play().catch(()=>{})}catch(e){}}
 
@@ -980,19 +983,38 @@ function spinSlot(){
   const H=130;
   const pickedIdx=Math.floor(Math.random()*LETTERS.length);
   const pickedLetter=LETTERS[pickedIdx];
+  // Land on the second set of letters so the reel travels visibly
   const targetItem=LETTERS.length+pickedIdx;
-  const targetY=-(targetItem*H);
+  const finalY=-(targetItem*H);
+  const DURATION=1300; // ms
 
-  reel.style.transition='none';reel.style.transform='translateY(0)';
-  // Force reflow
-  void reel.offsetWidth;
-  reel.style.transition='transform 1.4s cubic-bezier(0.05,0.82,0.165,1)';
-  reel.style.transform=`translateY(${targetY}px)`;
+  // Reset reel to top immediately (no transition)
+  reel.style.transition='none';
+  reel.style.transform='translateY(0)';
 
-  setTimeout(async()=>{
-    await gameRef.child('letter').set(pickedLetter);
-    slotSpinning=false;
-  },1500);
+  // Cubic ease-out: starts fast, decelerates smoothly
+  function easeOut(t){return 1-Math.pow(1-t,3);}
+
+  const startTime=performance.now();
+
+  function frame(now){
+    const elapsed=now-startTime;
+    const t=Math.min(elapsed/DURATION,1);
+    const y=finalY*easeOut(t);
+    reel.style.transform=`translateY(${y}px)`;
+    if(t<1){
+      requestAnimationFrame(frame);
+    } else {
+      // Animation done → write result to Firebase
+      setTimeout(async()=>{
+        await gameRef.child('letter').set(pickedLetter);
+        slotSpinning=false;
+      },120);
+    }
+  }
+
+  // Two rAF calls ensure the reset is painted before animation begins
+  requestAnimationFrame(()=>requestAnimationFrame(frame));
 }
 
 // ══════════════════════════════════════════════════════
