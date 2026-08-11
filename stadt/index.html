@@ -133,27 +133,27 @@ input{outline:none;-webkit-appearance:none}
 @keyframes glow-in{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
 
 /* ─── WRITING LAYOUT ─── */
-#scr-writing{justify-content:flex-start;padding:10px;align-items:center}
+#scr-writing{justify-content:flex-start;padding:12px;align-items:center}
 .writing-grid{
-  width:100%;max-width:980px;
-  display:grid;gap:10px;
-  grid-template-columns:190px 1fr 190px;
+  width:100%;max-width:1100px;
+  display:grid;gap:12px;
+  grid-template-columns:220px 1fr 220px;
   grid-template-areas:"left center right";
 }
-@media(max-width:700px)and(min-width:451px){
+@media(max-width:760px)and(min-width:481px){
   .writing-grid{grid-template-columns:1fr 1fr;grid-template-areas:"center center" "left right"}
 }
-@media(max-width:450px){
+@media(max-width:480px){
   .writing-grid{grid-template-columns:1fr;grid-template-areas:"center" "left" "right"}
 }
 .wg-left{grid-area:left}.wg-center{grid-area:center}.wg-right{grid-area:right}
 .side-panel{
   background:var(--glass);backdrop-filter:blur(18px);
   border:1px solid var(--glass-b);border-radius:18px;
-  padding:12px;display:flex;flex-direction:column;gap:6px;
+  padding:14px;display:flex;flex-direction:column;gap:8px;
   align-self:start;
 }
-.panel-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.panel-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
 
 /* ─── TIMER ─── */
 .timer-bar-wrap{width:100%;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
@@ -165,35 +165,41 @@ input{outline:none;-webkit-appearance:none}
 
 /* ─── LETTER BADGE ─── */
 .letter-badge{
-  font-size:clamp(44px,9vw,64px);font-weight:900;line-height:1;
+  font-size:clamp(52px,10vw,76px);font-weight:900;line-height:1;
   background:linear-gradient(135deg,var(--cyan),var(--pink));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 16px rgba(83,246,255,.4));
+  filter:drop-shadow(0 0 20px rgba(83,246,255,.5));
 }
 
 /* ─── CATEGORY GRID ─── */
-.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:9px;width:100%}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;width:100%}
 .cat-cell{
-  background:rgba(255,255,255,.04);border:1px solid var(--glass-b);border-radius:13px;
-  padding:11px 13px;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:3px;
-  min-height:68px;justify-content:center;
+  background:rgba(255,255,255,.04);border:1px solid var(--glass-b);border-radius:14px;
+  padding:14px 16px;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:5px;
+  min-height:90px;justify-content:center;
 }
-.cat-cell:hover{border-color:rgba(83,246,255,.35);background:rgba(83,246,255,.05)}
-.cat-cell.filled{border-color:rgba(83,246,255,.4);background:rgba(83,246,255,.07)}
-.cat-cell.locked{opacity:.6;cursor:default;pointer-events:none}
-.cc-name{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.cc-answer{font-size:clamp(14px,2.3vw,16px);font-weight:700;color:var(--text)}
-.cc-ph{font-size:13px;color:rgba(240,240,255,.18);font-style:italic}
+.cat-cell:hover{border-color:rgba(83,246,255,.5);background:rgba(83,246,255,.08);transform:translateY(-1px)}
+.cat-cell:active{transform:scale(.98)}
+.cat-cell.filled{border-color:rgba(83,246,255,.55);background:rgba(83,246,255,.1);box-shadow:0 0 12px rgba(83,246,255,.08)}
+.cat-cell.locked{opacity:.6;cursor:default;pointer-events:none;transform:none}
+.cc-name{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.cc-answer{font-size:clamp(17px,2.8vw,22px);font-weight:800;color:var(--cyan);line-height:1.2;word-break:break-word}
+.cc-ph{font-size:13px;color:rgba(240,240,255,.2);font-style:italic}
+/* fill counter below FERTIG */
+#fill-count{font-size:12px;color:var(--muted);text-align:center;margin-top:-4px;letter-spacing:.04em}
 
 /* ─── FERTIG BUTTON ─── */
 #btn-done{
-  width:100%;padding:18px;border-radius:16px;border:none;
+  width:100%;padding:20px;border-radius:16px;border:none;
   background:linear-gradient(135deg,var(--pink),var(--purple));
-  color:#fff;font-size:22px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
-  transition:all .25s;box-shadow:0 0 28px rgba(255,79,216,.25);
+  color:#fff;font-size:24px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+  transition:all .25s;box-shadow:0 0 28px rgba(255,79,216,.25);cursor:pointer;
 }
+#btn-done:hover{box-shadow:0 0 40px rgba(255,79,216,.45)}
 #btn-done:active{box-shadow:0 0 60px rgba(255,79,216,.6);transform:scale(.98)}
-#btn-done[disabled]{opacity:.3;pointer-events:none;box-shadow:none}
+#btn-done.partial{opacity:.55;box-shadow:none}
+#btn-done.partial:hover{opacity:.75;box-shadow:0 0 20px rgba(255,79,216,.2)}
+#btn-done[disabled]{opacity:.25;pointer-events:none;box-shadow:none;cursor:default}
 
 /* ─── STOP BANNER ─── */
 .stop-banner{
@@ -222,15 +228,27 @@ input{outline:none;-webkit-appearance:none}
 .oi-btns{display:flex;gap:12px;width:100%;max-width:580px}
 
 /* ─── REVEAL ─── */
-.rev-block{width:100%;background:var(--glass);border:1px solid var(--glass-b);border-radius:14px;overflow:hidden;margin-bottom:10px}
-.rev-hdr{display:flex;align-items:center;padding:9px 14px;background:rgba(255,255,255,.04);border-bottom:1px solid var(--glass-b)}
+.rev-block{width:100%;background:var(--glass);border:1px solid var(--glass-b);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.rev-hdr{display:flex;align-items:center;padding:10px 16px;background:rgba(255,255,255,.04);border-bottom:1px solid var(--glass-b)}
 .rev-hdr-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;flex:1}
-.rev-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.035)}
+.rev-row{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.035);flex-wrap:wrap}
 .rev-row:last-child{border-bottom:none}
-.rev-player{font-size:12px;font-weight:600;color:var(--muted);width:110px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rev-answer{flex:1;font-size:14px;font-weight:700}
-.rev-pts{font-size:13px;font-weight:800;width:46px;text-align:right}
+.rev-mine{background:rgba(83,246,255,.04);border-left:3px solid rgba(83,246,255,.4)}
+.rev-player{font-size:13px;font-weight:700;color:var(--text);width:100px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rev-answer{flex:1;font-size:16px;font-weight:700;min-width:80px}
+.rev-pts{font-size:15px;font-weight:800;width:52px;text-align:right;flex-shrink:0}
 .pts-20{color:#ffd700}.pts-10{color:var(--cyan)}.pts-5{color:var(--muted)}.pts-0{color:rgba(255,255,255,.18)}
+/* ── Vote buttons ── */
+.vote-btns{display:flex;gap:6px;width:100%;margin-top:4px}
+.vote-btn{flex:1;padding:8px 4px;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.35);font-size:13px;font-weight:800;cursor:pointer;transition:all .15s;white-space:nowrap}
+.vote-btn:hover{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.6)}
+.vote-btn.v0.sel,.vote-btn.v0:active{background:rgba(255,60,60,.18);border-color:#ff5050;color:#ff7070}
+.vote-btn.v5.sel,.vote-btn.v5:active{background:rgba(200,200,200,.12);border-color:rgba(200,200,200,.5);color:#ccc}
+.vote-btn.v10.sel,.vote-btn.v10:active{background:rgba(83,246,255,.18);border-color:var(--cyan);color:var(--cyan)}
+.vote-btn.v20.sel,.vote-btn.v20:active{background:rgba(255,215,0,.18);border-color:#ffd700;color:#ffd700}
+.vote-btn:disabled{opacity:.4;cursor:default;pointer-events:none}
+.vote-status{font-size:13px;color:var(--muted);text-align:center;padding:6px 0}
+.rev-hint{font-size:11px;color:rgba(255,255,255,.2);font-style:italic;margin-bottom:2px}
 
 /* ─── SCORE TABLE ─── */
 .score-table{width:100%;display:flex;flex-direction:column;gap:7px}
@@ -321,7 +339,7 @@ input{outline:none;-webkit-appearance:none}
 .w-score-item:last-child{border-bottom:none}
 
 /* ─── CENTER WRITING HEADER ─── */
-.writing-header{background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.writing-header{background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 
 /* ─── 60s COUNTDOWN ─── */
 #cd60-wrap{background:rgba(255,79,216,.08);border:1px solid rgba(255,79,216,.3);border-radius:12px;padding:10px 14px;display:none;text-align:center}
@@ -487,7 +505,8 @@ input{outline:none;-webkit-appearance:none}
       <div id="cat-grid" class="cat-grid"></div>
 
       <!-- FERTIG! -->
-      <button id="btn-done" disabled onclick="pressDone()">✋ Fertig!</button>
+      <button id="btn-done" onclick="pressDone()">✋ Fertig!</button>
+      <div id="fill-count"></div>
     </div>
 
     <!-- RIGHT: Scores -->
@@ -502,24 +521,27 @@ input{outline:none;-webkit-appearance:none}
 </div>
 
 <!-- FULL-SCREEN INPUT OVERLAY -->
-<div id="overlay-input">
+<div id="overlay-input" onclick="handleOverlayClick(event)">
   <div id="oi-cat" class="oi-cat">KATEGORIE</div>
   <div id="oi-letter" class="oi-letter">A</div>
   <input id="oi-field" class="oi-field" type="text" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" placeholder="Antwort eingeben…">
-  <div class="oi-hint">Enter-Taste oder Bestätigen-Button</div>
+  <div class="oi-hint">Enter bestätigt · Tippe außerhalb zum Schließen</div>
   <div class="oi-btns">
     <button class="btn btn-ghost" onclick="closeInput()" style="flex:1">Abbrechen</button>
-    <button class="btn btn-primary" onclick="confirmInput()" style="flex:2">✓ Bestätigen</button>
+    <button class="btn btn-primary" onclick="confirmInput()" style="flex:2;font-size:18px;padding:16px">✓ OK</button>
   </div>
 </div>
 
 <!-- ═══════════════ REVEAL ═══════════════ -->
-<div id="scr-reveal" class="scr" style="justify-content:flex-start;padding-top:14px">
-  <div class="card card-wide card-scroll">
-    <div class="game-title">🔍 Auswertung</div>
+<div id="scr-reveal" class="scr" style="justify-content:flex-start;padding:14px;align-items:center">
+  <div class="card card-wide card-scroll" style="max-width:900px">
+    <div class="game-title">🗳️ Abstimmung</div>
     <div id="reveal-sub" class="status-text"></div>
+    <div id="reveal-vote-status" class="vote-status"></div>
     <div class="sep"></div>
     <div id="reveal-content" style="width:100%"></div>
+    <div class="sep" id="reveal-sep2" style="display:none"></div>
+    <button class="btn btn-primary" id="btn-submit-votes" onclick="submitMyVotes()" style="display:none;font-size:18px;padding:18px">✅ Bewertung abschicken</button>
     <div class="sep"></div>
     <button class="btn btn-primary" id="btn-reveal-next" onclick="afterReveal()" disabled>Weiter ▶️</button>
   </div>
@@ -578,6 +600,7 @@ const gameRef    = db.ref(ROOM+'/game');
 const playersRef = db.ref(ROOM+'/players');
 const answersRef = db.ref(ROOM+'/answers');
 const scoresRef  = db.ref(ROOM+'/scores');
+const votesRef   = db.ref(ROOM+'/votes');
 
 // ── Constants ───────────────────────────────────────
 const LETTERS   = 'ABCDEFGHIJKLMNOPRSTUVWZ'.split('');
@@ -612,7 +635,7 @@ const BANK = {
 };
 
 // ── Sound ───────────────────────────────────────────
-const sndDice     = new Audio('https://raw.githubusercontent.com/werbung0816-afk/schnuppes-spielportal/main/dice.mp3');
+const sndSlot     = new Audio('https://raw.githubusercontent.com/werbung0816-afk/schnuppes-spielportal/main/slot machine zu kurz.mp3');
 const sndApplause = new Audio('https://raw.githubusercontent.com/werbung0816-afk/schnuppes-spielportal/main/applause.mp3');
 function play(s){try{s.currentTime=0;s.play().catch(()=>{})}catch(e){}}
 
@@ -620,8 +643,10 @@ function play(s){try{s.currentTime=0;s.play().catch(()=>{})}catch(e){}}
 let myId='', myName='', isHost=false;
 let gameState={}, allPlayers={};
 let myAnswers={}, localDone=false, currentCat=null;
+let myVotes={}, myVotesSubmitted=false, allVotes={};
 let writingTimerIv=null, cd60Iv=null;
 let mainTimerRunning=false, cd60Running=false;
+let calcRevealCalled=false;
 let slotSpinning=false;
 let aiTimers=[];
 let currentScreen='';
@@ -741,6 +766,10 @@ function subscribeAll(){
     if(gs.state!==prevState) onStateChange(gs.state);
     else onStateUpdate(gs.state);
   });
+  votesRef.on('value',s=>{
+    allVotes=s.val()||{};
+    if(gameState.state==='reveal') updateRevealVoteStatus();
+  });
 }
 
 function onStateChange(state){
@@ -749,6 +778,7 @@ function onStateChange(state){
   clearInterval(writingTimerIv);clearInterval(cd60Iv);
   writingTimerIv=null;cd60Iv=null;
   mainTimerRunning=false;cd60Running=false;
+  calcRevealCalled=false;
   aiTimers.forEach(t=>clearTimeout(t));aiTimers=[];
 
   if(state!=='writing'){
@@ -894,6 +924,7 @@ async function startGame(){
   await playersRef.update(upd);
   await db.ref(ROOM+'/answers').remove();
   await db.ref(ROOM+'/scores').remove();
+  await db.ref(ROOM+'/votes').remove();
   await gameRef.update({state:'spinning',round:1,letter:null,spinnerIdx:0,stopCalled:false,stopBy:null});
 }
 
@@ -957,7 +988,7 @@ function updateSpinScreen(){
 function spinSlot(){
   if(slotSpinning||gameState.letter)return;
   slotSpinning=true;
-  play(sndDice);
+  play(sndSlot);
   document.getElementById('btn-spin').disabled=true;
 
   const reel=document.getElementById('slot-reel');
@@ -986,7 +1017,8 @@ function initWritingScreen(){
   myAnswers={};localDone=false;
   document.getElementById('stop-banner').style.display='none';
   document.getElementById('cd60-wrap').classList.remove('show');
-  document.getElementById('btn-done').disabled=true;
+  document.getElementById('btn-done').disabled=false;
+  document.getElementById('btn-done').classList.remove('partial');
 
   const letter=gameState.letter||'?';
   const cats=gameState.categories||DEF_CATS;
@@ -1005,18 +1037,25 @@ function updateWritingScreen(){
   isHost=gameState.host===myId;
   refreshWritingSidePanels();
 
+  // Timer fallback: if timer didn't start in initWritingScreen (race condition), start it now
+  if(!mainTimerRunning && gameState.timerStart && !gameState.stopCalled){
+    startMainTimer();
+  }
+
   if(gameState.stopCalled){
     stopAllTimers();
     const stopper=allPlayers[gameState.stopBy];
     document.getElementById('stop-name').textContent=stopper?stopper.name:'Jemand';
     document.getElementById('stop-banner').style.display='block';
     document.getElementById('btn-done').disabled=true;
+    const fc=document.getElementById('fill-count');if(fc)fc.textContent='';
     lockCatGrid();
     closeInput();
-    if(isHost){
+    if(isHost && !calcRevealCalled){
+      calcRevealCalled=true;
       setTimeout(async()=>{
-        if(gameState.state==='writing') await calcAndReveal();
-      },5000);
+        if(gameState.state==='writing') await goToReveal();
+      },4000);
     }
   }
 }
@@ -1030,7 +1069,7 @@ function refreshWritingSidePanels(){
   players.forEach(([id,p],idx)=>{
     const row=document.createElement('div');
     row.className='w-player-item';
-    row.innerHTML=`<div class="p-avatar" style="background:${avColor(p.color??idx)};width:26px;height:26px;font-size:11px">${avInitial(p.name)}</div><div style="flex:1;font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}</div><div class="w-done-icon">${p.done?'✅':'⏳'}</div>`;
+    row.innerHTML=`<div class="p-avatar" style="background:${avColor(p.color??idx)};width:30px;height:30px;font-size:13px;flex-shrink:0">${avInitial(p.name)}</div><div style="flex:1;font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}</div><div class="w-done-icon">${p.done?'✅':'⏳'}</div>`;
     wpl.appendChild(row);
   });
 
@@ -1040,7 +1079,7 @@ function refreshWritingSidePanels(){
   [...players].sort((a,b)=>(b[1].score||0)-(a[1].score||0)).forEach(([id,p])=>{
     const row=document.createElement('div');
     row.className='w-score-item';
-    row.innerHTML=`<div style="font-size:12px;font-weight:600;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px">${esc(p.name)}</div><div style="font-size:15px;font-weight:900;color:var(--cyan)">${p.score||0}</div>`;
+    row.innerHTML=`<div style="font-size:13px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${esc(p.name)}</div><div style="font-size:18px;font-weight:900;color:var(--cyan);flex-shrink:0">${p.score||0}</div>`;
     wsc.appendChild(row);
   });
 }
@@ -1146,12 +1185,21 @@ document.getElementById('oi-field').addEventListener('keydown',e=>{
   if(e.key==='Enter')confirmInput();
   if(e.key==='Escape')closeInput();
 });
+function handleOverlayClick(e){
+  // Confirm if user taps the dark backdrop (not the input area)
+  if(e.target===document.getElementById('overlay-input')) confirmInput();
+}
 
 function checkDoneButton(){
-  if(gameState.stopCalled||localDone){document.getElementById('btn-done').disabled=true;return;}
+  const btn=document.getElementById('btn-done');
+  const fc=document.getElementById('fill-count');
+  if(gameState.stopCalled||localDone){btn.disabled=true;if(fc)fc.textContent='';return;}
+  btn.disabled=false;
   const cats=gameState.categories||DEF_CATS;
-  const allFilled=cats.every(c=>(myAnswers[c]||'').trim().length>0);
-  document.getElementById('btn-done').disabled=!allFilled;
+  const filled=cats.filter(c=>(myAnswers[c]||'').trim().length>0).length;
+  const allFilled=filled===cats.length;
+  btn.classList.toggle('partial',!allFilled);
+  if(fc) fc.textContent=allFilled?'':`${filled} von ${cats.length} Feldern ausgefüllt`;
 }
 
 async function pressDone(auto=false){
@@ -1192,10 +1240,12 @@ function scheduleAI(cats,letter){
 }
 
 // ══════════════════════════════════════════════════════
-//   SCORING + REVEAL
+//   GO TO REVEAL (host: auto-vote AI, then switch state)
 // ══════════════════════════════════════════════════════
-async function calcAndReveal(){
+async function goToReveal(){
   if(!isHost||gameState.state!=='writing')return;
+  calcRevealCalled=true;
+
   const round=gameState.round;
   const cats=gameState.categories||DEF_CATS;
   const pids=Object.keys(allPlayers);
@@ -1203,59 +1253,58 @@ async function calcAndReveal(){
   const aSnap=await answersRef.child(round).once('value');
   const allAns=aSnap.val()||{};
 
-  const roundScores={};
-  pids.forEach(pid=>{roundScores[pid]={};});
-
-  cats.forEach(cat=>{
-    // Collect answers per player (lowercase for comparison)
-    const catAns={};
-    pids.forEach(pid=>{catAns[pid]=((allAns[pid]||{})[cat]||'').trim().toLowerCase();});
-
-    // Count occurrences
-    const freq={};
-    pids.forEach(pid=>{const a=catAns[pid];if(a)freq[a]=(freq[a]||0)+1;});
-    const totalAnswerers=Object.values(catAns).filter(a=>a).length;
-
-    pids.forEach(pid=>{
-      const a=catAns[pid];
-      if(!a){roundScores[pid][cat]=0;}
-      else if(totalAnswerers===1){roundScores[pid][cat]=20;}
-      else if(freq[a]===1){roundScores[pid][cat]=10;}
-      else{roundScores[pid][cat]=5;}
+  // Auto-vote for AI players using comparison algorithm
+  const aiPids=pids.filter(pid=>allPlayers[pid]?.isAI);
+  if(aiPids.length>0){
+    const voteUpd={};
+    aiPids.forEach(pid=>{
+      const aiVote={};
+      cats.forEach(cat=>{
+        const ans=((allAns[pid]||{})[cat]||'').trim().toLowerCase();
+        if(!ans){aiVote[cat]=0;return;}
+        const catAns={};
+        pids.forEach(p=>{catAns[p]=((allAns[p]||{})[cat]||'').trim().toLowerCase();});
+        const freq={};
+        pids.forEach(p=>{const a=catAns[p];if(a)freq[a]=(freq[a]||0)+1;});
+        const totalAnswerers=Object.values(catAns).filter(a=>a).length;
+        if(totalAnswerers===1) aiVote[cat]=20;
+        else if(freq[ans]===1) aiVote[cat]=10;
+        else aiVote[cat]=5;
+      });
+      aiVote._submitted=true;
+      voteUpd[round+'/'+pid]=aiVote;
     });
-  });
-
-  // Totals + update cumulative scores
-  const playerUpd={};
-  pids.forEach(pid=>{
-    const total=Object.values(roundScores[pid]).reduce((s,v)=>s+v,0);
-    roundScores[pid]._total=total;
-    playerUpd[pid+'/score']=(allPlayers[pid]?.score||0)+total;
-  });
-
-  await scoresRef.child(round).set(roundScores);
-  await playersRef.update(playerUpd);
-
-  // Refresh local allPlayers
-  const ps=await playersRef.once('value');
-  allPlayers=ps.val()||{};
+    await votesRef.update(voteUpd);
+  }
 
   await gameRef.update({state:'reveal'});
 }
 
-// ── Reveal ────────────────────────────────────────────
+
+// ══════════════════════════════════════════════════════
+//   REVEAL – MANUAL VOTING
+// ══════════════════════════════════════════════════════
 async function renderReveal(){
   const round=gameState.round;
   const cats=gameState.categories||DEF_CATS;
   const players=sortedPlayers();
+
+  myVotes={};
+  myVotesSubmitted=false;
+
   document.getElementById('reveal-sub').textContent=`Runde ${round} von ${gameState.totalRounds}`;
 
-  const[aSnap,sSnap]=await Promise.all([
-    answersRef.child(round).once('value'),
-    scoresRef.child(round).once('value')
-  ]);
+  // Check if I already submitted votes (reconnect)
+  const myVotesSnap=await votesRef.child(round).child(myId).once('value');
+  const savedMyVotes=myVotesSnap.val()||{};
+  if(savedMyVotes._submitted){
+    myVotesSubmitted=true;
+    cats.forEach(c=>{myVotes[c]=savedMyVotes[c]??0;});
+  }
+
+  // Fetch all answers
+  const aSnap=await answersRef.child(round).once('value');
   const allAns=aSnap.val()||{};
-  const allSc=sSnap.val()||{};
 
   const content=document.getElementById('reveal-content');
   content.innerHTML='';
@@ -1263,29 +1312,164 @@ async function renderReveal(){
   cats.forEach(cat=>{
     const block=document.createElement('div');
     block.className='rev-block';
-    let html=`<div class="rev-hdr"><div class="rev-hdr-title">📁 ${esc(cat)}</div></div>`;
+    let html=`<div class="rev-hdr"><div class="rev-hdr-title">📂 ${esc(cat)}</div></div>`;
+
     players.forEach(([pid,p])=>{
       const ans=((allAns[pid]||{})[cat]||'').trim();
-      const pts=(allSc[pid]||{})[cat]||0;
-      const cls=pts===20?'pts-20':pts===10?'pts-10':pts===5?'pts-5':'pts-0';
-      const lbl=pts===20?'⭐ 20':pts===10?'10':pts===5?'5':ans?'0':'–';
-      html+=`<div class="rev-row"><div class="rev-player">${esc(p.name)}</div><div class="rev-answer ${!ans?'pts-0':''}">${ans||'<em style="opacity:.3">–</em>'}</div><div class="rev-pts ${cls}">${lbl}</div></div>`;
+      const isMine=pid===myId;
+      const isAI=allPlayers[pid]?.isAI;
+
+      html+=`<div class="rev-row${isMine?' rev-mine':''}">`;
+      html+=`<div class="rev-player">${esc(p.name)}</div>`;
+      html+=`<div class="rev-answer${!ans?' pts-0':''}">${ans||'<em style="opacity:.3">–</em>'}</div>`;
+
+      if(isMine){
+        if(!ans){
+          myVotes[cat]=0;
+          html+=`<div class="rev-pts pts-0">0</div>`;
+        } else if(myVotesSubmitted){
+          const pts=myVotes[cat]??0;
+          const cls=pts===20?'pts-20':pts===10?'pts-10':pts===5?'pts-5':'pts-0';
+          html+=`<div class="rev-pts ${cls}">${pts===20?'⭐ 20':pts===10?'10':pts===5?'5':'0'}</div>`;
+        } else {
+          const sv=myVotes[cat];
+          html+=`<div class="vote-btns" data-cat="${esc(cat)}">
+            <button class="vote-btn v0${sv===0?' sel':''}" onclick="setVote(${JSON.stringify(cat)},0,this)">✗&thinsp;0</button>
+            <button class="vote-btn v5${sv===5?' sel':''}" onclick="setVote(${JSON.stringify(cat)},5,this)">🤝&thinsp;5</button>
+            <button class="vote-btn v10${sv===10?' sel':''}" onclick="setVote(${JSON.stringify(cat)},10,this)">✅&thinsp;10</button>
+            <button class="vote-btn v20${sv===20?' sel':''}" onclick="setVote(${JSON.stringify(cat)},20,this)">⭐&thinsp;20</button>
+          </div>`;
+        }
+      } else if(isAI){
+        html+=`<div class="rev-pts" style="opacity:.3;font-size:11px">KI</div>`;
+      } else {
+        html+=`<div class="rev-pts" style="opacity:.2;font-size:20px">…</div>`;
+      }
+      html+=`</div>`;
     });
+
     block.innerHTML=html;
     content.appendChild(block);
   });
 
-  const isLast=round>=gameState.totalRounds;
+  // Submit button
+  const isAIMe=allPlayers[myId]?.isAI;
+  const btnSubmit=document.getElementById('btn-submit-votes');
+  const sep2=document.getElementById('reveal-sep2');
+  if(!isAIMe&&!myVotesSubmitted){
+    btnSubmit.disabled=false;
+    btnSubmit.textContent='✅ Bewertung abschicken';
+    checkAllVoted();
+  } else {
+    btnSubmit.style.display='';
+    if(sep2) sep2.style.display='';
+    btnSubmit.disabled=true;
+    btnSubmit.textContent=myVotesSubmitted?'✅ Abgestimmt!':'–';
+  }
+
   const btnNext=document.getElementById('btn-reveal-next');
-  btnNext.disabled=!isHost;
-  btnNext.textContent=isLast?'🏆 Endergebnis!':'Zwischenstand ▶️';
+  const isLast=round>=gameState.totalRounds;
+  btnNext.textContent=isLast?'🏆 Endergebnis!':'Weiter ▶️';
+  btnNext.disabled=true;
+
+  updateRevealVoteStatus();
+}
+
+function setVote(cat,pts,btn){
+  if(myVotesSubmitted)return;
+  myVotes[cat]=pts;
+  const group=btn.closest('.vote-btns');
+  group.querySelectorAll('.vote-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  checkAllVoted();
+}
+
+function checkAllVoted(){
+  const cats=gameState.categories||DEF_CATS;
+  const allDone=cats.every(c=>myVotes[c]!==undefined);
+  const btnSubmit=document.getElementById('btn-submit-votes');
+  const sep2=document.getElementById('reveal-sep2');
+  if(btnSubmit){
+    btnSubmit.style.display=allDone?'':'none';
+    if(sep2) sep2.style.display=allDone?'':'none';
+  }
+}
+
+async function submitMyVotes(){
+  if(myVotesSubmitted)return;
+  const round=gameState.round;
+  const saveObj={...myVotes,_submitted:true};
+  await votesRef.child(round).child(myId).set(saveObj);
+  myVotesSubmitted=true;
+  document.querySelectorAll('.vote-btn').forEach(b=>{b.disabled=true;});
+  const btnSubmit=document.getElementById('btn-submit-votes');
+  if(btnSubmit){btnSubmit.disabled=true;btnSubmit.textContent='✅ Abgestimmt!';}
+}
+
+function updateRevealVoteStatus(){
+  const round=gameState.round;
+  const roundVotes=(allVotes[round])||{};
+  const humanPlayers=Object.entries(allPlayers).filter(([,p])=>!p.isAI);
+  const submitted=humanPlayers.filter(([pid])=>roundVotes[pid]?._submitted).length;
+  const total=humanPlayers.length;
+
+  const statusEl=document.getElementById('reveal-vote-status');
+  if(statusEl){
+    if(submitted<total){
+      statusEl.textContent=`⏳ ${submitted} von ${total} Spieler${total!==1?'n':''} abgestimmt`;
+      statusEl.style.color='';
+    } else {
+      statusEl.textContent='✅ Alle haben abgestimmt!';
+      statusEl.style.color='var(--cyan)';
+    }
+  }
+
+  const btnNext=document.getElementById('btn-reveal-next');
+  if(btnNext&&isHost) btnNext.disabled=submitted<total;
+
+  // Reconnect: I already voted on another tab
+  if(roundVotes[myId]?._submitted&&!myVotesSubmitted){
+    myVotesSubmitted=true;
+    document.querySelectorAll('.vote-btn').forEach(b=>{b.disabled=true;});
+    const btnSubmit=document.getElementById('btn-submit-votes');
+    if(btnSubmit){btnSubmit.disabled=true;btnSubmit.textContent='✅ Abgestimmt!';}
+  }
 }
 
 async function afterReveal(){
   if(!isHost)return;
-  const isLast=gameState.round>=gameState.totalRounds;
+  const round=gameState.round;
+  const cats=gameState.categories||DEF_CATS;
+  const pids=Object.keys(allPlayers);
+
+  const vSnap=await votesRef.child(round).once('value');
+  const roundVotes=vSnap.val()||{};
+
+  const roundScores2={};
+  const playerUpd={};
+  pids.forEach(pid=>{
+    const pVotes=roundVotes[pid]||{};
+    const entry={};
+    let total=0;
+    cats.forEach(cat=>{
+      const pts=pVotes[cat]??0;
+      entry[cat]=pts;
+      total+=pts;
+    });
+    entry._total=total;
+    roundScores2[pid]=entry;
+    playerUpd[pid+'/score']=(allPlayers[pid]?.score||0)+total;
+  });
+
+  await scoresRef.child(round).set(roundScores2);
+  await playersRef.update(playerUpd);
+  const ps=await playersRef.once('value');
+  allPlayers=ps.val()||{};
+
+  const isLast=round>=gameState.totalRounds;
   await gameRef.update({state:isLast?'victory':'board'});
 }
+
 
 // ── Scoreboard ────────────────────────────────────────
 async function renderBoard(){
@@ -1359,6 +1543,7 @@ async function newGame(){
   await playersRef.update(upd);
   await db.ref(ROOM+'/answers').remove();
   await db.ref(ROOM+'/scores').remove();
+  await db.ref(ROOM+'/votes').remove();
   const savedCats=JSON.parse(localStorage.getItem('slrf_cats')||'null')||[...DEF_CATS];
   await gameRef.update({state:'lobby',round:0,letter:null,spinnerIdx:0,stopCalled:false,stopBy:null,categories:savedCats});
   myAnswers={};localDone=false;
