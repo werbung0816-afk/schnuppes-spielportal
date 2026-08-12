@@ -321,6 +321,10 @@ body{-webkit-user-select:none;user-select:none}
   0%{opacity:0}8%{opacity:1}18%{opacity:0}
   33%{opacity:1}43%{opacity:0}
   58%{opacity:1}68%{opacity:0}100%{opacity:0}}
+
+/* Tally-Striche auf Spielerkarte */
+.tally{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin:2px 0 1px;line-height:0;min-height:4px}
+.tally svg{display:block;overflow:visible}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
@@ -437,7 +441,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.78';
+const VERSION='v5.79';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -1060,6 +1064,7 @@ function renderPlayers(){
     if(isTurn){ card.style.borderColor=col; card.style.boxShadow=`0 0 0 1.5px ${col},0 0 18px ${col}44`; }
     card.innerHTML=`<div class="cnt" style="color:${col}">${p.lids}</div>
       <div class="nm" style="color:${col}">${G.marker===i&&G.half!=='finale'?'🔖 ':''}${p.name}${p.isAI?' <span class="ai">(KI)</span>':''}</div>
+      ${tallyHTML(p.name)}
       <div class="turnflag" style="color:${col}">${isTurn&&meCard?'du bist dran ✦':(isTurn?(p.isAI?'würfelt…':'ist dran…'):'')}</div>
       <div class="lids" style="justify-content:center">${lids}</div>${mini}${hid}<div class="res" style="color:${col}">${res}</div>`;
     box.appendChild(card);
@@ -1337,6 +1342,33 @@ function triggerAusFlash(){
   var el=document.getElementById('ausFlash'); if(!el) return;
   el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
   setTimeout(function(){ el.classList.remove('on'); },1000);
+}
+
+// Tally-Striche: organic, wie ins Leder geritzt
+function tallyHTML(nm){
+  var n=(SZ&&SZ.settled&&SZ.settled[nm])||0;
+  if(n<=0) return '<div class="tally"></div>';
+  var col='rgba(255,228,150,.54)',sw=1;
+  // Leichte Unregelmässigkeit per Gruppe/Index
+  var jx=[[2.2,1.1,2.0,12.9],[6.0,0.4,5.8,13.6],[10.1,0.9,9.9,13.1],[14.0,0.2,14.2,13.8]];
+  function vline(x1,y1,x2,y2){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="'+sw+'" stroke-linecap="round"/>';}
+  function mark5(g){
+    var s='<svg width="22" height="14" viewBox="0 0 22 14">';
+    jx.forEach(function(v,i){var d=(g+i)%3===0?.18:(g+i)%3===1?-.13:.09;
+      s+=vline(v[0]+d,v[1],v[2]-d*.5,v[3]);});
+    s+=vline(.5,12.5,19.5,1.5);
+    return s+'</svg>';
+  }
+  function markN(n2,g){
+    var w=n2*4+2,s='<svg width="'+w+'" height="14" viewBox="0 0 '+w+' 14">';
+    for(var i=0;i<n2;i++){var xb=2.1+i*4,d=(g*3+i)%3===0?.18:(g*3+i)%3===1?-.13:.09;
+      s+=vline(xb+d,i%2?.4:1.1,xb-d*.5,i%2?13.6:12.9);}
+    return s+'</svg>';
+  }
+  var groups=Math.floor(n/5),rem=n%5,html='<div class="tally">';
+  for(var g=0;g<groups;g++) html+=mark5(g);
+  if(rem>0) html+=markN(rem,groups);
+  return html+'</div>';
 }
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
