@@ -314,6 +314,13 @@ body{-webkit-user-select:none;user-select:none}
 #cMic.nosupport{display:none}
 @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,60,60,.4)}50%{box-shadow:0 0 0 6px rgba(255,60,60,0)}}
 #cRecentSec{display:none}
+
+#ausFlash{position:fixed;inset:0;z-index:500;pointer-events:none;background:rgba(83,246,255,.55);opacity:0}
+#ausFlash.on{animation:ausFlicker .9s ease-out forwards}
+@keyframes ausFlicker{
+  0%{opacity:0}8%{opacity:1}18%{opacity:0}
+  33%{opacity:1}43%{opacity:0}
+  58%{opacity:1}68%{opacity:0}100%{opacity:0}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
@@ -430,7 +437,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.75';
+const VERSION='v5.77';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -493,7 +500,7 @@ let _lastCueTs=0;
 function playSoundCue(cue){
   if(!cue||!cue.type) return;
   if(cue.type==='dice') playDice();
-  else if(cue.type==='schockaus'){ playJingle1(); try{ const _cup=$('cup'); if(_cup){ _cup.classList.remove('aus-spin'); void _cup.offsetWidth; _cup.classList.add('aus-spin'); setTimeout(()=>_cup.classList.remove('aus-spin'),1600); } }catch(e){} }
+  else if(cue.type==='schockaus'){ playJingle1(); triggerAusFlash(); try{ const _cup=$('cup'); if(_cup){ _cup.classList.remove('aus-spin'); void _cup.offsetWidth; _cup.classList.add('aus-spin'); setTimeout(()=>_cup.classList.remove('aus-spin'),1600); } }catch(e){} }
   else if(cue.type==='halfend'||cue.type==='finale') playApplause();
   else if(cue.type==='doubleloss') playChain([oopsAudio,applauseAudio]);
   else if(cue.type==='gameover'||cue.type==='kaiserover') playChain([jingle2Audio,applauseAudio,beerAudio]);
@@ -683,7 +690,7 @@ async function runLaden(){
   $('controls').innerHTML=''; $('comboBig').className='combo-big'; $('comboBig').textContent=''; renderPlayers(); pushState();
   let order, best, winners;
   do{ order=activePlayers().sort(()=>Math.random()-.5); const rolls=[];
-    for(const idx of order){ fitCupName($('cupName'),G.players[idx].name); $('cup').classList.add('shake'); playDice();
+    for(const idx of order){ fitCupName($('cupName'),G.players[idx].name); $('cup').classList.add('shake'); playDice(); G.soundCue={type:'dice',ts:Date.now()}; pushState();
       $('dice').innerHTML=`<div class="die roll">${pips(rollDie())}</div>`; await sleep(220); const v=rollDie(); rolls.push(v);
       $('dice').innerHTML=`<div class="die${v===1?' one':''}">${pips(v)}</div>`; $('cup').classList.remove('shake'); vibe(12); await sleep(320); }
     best=Math.max(...rolls); winners=order.filter((_,k)=>rolls[k]===best);
@@ -842,7 +849,7 @@ function resolveRound(){
   let win=ids[0],lose=ids[0];
   ids.forEach(i=>{ if(sortKey(G.playerStates[i])>sortKey(G.playerStates[win]))win=i; if(sortKey(G.playerStates[i])<sortKey(G.playerStates[lose]))lose=i; });
   const wc=G.playerStates[win].combo; let amountTxt;
-  if(wc.type==='schockaus'){ G.players.forEach((p,k)=>{ if(k!==lose)p.lids=0; }); G.middleLids=0; G.players[lose].lids=TOTAL_LIDS; amountTxt='ALLE — volles Brett!'; G.soundCue={type:'schockaus',ts:Date.now()}; playJingle1(); }
+  if(wc.type==='schockaus'){ G.players.forEach((p,k)=>{ if(k!==lose)p.lids=0; }); G.middleLids=0; G.players[lose].lids=TOTAL_LIDS; amountTxt='ALLE — volles Brett!'; G.soundCue={type:'schockaus',ts:Date.now()}; playJingle1(); triggerAusFlash(); }
   else { giveLids(lose,wc.deckel,win); amountTxt=wc.deckel+' Deckel'; }
   vibe(30);
   const _ausThrow=G.playerStates[win].throwNum;
@@ -1325,6 +1332,12 @@ function stopRec(){
   try{ if(_recog) _recog.stop(); }catch(ex){} // stop() statt abort() — haelt Instanz und Permission am Leben
 }
 
+
+function triggerAusFlash(){
+  var el=document.getElementById('ausFlash'); if(!el) return;
+  el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+  setTimeout(function(){ el.classList.remove('on'); },1000);
+}
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
@@ -1332,6 +1345,7 @@ if('serviceWorker' in navigator){
 }
 
 </script>
+<div id="ausFlash"></div>
 <div id="chatMsg"></div>
 <div id="chatModal"><div class="chat-sheet"><div class="chat-sheet-top"><h3>Chat</h3><button id="cClose">&#x2715;</button></div><div class="chat-lbl">Schnell</div><div class="chat-pills" id="cQP"></div><div id="cRecentSec"><div class="chat-lbl">Zuletzt</div><div class="chat-pills" id="cRP"></div></div><div class="chat-lbl">Emoji</div><div class="chat-emojis" id="cER"></div><div class="chat-input-row"><button id="cMic" title="Spracheingabe">&#127908;</button><input id="cInput" placeholder="Nachricht…" maxlength="80" autocomplete="off"><button id="cSend">&#10148;</button></div></div></div>
 <div id="bierModal"><div class="bier-sheet"><button class="bier-close" id="bierClose">✕</button><h2>🍺 Biersammler</h2><div id="bierModalContent"></div></div></div>
