@@ -430,7 +430,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.74';
+const VERSION='v5.75';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -766,6 +766,7 @@ function finishTurn(idx,concealed){
       G.banner='🎲🎲🎲 Unschlagbar!';
     } else if(_rem.length>0){
       const _n=ps.throwNum-1;
+      G.maxThrows=_n; // Gegner dürfen max. _n Würfe machen
       G.banner='🎲🎲🎲 SCHOCK-AUS! Schaffst Du es im '+_n+'. Wurf?';
     }
     pushState();
@@ -1258,7 +1259,6 @@ function saveRecentChat(text){
     localStorage.setItem('sd_chat_recent',JSON.stringify(r)); }catch(ex){}
 }
 function openChatModal(){
-  if(!_recog) initSpeech();
   var qp=document.getElementById('cQP');
   if(qp) qp.innerHTML=CHAT_QUICK.map(function(t){return '<button class="chat-pill" onclick="fillChat(this.textContent)">'+t+'</button>';}).join('');
   try{ var r=JSON.parse(localStorage.getItem('sd_chat_recent')||'[]');
@@ -1312,6 +1312,7 @@ function initSpeech(){
   _recog.onend=function(){ stopRec(); };
 }
 function toggleRec(){
+  if(!_recog) initSpeech();
   if(!_recog){ toast('Spracherkennung nicht verfügbar.','warn'); return; }
   if(_isRec){ stopRec(); return; }
   _isRec=true;
@@ -1321,7 +1322,7 @@ function toggleRec(){
 function stopRec(){
   _isRec=false;
   var mb=document.getElementById('cMic'); if(mb) mb.classList.remove('recording');
-  try{ if(_recog) _recog.abort(); }catch(ex){}
+  try{ if(_recog) _recog.stop(); }catch(ex){} // stop() statt abort() — haelt Instanz und Permission am Leben
 }
 
 if('serviceWorker' in navigator){
