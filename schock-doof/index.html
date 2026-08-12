@@ -128,6 +128,9 @@ button{font-family:inherit;cursor:pointer;border:none;color:#fff;background:tran
 .cup{width:118px;height:104px;margin:4px auto 2px;position:relative}
 .cup img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 7px 10px rgba(0,0,0,.5))}
 .cup.shake{animation:shake .5s ease}
+
+@keyframes cupSpin{0%{transform:rotate(0deg)}100%{transform:rotate(1800deg)}}
+.cup.aus-spin{animation:cupSpin 1.5s cubic-bezier(.4,0,.2,1) forwards;transform-origin:center center}
 @keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-9deg) translateY(-4px)}40%{transform:rotate(8deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(4deg)}}
 .cup-name{position:absolute;left:10%;right:10%;top:47%;text-align:center;font-weight:800;font-size:.7rem;line-height:1.08;letter-spacing:.04em;
   color:rgba(74,42,16,.82);text-shadow:0 1px 0 rgba(255,235,200,.3),0 0 1px rgba(40,18,2,.6);transform:translateY(-50%) rotate(-1.5deg);pointer-events:none;
@@ -427,7 +430,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.71';
+const VERSION='v5.74';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -490,7 +493,7 @@ let _lastCueTs=0;
 function playSoundCue(cue){
   if(!cue||!cue.type) return;
   if(cue.type==='dice') playDice();
-  else if(cue.type==='schockaus') playJingle1();
+  else if(cue.type==='schockaus'){ playJingle1(); try{ const _cup=$('cup'); if(_cup){ _cup.classList.remove('aus-spin'); void _cup.offsetWidth; _cup.classList.add('aus-spin'); setTimeout(()=>_cup.classList.remove('aus-spin'),1600); } }catch(e){} }
   else if(cue.type==='halfend'||cue.type==='finale') playApplause();
   else if(cue.type==='doubleloss') playChain([oopsAudio,applauseAudio]);
   else if(cue.type==='gameover'||cue.type==='kaiserover') playChain([jingle2Audio,applauseAudio,beerAudio]);
@@ -751,9 +754,22 @@ function doDrehen(idx){ const ps=G.playerStates[idx]; if(!canDrehen(ps))return; 
 function finishTurn(idx,concealed){
   const ps=G.playerStates[idx]; if(ps.throwNum===0){ toast('Erst würfeln!','warn'); return; }
   if(ps.mustRoll){ toast('Nach dem Drehen erst würfeln.','warn'); return; }
-  ps.done=true; ps.combo=evalDice(ps.dice,ps.throwNum); if(ps.combo.type==='schockaus') concealed=false;
+  ps.done=true; ps.combo=evalDice(ps.dice,ps.throwNum);
+  if(ps.combo.type==='schockaus'){ concealed=false; try{ const _cup=$('cup'); if(_cup){ _cup.classList.remove('aus-spin'); void _cup.offsetWidth; _cup.classList.add('aus-spin'); setTimeout(()=>_cup.classList.remove('aus-spin'),1600); } }catch(e){} }
   ps.concealed=!!concealed; vibe(20); if(ps.order===0) G.maxThrows=ps.throwNum;
   if(!concealed&&isMe(idx)){ const cb=$('comboBig'); cb.textContent=ps.combo.label; cb.className='combo-big pop'+(ps.combo.type==='schockaus'?'':' grad'); cb.style.color=(ps.combo.type==='schockaus')?'var(--red)':''; }
+  if(ps.combo.type==='schockaus'&&amHost){
+    const _rem=G.turnOrder.filter(i=>!G.playerStates[i].done);
+    if(ps.throwNum===1){
+      // Erster Wurf — unschlagbar, restliche Spieler überspringen
+      _rem.forEach(i=>{ G.playerStates[i].done=true; });
+      G.banner='🎲🎲🎲 Unschlagbar!';
+    } else if(_rem.length>0){
+      const _n=ps.throwNum-1;
+      G.banner='🎲🎲🎲 SCHOCK-AUS! Schaffst Du es im '+_n+'. Wurf?';
+    }
+    pushState();
+  }
   renderPlayers(); pushState();
   setTimeout(advance, G.players[idx].isAI?600:850);
 }
@@ -821,14 +837,15 @@ function giveLids(toIdx,amount,fromIdx){
 }
 function resolveRound(){
   G.phase='summary'; const ids=G.turnOrder.slice();
-  ids.forEach(i=>{ const ps=G.playerStates[i]; if(!ps.combo)ps.combo=evalDice(ps.dice,ps.throwNum||1); ps.concealed=false; });
+  ids.forEach(i=>{ const ps=G.playerStates[i]; if(!ps.combo){ if(ps.throwNum===0) ps.combo={type:'zahl',label:'(kein Wurf)',deckel:1,rank:0}; else ps.combo=evalDice(ps.dice,ps.throwNum||1); } ps.concealed=false; });
   let win=ids[0],lose=ids[0];
   ids.forEach(i=>{ if(sortKey(G.playerStates[i])>sortKey(G.playerStates[win]))win=i; if(sortKey(G.playerStates[i])<sortKey(G.playerStates[lose]))lose=i; });
   const wc=G.playerStates[win].combo; let amountTxt;
   if(wc.type==='schockaus'){ G.players.forEach((p,k)=>{ if(k!==lose)p.lids=0; }); G.middleLids=0; G.players[lose].lids=TOTAL_LIDS; amountTxt='ALLE — volles Brett!'; G.soundCue={type:'schockaus',ts:Date.now()}; playJingle1(); }
   else { giveLids(lose,wc.deckel,win); amountTxt=wc.deckel+' Deckel'; }
   vibe(30);
-  let ev=''; if(wc.type==='schockaus')ev=EVENT.schockaus; else if(wc.type==='schock'&&wc.n===2)ev=EVENT.doof; else if(wc.type==='schock')ev=EVENT.schock; else if(wc.type==='general')ev=EVENT.general; else if(wc.type==='strasse')ev=EVENT.strasse;
+  const _ausThrow=G.playerStates[win].throwNum;
+  let ev=''; if(wc.type==='schockaus') ev=(_ausThrow===1)?'🎲🎲🎲 ERSTER WURF — Unschlagbar!':EVENT.schockaus; else if(wc.type==='schock'&&wc.n===2)ev=EVENT.doof; else if(wc.type==='schock')ev=EVENT.schock; else if(wc.type==='general')ev=EVENT.general; else if(wc.type==='strasse')ev=EVENT.strasse;
   const _we=WIN_EMOJIS[Math.floor(Math.random()*WIN_EMOJIS.length)];
   const _le=LOSE_EMOJIS[Math.floor(Math.random()*LOSE_EMOJIS.length)];
   G.banner=`<span style="color:${playerColor(win)}">${_we} ${G.players[win].name} gewinnt!${ev?' · '+ev:''}</span><br><span style="color:${playerColor(lose)};font-size:.85em">${_le} ${G.players[lose].name} +${amountTxt}</span>`;
@@ -997,7 +1014,7 @@ function startRecovery(){ stopRecovery();
     if(!amHost)return;
     const age=Date.now()-(G.ts||0);
     if((G.phase==='summary'||G.phase==='notice'||G.phase==='gameover'||G.phase==='kaiserover')&&age>5000) advanceStuck();
-    else if(G.phase==='rolling'||G.phase==='laden') advanceStuck();
+    else if((G.phase==='rolling'||G.phase==='laden')&&leader()>=0&&!_rolling&&age>8000) advanceStuck();
   },4000);
 }
 function stopRecovery(){ if(recoveryTimer){ clearInterval(recoveryTimer); recoveryTimer=null; } }
@@ -1217,7 +1234,7 @@ document.addEventListener('visibilitychange',()=>{
 
 // Chat
 var _lastChatTs=0,_chatHideTimer=null;
-var CHAT_QUICK=['Prost! \u{1F37B}','Schock Doof! \u{1F631}','Zum Wohl! \u{1F942}','Gl\u00FCck gehabt \u{1F605}','Nochmal! \u{1F3B2}','Nicht schlecht \u{1F440}','H\u00E4?? \u{1F914}'];
+var CHAT_QUICK=['Prost! \u{1F37B}','Schock Doof! \u{1F631}','Zum Wohl! \u{1F942}','Gl\u00FCck gehabt \u{1F605}','Nochmal! \u{1F3B2}','Nicht schlecht \u{1F440}','H\u00E4?? \u{1F914}','Is klar! \u{1F44C}','Interessant! \u{1F9D0}'];
 var CHAT_EMOJI=['\u{1F602}','\u{1F605}','\u{1F631}','\u{1F926}','\u{1F937}','\u{1F634}','\u{1F480}','\u{1F37A}','\u{1F37B}','\u{1F942}','\u{1F389}','\u{1F525}','\u{1F4AA}','\u{1F44D}','\u{1F44E}','\u{1F3B2}','\u{1F3C6}','\u{1F608}','\u{1FAE0}','\u{1F973}','\u{1F929}','\u{1F62D}'];
 
 function sendChat(text){
