@@ -437,7 +437,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.77';
+const VERSION='v5.78';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -1059,7 +1059,7 @@ function renderPlayers(){
     const card=document.createElement('div'); card.className='pc'+(isTurn?' active':'')+(p.lids>=TOTAL_LIDS?' lost':'');
     if(isTurn){ card.style.borderColor=col; card.style.boxShadow=`0 0 0 1.5px ${col},0 0 18px ${col}44`; }
     card.innerHTML=`<div class="cnt" style="color:${col}">${p.lids}</div>
-      <div class="nm" style="color:${col}">${G.marker===i?'🔖 ':''}${p.name}${p.isAI?' <span class="ai">(KI)</span>':''}</div>
+      <div class="nm" style="color:${col}">${G.marker===i&&G.half!=='finale'?'🔖 ':''}${p.name}${p.isAI?' <span class="ai">(KI)</span>':''}</div>
       <div class="turnflag" style="color:${col}">${isTurn&&meCard?'du bist dran ✦':(isTurn?(p.isAI?'würfelt…':'ist dran…'):'')}</div>
       <div class="lids" style="justify-content:center">${lids}</div>${mini}${hid}<div class="res" style="color:${col}">${res}</div>`;
     box.appendChild(card);
