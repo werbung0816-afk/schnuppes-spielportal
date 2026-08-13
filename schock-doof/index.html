@@ -442,7 +442,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.87';
+const VERSION='v5.90';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -496,7 +496,7 @@ const firebaseConfig={apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",authDomai
 let ONLINE=false, ROOM=null;
 try{ if(typeof firebase!=='undefined'){ firebase.initializeApp(firebaseConfig); ROOM=firebase.database().ref('schock-doof/room'); ONLINE=true; } }catch(e){ console.warn('Firebase aus:',e); ONLINE=false; }
 const CID='c'+Math.random().toString(36).slice(2)+Date.now().toString(36);
-let amHost=!ONLINE, amSpectator=false, _pendingSpectators=[];           // offline: man ist immer Host (Solo + KI)
+let amHost=!ONLINE, amSpectator=false, _pendingSpectators=[], _confirmedPlayer=false;           // offline: man ist immer Host (Solo + KI)
 let myName='Spieler';
 let seatCount=3;
 let presence={};
@@ -601,7 +601,7 @@ function isMe(idx){ return idx===myIdx(); }
 /* ---------- Firebase: State-Sync ---------- */
 function sanitize(o){ return JSON.parse(JSON.stringify(o,(k,v)=>v===undefined?null:v)); }
 function hydrate(raw){
-  const g=raw; g.players=g.players||[]; g.players.forEach(p=>{ if(typeof p.lids!=='number')p.lids=0; });
+  const g=Object.assign({},raw); g.players=g.players||[]; g.players.forEach(p=>{ if(typeof p.lids!=='number')p.lids=0; });
   g.turnOrder=g.turnOrder||[]; g.finalists=g.finalists||[]; g.halfLosers=g.halfLosers||[-1,-1];
   g.playerStates=g.playerStates||[];
   g.playerStates.forEach(ps=>{ ps.dice=ps.dice||[1,1,1]; ps.kept=ps.kept||[false,false,false];
@@ -617,7 +617,7 @@ function pushState(){
 
 /* ---------- Firebase: Präsenz / Raum ---------- */
 function enterRoom(){
-  myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount; G=null; roomEnteredAt=Date.now(); _lastCueTs=Date.now();; _lastChatTs=Date.now();
+  myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount; G=null; roomEnteredAt=Date.now(); _lastCueTs=Date.now(); _lastChatTs=Date.now(); _confirmedPlayer=false;
   if(ONLINE) try{ ROOM.child('chat').on('value',function(cs){ var msg=cs.val(); if(msg&&msg.ts>_lastChatTs){ _lastChatTs=msg.ts; showChatMsg(msg.sender,msg.text); } }); }catch(ex){}
   try{ if(myName&&myName!=='Spieler') localStorage.setItem('schock_name',myName); }catch(e){}
   showScreen('waiting');
@@ -647,16 +647,22 @@ function enterRoom(){
     if(amHost) return;
     const raw=s.val(); if(!raw){ G=null; return; }
     if(raw.ts&&raw.ts<roomEnteredAt-60000) return;
-    if(raw.players&&!raw.players.some(p=>p&&p.cid===CID)){
-      // Nicht in Spielerliste — Zuschauer-Modus aktivieren wenn Spiel läuft
-      if(!amSpectator&&raw.phase&&!['gameover','kaiserover','laden'].includes(raw.phase)){
+    // Spieler-Validierung: CID in Spielerliste?
+    const _players=Array.isArray(raw.players)?raw.players:Object.values(raw.players||{});
+    const _inGame=_players.some(p=>p&&p.cid===CID);
+    // Einmal bestätigt → immer Spieler (verhindert falschen Zuschauer-Modus)
+    if(_inGame) _confirmedPlayer=true;
+    if(!_inGame){
+      const _activePhase=['rolling','summary','notice','finale'].includes(raw.phase);
+      if(!amSpectator&&_activePhase&&!_confirmedPlayer){
+        // Echter Zuschauer: CID war noch nie in der Spielerliste
         enterSpectatorMode();
         G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint(); return;
       }
-      if(!amSpectator) return;
+      if(!amSpectator) return; // Warte-Zustand: noch kein Spiel für diesen Spieler
     }
     // Zuschauer wird Spieler wenn CID jetzt im State
-    if(amSpectator&&raw.players&&raw.players.some(p=>p&&p.cid===CID)) exitSpectatorMode();
+    if(amSpectator&&_inGame) exitSpectatorMode();
     // Älteren State niemals annehmen (allgemeiner Guard)
     if(G&&G.ts&&raw.ts&&raw.ts<=G.ts) return;
     // Gameover darf nicht überschrieben werden
@@ -710,7 +716,7 @@ function renderWaiting(){
   const note=$('waitHostNote'); if(note) note.style.display=amHost?'none':'';
 }
 function leaveRoom(){
-  amSpectator=false; _pendingSpectators=[];
+  amSpectator=false; _pendingSpectators=[]; _confirmedPlayer=false;
   if(ONLINE) try{ ROOM.child('viewers').child(myName.replace(/[.#$\[\]]/g,'_')).remove(); }catch(e){}
   if(ONLINE){ try{ ROOM.child('presence/'+CID).remove(); ROOM.off(); }catch(e){} }
   amHost=!ONLINE; presence={}; showScreen('lobby');
