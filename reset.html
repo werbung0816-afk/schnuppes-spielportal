@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🔧 Spielportal Admin – Reset</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{ box-sizing:border-box; margin:0; padding:0; }
+:root{
+  --cyan:#53f6ff; --pink:#ff4fd8; --lila:#8f5fff;
+  --green:#5eff9b; --orange:#ff9b54; --red:#ff4f4f;
+  --bg1:#050111; --bg2:#120523;
+  --panel:rgba(10,12,38,.9); --border:rgba(255,255,255,.1);
+}
+body{
+  font-family:'Outfit',sans-serif;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  color:#fff; min-height:100vh; font-size:16px;
+}
+
+/* ── PIN ── */
+#pin-screen{
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; min-height:100vh; gap:24px; padding:24px;
+}
+#pin-screen h1{
+  font-size:32px; font-weight:900;
+  background:linear-gradient(90deg,var(--pink),var(--cyan));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+#pin-screen p{ color:rgba(255,255,255,.4); font-size:14px; }
+.pin-box{
+  background:var(--panel); border:1px solid var(--border); border-radius:20px;
+  padding:32px 28px; display:flex; flex-direction:column; gap:16px;
+  width:100%; max-width:340px;
+}
+.pin-input{
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.15);
+  border-radius:12px; color:#fff; font-family:'Outfit',sans-serif;
+  font-size:28px; font-weight:700; letter-spacing:12px; text-align:center;
+  padding:14px; outline:none; width:100%;
+}
+.pin-input:focus{ border-color:var(--cyan); }
+.pin-error{ color:var(--red); font-size:13px; text-align:center; display:none; }
+
+/* ── App ── */
+#app{ display:none; padding:28px 20px 60px; max-width:960px; margin:0 auto; }
+
+.app-header{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:28px; flex-wrap:wrap; gap:12px;
+}
+.app-title{
+  font-size:clamp(22px,5vw,30px); font-weight:900;
+  background:linear-gradient(90deg,var(--pink),var(--cyan));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.app-sub{ color:rgba(255,255,255,.3); font-size:12px; margin-top:4px; }
+
+/* ── Buttons ── */
+.btn{
+  border:none; cursor:pointer; font-family:'Outfit',sans-serif;
+  font-weight:700; border-radius:12px; padding:10px 20px;
+  font-size:14px; transition:opacity .2s, transform .1s;
+}
+.btn:hover{ opacity:.82; }
+.btn:active{ transform:scale(.97); }
+.btn-danger{ background:rgba(255,79,79,.18); color:var(--red); border:1px solid rgba(255,79,79,.3); }
+.btn-cyan{ background:rgba(83,246,255,.15); color:var(--cyan); border:1px solid rgba(83,246,255,.3); }
+.btn-grey{ background:rgba(255,255,255,.08); color:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.12); }
+.btn-sm{ padding:6px 14px; font-size:12px; border-radius:8px; }
+.btn-lg{ padding:12px 26px; font-size:15px; }
+
+/* ── Status bar ── */
+.status-bar{
+  background:var(--panel); border:1px solid var(--border); border-radius:14px;
+  padding:13px 18px; margin-bottom:20px;
+  display:flex; align-items:center; gap:10px; font-size:13px; color:rgba(255,255,255,.45);
+}
+.dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; background:var(--green); }
+.dot.red{ background:var(--red); }
+.dot.yellow{ background:var(--orange); animation:pulse 1.2s infinite; }
+@keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
+
+/* ── Controls ── */
+.controls{
+  display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:20px;
+}
+.controls-right{ margin-left:auto; display:flex; gap:8px; }
+
+/* ── Project block ── */
+.project-block{
+  margin-bottom:28px;
+}
+.project-label{
+  display:flex; align-items:center; gap:10px;
+  padding:0 4px 10px; border-bottom:1px solid rgba(255,255,255,.07);
+  margin-bottom:12px;
+}
+.project-label-icon{ font-size:16px; }
+.project-label-name{
+  font-size:11px; font-weight:700; letter-spacing:3px;
+  text-transform:uppercase; color:rgba(255,255,255,.3);
+}
+.project-label-badge{
+  font-size:11px; padding:2px 8px; border-radius:6px; font-weight:700;
+}
+.proj-main .project-label-badge{ background:rgba(83,246,255,.12); color:var(--cyan); }
+.proj-romme .project-label-badge{ background:rgba(94,255,155,.12); color:var(--green); }
+.proj-zehnt .project-label-badge{ background:rgba(255,155,84,.12); color:var(--orange); }
+.project-reset-btn{ margin-left:auto; }
+
+/* ── Game section ── */
+.game-section{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:18px; margin-bottom:10px; overflow:hidden;
+}
+.game-header{
+  display:flex; align-items:center; gap:12px; padding:14px 18px;
+  cursor:pointer; user-select:none; transition:background .15s;
+}
+.game-header:hover{ background:rgba(255,255,255,.04); }
+.game-icon{ font-size:24px; }
+.game-name{ font-weight:700; font-size:16px; flex:1; }
+.game-count{
+  font-size:11px; font-weight:700; padding:3px 9px; border-radius:8px;
+  background:rgba(255,79,216,.12); color:var(--pink); border:1px solid rgba(255,79,216,.2);
+}
+.game-count.zero{
+  background:rgba(255,255,255,.05); color:rgba(255,255,255,.25); border-color:transparent;
+}
+.game-toggle{ color:rgba(255,255,255,.25); font-size:11px; transition:transform .2s; }
+.game-toggle.open{ transform:rotate(90deg); }
+
+.room-list{ border-top:1px solid rgba(255,255,255,.05); }
+.room-list.hidden{ display:none; }
+.room-item{
+  display:flex; align-items:center; gap:10px; padding:11px 18px;
+  border-bottom:1px solid rgba(255,255,255,.04); transition:background .15s;
+}
+.room-item:last-child{ border-bottom:none; }
+.room-item:hover{ background:rgba(255,255,255,.03); }
+.room-id{ font-family:'Courier New',monospace; font-size:12px; color:var(--cyan); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.room-meta{ font-size:11px; color:rgba(255,255,255,.28); white-space:nowrap; }
+.room-players{ font-size:11px; color:rgba(255,255,255,.4); background:rgba(255,255,255,.06); padding:2px 7px; border-radius:6px; white-space:nowrap; }
+.no-rooms{ padding:16px; text-align:center; color:rgba(255,255,255,.18); font-size:13px; }
+
+/* ── Config panel ── */
+.cfg-toggle{ font-size:12px; color:rgba(255,255,255,.2); cursor:pointer; text-decoration:underline; }
+.cfg-panel{
+  background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07);
+  border-radius:14px; padding:20px; margin-bottom:20px; display:none;
+}
+.cfg-panel.show{ display:block; }
+.cfg-row{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+@media(max-width:700px){ .cfg-row{ grid-template-columns:1fr; } }
+.cfg-col h4{ font-size:12px; font-weight:700; letter-spacing:1px; margin-bottom:10px; }
+.cfg-col.col-main h4{ color:var(--cyan); }
+.cfg-col.col-romme h4{ color:var(--green); }
+.cfg-col.col-zehnt h4{ color:var(--orange); }
+.cfg-input{
+  background:rgba(0,0,0,.4); border:1px solid rgba(255,255,255,.1);
+  border-radius:8px; color:#fff; font-family:'Courier New',monospace;
+  font-size:11px; padding:7px 10px; width:100%; outline:none; margin-bottom:8px;
+}
+.cfg-input:focus{ border-color:var(--cyan); }
+.cfg-label{ font-size:10px; color:rgba(255,255,255,.3); margin-bottom:4px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
+textarea.cfg-input{ resize:vertical; line-height:1.5; }
+
+/* ── Toast ── */
+#toast{
+  position:fixed; bottom:24px; right:24px;
+  background:rgba(10,12,38,.97); border:1px solid rgba(83,246,255,.3);
+  color:var(--cyan); padding:11px 18px; border-radius:12px;
+  font-size:14px; font-weight:600;
+  transform:translateY(100px); opacity:0; transition:all .3s; z-index:999;
+}
+#toast.show{ transform:translateY(0); opacity:1; }
+#toast.error{ border-color:rgba(255,79,79,.4); color:var(--red); }
+
+/* ── Modal ── */
+#modal-overlay{
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(4px);
+  z-index:100; align-items:center; justify-content:center;
+}
+#modal-overlay.show{ display:flex; }
+.modal{
+  background:#0d0e2a; border:1px solid var(--border);
+  border-radius:20px; padding:30px; max-width:360px; width:90%; text-align:center;
+}
+.modal h3{ font-size:19px; font-weight:800; margin-bottom:10px; }
+.modal p{ color:rgba(255,255,255,.4); font-size:13px; line-height:1.55; margin-bottom:22px; }
+.modal-btns{ display:flex; gap:10px; justify-content:center; }
+</style>
+</head>
+<body>
+
+<!-- PIN -->
+<div id="pin-screen">
+  <h1>🔧 Admin Reset</h1>
+  <p>Schnuppes Spielportal · Raumverwaltung</p>
+  <div class="pin-box">
+    <input class="pin-input" id="pin-input" type="password" inputmode="numeric"
+           maxlength="4" placeholder="····" autocomplete="off">
+    <div class="pin-error" id="pin-error">❌ Falscher PIN</div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <div class="app-header">
+    <div>
+      <div class="app-title">🔧 Spielportal Admin</div>
+      <div class="app-sub">Firebase Raumverwaltung · 3 Projekte übergreifend</div>
+    </div>
+    <button class="btn btn-cyan btn-lg" onclick="loadAll()">🔄 Alle neu laden</button>
+  </div>
+
+  <div class="status-bar">
+    <div class="dot" id="status-dot"></div>
+    <span id="status-text">Verbinde …</span>
+  </div>
+
+  <span class="cfg-toggle" onclick="toggleCfg()">⚙ API-Keys & Pfade konfigurieren</span>
+
+  <div class="cfg-panel" id="cfg-panel" style="margin-top:12px;">
+    <div class="cfg-row">
+      <!-- schnuppes-spielportal -->
+      <div class="cfg-col col-main">
+        <h4>🎮 schnuppes-spielportal</h4>
+        <div class="cfg-label">API Key</div>
+        <input class="cfg-input" id="k0" placeholder="AIza…">
+        <div class="cfg-label">Database URL</div>
+        <input class="cfg-input" id="u0" placeholder="https://schnuppes-spielportal-default-rtdb…">
+        <div class="cfg-label">Pfade (je Zeile: Emoji Name /pfad)</div>
+        <textarea class="cfg-input" id="p0" rows="12"></textarea>
+      </div>
+      <!-- romme-hand -->
+      <div class="cfg-col col-romme">
+        <h4>🃏 romme-hand</h4>
+        <div class="cfg-label">API Key</div>
+        <input class="cfg-input" id="k1" placeholder="AIza…">
+        <div class="cfg-label">Database URL</div>
+        <input class="cfg-input" id="u1" placeholder="https://romme-hand-default-rtdb…">
+        <div class="cfg-label">Pfade</div>
+        <textarea class="cfg-input" id="p1" rows="12"></textarea>
+      </div>
+      <!-- monis-zehntausend -->
+      <div class="cfg-col col-zehnt">
+        <h4>🎲 monis-zehntausend</h4>
+        <div class="cfg-label">API Key</div>
+        <input class="cfg-input" id="k2" placeholder="AIza…">
+        <div class="cfg-label">Database URL</div>
+        <input class="cfg-input" id="u2" placeholder="https://monis-zehntausend-default-rtdb…">
+        <div class="cfg-label">Pfade</div>
+        <textarea class="cfg-input" id="p2" rows="12"></textarea>
+      </div>
+    </div>
+    <br>
+    <button class="btn btn-cyan" onclick="saveCfg()">✅ Speichern & Neu laden</button>
+    &nbsp;
+    <button class="btn btn-grey btn-sm" onclick="resetCfg()">Standardwerte wiederherstellen</button>
+  </div>
+
+  <div class="controls" style="margin-top:16px;">
+    <span style="color:rgba(255,255,255,.3);font-size:13px;" id="total-label">–</span>
+    <div class="controls-right">
+      <button class="btn btn-grey btn-sm" onclick="expandAll()">Aufklappen</button>
+      <button class="btn btn-grey btn-sm" onclick="collapseAll()">Zuklappen</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmResetAll()">🗑 Alle löschen</button>
+    </div>
+  </div>
+
+  <div id="game-list"></div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Modal -->
+<div id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title"></h3>
+    <p id="modal-body"></p>
+    <div class="modal-btns">
+      <button class="btn btn-grey" onclick="closeModal()">Abbrechen</button>
+      <button class="btn btn-danger" id="modal-ok">Löschen</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+// ══════════════════════════════════════════════════
+//  KONFIGURATION
+// ══════════════════════════════════════════════════
+const ADMIN_PIN = "1234"; // ← PIN hier ändern
+
+const PROJECTS_DEFAULT = [
+  {
+    id:   "schnuppes-spielportal",
+    name: "schnuppes-spielportal",
+    icon: "🎮",
+    cls:  "proj-main",
+    apiKey:      "AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",
+    databaseURL: "https://schnuppes-spielportal-default-rtdb.europe-west1.firebaseio.com",
+    paths: [
+      { icon:"🎲", name:"Dani's Kniffelchen",   path:"/kniffel/rooms" },
+      { icon:"🎵", name:"Chartster",             path:"/chartster/rooms" },
+      { icon:"🌍", name:"Stadt, Land, Sonstwas", path:"/stadtland/rooms" },
+      { icon:"🃏", name:"Phase 10",              path:"/phase10/rooms" },
+      { icon:"🎲", name:"Backgammon",            path:"/backgammon/rooms" },
+      { icon:"🎴", name:"Memory",                path:"/memory/rooms" },
+      { icon:"🕵️", name:"Imposter",             path:"/imposter/rooms" },
+      { icon:"🂡",  name:"Arschloch",            path:"/arschloch/rooms" },
+      { icon:"⭕", name:"Tic Tac Toe",           path:"/tictactoe/rooms" },
+      { icon:"🔴", name:"4 Gewinnt",             path:"/4gewinnt/rooms" },
+      { icon:"🎲", name:"Bingo Bernie",          path:"/bingo/rooms" },
+      { icon:"🎲", name:"Schock Doof",           path:"/schockdoof/rooms" },
+    ]
+  },
+  {
+    id:   "romme-hand",
+    name: "romme-hand",
+    icon: "🃏",
+    cls:  "proj-romme",
+    apiKey:      "AIzaSyC5wUppAxAE_LrEpr8FdlAfqNuyiq59HV8",
+    databaseURL: "https://romme-hand-default-rtdb.europe-west1.firebaseio.com",
+    paths: [
+      { icon:"🃏", name:"Ingo's Rommé Hand", path:"/rooms" },
+    ]
+  },
+  {
+    id:   "monis-zehntausend",
+    name: "monis-zehntausend",
+    icon: "🎲",
+    cls:  "proj-zehnt",
+    apiKey:      "AIzaSyDkX_aEjOjUmwfMGxRAzwH8IjUPM0wx44s",
+    databaseURL: "https://monis-zehntausend-default-rtdb.europe-west1.firebaseio.com",
+    paths: [
+      { icon:"🎲", name:"Moni's Zehntausend", path:"/rooms" },
+    ]
+  }
+];
+// ══════════════════════════════════════════════════
+
+let dbs = {};        // projectId → firebase.database instance
+let modalCb = null;
+
+// ── PIN ────────────────────────────────────────────
+document.getElementById('pin-input').addEventListener('input', e => {
+  if(e.target.value.length !== 4) return;
+  if(e.target.value === ADMIN_PIN){
+    document.getElementById('pin-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    init();
+  } else {
+    document.getElementById('pin-error').style.display = 'block';
+    e.target.value = '';
+    setTimeout(()=>{ document.getElementById('pin-error').style.display='none'; }, 2000);
+  }
+});
+
+// ── Init Firebase per project ──────────────────────
+function init(){
+  const projects = getProjects();
+  projects.forEach(proj => {
+    try {
+      const app = firebase.apps.find(a => a.name === proj.id)
+        || firebase.initializeApp({
+              apiKey:      proj.apiKey,
+              databaseURL: proj.databaseURL,
+              projectId:   proj.id,
+           }, proj.id);
+      dbs[proj.id] = firebase.database(app);
+    } catch(e){
+      console.warn('Firebase init error', proj.id, e);
+    }
+  });
+  loadAll();
+}
+
+// ── Load all rooms from all projects ──────────────
+async function loadAll(){
+  setStatus('yellow','Lade alle Projekte …');
+  const container = document.getElementById('game-list');
+  container.innerHTML = '<div style="padding:40px;text-align:center;color:rgba(255,255,255,.2);font-size:14px;">Lade …</div>';
+
+  const projects = getProjects();
+  let totalRooms = 0;
+  const html = [];
+
+  for(const proj of projects){
+    const db = dbs[proj.id];
+    const gameResults = [];
+
+    await Promise.all(proj.paths.map(async g => {
+      try {
+        const snap = await db.ref(g.path).get();
+        const rooms = snap.exists() && snap.val() ? snap.val() : {};
+        const count = Object.keys(rooms).length;
+        totalRooms += count;
+        gameResults.push({ g, rooms, count });
+      } catch(e){
+        gameResults.push({ g, rooms:{}, count:0, err: e.message });
+      }
+    }));
+
+    gameResults.sort((a,b)=>b.count-a.count);
+    html.push(buildProjectBlock(proj, gameResults));
+  }
+
+  container.innerHTML = html.join('');
+  document.getElementById('total-label').textContent = `${totalRooms} aktive Räume gesamt`;
+  setStatus('connected', `${totalRooms} Räume in 3 Projekten geladen`);
+}
+
+// ── Build project block ────────────────────────────
+function buildProjectBlock(proj, gameResults){
+  const totalInProj = gameResults.reduce((s,r)=>s+r.count,0);
+  const games = gameResults.map(r => buildGameSection(proj, r)).join('');
+  return `
+    <div class="project-block">
+      <div class="project-label">
+        <span class="project-label-icon">${proj.icon}</span>
+        <span class="project-label-name">${proj.name}</span>
+        <span class="project-label-badge ${proj.cls}">${totalInProj} Raum${totalInProj!==1?'e':''}</span>
+        ${totalInProj>0?`<button class="btn btn-danger btn-sm project-reset-btn"
+          onclick="confirmResetProject('${proj.id}','${esc(proj.name)}')">🗑 Projekt leeren</button>`:''}
+      </div>
+      ${games}
+    </div>`;
+}
+
+function buildGameSection(proj, {g, rooms, count, err}){
+  const id = 'gs_' + btoa(proj.id+g.path).replace(/[^a-z0-9]/gi,'');
+  const keys = Object.keys(rooms);
+  const isOpen = count > 0;
+  const roomItems = keys.length === 0
+    ? `<div class="no-rooms">Keine aktiven Räume</div>`
+    : keys.map(k => buildRoomItem(proj.id, g.path, k, rooms[k])).join('');
+
+  return `
+    <div class="game-section">
+      <div class="game-header" onclick="toggleSec('${id}')">
+        <span class="game-icon">${g.icon}</span>
+        <span class="game-name">${g.name}</span>
+        ${err?`<span style="font-size:11px;color:var(--red)">⚠ ${esc(err)}</span>`:''}
+        <span class="game-count ${count===0?'zero':''}">${count} Raum${count!==1?'e':''}</span>
+        ${count>0?`<button class="btn btn-danger btn-sm"
+          onclick="event.stopPropagation();confirmResetGame('${proj.id}','${esc(g.path)}','${esc(g.name)}')">🗑 Alle</button>`:''}
+        <span class="game-toggle ${isOpen?'open':''}" id="tog_${id}">▶</span>
+      </div>
+      <div class="room-list ${isOpen?'':'hidden'}" id="lst_${id}">
+        ${roomItems}
+      </div>
+    </div>`;
+}
+
+function buildRoomItem(projId, gamePath, roomId, data){
+  const players = data&&data.players ? Object.keys(data.players).length+' Spieler'
+                : data&&data.playerCount ? data.playerCount+' Spieler' : '';
+  const ts = data&&data.createdAt
+    ? new Date(data.createdAt).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})
+    : '';
+  const st = data&&data.status ? esc(data.status) : '';
+  return `
+    <div class="room-item">
+      <span class="room-id">${esc(roomId)}</span>
+      ${players?`<span class="room-players">👥 ${players}</span>`:''}
+      ${st?`<span class="room-meta">${st}</span>`:''}
+      ${ts?`<span class="room-meta">🕐 ${ts}</span>`:''}
+      <button class="btn btn-danger btn-sm"
+        onclick="confirmResetRoom('${projId}','${esc(gamePath)}','${esc(roomId)}')">🗑</button>
+    </div>`;
+}
+
+// ── Toggle ──────────────────────────────────────────
+function toggleSec(id){
+  document.getElementById('lst_'+id).classList.toggle('hidden');
+  document.getElementById('tog_'+id).classList.toggle('open');
+}
+function expandAll(){
+  document.querySelectorAll('.room-list').forEach(l=>l.classList.remove('hidden'));
+  document.querySelectorAll('.game-toggle').forEach(t=>t.classList.add('open'));
+}
+function collapseAll(){
+  document.querySelectorAll('.room-list').forEach(l=>l.classList.add('hidden'));
+  document.querySelectorAll('.game-toggle').forEach(t=>t.classList.remove('open'));
+}
+
+// ── Confirm / Reset actions ─────────────────────────
+function confirmResetRoom(projId, path, roomId){
+  showModal('Raum löschen?',
+    `Raum <strong style="color:var(--cyan)">${esc(roomId)}</strong><br>aus <strong>${esc(path)}</strong> (${esc(projId)}) wird gelöscht.`,
+    async ()=>{
+      await dbs[projId].ref(`${path}/${roomId}`).remove();
+      toast(`✅ Raum "${roomId}" gelöscht`); loadAll();
+    });
+}
+function confirmResetGame(projId, path, name){
+  showModal('Alle Räume löschen?',
+    `Alle Räume von <strong style="color:var(--cyan)">${esc(name)}</strong><br>im Projekt <strong>${esc(projId)}</strong> werden gelöscht.`,
+    async ()=>{
+      await dbs[projId].ref(path).remove();
+      toast(`✅ Alle Räume von "${name}" gelöscht`); loadAll();
+    });
+}
+function confirmResetProject(projId, name){
+  const proj = getProjects().find(p=>p.id===projId);
+  showModal('Projekt leeren?',
+    `Alle Räume aller Spiele in <strong style="color:var(--cyan)">${esc(name)}</strong> werden gelöscht.<br><br>Alle laufenden Spiele werden beendet.`,
+    async ()=>{
+      await Promise.all(proj.paths.map(g => dbs[projId].ref(g.path).remove()));
+      toast(`✅ Projekt "${name}" geleert`); loadAll();
+    });
+}
+function confirmResetAll(){
+  const total = document.getElementById('total-label').textContent;
+  showModal('Alles löschen?',
+    `Wirklich <strong style="color:var(--red)">alle Räume in allen 3 Projekten</strong> löschen?<br><br>${esc(total)}. Alle laufenden Spiele werden sofort beendet.`,
+    async ()=>{
+      const projects = getProjects();
+      for(const proj of projects){
+        await Promise.all(proj.paths.map(g => dbs[proj.id].ref(g.path).remove()));
+      }
+      toast('✅ Alle Räume in allen Projekten gelöscht'); loadAll();
+    });
+}
+
+// ── Modal ────────────────────────────────────────────
+function showModal(title, body, cb){
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = body;
+  document.getElementById('modal-overlay').classList.add('show');
+  modalCb = cb;
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('show'); modalCb=null; }
+document.getElementById('modal-ok').onclick = async ()=>{
+  closeModal();
+  if(modalCb){ setStatus('yellow','Lösche …'); try{ await modalCb(); }catch(e){ toast('Fehler: '+e.message,true); } }
+};
+
+// ── Toast ────────────────────────────────────────────
+function toast(msg, isErr=false){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='show'+(isErr?' error':'');
+  setTimeout(()=>{ el.className=''; },3500);
+}
+
+// ── Status ───────────────────────────────────────────
+function setStatus(type, msg){
+  document.getElementById('status-dot').className='dot'+(type==='red'?' red':type==='yellow'?' yellow':'');
+  document.getElementById('status-text').textContent=msg;
+}
+
+// ── Config ───────────────────────────────────────────
+let cfgOpen=false;
+function toggleCfg(){
+  cfgOpen=!cfgOpen;
+  const panel=document.getElementById('cfg-panel');
+  panel.classList.toggle('show',cfgOpen);
+  if(cfgOpen) fillCfgForm();
+}
+function fillCfgForm(){
+  const projs=getProjects();
+  projs.forEach((p,i)=>{
+    document.getElementById('k'+i).value=p.apiKey;
+    document.getElementById('u'+i).value=p.databaseURL;
+    document.getElementById('p'+i).value=p.paths.map(g=>`${g.icon} ${g.name} ${g.path}`).join('\n');
+  });
+}
+function saveCfg(){
+  const data=[0,1,2].map(i=>({
+    apiKey: document.getElementById('k'+i).value.trim(),
+    databaseURL: document.getElementById('u'+i).value.trim(),
+    paths: document.getElementById('p'+i).value.trim()
+  }));
+  localStorage.setItem('ssp_admin3', JSON.stringify(data));
+  cfgOpen=false; document.getElementById('cfg-panel').classList.remove('show');
+  location.reload();
+}
+function resetCfg(){
+  localStorage.removeItem('ssp_admin3');
+  location.reload();
+}
+function getProjects(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('ssp_admin3')||'null');
+    if(!saved) return PROJECTS_DEFAULT;
+    return PROJECTS_DEFAULT.map((p,i)=>({
+      ...p,
+      apiKey: saved[i].apiKey || p.apiKey,
+      databaseURL: saved[i].databaseURL || p.databaseURL,
+      paths: saved[i].paths
+        ? saved[i].paths.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
+            const m=l.match(/^(\S+)\s+(.+?)\s+(\/\S+)$/);
+            return m?{icon:m[1],name:m[2],path:m[3]}:null;
+          }).filter(Boolean)
+        : p.paths
+    }));
+  }catch{ return PROJECTS_DEFAULT; }
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+</script>
+</body>
+</html>
