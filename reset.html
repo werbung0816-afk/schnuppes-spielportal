@@ -293,6 +293,7 @@ textarea.cfg-input{ resize:vertical; line-height:1.5; }
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script>
 // ══════════════════════════════════════════════════
 //  KONFIGURATION
@@ -365,22 +366,40 @@ document.getElementById('pin-input').addEventListener('input', e => {
 });
 
 // ── Init Firebase per project ──────────────────────
-function init(){
+async function init(){
   const projects = getProjects();
+  const authPromises = [];
   projects.forEach(proj => {
     try {
       const app = firebase.apps.find(a => a.name === proj.id)
         || firebase.initializeApp({
               apiKey:      proj.apiKey,
+              authDomain:  proj.id + '.firebaseapp.com',
               databaseURL: proj.databaseURL,
               projectId:   proj.id,
            }, proj.id);
       dbs[proj.id] = firebase.database(app);
+      // Anonym einloggen damit Security Rules greifen
+      const auth = firebase.auth(app);
+      authPromises.push(
+        auth.signInAnonymously().catch(e => console.warn('Auth skip:', proj.id, e.code))
+      );
     } catch(e){
       console.warn('Firebase init error', proj.id, e);
     }
   });
+  setStatus('yellow', 'Authentifiziere …');
+  await Promise.all(authPromises);
   loadAll();
+}
+
+// Hilfsfunktion: Firebase-Read mit Timeout
+function getWithTimeout(ref, ms=8000){
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('Timeout')), ms);
+    ref.get().then(snap => { clearTimeout(timer); resolve(snap); })
+             .catch(err  => { clearTimeout(timer); reject(err); });
+  });
 }
 
 // ── Load all rooms from all projects ──────────────
@@ -399,7 +418,7 @@ async function loadAll(){
 
     await Promise.all(proj.paths.map(async g => {
       try {
-        const snap = await db.ref(g.path).get();
+        const snap = await getWithTimeout(db.ref(g.path));
         const rooms = snap.exists() && snap.val() ? snap.val() : {};
         const count = Object.keys(rooms).length;
         totalRooms += count;
