@@ -393,6 +393,8 @@ body{
 
 /* version */
 .ver{position:fixed;bottom:12px;right:16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);z-index:100}
+
+.embedded-mode #screen-lobby{display:none!important;}
 </style>
 </head>
 <body>
@@ -412,7 +414,7 @@ body{
 </div>
 
 <!-- ════ LOBBY ════ -->
-<div id="screen-lobby" class="screen active">
+<div id="screen-lobby" class="screen">
 <div class="card">
   <div class="game-title">PAPARAZZI</div>
   <div style="font-size:13px;color:var(--muted);margin-top:-8px">Erkenne den Künstler aus dem verschwommenen Bild</div>
@@ -518,6 +520,7 @@ body{
 var EMBEDDED_MODE = (new URLSearchParams(window.location.search)).get('embedded') === '1';
 var embCfg = {};
 if(EMBEDDED_MODE){
+  document.body.classList.add('embedded-mode');
   try { embCfg = JSON.parse(sessionStorage.getItem('chartsterMiniConfig') || '{}'); } catch(e){}
 }
 
@@ -771,15 +774,26 @@ function setGoal(btn){
 
 // ════ START ════
 function startGame(){
-  var active=getActiveSeats();
-  if(active.length<2){showHint('Mindestens 2 Teams!');return;}
   if(G.artists.length===0){showHint('Songs noch nicht geladen – kurz warten!');return;}
 
-  G.teams=active.map(function(pos,i){
-    var inp=document.querySelector('.seat[data-pos="'+pos+'"] .seat-inp');
-    var name=inp&&inp.value.trim()?inp.value.trim():DEFAULTS[i];
-    return{name:name,color:COLORS[i],pos:pos,side:SEAT_SIDE[pos]};
-  });
+  if(EMBEDDED_MODE){
+    // Spieler direkt aus Chartster-Config lesen
+    var ep=embCfg.players||[];
+    ep.forEach(function(p,i){if(p.color) COLORS[i]=p.color;});
+    G.teams=ep.map(function(p,i){
+      return{name:p.name||DEFAULTS[i],color:p.color||COLORS[i],
+             origIdx:p.origIdx!==undefined?p.origIdx:i};
+    });
+  } else {
+    var active=getActiveSeats();
+    if(active.length<2){showHint('Mindestens 2 Teams!');return;}
+    G.teams=active.map(function(pos,i){
+      var inp=document.querySelector('.seat[data-pos="'+pos+'"] .seat-inp');
+      var name=inp&&inp.value.trim()?inp.value.trim():DEFAULTS[i];
+      return{name:name,color:COLORS[i],pos:pos,side:SEAT_SIDE[pos],
+             origIdx:i};
+    });
+  }
   G.players=G.teams.map(function(t){return t.name;});
   G.scores=G.teams.map(function(){return 0;});
   G.queue=shuffle(G.artists.map(function(_,i){return i;}));
