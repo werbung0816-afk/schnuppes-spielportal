@@ -9,7 +9,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273f67eca387b89ebc07349254f",
     "al": "Das Album",
     "r": "2010-04-24",
-    "is": "ATHE51082020"
+    "is": "ATHE51082020",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/f26cf193c86a7552a99c08731aa5c93c/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "00er",
@@ -954,9 +955,9 @@
     "a": "Stefan Raab",
     "t": "Wadde hadde dudde da?",
     "l": "0h2NqULt32GOvyAnpf8wiE",
-    "c": "https://cdn-images.dzcdn.net/images/cover/f7d38e8a4acb22c83433fef582ab5813/1000x1000-000000-80-0-0.jpg",
-    "al": "Seine größten Hits - 25 Jahre",
-    "r": "2024-09-13",
+    "c": "https://i.scdn.co/image/ab67616d0000b273999c3ddbf6ddc11660d4d727",
+    "al": "MFG",
+    "r": "2000-03-27",
     "is": "DEQ980000078",
     "ca": "https://i.scdn.co/image/ab6761610000e5eb140df32415d5a8a1e81ce0b3"
   },
@@ -1139,7 +1140,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273f67eca387b89ebc07349254f",
     "al": "Das Album",
     "r": "2010-04-24",
-    "is": "ATHE51082030"
+    "is": "ATHE51082030",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/f26cf193c86a7552a99c08731aa5c93c/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "00er",
@@ -1723,7 +1725,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273907a8a7088abc066718a7b3b",
     "al": "HAQ",
     "r": "2018-06-15",
-    "is": "FR10S1863355"
+    "is": "FR10S1863355",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/b9c87a183ca87942ac48e30f81c5b1c6/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "00er",
@@ -6226,9 +6229,9 @@
     "a": "Robbie Williams",
     "t": "Radio",
     "l": "2r7J1AX8x0JcPPVpCSrKer",
-    "c": "https://cdn-images.dzcdn.net/images/cover/609a5a341d0b7d2440bfe915a0002e97/1000x1000-000000-80-0-0.jpg",
-    "al": "In And Out Of Consciousness: Greatest Hits 1990 - 2010",
-    "r": "2010-01-01",
+    "c": "https://i.scdn.co/image/ab67616d0000b27392b320c0a45db23a69e2c366",
+    "al": "Intensive Care",
+    "r": "2005-10-24",
     "is": "GBFFG0400018",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebec4b5ff594ae3d7c5622cf23"
   },
@@ -9487,9 +9490,9 @@
     "a": "Michael Mind feat. Manfred Mann's Earth Band",
     "t": "Blinded By The Light",
     "l": "35T8RXR3gDEzhcedyI956b",
-    "c": "https://cdn-images.dzcdn.net/images/cover/1cb4f694f37d6f9df018be4a54a8ef54/1000x1000-000000-80-0-0.jpg",
-    "al": "Kontor Presents Michael Mind Project - State of Mind",
-    "r": "2013-03-15",
+    "c": "https://i.scdn.co/image/ab67616d0000b273f48b17ac81f4dca5eba40aa8",
+    "al": "Michael Mind Project - State of Mind",
+    "r": "2007-01-01",
     "is": "DEN061202537",
     "ca": "https://cdn-images.dzcdn.net/images/artist/f1f887234d2841d94ae10e45681cbc61/1000x1000-000000-80-0-0.jpg"
   },
@@ -12184,6 +12187,19 @@
   },
   {
     "f": "10er",
+    "y": 2008,
+    "p": 5,
+    "a": "Asaf Avidan",
+    "t": "One Day / Reckoning Song",
+    "l": "5bGG1abhVIUm6EAa36ipRX",
+    "c": "https://i.scdn.co/image/ab67616d0000b273895d176afa9c0a1d350f7520",
+    "al": "One Day / Reckoning Song (Wankelmut Remix)",
+    "r": "2012-10-08",
+    "is": "DEQ321200132",
+    "ca": "https://i.scdn.co/image/ab6761610000e5eb5eeafd4e13fed863a5e95c96"
+  },
+  {
+    "f": "10er",
     "y": 2010,
     "p": 1,
     "a": "Israel IZ Kamakawiwo'ole",
@@ -12246,6 +12262,19 @@
     "r": "2020-12-04",
     "is": "AUCN30901654",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebd24473f20f5bc3fe72811019"
+  },
+  {
+    "f": "10er",
+    "y": 2010,
+    "p": 6,
+    "a": "Lilly Wood & The Prick",
+    "t": "Prayer In C",
+    "l": "4MteadAdoJXNnuBIa0Q1ZK",
+    "c": "https://i.scdn.co/image/ab67616d0000b27390802232b5f1a6047ebfe512",
+    "al": "Invincible Friends",
+    "r": "2010-05-31",
+    "is": "FR9W10906230",
+    "ca": "https://i.scdn.co/image/ab6761610000e5eb1f4caca17c0247e65e20645c"
   },
   {
     "f": "10er",
@@ -12491,7 +12520,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273d8ead1778f9543f574bb54f3",
     "al": "Giraffenaffen 10",
     "r": "2026-04-17",
-    "is": "DEUM72600093"
+    "is": "DEUM72600093",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/21477cb8a16695788dcdb1625495853a/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "10er",
@@ -12851,9 +12881,9 @@
     "a": "Enrique Iglesias feat. Pitbull",
     "t": "I Like It",
     "l": "03II0FjR5761PnGQHKgHHk",
-    "c": "https://cdn-images.dzcdn.net/images/cover/335464b3bab374dbc53bfe2a05f22a8f/1000x1000-000000-80-0-0.jpg",
-    "al": "Karaoke hits",
-    "r": "2010-09-23",
+    "c": "https://i.scdn.co/image/ab67616d0000b273c53d8d544509f5017535e211",
+    "al": "Euphoria",
+    "r": "2010-07-05",
     "is": "ARG991008530",
     "ca": "https://cdn-images.dzcdn.net/images/artist/7c0f867fb50b6c9302f991521e42e764/1000x1000-000000-80-0-0.jpg"
   },
@@ -13839,9 +13869,9 @@
     "a": "Sak Noel",
     "t": "Loca People (What The F**k!)",
     "l": "7Aa2HJYbZvVbTmBjmKhv9D",
-    "c": "https://cdn-images.dzcdn.net/images/cover/2ea75ddfe500b3b8dd509b4194612f54/1000x1000-000000-80-0-0.jpg",
-    "al": "Urban Dance Vol. 2",
-    "r": "2011-09-09",
+    "c": "https://i.scdn.co/image/ab67616d0000b2731ed7280dbc9e321bbb054571",
+    "al": "Loca People",
+    "r": "2011-01-01",
     "is": "ES61A0800031",
     "ca": "https://cdn-images.dzcdn.net/images/artist/daa231682ae310d58d50bca40b3fcb6f/1000x1000-000000-80-0-0.jpg"
   },
@@ -13969,9 +13999,9 @@
     "a": "Katy Perry feat. Kanye West",
     "t": "E.T.",
     "l": "2ya7QgShrnI12YnREgBwav",
-    "c": "https://cdn-images.dzcdn.net/images/cover/99578b0bb8c838383c414a5b62b5e15d/1000x1000-000000-80-0-0.jpg",
-    "al": "Karaoke The Best Collection",
-    "r": "2011-03-14",
+    "c": "https://i.scdn.co/image/ab67616d0000b2732b35c65272c692eed2345f1e",
+    "al": "Teenage Dream",
+    "r": "2010-08-24",
     "is": "ARG991011129",
     "ca": "https://cdn-images.dzcdn.net/images/artist/9c144bd1ed91b2a59c826cf1d1cde633/1000x1000-000000-80-0-0.jpg"
   },
@@ -14447,6 +14477,19 @@
     "f": "10er",
     "y": 2012,
     "p": 1,
+    "a": "Omi",
+    "t": "Cheerleader",
+    "l": "7vFoFDWqTX0mHzLfrF1Cfy",
+    "c": "https://i.scdn.co/image/ab67616d0000b27385ca00029c70d6b5b8372e96",
+    "al": "Me 4 U",
+    "r": "2015-10-16",
+    "is": "USUS11202574",
+    "ca": "https://i.scdn.co/image/ab6761610000e5eb0e46cda64faf8eae508fd53d"
+  },
+  {
+    "f": "10er",
+    "y": 2012,
+    "p": 1,
     "a": "Michel Teló",
     "t": "Ai se eu te pego!",
     "l": "29vem0DsWK4224LQyxcmA5",
@@ -14485,15 +14528,15 @@
   {
     "f": "10er",
     "y": 2012,
-    "p": 5,
-    "a": "Asaf Avidan",
-    "t": "One Day / Reckoning Song (Wankelmut Rmx)",
-    "l": "5bGG1abhVIUm6EAa36ipRX",
-    "c": "https://i.scdn.co/image/ab67616d0000b273895d176afa9c0a1d350f7520",
-    "al": "One Day / Reckoning Song (Wankelmut Remix)",
-    "r": "2012-10-08",
-    "is": "DEQ321200132",
-    "ca": "https://i.scdn.co/image/ab6761610000e5eb5eeafd4e13fed863a5e95c96"
+    "p": 4,
+    "a": "Imany",
+    "t": "Don't Be So Shy",
+    "l": "00vk0sEfb6mr2ehwSw0Uhn",
+    "c": "https://i.scdn.co/image/ab67616d0000b2737c08ab28cd5a178402056972",
+    "al": "The Wrong Kind Of War",
+    "r": "2016-08-26",
+    "is": "RUA591500339",
+    "ca": "https://i.scdn.co/image/ab6761610000e5ebbf54ac600a5823c2cdd98b98"
   },
   {
     "f": "10er",
@@ -15438,9 +15481,9 @@
     "a": "R.I.O. feat. Nicco",
     "t": "Party Shaker",
     "l": "6QFROHpPMJj4xNzWxM9JFH",
-    "c": "https://cdn-images.dzcdn.net/images/cover/3dbfe50b380dfca25a23b877b1656a89/1000x1000-000000-80-0-0.jpg",
-    "al": "UPTRAX Vol.01",
-    "r": "2012-07-27",
+    "c": "https://i.scdn.co/image/ab67616d0000b2736ab856c39479563f94d4171a",
+    "al": "Party Shaker",
+    "r": "2012-01-01",
     "is": "DEHK91257101",
     "ca": "https://cdn-images.dzcdn.net/images/artist/fc700bc1daa32032e498c796338a0ac8/1000x1000-000000-80-0-0.jpg"
   },
@@ -15568,9 +15611,9 @@
     "a": "Guru Josh",
     "t": "Infinity 2012",
     "l": "2bt6OPoNWU4zDXuZao95Ks",
-    "c": "https://cdn-images.dzcdn.net/images/cover/50a15b3810fc645905ce1c8127a916ae/1000x1000-000000-80-0-0.jpg",
-    "al": "UPTRAX Vol.01",
-    "r": "2012-07-27",
+    "c": "https://i.scdn.co/image/ab67616d0000b2736ab856c39479563f94d4171a",
+    "al": "Infinity 2012",
+    "r": "2012-01-01",
     "is": "DEHD60812262",
     "ca": "https://i.scdn.co/image/ab67616d0000b273c24c489de3040f32d80f21f6"
   },
@@ -15625,6 +15668,19 @@
     "r": "2013-01-01",
     "is": "USUM71307668",
     "ca": "https://i.scdn.co/image/ab6761610000e5eb02582bb3fa9d68f44a247f39"
+  },
+  {
+    "f": "10er",
+    "y": 2013,
+    "p": 3,
+    "a": "Mr Probz",
+    "t": "Waves",
+    "l": "3s8GJ1A9ujxsKcLaJ2wY7Q",
+    "c": "https://i.scdn.co/image/ab67616d0000b2739cb75e42da5919937f4069b8",
+    "al": "Waves",
+    "r": "2013-11-22",
+    "is": "TCABN1366256",
+    "ca": "https://i.scdn.co/image/ab6761610000e5eb4665e17c6cad3616d170dfeb"
   },
   {
     "f": "10er",
@@ -16758,19 +16814,6 @@
   {
     "f": "10er",
     "y": 2014,
-    "p": 3,
-    "a": "Mr Probz",
-    "t": "Waves (Robin Schulz Remix)",
-    "l": "2HDhsfCmbVjLHYXK32jaCC",
-    "c": "https://i.scdn.co/image/ab67616d0000b2736b1e6c3de39b48225ad5ac95",
-    "al": "Waves [feat. Chris Brown & T.I.] (Robin Schulz Remix)",
-    "r": "2014-11-13",
-    "is": "NLB8R1400020",
-    "ca": "https://i.scdn.co/image/ab6761610000e5eb4665e17c6cad3616d170dfeb"
-  },
-  {
-    "f": "10er",
-    "y": 2014,
     "p": 4,
     "a": "Andreas Bourani",
     "t": "Auf uns",
@@ -16793,19 +16836,6 @@
     "r": "2014-05-19",
     "is": "DEQ321400093",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebb1a35d0275298c6d79467bf8"
-  },
-  {
-    "f": "10er",
-    "y": 2014,
-    "p": 6,
-    "a": "Lilly Wood & The Prick and Robin Schulz",
-    "t": "Prayer In C (Robin Schulz Remix)",
-    "l": "3k9FFXVPn3ua8dlpkxlCvZ",
-    "c": "https://i.scdn.co/image/ab67616d0000b2730538d5d965798a403219a470",
-    "al": "Prayer in C",
-    "r": "2014-05-16",
-    "is": "DEA621400324",
-    "ca": "https://i.scdn.co/image/ab6761610000e5eb1f4caca17c0247e65e20645c"
   },
   {
     "f": "10er",
@@ -17872,19 +17902,6 @@
     "r": "2014-06-21",
     "is": "GBAHS1400099",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebd55c95ad400aed87da52daec"
-  },
-  {
-    "f": "10er",
-    "y": 2015,
-    "p": 1,
-    "a": "Omi",
-    "t": "Cheerleader (Felix Jaehn Remix)",
-    "l": "7vFoFDWqTX0mHzLfrF1Cfy",
-    "c": "https://i.scdn.co/image/ab67616d0000b27385ca00029c70d6b5b8372e96",
-    "al": "Me 4 U",
-    "r": "2015-10-16",
-    "is": "USUS11202574",
-    "ca": "https://i.scdn.co/image/ab6761610000e5eb0e46cda64faf8eae508fd53d"
   },
   {
     "f": "10er",
@@ -19029,19 +19046,6 @@
     "r": "2016-02-18",
     "is": "USRC11600201",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebcc1806f0a2f6c9e449de9d3c"
-  },
-  {
-    "f": "10er",
-    "y": 2016,
-    "p": 4,
-    "a": "Imany",
-    "t": "Don't Be So Shy (Filatov & Karas Remix)",
-    "l": "00vk0sEfb6mr2ehwSw0Uhn",
-    "c": "https://i.scdn.co/image/ab67616d0000b2737c08ab28cd5a178402056972",
-    "al": "The Wrong Kind Of War",
-    "r": "2016-08-26",
-    "is": "RUA591500339",
-    "ca": "https://i.scdn.co/image/ab6761610000e5ebbf54ac600a5823c2cdd98b98"
   },
   {
     "f": "10er",
@@ -20241,6 +20245,19 @@
     "f": "10er",
     "y": 2017,
     "p": 7,
+    "a": "Namika feat. Black M",
+    "t": "Je ne parle pas français",
+    "l": "4eJqzRN15DabYK4byfWghD",
+    "c": "https://i.scdn.co/image/ab67616d0000b27363f705c9659121b74d6c46cd",
+    "al": "Que Walou",
+    "r": "2018-06-01",
+    "is": "DEE861800295",
+    "ca": "https://i.scdn.co/image/ab6761610000e5ebc7d270ab14340a10ab8fd4cc"
+  },
+  {
+    "f": "10er",
+    "y": 2017,
+    "p": 7,
     "a": "Robin Schulz feat. James Blunt",
     "t": "OK",
     "l": "3OnLVddwAfFPnRfU791ri2",
@@ -21418,19 +21435,6 @@
     "r": "2018-04-13",
     "is": "FR22F1800090",
     "ca": "https://i.scdn.co/image/ab6761610000e5eb68eeec349171d12a3b735af7"
-  },
-  {
-    "f": "10er",
-    "y": 2018,
-    "p": 7,
-    "a": "Namika feat. Black M",
-    "t": "Je ne parle pas français (Beatgees Remix)",
-    "l": "7pLG2f4GnHLYgRovYdgCPL",
-    "c": "https://i.scdn.co/image/ab67616d0000b273121f1e3b2b30bb3921ccaac2",
-    "al": "Je ne parle pas français (feat. Black M) [Beatgees Remix]",
-    "r": "2018-04-13",
-    "is": "DEE861800632",
-    "ca": "https://i.scdn.co/image/ab6761610000e5ebc7d270ab14340a10ab8fd4cc"
   },
   {
     "f": "10er",
@@ -23666,6 +23670,45 @@
   },
   {
     "f": "20er",
+    "y": 2016,
+    "p": 4,
+    "a": "SAINt JHN",
+    "t": "Roses",
+    "l": "40cFdmLD8PO7wOvYHG4qYe",
+    "c": "https://i.scdn.co/image/ab67616d0000b273f062321ad9046a2a99c6bac8",
+    "al": "While The World Was Burning",
+    "r": "2020-11-20",
+    "is": "USUYG1314590",
+    "ca": "https://i.scdn.co/image/ab6761610000e5ebd39f6882e384376eaf3271a0"
+  },
+  {
+    "f": "20er",
+    "y": 2019,
+    "p": 49,
+    "a": "Master KG feat. Burna Boy & Nomcebo Zikode",
+    "t": "Jerusalema",
+    "l": "1dmES1X8l1AnFBy2gR3wYA",
+    "c": "https://i.scdn.co/image/ab67616d0000b2730d19cc1dd2613be1481f8263",
+    "al": "Jerusalema (Deluxe)",
+    "r": "2020-12-18",
+    "is": "ZA56E2002088",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/d59e7069dc54809cab23c7a4775faece/1000x1000-000000-80-0-0.jpg"
+  },
+  {
+    "f": "20er",
+    "y": 2019,
+    "p": 59,
+    "a": "CKay feat. ElGrande Toto",
+    "t": "Love Nwantiti",
+    "l": "2Xr1dTzJee307rmrkt8c0g",
+    "c": "https://i.scdn.co/image/ab67616d0000b273405fdad252857e01dbced96a",
+    "al": "CKay The First",
+    "r": "2019-08-30",
+    "is": "QMEU31910213",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/032e7d03d75414baf8b73411e6679a13/1000x1000-000000-80-0-0.jpg"
+  },
+  {
+    "f": "20er",
     "y": 2020,
     "p": 1,
     "a": "The Weeknd",
@@ -23676,19 +23719,6 @@
     "r": "2020-03-20",
     "is": "USUG11904206",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebc1719ac9e6a75c1c25835018"
-  },
-  {
-    "f": "20er",
-    "y": 2020,
-    "p": 4,
-    "a": "SAINt JHN",
-    "t": "Roses (Imanbek Remix)",
-    "l": "24Yi9hE78yPEbZ4kxyoXAI",
-    "c": "https://i.scdn.co/image/ab67616d0000b273b340b496cb7c38d727ff40be",
-    "al": "Roses (Imanbek Remix)",
-    "r": "2019-10-09",
-    "is": "RUB421901499",
-    "ca": "https://i.scdn.co/image/ab6761610000e5ebd39f6882e384376eaf3271a0"
   },
   {
     "f": "20er",
@@ -24170,19 +24200,6 @@
     "r": "2020-03-27",
     "is": "GBAHT1901298",
     "ca": "https://i.scdn.co/image/ab6761610000e5eb0c68f6c95232e716f0abee8d"
-  },
-  {
-    "f": "20er",
-    "y": 2020,
-    "p": 49,
-    "a": "Master KG feat. Burna Boy & Nomcebo Zikode",
-    "t": "Jerusalema (Remix)",
-    "l": "2R7gA9dAHTjASKU0wiTJok",
-    "c": "https://i.scdn.co/image/ab67616d0000b27393dabd07cc2815a21b7ef625",
-    "al": "Jerusalema (feat. Burna Boy & Nomcebo Zikode) [Remix]",
-    "r": "2020-07-09",
-    "is": "ZA82Y2000076",
-    "ca": "https://cdn-images.dzcdn.net/images/artist/d59e7069dc54809cab23c7a4775faece/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -25428,19 +25445,6 @@
     "r": "2021-05-06",
     "is": "DEUM72007087",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebdc80016eee62de91344e781c"
-  },
-  {
-    "f": "20er",
-    "y": 2021,
-    "p": 59,
-    "a": "CKay feat. ElGrande Toto",
-    "t": "Love Nwantiti (North African Remix)",
-    "l": "1EYeZGTMCjV7uVey5fNWXM",
-    "c": "https://i.scdn.co/image/ab67616d0000b2735af6e77febd3607d1ff34497",
-    "al": "love nwantiti (feat. ElGrande Toto) [North African Remix]",
-    "r": "2020-08-21",
-    "is": "ZA34K2000415",
-    "ca": "https://cdn-images.dzcdn.net/images/artist/032e7d03d75414baf8b73411e6679a13/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -27032,7 +27036,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273318e231353ee12b7183c9936",
     "al": "Blaue Stunden",
     "r": "2023-11-03",
-    "is": "DE1GM2200005"
+    "is": "DE1GM2200005",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/d6028830b16484fcec482e4ae734d45c/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -27935,19 +27940,6 @@
     "r": "2023-11-24",
     "is": "DGA0L2397076",
     "ca": "https://cdn-images.dzcdn.net/images/artist/6ceb2409e2424799a9f55b2936690dc5/1000x1000-000000-80-0-0.jpg"
-  },
-  {
-    "f": "20er",
-    "y": 2024,
-    "p": 58,
-    "a": "Disturbed",
-    "t": "The Sound Of Silence (Cyril Remix)",
-    "l": "1LY3GhF0zxIVgbYEQjCbUO",
-    "c": "https://i.scdn.co/image/ab67616d0000b2733b4f7ee095821f15a7d78127",
-    "al": "The Sound of Silence (CYRIL Remix)",
-    "r": "2024-02-02",
-    "is": "USRE12400063",
-    "ca": "https://i.scdn.co/image/ab6761610000e5eb6823b6df396ecf49931e34a1"
   },
   {
     "f": "20er",
@@ -29239,12 +29231,12 @@
     "y": 2025,
     "p": 98,
     "a": "Pietro Basile, Harris & Ford & Big Tim",
-    "t": "Gianna (Remix)",
-    "l": "7xyqYw7dARltcgGhtSqbti",
+    "t": "Gianna",
+    "l": "52lF2brp2QBZRcIlB0GJe4",
     "c": "https://i.scdn.co/image/ab67616d0000b273b2f7b9209f3a26ad47ad249f",
     "al": "Gianna (Harris & Ford x BIG TIM Remix)",
     "r": "2025-04-04",
-    "is": "DEWS52500011"
+    "is": "DEWS52500010"
   },
   {
     "f": "20er",
@@ -31260,9 +31252,9 @@
     "t": "Siebentausend Rinder",
     "l": "4u5ESVCB3rZW4dkvFwl05B",
     "legacy": true,
-    "c": "https://cdn-images.dzcdn.net/images/cover/42a0446aa76c04b1aa4a056e4710d0e0/1000x1000-000000-80-0-0.jpg",
-    "al": "Das Beste aus 50 Jahren Ariola Vol. 3",
-    "r": "2008-03-14",
+    "c": "https://i.scdn.co/image/ab67616d0000b27326a15a97731e9377e15e4cfe",
+    "al": "Peter Hinnen",
+    "r": "1963-01-01",
     "is": "DEA816300004",
     "ca": "https://i.scdn.co/image/ab67616d0000b273386f68705cb9444f1146ceaf"
   },
@@ -31708,9 +31700,9 @@
     "t": "Drina-Marsch",
     "l": "709W93OAZ2BqaPRvDa1zXl",
     "legacy": true,
-    "c": "https://cdn-images.dzcdn.net/images/cover/ea7e40055c6a87da2af01d2a6b3228ee/1000x1000-000000-80-0-0.jpg",
-    "al": "TætPå (Vol. 2)",
-    "r": "2020-05-15",
+    "c": "https://i.scdn.co/image/ab67616d0000b27309575af0c60a2031814eaad7",
+    "al": "Guitar Instrumentals",
+    "r": "1964-01-01",
     "is": "DKNA21301201",
     "ca": "https://cdn-images.dzcdn.net/images/artist/938d65912058447c6c0548cbcae5fbcb/1000x1000-000000-80-0-0.jpg"
   },
@@ -31890,9 +31882,9 @@
     "t": "Das war mein schönster Tanz",
     "l": "2BHfvwa7gxhN7h0rxQMubR",
     "legacy": true,
-    "c": "https://cdn-images.dzcdn.net/images/cover/42a0446aa76c04b1aa4a056e4710d0e0/1000x1000-000000-80-0-0.jpg",
-    "al": "Die besten deutschen Teenager-Hits der 50er und 60er",
-    "r": "2016-05-13",
+    "c": "https://i.scdn.co/image/ab67616d0000b27321ef909413f193b5f08f7cff",
+    "al": "Das war mein schönster Tanz",
+    "r": "1965-01-01",
     "is": "DEAR41617519",
     "ca": "https://i.scdn.co/image/ab6742d3000053b7b9ee0691b3f1938170836140"
   },
@@ -32170,9 +32162,9 @@
     "t": "Taxi nach Texas",
     "l": "47LoG1xV1A5BOiLTsra6QK",
     "legacy": true,
-    "c": "https://cdn-images.dzcdn.net/images/cover/bb47f22e1440193f2c8ce0b6c133c54b/1000x1000-000000-80-0-0.jpg",
-    "al": "Schlagerjuwelen - Best Of, Vol. 3",
-    "r": "2009-01-01",
+    "c": "https://i.scdn.co/image/ab67616d0000b273a408bf280f35a381c22fd85c",
+    "al": "Taxi nach Texas",
+    "r": "1965-01-01",
     "is": "DEF060002640",
     "ca": "https://cdn-images.dzcdn.net/images/artist/0959a86c2ad559f095dd8a63aab83850/1000x1000-000000-80-0-0.jpg"
   },
@@ -32268,9 +32260,9 @@
     "t": "Good Bye, Good Bye, Good Bye",
     "l": "5eIWjrnasbZOTFyuKXAkaY",
     "legacy": true,
-    "c": "https://cdn-images.dzcdn.net/images/cover/fec6b390cde34381671de3974100db06/1000x1000-000000-80-0-0.jpg",
-    "al": "Sings Her German Hits (Expanded Edition)",
-    "r": "2023-01-13",
+    "c": "https://i.scdn.co/image/ab67616d0000b27350157ea3aec9b42cb99f39c4",
+    "al": "Peggy March Sings",
+    "r": "1965-01-01",
     "is": "USRC10401813",
     "ca": "https://i.scdn.co/image/ab6761610000e5eb336c45602c0b88cf0cd63483"
   },
@@ -35974,7 +35966,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b27302b2946185f532167bae29f3",
     "al": "New World",
     "r": "1971-01-01",
-    "is": "GBAYE7100101"
+    "is": "GBAYE7100101",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/34b7226afe31e80d5eee9db562e87d21/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "70er",
@@ -36672,9 +36665,9 @@
     "a": "Wum's Gesang",
     "t": "Ich wünsch mir 'ne kleine Miezekatze",
     "l": "3LE0oKAZ8PCHIHjrsZ5IRg",
-    "c": "https://cdn-images.dzcdn.net/images/cover/854f7a0c4856a42d908593e3776a42e2/1000x1000-000000-80-0-0.jpg",
-    "al": "Das Beste aus 50 Jahren Ariola Vol. 1",
-    "r": "2008-03-14",
+    "c": "https://i.scdn.co/image/ab67616d0000b2736bc55bed899fb4293ebcd246",
+    "al": "Wum's Gesang singt für Kinder",
+    "r": "1973-01-01",
     "is": "DEA817200001",
     "ca": "https://cdn-images.dzcdn.net/images/artist/7b68dddaa434438ce48647202e1ba619/1000x1000-000000-80-0-0.jpg"
   },
@@ -37621,9 +37614,9 @@
     "a": "Cindy & Bert",
     "t": "Spaniens Gitarren",
     "l": "6T0zdOkIHgapgfvtsuNjNm",
-    "c": "https://cdn-images.dzcdn.net/images/cover/13230c0db6adff578f60628eae98f009/1000x1000-000000-80-0-0.jpg",
-    "al": "...und jetzt alle! Der Schlager Hit-Mix",
-    "r": "2016-10-11",
+    "c": "https://i.scdn.co/image/ab67616d0000b2730d2f91a195def884359f4089",
+    "al": "Spaniens Gitarren",
+    "r": "1974-01-01",
     "is": "DENW81600031",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebff39f09494561f23f5f4b8c5"
   },
@@ -37816,9 +37809,9 @@
     "a": "Cindy & Bert",
     "t": "Aber am Abend da spielt der Zigeuner",
     "l": "6T0zdOkIHgapgfvtsuNjNm",
-    "c": "https://cdn-images.dzcdn.net/images/cover/0a60418b778661c7abac841fc2c2b83c/1000x1000-000000-80-0-0.jpg",
-    "al": "...und jetzt alle! Der Schlager Hit-Mix",
-    "r": "2016-10-11",
+    "c": "https://i.scdn.co/image/ab67616d0000b2730d2f91a195def884359f4089",
+    "al": "Aber am Abend da spielt der Zigeuner",
+    "r": "1974-01-01",
     "is": "DENW81600031",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebff39f09494561f23f5f4b8c5"
   },
@@ -38595,11 +38588,11 @@
     "p": 7,
     "a": "Sailor",
     "t": "Girls, Girls, Girls",
-    "l": "1rWwPGQnYP2VrdUViImQMf",
-    "c": "https://cdn-images.dzcdn.net/images/cover/ad68f0dd49080eb55d1e0e7df1e4e07b/1000x1000-000000-80-0-0.jpg",
-    "al": "Sailor's Greatest Hits",
-    "r": "1993-05-10",
-    "is": "DEC769100082",
+    "l": "3wceSVjJlNNRJMQ8R31C6y",
+    "c": "https://i.scdn.co/image/ab67616d0000b2737488981e841b24bc91739019",
+    "al": "Treasure Trove: Anthology 1975-2005",
+    "r": "2005-10-01",
+    "is": "GBHMX0724911",
     "ca": "https://i.scdn.co/image/ab67616d0000b273ff430fa24c5ec92b9c0d4a9d"
   },
   {
@@ -39024,10 +39017,10 @@
     "p": 41,
     "a": "Slik",
     "t": "Forever And Ever",
-    "l": "6KlAQwufU2PKNX15neNmPN",
-    "c": "https://cdn-images.dzcdn.net/images/cover/6b22ccb0edfa57c49bdf40e868209d70/1000x1000-000000-80-0-0.jpg",
-    "al": "Glam. Greatest Hits",
-    "r": "2011-09-19",
+    "l": "5BcOSd5DwNNDfMMVifA2qF",
+    "c": "https://i.scdn.co/image/ab67616d0000b2739971075361fcf5397c34ac03",
+    "al": "Slik",
+    "r": "1976-08-07",
     "is": "NLB127500321",
     "ca": "https://cdn-images.dzcdn.net/images/artist/ebbaf00a8c34e2c6398a7982b90e14dd/1000x1000-000000-80-0-0.jpg"
   },
@@ -41072,6 +41065,19 @@
   },
   {
     "f": "80er",
+    "y": 1976,
+    "p": 68,
+    "a": "The Real Thing",
+    "t": "You To Me Are Everything",
+    "l": "65kKvpTuhJAVxyFPlKuOAd",
+    "c": "https://i.scdn.co/image/ab67616d0000b273874698f8742583e90e88a6d6",
+    "al": "Real Thing",
+    "r": "1976-04-11",
+    "is": "GBAJE7600005",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/e4eb438c8d8008a68ecc4ab80ed724fc/1000x1000-000000-80-0-0.jpg"
+  },
+  {
+    "f": "80er",
     "y": 1980,
     "p": 1,
     "a": "Goombay Dance Band",
@@ -41272,9 +41278,9 @@
     "a": "Olivia Newton-John & Electric Light Orchestra",
     "t": "Xanadu",
     "l": "52syjbKa983QYwL8TM6ZtM",
-    "c": "https://cdn-images.dzcdn.net/images/cover/376e54c471f4b85333225a5670c910ba/1000x1000-000000-80-0-0.jpg",
-    "al": "Olivia's Greatest Hits (Vol. 2 / Deluxe Edition / Remastered)",
-    "r": "2023-01-06",
+    "c": "https://i.scdn.co/image/ab67616d0000b27348c551e14b553c3a63264d37",
+    "al": "Xanadu (Original Motion Picture Soundtrack)",
+    "r": "1980-06-16",
     "is": "QZUDB2200121",
     "ca": "https://i.scdn.co/image/a9c4bea41f06c1be30efa9e06cb6e1a07f27e3f5"
   },
@@ -41363,9 +41369,9 @@
     "a": "Johnny Logan",
     "t": "What's Another Year",
     "l": "51hipIpHYmj2Qh2tyQ32h6",
-    "c": "https://cdn-images.dzcdn.net/images/cover/dd7a00f240f5e5ec50b84da099fcb45c/1000x1000-000000-80-0-0.jpg",
-    "al": "The Best Of Johnny Logan",
-    "r": "1996-05-06",
+    "c": "https://i.scdn.co/image/ab67616d0000b273934d4d760895261aec153124",
+    "al": "Johnny Logan",
+    "r": "1980-01-01",
     "is": "GBBBM8700009",
     "ca": "https://cdn-images.dzcdn.net/images/artist/8844581a83e50edb6db01ef752b0d1ea/1000x1000-000000-80-0-0.jpg"
   },
@@ -42650,9 +42656,9 @@
     "a": "Precious Wilson",
     "t": "We Are On The Race Track",
     "l": "6YMQ4EseMAfEpCArEED2Cb",
-    "c": "https://cdn-images.dzcdn.net/images/cover/5d233170fdec98c7f60af028eeef80fb/1000x1000-000000-80-0-0.jpg",
-    "al": "Greatest Hits",
-    "r": "2007-03-01",
+    "c": "https://i.scdn.co/image/ab67616d0000b273fcd703c86e5efbec0f4f14d8",
+    "al": "Precious Wilson",
+    "r": "1981-01-01",
     "is": "DED169400108",
     "ca": "https://cdn-images.dzcdn.net/images/artist/669366c1d50619bf76261026017846ad/1000x1000-000000-80-0-0.jpg"
   },
@@ -44893,6 +44899,19 @@
   },
   {
     "f": "80er",
+    "y": 1983,
+    "p": 89,
+    "a": "Depeche Mode",
+    "t": "Everything Counts",
+    "l": "1R1vbkHj40yexphG1i7x27",
+    "c": "https://i.scdn.co/image/ab67616d0000b2738506825f0fb6abd2cd167fe1",
+    "al": "Construction Time Again (Deluxe)",
+    "r": "1983-08-22",
+    "is": "GBAJH0602608",
+    "ca": "https://i.scdn.co/image/ab6761610000e5ebaff13c9484fdad590ccfb73c"
+  },
+  {
+    "f": "80er",
     "y": 1984,
     "p": 1,
     "a": "Laura Branigan",
@@ -45572,9 +45591,9 @@
     "a": "Savage Progress",
     "t": "My Soul Unwraps Tonight",
     "l": "7dsYSRtAVW5g5NrBeUIaYF",
-    "c": "https://cdn-images.dzcdn.net/images/cover/f58fcf6b6372ac680452aeadb2a83e37/1000x1000-000000-80-0-0.jpg",
-    "al": "Blank & Jones Present so80s (SoEighties) Vol. 3",
-    "r": "2010-01-01",
+    "c": "https://i.scdn.co/image/ab67616d0000b2731c94f44cfdfa1af00a0d8d44",
+    "al": "Celebration",
+    "r": "1984-01-01",
     "is": "GBAAA1000218"
   },
   {
@@ -45626,7 +45645,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b2735dfa9699effa1ed894e8244d",
     "al": "Let the Music Play",
     "r": "2006-01-01",
-    "is": "CAU118401853"
+    "is": "CAU118401853",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/28149627324aff6cd28add7a8b193635/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "80er",
@@ -46117,8 +46137,8 @@
     "t": "Comanchero",
     "l": "35u5oMinU8iFfB5W1D6T7y",
     "c": "https://i.scdn.co/image/ab67616d0000b2730771d61f9bab123fb6d3f06f",
-    "al": "Italo Dance Hits",
-    "r": "2010-02-12",
+    "al": "Comanchero",
+    "r": "1985-01-01",
     "is": "ITC050710166"
   },
   {
@@ -47582,9 +47602,9 @@
     "a": "Marietta",
     "t": "Fire And Ice",
     "l": "3zFpuZBJ1sYhvoc3Ot1lq4",
-    "c": "https://cdn-images.dzcdn.net/images/cover/cdb8b357c855fdaf7290e1eea9c11ec4/1000x1000-000000-80-0-0.jpg",
-    "al": "Ronny's Pop Show - Best Of",
-    "r": "2017-01-13",
+    "c": "https://i.scdn.co/image/ab67616d0000b2732189a9bf68e728e2d7d6a58c",
+    "al": "Fire And Ice",
+    "r": "1986-01-01",
     "is": "DEE868600007",
     "ca": "https://cdn-images.dzcdn.net/images/artist/4ee8d69068b1ce3b94e11d0cf63a8292/1000x1000-000000-80-0-0.jpg"
   },
@@ -47626,19 +47646,6 @@
     "r": "1986-04-28",
     "is": "DEH820500252",
     "ca": "https://cdn-images.dzcdn.net/images/artist/4de6b751acdda3fdb833c2ebbd649127/1000x1000-000000-80-0-0.jpg"
-  },
-  {
-    "f": "80er",
-    "y": 1986,
-    "p": 68,
-    "a": "The Real Thing",
-    "t": "You To Me Are Everything (The Decade Remix 76-86)",
-    "l": "3D9Du2N7wrTLpRnZlOfNxy",
-    "c": "https://i.scdn.co/image/ab67616d0000b273717a50dea6a689e148b8f5de",
-    "al": "Can You Feel the Force?: Pye Remixes, B Sides & Rarities",
-    "r": "2022-03-18",
-    "is": "GB5KW2003295",
-    "ca": "https://cdn-images.dzcdn.net/images/artist/e4eb438c8d8008a68ecc4ab80ed724fc/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "80er",
@@ -48530,10 +48537,10 @@
     "p": 63,
     "a": "Pepsi & Shirlie",
     "t": "Heartache",
-    "l": "3VaupuT6cmpgrOoBh6KdlC",
-    "c": "https://cdn-images.dzcdn.net/images/cover/45e180c834045a5a9b621ea4978deeb4/1000x1000-000000-80-0-0.jpg",
-    "al": "Best Of 80s",
-    "r": "2015-11-20",
+    "l": "15yELRBXga61TtGGmMvJfn",
+    "c": "https://i.scdn.co/image/ab67616d0000b273cceecf9fc7f9f29d725bfa25",
+    "al": "The Electric 80s",
+    "r": "2020-05-15",
     "is": "GBF068725180",
     "ca": "https://cdn-images.dzcdn.net/images/artist/147b39892d79529b62de49bc298252bd/1000x1000-000000-80-0-0.jpg"
   },
@@ -49953,19 +49960,6 @@
   {
     "f": "80er",
     "y": 1989,
-    "p": 26,
-    "a": "Phil Collins",
-    "t": "In The Air Tonight ('88 Remix)",
-    "l": "7kJ0UkAMhWvu7bbJDJo7cr",
-    "c": "https://i.scdn.co/image/ab67616d0000b27301b8a6552dc3d4697f74f1c1",
-    "al": "Remixed Sides",
-    "r": "2019-05-31",
-    "is": "USRH11902144",
-    "ca": "https://i.scdn.co/image/ab6761610000e5ebe1b4af6dd9cad1b03d03218d"
-  },
-  {
-    "f": "80er",
-    "y": 1989,
     "p": 27,
     "a": "Tone Loc",
     "t": "Funky Cold Medina",
@@ -50048,9 +50042,9 @@
     "a": "Milli Vanilli",
     "t": "Girl I'm Gonna Miss You",
     "l": "122vb6LtwACmfBIWpwmN1w",
-    "c": "https://cdn-images.dzcdn.net/images/cover/93438b5905da18db776bad2b7fa0e630/1000x1000-000000-80-0-0.jpg",
-    "al": "The Best of Milli Vanilli (35th Anniversary)",
-    "r": "2023-11-17",
+    "c": "https://i.scdn.co/image/ab67616d0000b27311542dadbf7408521016590b",
+    "al": "All or Nothing",
+    "r": "1988-10-03",
     "is": "DEC732300008",
     "ca": "https://i.scdn.co/image/ab6761610000e5eb9b458e78c2b564913f3daebe"
   },
@@ -50510,19 +50504,6 @@
   {
     "f": "80er",
     "y": 1989,
-    "p": 71,
-    "a": "Rufus & Chaka Khan",
-    "t": "Ain't Nobody (Remix)",
-    "l": "6hgSQgrkYvE7CAlSpMPuCC",
-    "c": "https://i.scdn.co/image/ab67616d0000b273d8293414ccdb299176101c37",
-    "al": "Ain't Nobody (Remixes)",
-    "r": "2020-07-10",
-    "is": "USWB12001798",
-    "ca": "https://cdn-images.dzcdn.net/images/artist/09ab9541328c68448f59b5471a50aeed/1000x1000-000000-80-0-0.jpg"
-  },
-  {
-    "f": "80er",
-    "y": 1989,
     "p": 72,
     "a": "Robin Beck",
     "t": "Save Up All Your Tears",
@@ -50740,19 +50721,6 @@
     "r": "1989",
     "is": "GBCRL0800110",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebdf126340c69932e9c9ff27de"
-  },
-  {
-    "f": "80er",
-    "y": 1989,
-    "p": 89,
-    "a": "Depeche Mode",
-    "t": "Everything Counts (Live)",
-    "l": "1GUHa1E9FNBS23tbyENdc9",
-    "c": "https://i.scdn.co/image/ab67616d0000b273319d7bbbc8607c6821819ed9",
-    "al": "101 (Live)",
-    "r": "1989-03-13",
-    "is": "GBAJH9900250",
-    "ca": "https://i.scdn.co/image/ab6761610000e5ebaff13c9484fdad590ccfb73c"
   },
   {
     "f": "80er",
@@ -51151,9 +51119,9 @@
     "a": "P.M. Sampson & Double Key",
     "t": "We Love To Love",
     "l": "55rtzD53Mse5SS5SwoxkZg",
-    "c": "https://cdn-images.dzcdn.net/images/cover/cf1a28a2745f0bbdfc09a3901d0bf2ba/1000x1000-000000-80-0-0.jpg",
-    "al": "Peter Columbus Masterpieces The Producer's Collection Vol.1",
-    "r": "2012-10-23",
+    "c": "https://i.scdn.co/image/ab67616d0000b273482b8b5449934a1095f8da6d",
+    "al": "We Love To Love",
+    "r": "1990-01-01",
     "is": "DER751284101",
     "ca": "https://cdn-images.dzcdn.net/images/artist/5ae469f77067b3438c9cf261ace3178d/1000x1000-000000-80-0-0.jpg"
   },
@@ -51284,7 +51252,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273503e420715b7c580bdf240a4",
     "al": "Pump ab das Bier (Remastered 2025)",
     "r": "1990",
-    "is": "DEEG22583192"
+    "is": "DEEG22583192",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/70e280a5135a4fe23a46d1ce9f9c21cf/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "90er",
@@ -54825,9 +54794,9 @@
     "a": "Die Fantastischen Vier",
     "t": "MfG (Mit freundlichen Grüßen)",
     "l": "6Fs72goSBrzyjEzpnfqZWs",
-    "c": "https://cdn-images.dzcdn.net/images/cover/1f2be3ef09864973a64c60693c0f9f14/1000x1000-000000-80-0-0.jpg",
-    "al": "The Liechtenstein Tapes (Best Of Re-Recordings)",
-    "r": "2023-01-13",
+    "c": "https://i.scdn.co/image/ab67616d0000b2730c80a9d2dc702911fcd4b082",
+    "al": "4:99",
+    "r": "1999-11-08",
     "is": "DEZR22200059",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebf5ed887d40ffc8c3f9267d62"
   },
@@ -54905,7 +54874,7 @@
     "l": "1ofhfV90EnYhEr7Un2fWiv",
     "c": "https://cdn-images.dzcdn.net/images/cover/49856d92a31e284c7fe34b7971dba0b0/1000x1000-000000-80-0-0.jpg",
     "al": "Greatest Hits",
-    "r": "1998-01-01",
+    "r": "1998-11-24",
     "is": "USIR10110269",
     "ca": "https://i.scdn.co/image/ab67616d0000b273d81a092eb373ded457d94eec"
   },
@@ -55720,9 +55689,9 @@
     "a": "Pur",
     "t": "Partyhitmix",
     "l": "6PAQcUJDJrGcqBcLNkoTfR",
-    "c": "https://cdn-images.dzcdn.net/images/cover/0be3ba5a1816a213e6e12912b454fc1d/1000x1000-000000-80-0-0.jpg",
-    "al": "Partyhitmix Vol. 2",
-    "r": "2007-01-01",
+    "c": "https://i.scdn.co/image/ab67616d0000b273bef5304fedd2547628c84b4a",
+    "al": "Abenteuerland",
+    "r": "1999-01-01",
     "is": "DEA340703850",
     "ca": "https://i.scdn.co/image/ab6761610000e5ebe0fbfbc6afb794204422349e"
   },
@@ -56643,9 +56612,9 @@
     "a": "America",
     "t": "The Last Unicorn",
     "l": "59uopHNpuKcozG1GQlZOiY",
-    "c": "https://cdn-images.dzcdn.net/images/cover/53ef91a1552643a512958611c37d01cc/1000x1000-000000-80-0-0.jpg",
-    "al": "The Best Of America",
-    "r": "1997-02-03",
+    "c": "https://i.scdn.co/image/ab67616d0000b2734c577efe2dccb8bf71a2b1db",
+    "al": "The Last Unicorn (Original Motion Picture Soundtrack)",
+    "r": "1982-01-01",
     "is": "USUM71915371",
     "ca": "https://i.scdn.co/image/ab6761610000e5eb1918619d3b26c6cb16084997"
   },
@@ -56722,8 +56691,8 @@
     "t": "What A Feeling",
     "l": "5KWgFe13jJB3hKx3gS3AVc",
     "c": "https://i.scdn.co/image/ab67616d0000b273fe7befd2aac567491ce50df6",
-    "al": "Reimagined for Ballet Class, Vol. 1: Songs from the 80s",
-    "r": "2019-01-18",
+    "al": "Flashdance (Original Soundtrack)",
+    "r": "1983-04-22",
     "is": "GBKPL1936183",
     "ca": "https://i.scdn.co/image/ab67616d0000b273a566315cd5cffbf90143c5bd"
   },
@@ -64505,9 +64474,9 @@
     "a": "The Fans",
     "t": "Olé, Olé, Olé (The Name Of The Game)",
     "l": "0EaDjWVZvLzOMBpPvn4eNB",
-    "c": "https://cdn-images.dzcdn.net/images/cover/3aeb7173de03d385b359a0e202f03b30/1000x1000-000000-80-0-0.jpg",
-    "al": "Football Hits",
-    "r": "2012-04-15",
+    "c": "https://i.scdn.co/image/ab67616d0000b2738e71d1fc4675c5b1742aad8b",
+    "al": "Olé, Olé, Olé (The Name Of The Game)",
+    "r": "1998-01-01",
     "is": "USA561098938",
     "ca": "https://cdn-images.dzcdn.net/images/artist/3aeb7173de03d385b359a0e202f03b30/1000x1000-000000-80-0-0.jpg"
   },
