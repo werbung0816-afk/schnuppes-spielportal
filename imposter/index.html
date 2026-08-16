@@ -128,7 +128,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       </div>
     </div>
     <button class="btn-primary" onclick="joinRoom()">Raum betreten</button>
-    <div class="version" style="margin-top:14px;">v3.3 • Schnuppes Spielportal</div>
+    <div class="version" style="margin-top:14px;">v3.4 • Schnuppes Spielportal</div>
   </div>
 </div>
 
@@ -151,7 +151,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: ROLLEN-ANZEIGE -->
 <div id="screenRole" class="screen">
   <div class="role-card">
-    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v3.3 • Live</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><div class="version">v3.4 • Live</div></div>
     <div style="font-size:clamp(15px,2.5vw,20px);font-weight:700;color:#ff9ef0;margin-bottom:6px;" id="rolePlayerName"></div>
     <div class="role-tap">Tippe auf das Feld – halte das Gerät zu dir!</div>
     <div class="role-hidden" id="roleHidden" onclick="revealRole()">👁️ Tippen zum Anzeigen</div>
@@ -164,7 +164,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
 <!-- LIVE: SPIELFELD -->
 <div id="screenLive" class="screen">
   <div class="live-wrap">
-    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v3.3</div></div>
+    <div class="logo"><h1>🕵️ Imposter</h1><p>Live-Modus</p><div class="version">v3.4</div></div>
     <div class="status-bar" id="liveStatus">Runde läuft…</div>
     <div class="panel" style="margin-bottom:14px;">
       <div class="panel-title">🏆 Punkte</div>
@@ -206,7 +206,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
       <div id="scoreTable"></div>
     </div>
     <div class="game-center">
-      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v3.3</div></div>
+      <div class="logo"><h1>🕵️ Imposter</h1><p>Online-Modus</p><div class="version">v3.4</div></div>
       <div class="status-bar" id="statusBar">Warte…</div>
       <div class="word-box"><div class="word-label">Deine Rolle</div><div id="wordDisplay">—</div></div>
       <div class="round-info">
@@ -256,6 +256,7 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
   <div class="gear-panel" id="gearPanel">
     <button class="gear-item" onclick="syncNow()">🔄 Synchronisieren</button>
     <button class="gear-item" onclick="resetRoom()">🗑️ Raum zurücksetzen</button>
+    <button class="gear-item" onclick="resetUsedPairs()">🔀 Wörter zurücksetzen</button>
   </div>
 </div>
 
@@ -292,9 +293,43 @@ let liveW=null,liveG=null,liveUIInit=false,liveLastRound=-1;
 let revStep=0,viewing=false;
 
 // ── Wörter ───────────────────────────────────────────────────────────────────
-let words=[];
-(async()=>{try{words=(await(await fetch("words.json")).json()).words;}catch(_){words=["Elefant","Pizza","Strand","Gitarre","Vulkan","Delfin","Kaktus","Rakete","Pinguin","Wasserfall"];}})();
-const pw=()=>words[Math.floor(Math.random()*words.length)]||"Geheimnis";
+let pairs=[];
+let usedPairIndices=new Set(); // keine Wiederholungen pro Session
+(async()=>{
+  try{
+    const d=await(await fetch("words.json")).json();
+    if(d.pairs) pairs=d.pairs;
+    else pairs=d.words.map(w=>[w,w]); // Fallback auf altes Format
+  }catch(_){
+    pairs=[["Hund","Katze"],["Pizza","Burger"],["Gitarre","Klavier"],["Strand","Berge"],["Elefant","Nilpferd"]];
+  }
+})();
+
+// Gibt [crewWort, imposterWort] zurück, ohne Wiederholung (auch sessionübergreifend)
+// usedPairIndices wird aus Firebase geladen und dort gespeichert
+async function pickPairFromFirebase(){
+  const snap=await get(ref(db,"imposter/usedPairs"));
+  let used=snap.val();
+  // used ist ein Objekt {0:true, 3:true, ...} oder null
+  const usedSet=new Set(used?Object.keys(used).map(Number):[]);
+  if(usedSet.size>=pairs.length){
+    // alle durch → reset
+    await set(ref(db,"imposter/usedPairs"),null);
+    usedSet.clear();
+  }
+  let idx;
+  let attempts=0;
+  do{
+    idx=Math.floor(Math.random()*pairs.length);
+    attempts++;
+  } while(usedSet.has(idx)&&attempts<pairs.length*3);
+  // idx in Firebase merken
+  await update(ref(db,"imposter/usedPairs"),{[idx]:true});
+  const pair=pairs[idx];
+  return Math.random()<0.5 ? [pair[0],pair[1]] : [pair[1],pair[0]];
+}
+// Synchroner Fallback für den seltenen Fall dass pairs noch nicht geladen
+const pw=()=>(pairs[Math.floor(Math.random()*pairs.length)]||["Hund","Katze"])[0];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function gid(){let i=sessionStorage.getItem("imp_id");if(!i){i="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);sessionStorage.setItem("imp_id",i);}return i;}
@@ -403,13 +438,16 @@ window.hostStartGame=async function(){
   if(mode==="live")isHost=true;
   const players={};
   Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name?.trim())players[pid]={...p,hint1:"",hint2:"",vote:""};});
-  const word=pw(),ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
+  const [crewWord,impWord]=await pickPairFromFirebase();
+  const ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
   if(mode==="live"){
     const playerOrder=ids.join(",");
-    await update(ref(db,ROOM),{phase:"roleReveal",round:(st.round||0)+1,word,imposterId:impId,
+    await update(ref(db,ROOM),{phase:"roleReveal",round:(st.round||0)+1,
+      word:crewWord,imposterWord:impWord,imposterId:impId,
       hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",liveStep:0,playerOrder,players,history:st.history||[]});
   } else {
-    await update(ref(db,ROOM),{phase:"play",round:1,turnIndex:0,word,imposterId:impId,
+    await update(ref(db,ROOM),{phase:"play",round:1,turnIndex:0,
+      word:crewWord,imposterWord:impWord,imposterId:impId,
       hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players});
   }
 };
@@ -425,8 +463,10 @@ window.startVsKI=async function(){
     const need=3-Object.keys(players).length;
     for(let i=0;i<need&&i<avail.length;i++){const kid="ki_"+Date.now()+"_"+i;players[kid]={name:avail[i]+" (KI)",score:0,hint1:"",hint2:"",vote:"",lastSeen:Date.now(),isKI:true};}
   }
-  const word=pw(),ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
-  await set(ref(db,ROOM),{...st,phase:"play",round:1,turnIndex:0,word,imposterId:impId,
+  const [crewWord4,impWord4]=await pickPairFromFirebase();
+  const ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
+  await set(ref(db,ROOM),{...st,phase:"play",round:1,turnIndex:0,
+    word:crewWord4,imposterWord:impWord4,imposterId:impId,
     hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players,host:myId,gameMode:"online",history:[],timestamp:Date.now()});
 };
 
@@ -471,9 +511,15 @@ window.revealRole=function(){
   revStep=st.liveStep||0;viewing=true;
   document.getElementById("roleHidden").style.display="none";
   const c=document.getElementById("roleContent");c.style.display="block";
-  c.innerHTML=st.imposterId===myId
-    ?`<div class="imposter-label">🕵️ Du bist der<br>IMPOSTER!</div><div class="imposter-sub" style="margin-top:10px;">Bluff überzeugend!</div>`
-    :`<div class="word-label">Das geheime Wort ist</div><div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
+  if(st.imposterId===myId){
+    const iw=esc(st.imposterWord||"?");
+    c.innerHTML=`<div class="imposter-label">🕵️ Du bist der IMPOSTER!</div>
+      <div class="word-label" style="margin-top:16px;">Dein Hinweis-Wort</div>
+      <div class="word-display" style="font-size:clamp(22px,4.5vw,42px);margin-top:8px;">${iw}</div>
+      <div class="imposter-sub" style="margin-top:10px;">Das ist NICHT das echte Wort – bluff überzeugend!</div>`;
+  } else {
+    c.innerHTML=`<div class="word-label">Das geheime Wort ist</div><div class="word-display" style="font-size:clamp(26px,5.5vw,50px);">${esc(st.word)}</div>`;
+  }
   const ids=gpo(st);
   const nb=document.getElementById("btnRoleNext"),sb=document.getElementById("btnRoleStart");
   if(revStep<ids.length-1){
@@ -539,7 +585,7 @@ window.confirmLive=async function(){
   else{upd[`players/${impId}/score`]=(players[impId]?.score||0)+1;}
   if(liveG){const base=upd[`players/${impId}/score`]??players[impId]?.score??0;upd[`players/${impId}/score`]=base+1;}
   const impName=players[impId]?.name||"?";
-  upd["history"]=[...(st.history||[]),`Runde ${st.round}: ${liveW==="crew"?"🎉 Crew gewann":"🕵️ Imposter gewann"} | Imposter: ${impName} | Wort: ${st.word||"?"}${liveG?" | 🎯 Wort erraten":""}`];
+  upd["history"]=[...(st.history||[]),`Runde ${st.round}: ${liveW==="crew"?"🎉 Crew gewann":"🕵️ Imposter gewann"} | Crew-Wort: ${st.word||"?"} | Imposter-Wort: ${st.imposterWord||"?"} | Imposter: ${impName}${liveG?" | 🎯 Wort erraten":""}`];
   upd["phase"]="liveResult";
   await update(ref(db,ROOM),upd);
   snd("applause.mp3");showOverlay(liveW==="crew",impName,st.word||"?");
@@ -549,9 +595,11 @@ window.liveNextRound=async function(){
   isHost=true; // Live: jeder darf nächste Runde starten
   const players={};
   Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name?.trim())players[pid]={...p,hint1:"",hint2:"",vote:""};});
-  const word=pw(),ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
+  const [crewWord2,impWord2]=await pickPairFromFirebase();
+  const ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
   const playerOrder=ids.join(",");
-  await update(ref(db,ROOM),{phase:"roleReveal",round:(st.round||1)+1,word,imposterId:impId,
+  await update(ref(db,ROOM),{phase:"roleReveal",round:(st.round||1)+1,
+    word:crewWord2,imposterWord:impWord2,imposterId:impId,
     hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",liveStep:0,playerOrder,players,history:st.history||[]});
   document.getElementById("overlay").classList.remove("show");
   liveW=null;liveG=null;
@@ -581,7 +629,15 @@ function renderO(st){
   document.getElementById("phaseName").textContent=phase==="play"?`Hinweise ${st.hintPhase||1}/2`:phase==="vote"?"Abstimmung":"Ergebnis";
   document.getElementById("turnName").textContent=phase==="play"?esc(tn):"—";
   const wd=document.getElementById("wordDisplay");
-  wd.innerHTML=st.imposterId===myId?`<div class="imposter-label">🕵️ Du bist der Imposter!</div><div class="imposter-sub">Bluff überzeugend!</div>`:`<div class="word-display">${esc(st.word||"—")}</div>`;
+  if(st.imposterId===myId){
+    const iw=esc(st.imposterWord||"?");
+    wd.innerHTML=`<div class="imposter-label">🕵️ Du bist der Imposter!</div>
+      <div class="word-label" style="margin-top:12px;">Dein Hinweis-Wort</div>
+      <div class="word-display" style="font-size:clamp(20px,4vw,38px);margin-top:6px;">${iw}</div>
+      <div class="imposter-sub">Das ist NICHT das echte Wort!</div>`;
+  } else {
+    wd.innerHTML=`<div class="word-display">${esc(st.word||"—")}</div>`;
+  }
   ["hintSection","voteSection","guessSection","resultSection"].forEach(id=>document.getElementById(id).style.display="none");
   if(phase==="play"&&im){const k=(st.hintPhase||1)===1?"hint1":"hint2";if(!players[myId]?.[k])document.getElementById("hintSection").style.display="block";}
   if(phase==="vote"){document.getElementById("voteSection").style.display="block";renderVB(players);}
@@ -670,8 +726,10 @@ window.submitGuess=async function(){
 window.onlineNextRound=async function(){
   if(!isHost)return;const st=ST;
   const players={};Object.entries(st.players||{}).forEach(([pid,p])=>{if(p.name?.trim())players[pid]={...p,hint1:"",hint2:"",vote:""};});
-  const word=pw(),ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
-  await set(ref(db,ROOM),{...st,phase:"play",round:(st.round||1)+1,turnIndex:0,word,imposterId:impId,
+  const [crewWord3,impWord3]=await pickPairFromFirebase();
+  const ids=Object.keys(players),impId=ids[Math.floor(Math.random()*ids.length)];
+  await set(ref(db,ROOM),{...st,phase:"play",round:(st.round||1)+1,turnIndex:0,
+    word:crewWord3,imposterWord:impWord3,imposterId:impId,
     hintPhase:1,hints1:{},hints2:{},voteResults:{},imposterGuess:"",players,timestamp:Date.now()});
   document.getElementById("overlay").classList.remove("show");myVote=null;
 };
@@ -718,6 +776,11 @@ window.closeOverlay=()=>document.getElementById("overlay").classList.remove("sho
 // ── Gear ──────────────────────────────────────────────────────────────────────
 window.toggleGear=()=>document.getElementById("gearPanel").classList.toggle("open");
 window.syncNow=()=>{if(ST)dispatch(ST);document.getElementById("gearPanel").classList.remove("open");};
+window.resetUsedPairs=async()=>{
+  await set(ref(db,"imposter/usedPairs"),null);
+  document.getElementById("gearPanel").classList.remove("open");
+  alert("Wortliste zurückgesetzt – alle Begriffe sind wieder verfügbar.");
+};
 window.resetRoom=async()=>{
   await remove(ref(db,ROOM));if(hbT)clearInterval(hbT);
   sessionStorage.removeItem("imp_id");document.getElementById("gearPanel").classList.remove("open");location.reload();
