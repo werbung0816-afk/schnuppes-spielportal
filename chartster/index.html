@@ -610,7 +610,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.5.5</div>
+<div class="version">v4.5.6</div>
 
 <!-- SW Update Toast -->
 
@@ -864,14 +864,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script>
 // ════ ZUSCHAUER-MODUS ════
-var IS_SPECTATOR = false;
-var _joinTs = Date.now();
-var pwaNewWorker = null;
-var specListener  = null;
 
-var specWakeLock = null;
 
 async function requestWakeLock(){
   if(!('wakeLock' in navigator)) return;
@@ -972,7 +968,6 @@ function updateSpectatorView(d){
 
 function applySwUpdate(){if(window._pwaNewWorker){window._pwaNewWorker.postMessage('SKIP_WAITING');setTimeout(function(){window.location.reload();},400);}else{window.location.reload();}}
 
-var _recoveryData = null;
 function showGameRecovery(d){
   _recoveryData = d;
   document.getElementById('game-recovery-overlay').style.display='flex';
@@ -993,7 +988,6 @@ function discardGame(){
   REF.set({host:Date.now(),screen:'lobby'});
   setHost();
 }
-
 </script>
 
 <!-- ════ MINI-GAME ANNOUNCE ════ -->
@@ -1029,6 +1023,12 @@ const fbCfg={apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",authDomain:"schnup
 firebase.initializeApp(fbCfg);
 const DB=firebase.database(),REF=DB.ref('chartster/game');
 var IS_HOST=false,fbListener=null;
+var IS_SPECTATOR=false;
+var specListener=null;
+var _joinTs=Date.now();
+var pwaNewWorker=null;
+var _recoveryData=null;
+var specWakeLock=null;
 
 const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ffd84d','#ff6b35'];
 const DEFAULTS=['Helden','Legenden','Stars','Cracks','Profis','Champs'];
@@ -1735,7 +1735,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=91', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=92', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
