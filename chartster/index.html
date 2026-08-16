@@ -610,7 +610,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.5.4</div>
+<div class="version">v4.5.5</div>
 
 <!-- SW Update Toast -->
 
@@ -868,6 +868,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 // ════ ZUSCHAUER-MODUS ════
 var IS_SPECTATOR = false;
 var _joinTs = Date.now();
+var pwaNewWorker = null;
 var specListener  = null;
 
 var specWakeLock = null;
@@ -969,7 +970,7 @@ function updateSpectatorView(d){
 }
 
 
-function applySwUpdate(){if(typeof pwaNewWorker!=="undefined"&&pwaNewWorker){pwaNewWorker.postMessage("SKIP_WAITING");}else{window.location.reload();}}
+function applySwUpdate(){if(window._pwaNewWorker){window._pwaNewWorker.postMessage('SKIP_WAITING');setTimeout(function(){window.location.reload();},400);}else{window.location.reload();}}
 
 var _recoveryData = null;
 function showGameRecovery(d){
@@ -1733,7 +1734,8 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=90', {
+    var _hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=91', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
@@ -1741,10 +1743,10 @@ if ('serviceWorker' in navigator) {
 
       // Update-Check
       reg.addEventListener('updatefound', () => {
-        pwaNewWorker = reg.installing;
+        pwaNewWorker = reg.installing; window._pwaNewWorker = pwaNewWorker;
         pwaNewWorker?.addEventListener('statechange', () => {
-          if (pwaNewWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // Update bereit → Toast anzeigen
+          if (pwaNewWorker.state === 'installed' && navigator.serviceWorker.controller && _hadController) {
+            // Nur bei Hintergrund-Update Toast zeigen
             var toast = document.getElementById('sw-update-toast');
             if(toast) toast.classList.add('show');
           }
@@ -1754,8 +1756,12 @@ if ('serviceWorker' in navigator) {
 
     // Update verfügbar → Toast anzeigen statt Auto-Reload
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      var toast = document.getElementById('sw-update-toast');
-      if(toast) toast.classList.add('show');
+      if(_hadController){
+        var toast = document.getElementById('sw-update-toast');
+        if(toast) toast.classList.add('show');
+      } else {
+        window.location.reload();
+      }
     });;
   });
 }
