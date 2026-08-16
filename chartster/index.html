@@ -587,7 +587,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.5.0</div>
+<div class="version">v4.5.1</div>
 <div id="hint-toast"></div>
 <div id="victoryOverlay"></div>
 <button id="opt-fab" onclick="openOpt()" style="position:fixed;bottom:18px;right:18px;z-index:840;width:50px;height:50px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:22px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)">⚙</button>
@@ -985,7 +985,7 @@ function startGame(){
   if(G.songs.length===0){showHint('Songs werden geladen – kurz warten!');return;}
   G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
   var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
-  G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
+  G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
   try{var el=document.documentElement;if(el.requestFullscreen)el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();}catch(e){}
   showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
 }
@@ -1141,7 +1141,13 @@ function newSongToken(){var team=G.teams[G.cur];if(team.tokens<=0){showHint('Kei
 
 // ── SCORING ──
 function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort((a,b)=>a-b);var correctPos=getCorrectPos(G.currentCard.y,sorted);if(type==='year'||type==='both'){team.years.push(G.currentCard.y);team.years.sort((a,b)=>a-b);if(type==='both')team.tokens=Math.min(MAX_TOK,team.tokens+1);spawnConfetti(team.color,90,false);}else{for(var i=0;i<G.teams.length;i++){if(i!==G.cur&&G.bets[i]===correctPos){G.teams[i].years.push(G.currentCard.y);G.teams[i].years.sort((a,b)=>a-b);spawnConfetti(G.teams[i].color,60,false);showHint(`${G.teams[i].name} stehlen die Jahreszahl! 🎉`);break;}}}G.bets={};G.betMode=null;
-  if(team.years.length>=WIN){showVictory();return;}
+  if(team.years.length>=WIN){
+    if(!G.finalRound){
+      G.finalRound=true;
+      G.finalRoundStart=G.cur;
+      showHint((team.name)+' hat gewonnen! Alle spielen noch ihre Runde zu Ende.');
+    }
+  }
   if(G.miniGames){
     var memTrigger=WIN===5?3:5;
     var papTrigger=WIN===5?4:9;
@@ -1157,7 +1163,8 @@ function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort(
 
 // ── TRANSITION ──
 function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':' r90','right':' r270','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
-function continueGame(){G.cur=nextTeamIdx();G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
+function continueGame(){G.cur=nextTeamIdx();
+  if(G.finalRound && G.cur===G.finalRoundStart){showVictory();return;}G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
 
 // ── VICTORY ──
 function showVictory(){var sorted=G.teams.slice().sort((a,b)=>b.years.length-a.years.length||(b.tokens-a.tokens));var seq=sorted.map(function(team,rank){var m=MEDALS[rank]||MEDALS[MEDALS.length-1];return{place:m.place,comment:m.coms[Math.floor(Math.random()*m.coms.length)],name:team.name,color:team.color,score:team.years.length+' Karten',tokens:team.tokens+' Token',cls:m.cls,cf:m.cf};}).reverse();var overlay=document.getElementById('victoryOverlay');overlay.classList.add('show');var stage=0;function render(i){var d=seq[i];overlay.innerHTML=buildCfHTML(d.cf)+`<div class="vstage active ${d.cls}"><div class="v-comment">${d.comment}</div><div class="v-place">${d.place}</div><div class="v-card ${d.cls}"><div class="v-name" style="color:${d.color}">${d.name}</div><div class="v-score" style="color:${d.color}">${d.score}</div><div class="v-sub">${d.tokens}</div></div>${i===seq.length-1?`<button class="vfinal-btn" onclick="doReset()">🔄 Neues Spiel</button>`:''}</div>`;playApplause();}render(0);var vt=setInterval(function(){stage++;if(stage>=seq.length){clearInterval(vt);return;}render(stage);},3000);if(IS_HOST)REF.update({screen:'won'});}
@@ -1171,7 +1178,7 @@ function openOpt(){buildOptFilter();document.getElementById('opt-panel').classLi
 function closeOpt(){document.getElementById('opt-panel').classList.remove('show');document.getElementById('opt-confirm').classList.remove('show');}
 function optNewSong(){closeOpt();clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();showHint('Schiedsrichter: Neuer Song! ⚖️');}
 function optResetPrompt(){document.getElementById('opt-confirm').classList.add('show');}
-function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');updateSongCount();document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
+function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');updateSongCount();document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
 
 // ── UTILS ──
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el){el.classList.add('active');G.screen=name;}document.getElementById('opt-fab').style.display=(name==='game')?'flex':'none';}
@@ -1503,7 +1510,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 // ── Service Worker registrieren ──────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=86', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=87', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
