@@ -610,7 +610,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.5.9</div>
+<div class="version">v4.6.0</div>
 
 <!-- SW Update Toast -->
 
@@ -733,9 +733,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   </div>
   <div class="sep"></div>
   <div style="display:flex;gap:10px;width:100%">
-    <button class="btn" onclick="enterSpectator()" style="background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--glass-b);font-size:13px;padding:10px;letter-spacing:.08em;">👁 Zuschauer-Modus</button>
-  <button class="btn btn-primary" id="start-btn" onclick="startGame()" disabled style="flex:1">Spiel starten</button>
+    <button class="btn btn-primary" id="start-btn" onclick="startGame()" disabled style="flex:1">Spiel starten</button>
     <button id="s5-btn" onclick="toggleS5()" style="padding:14px 18px;border-radius:14px;font-family:Outfit,sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(255,79,216,.35);background:rgba(255,79,216,.08);color:var(--muted);white-space:nowrap;flex-shrink:0;transition:all .2s">Schnelle 5</button>
+  <button class="btn" onclick="enterSpectator()" style="background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--glass-b);font-size:12px;padding:9px;letter-spacing:.08em;margin-top:2px;">👁 Zuschauer-Modus</button>
   </div>
   <div class="sep"></div>
   <div class="mg-cards">
@@ -1084,10 +1084,12 @@ function initFirebase(){
   REF.once('value').then(snap=>{
     var d=snap.val();
     var hasGame=d&&d.screen==='game'&&d.teams&&d.teams.length>0;
-    if(!d||d.screen==='lobby'||!d.host){setHost();}
+    var hostAge=d&&d.host?(Date.now()-d.host):999999;
+    var activeHost=hostAge<30000; // anderes Gerät hostet aktiv (< 30s)
+    if(!d||d.screen==='lobby'||!d.host||!activeHost){setHost();}
     else if(wasHost&&hasGame){showGameRecovery(d);}
     else if(wasHost){setHost();}
-    else if(hasGame){setGuest();}
+    else if(activeHost&&hasGame){setGuest();}
     else{setHost();}
   }).catch(()=>setHost());
 }
@@ -1096,7 +1098,7 @@ function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');do
 function applyRemote(d){
   if(d.ts && d.ts < _joinTs - 10000) return; // Signal älter als 10s verwerfen
   if(d.screen==='game'&&d.teams){G.teams=d.teams;G.cur=d.cur||0;G.currentCard=d.card||null;showScreen('game');renderPanels();updateGameUI();}}
-function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.teams,cur:G.cur,card:G.currentCard||null,ts:Date.now()});}
+function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.teams,cur:G.cur,card:G.currentCard||null,ts:Date.now(),host:Date.now()});}
 initFirebase();
 
 
@@ -1739,7 +1741,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=95', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=96', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
