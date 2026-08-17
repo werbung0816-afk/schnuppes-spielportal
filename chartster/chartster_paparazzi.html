@@ -710,8 +710,7 @@ function loadSongs(){
             name:(s.a||'').trim(),
             img:hasImg?imgUrl:null,
             followers:s.fo||0,
-            inTop20:inTop20,
-            bestPos:s.p||99
+            inTop20:inTop20
           };
         } else {
           if(hasImg && !artistMap[key].img) artistMap[key].img=imgUrl;
@@ -780,10 +779,12 @@ function startGame(){
   if(EMBEDDED_MODE){
     // Spieler direkt aus Chartster-Config lesen
     var ep=embCfg.players||[];
+    var embPos=['bot-l','bot-r','top-l','top-r','left','right'];
     ep.forEach(function(p,i){if(p.color) COLORS[i]=p.color;});
     G.teams=ep.map(function(p,i){
       return{name:p.name||DEFAULTS[i],color:p.color||COLORS[i],
-             origIdx:p.origIdx!==undefined?p.origIdx:i};
+             origIdx:p.origIdx!==undefined?p.origIdx:i,
+             pos:embPos[i]||'bot-l'};
     });
   } else {
     var active=getActiveSeats();
