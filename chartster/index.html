@@ -610,7 +610,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.6.2</div>
+<div class="version">v4.6.3</div>
 
 <!-- SW Update Toast -->
 
@@ -882,6 +882,7 @@ function releaseWakeLock(){
   if(specWakeLock){ specWakeLock.release(); specWakeLock=null; }
 }
 
+if(typeof IS_SPECTATOR==='undefined') var IS_SPECTATOR=false;
 // Re-acquire after tab becomes visible again
 document.addEventListener('visibilitychange', function(){
   if(IS_SPECTATOR && document.visibilityState==='visible') requestWakeLock();
@@ -1227,7 +1228,6 @@ function startGame(){
   G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
   var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
   G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
-  try{var el=document.documentElement;if(el.requestFullscreen)else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();}catch(e){}
   showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
 }
 
@@ -1751,7 +1751,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=98', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=99', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
