@@ -710,7 +710,8 @@ function loadSongs(){
             name:(s.a||'').trim(),
             img:hasImg?imgUrl:null,
             followers:s.fo||0,
-            inTop20:inTop20
+            inTop20:inTop20,
+            bestPos:s.p||99
           };
         } else {
           if(hasImg && !artistMap[key].img) artistMap[key].img=imgUrl;
