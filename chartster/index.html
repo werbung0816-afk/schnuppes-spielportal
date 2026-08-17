@@ -562,7 +562,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 @keyframes spec-pulse{0%,100%{opacity:.6;}50%{opacity:1;}}
 .spec-hint{font-size:clamp(12px,1.5vw,18px);color:var(--muted);letter-spacing:.1em;text-transform:uppercase;text-align:center;}
 .spec-timeline{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;width:100%;}
-.spec-year{background:rgba(143,95,255,.22);border:2px solid rgba(143,95,255,.6);border-radius:clamp(12px,2vw,20px);padding:clamp(14px,2.5vw,28px) clamp(20px,3.5vw,48px);font-size:clamp(36px,7vw,96px);font-weight:800;color:#fff;text-align:center;min-width:clamp(100px,12vw,180px);}
+.spec-year{background:rgba(143,95,255,.22);border:2px solid rgba(143,95,255,.6);border-radius:clamp(12px,2vw,20px);padding:clamp(16px,3vw,36px) clamp(24px,4vw,60px);font-size:clamp(48px,9vw,130px);font-weight:800;color:#fff;text-align:center;min-width:clamp(100px,12vw,180px);}
 .spec-connector{width:clamp(16px,2.5vw,40px);height:3px;background:rgba(255,255,255,.15);flex-shrink:0;}
 .spec-listening{font-size:clamp(16px,2.5vw,28px);color:rgba(255,255,255,.28);letter-spacing:.06em;font-style:italic;text-align:center;}
 .spec-sep{width:100%;height:1px;background:var(--glass-b);}
@@ -610,7 +610,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.6.0</div>
+<div class="version">v4.6.1</div>
 
 <!-- SW Update Toast -->
 
@@ -735,8 +735,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div style="display:flex;gap:10px;width:100%">
     <button class="btn btn-primary" id="start-btn" onclick="startGame()" disabled style="flex:1">Spiel starten</button>
     <button id="s5-btn" onclick="toggleS5()" style="padding:14px 18px;border-radius:14px;font-family:Outfit,sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(255,79,216,.35);background:rgba(255,79,216,.08);color:var(--muted);white-space:nowrap;flex-shrink:0;transition:all .2s">Schnelle 5</button>
-  <button class="btn" onclick="enterSpectator()" style="background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--glass-b);font-size:12px;padding:9px;letter-spacing:.08em;margin-top:2px;">👁 Zuschauer-Modus</button>
   </div>
+  <button onclick="enterSpectator()" style="width:100%;background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.1);font-size:12px;padding:8px;border-radius:10px;font-family:Outfit,sans-serif;letter-spacing:.08em;cursor:pointer;font-weight:600;">👁 Zuschauer-Modus</button>
   <div class="sep"></div>
   <div class="mg-cards">
     <a href="../chartster-memory/index.html" class="mg-card" id="mg-memory">
@@ -1097,6 +1097,11 @@ function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){
   if(d.ts && d.ts < _joinTs - 10000) return; // Signal älter als 10s verwerfen
+  if(IS_SPECTATOR){
+    // Zuschauer bleibt auf Zuschauer-Screen — nur Daten aktualisieren
+    if(d.teams) updateSpectatorView(d);
+    return;
+  }
   if(d.screen==='game'&&d.teams){G.teams=d.teams;G.cur=d.cur||0;G.currentCard=d.card||null;showScreen('game');renderPanels();updateGameUI();}}
 function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.teams,cur:G.cur,card:G.currentCard||null,ts:Date.now(),host:Date.now()});}
 initFirebase();
@@ -1741,7 +1746,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=96', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=97', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
