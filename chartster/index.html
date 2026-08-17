@@ -554,19 +554,19 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 /* ── ZUSCHAUER ── */
 #screen-spectator{justify-content:center;align-items:center;padding:0;}
-.spec-card{width:100%;max-width:100%;min-height:100vh;background:var(--glass);backdrop-filter:blur(18px);border:none;border-radius:0;padding:clamp(20px,3vw,40px) clamp(16px,4vw,60px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,2.5vw,32px);}
+.spec-card{width:100%;max-width:100%;height:100vh;background:var(--glass);backdrop-filter:blur(18px);border:none;border-radius:0;padding:clamp(16px,2.5vw,32px) clamp(16px,4vw,60px) clamp(12px,2vw,24px);display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.5vw,20px);overflow:hidden;}
 .spec-team-row{display:flex;align-items:center;gap:14px;width:100%;justify-content:center;}
 .spec-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;}
 .spec-team-name{font-size:clamp(28px,5vw,56px);font-weight:800;letter-spacing:.08em;text-transform:uppercase;}
 .spec-badge{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:rgba(83,246,255,.12);color:#53f6ff;border-radius:20px;padding:4px 14px;border:1px solid rgba(83,246,255,.3);animation:spec-pulse 2s ease-in-out infinite;}
 @keyframes spec-pulse{0%,100%{opacity:.6;}50%{opacity:1;}}
 .spec-hint{font-size:clamp(12px,1.5vw,18px);color:var(--muted);letter-spacing:.1em;text-transform:uppercase;text-align:center;}
-.spec-timeline{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;width:100%;}
+.spec-timeline{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,1.2vw,18px);width:100%;flex:1;}
 .spec-year{background:rgba(143,95,255,.22);border:2px solid rgba(143,95,255,.6);border-radius:clamp(12px,2vw,20px);padding:clamp(16px,3vw,36px) clamp(24px,4vw,60px);font-size:clamp(48px,9vw,130px);font-weight:800;color:#fff;text-align:center;min-width:clamp(100px,12vw,180px);}
 .spec-connector{width:clamp(16px,2.5vw,40px);height:3px;background:rgba(255,255,255,.15);flex-shrink:0;}
 .spec-listening{font-size:clamp(16px,2.5vw,28px);color:rgba(255,255,255,.28);letter-spacing:.06em;font-style:italic;text-align:center;}
 .spec-sep{width:100%;height:1px;background:var(--glass-b);}
-.spec-scores{display:flex;flex-wrap:wrap;gap:10px;width:100%;justify-content:center;}
+.spec-scores{display:flex;flex-wrap:wrap;gap:8px;width:100%;justify-content:center;flex-shrink:0;}
 .spec-score-card{flex:1;min-width:120px;max-width:180px;background:rgba(255,255,255,.04);border:1px solid var(--glass-b);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:8px;}
 .spec-score-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .spec-score-name{font-size:clamp(13px,1.8vw,20px);color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -610,7 +610,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.6.1</div>
+<div class="version">v4.6.2</div>
 
 <!-- SW Update Toast -->
 
@@ -916,52 +916,57 @@ function updateSpectatorView(d){
   var cur  = d.cur || 0;
   var team = d.teams[cur];
   if(!team) return;
+  var dotColors=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f1c'];
 
-  // Team name + color
   var nameEl = document.getElementById('spec-team-name');
   var dotEl  = document.getElementById('spec-dot');
-  nameEl.textContent   = team.name;
-  nameEl.style.color   = team.color;
-  dotEl.style.background  = team.color;
-  dotEl.style.boxShadow   = '0 0 10px ' + team.color;
+  nameEl.textContent = team.name;
+  nameEl.style.color = team.color;
+  dotEl.style.background = team.color;
+  dotEl.style.boxShadow  = '0 0 10px '+team.color;
 
-  // Timeline: max 5 per row then wrap
   var years = (team.years||[]).slice().sort(function(a,b){return a-b;});
   var tl = document.getElementById('spec-timeline');
   tl.innerHTML = '';
-  years.forEach(function(y, i){
-    if(i > 0){
-      if(i % 5 === 0){
-        // Line break spacer
-        var br = document.createElement('div');
-        br.style.cssText = 'width:100%;height:0;';
-        tl.appendChild(br);
-      } else {
-        var conn = document.createElement('div');
-        conn.className = 'spec-connector';
-        tl.appendChild(conn);
-      }
-    }
-    var card = document.createElement('div');
-    card.className = 'spec-year';
-    card.textContent = y;
-    tl.appendChild(card);
-  });
+
   if(!years.length){
     var empty = document.createElement('div');
-    empty.style.cssText = 'color:var(--muted);font-size:15px;letter-spacing:.06em;';
-    empty.textContent = 'Noch keine Karten platziert';
+    empty.style.cssText='color:var(--muted);font-size:clamp(16px,2.5vw,24px);letter-spacing:.06em;text-align:center;width:100%;';
+    empty.textContent='Noch keine Karten platziert';
     tl.appendChild(empty);
+  } else {
+    // Layout: Schnelle5 → 3+2, Normal → 4+4+2
+    var isSchnelle = WIN===5;
+    var rowSizes = isSchnelle ? [3,2] : [4,4,2];
+    var idx=0;
+    var colorIdx=0;
+    rowSizes.forEach(function(rowSize, ri){
+      if(idx >= years.length) return;
+      var row = document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;justify-content:center;gap:clamp(6px,1.2vw,18px);width:100%;';
+      for(var j=0;j<rowSize&&idx<years.length;j++){
+        if(j>0){
+          var dot=document.createElement('div');
+          dot.style.cssText='width:clamp(8px,1.2vw,16px);height:clamp(8px,1.2vw,16px);border-radius:50%;flex-shrink:0;background:'+dotColors[colorIdx%dotColors.length]+';box-shadow:0 0 8px '+dotColors[colorIdx%dotColors.length]+';';
+          colorIdx++;
+          row.appendChild(dot);
+        }
+        var card=document.createElement('div');
+        card.className='spec-year';
+        card.textContent=years[idx++];
+        row.appendChild(card);
+      }
+      tl.appendChild(row);
+    });
   }
 
   // Scores
   var sc = document.getElementById('spec-scores');
   sc.innerHTML = '';
   d.teams.forEach(function(t){
-    var card = document.createElement('div');
-    card.className = 'spec-score-card';
-    card.innerHTML =
-      '<div class="spec-score-dot" style="background:'+t.color+'"></div>'+
+    var card=document.createElement('div');
+    card.className='spec-score-card';
+    card.innerHTML='<div class="spec-score-dot" style="background:'+t.color+'"></div>'+
       '<div class="spec-score-name">'+t.name+'</div>'+
       '<div class="spec-score-val" style="color:'+t.color+'">'+(t.years||[]).length+'</div>';
     sc.appendChild(card);
@@ -1222,7 +1227,7 @@ function startGame(){
   G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
   var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
   G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
-  try{var el=document.documentElement;if(el.requestFullscreen)el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();}catch(e){}
+  try{var el=document.documentElement;if(el.requestFullscreen)else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();}catch(e){}
   showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
 }
 
@@ -1403,7 +1408,7 @@ function continueGame(){G.cur=nextTeamIdx();
   if(G.finalRound && G.cur===G.finalRoundStart){showVictory();return;}G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
 
 // ── VICTORY ──
-function showVictory(){var sorted=G.teams.slice().sort((a,b)=>b.years.length-a.years.length||(b.tokens-a.tokens));var seq=sorted.map(function(team,rank){var m=MEDALS[rank]||MEDALS[MEDALS.length-1];return{place:m.place,comment:m.coms[Math.floor(Math.random()*m.coms.length)],name:team.name,color:team.color,score:team.years.length+' Karten',tokens:team.tokens+' Token',cls:m.cls,cf:m.cf};}).reverse();var overlay=document.getElementById('victoryOverlay');overlay.classList.add('show');var stage=0;function render(i){var d=seq[i];overlay.innerHTML=buildCfHTML(d.cf)+`<div class="vstage active ${d.cls}"><div class="v-comment">${d.comment}</div><div class="v-place">${d.place}</div><div class="v-card ${d.cls}"><div class="v-name" style="color:${d.color}">${d.name}</div><div class="v-score" style="color:${d.color}">${d.score}</div><div class="v-sub">${d.tokens}</div></div>${i===seq.length-1?`<button class="vfinal-btn" onclick="doReset()">🔄 Neues Spiel</button>`:''}</div>`;playApplause();}render(0);var vt=setInterval(function(){stage++;if(stage>=seq.length){clearInterval(vt);return;}render(stage);},3000);if(IS_HOST)REF.update({screen:'won'});}
+function showVictory(){var sorted=G.teams.slice().sort((a,b)=>b.years.length-a.years.length);var seq=sorted.map(function(team,rank){var effectiveRank=rank;for(var r=0;r<rank;r++){if(sorted[r].years.length===team.years.length){effectiveRank=r;break;}}var m=MEDALS[effectiveRank]||MEDALS[MEDALS.length-1];return{place:m.place,comment:m.coms[Math.floor(Math.random()*m.coms.length)],name:team.name,color:team.color,score:team.years.length+' Karten',tokens:team.tokens+' Token',cls:m.cls,cf:m.cf};}).reverse();var overlay=document.getElementById('victoryOverlay');overlay.classList.add('show');var stage=0;function render(i){var d=seq[i];overlay.innerHTML=buildCfHTML(d.cf)+`<div class="vstage active ${d.cls}"><div class="v-comment">${d.comment}</div><div class="v-place">${d.place}</div><div class="v-card ${d.cls}"><div class="v-name" style="color:${d.color}">${d.name}</div><div class="v-score" style="color:${d.color}">${d.score}</div><div class="v-sub">${d.tokens}</div></div>${i===seq.length-1?`<button class="vfinal-btn" onclick="doReset()">🔄 Neues Spiel</button>`:''}</div>`;playApplause();}render(0);var vt=setInterval(function(){stage++;if(stage>=seq.length){clearInterval(vt);return;}render(stage);},3000);if(IS_HOST)REF.update({screen:'won'});}
 function buildCfHTML(n){var cols=['#ff4d6d','#ffd166','#06d6a0','#4cc9f0','#b5179e','#f72585','#53f6ff','#ff4fd8'];var shp=['50%','4px','0'];var h='';for(var i=0;i<n;i++){var sz=6+Math.random()*14;h+=`<div style="position:absolute;top:-30px;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};border-radius:${shp[i%3]};transform:rotate(${Math.random()*360}deg);animation:cf-fall ${2+Math.random()*4}s ${Math.random()*1.5}s linear both"></div>`;}return h;}
 
 // ── CONFETTI ──
@@ -1475,7 +1480,7 @@ function launchMiniGame(type){
     tokenReward:tokenReward,
     filters: Array.from(G.excluded)
   };
-  try{sessionStorage.setItem('chartsterMiniConfig',JSON.stringify(cfg));}catch(e){}
+  try{localStorage.setItem('chartsterMiniConfig',JSON.stringify({...cfg,ts:Date.now()}));}catch(e){}
 
   // Show iframe
   var wrap=document.getElementById('minigame-frame-wrap');
@@ -1746,7 +1751,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=97', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=98', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {

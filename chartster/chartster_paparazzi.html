@@ -521,7 +521,7 @@ var EMBEDDED_MODE = (new URLSearchParams(window.location.search)).get('embedded'
 var embCfg = {};
 if(EMBEDDED_MODE){
   document.body.classList.add('embedded-mode');
-  try { embCfg = JSON.parse(sessionStorage.getItem('chartsterMiniConfig') || '{}'); } catch(e){}
+  try { var _mc=JSON.parse(localStorage.getItem('chartsterMiniConfig')||'{}');embCfg=((_mc.ts&&Date.now()-_mc.ts<120000)?_mc:{}); } catch(e){}
 }
 
 
