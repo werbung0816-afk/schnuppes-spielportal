@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.8.4</div>
+<div class="version">v4.8.5</div>
 
 <!-- SW Update Toast -->
 
@@ -1359,7 +1359,7 @@ function clearCd(){clearInterval(G.cdTimer);G.cdTimer=null;}
 // ── TOKEN PANEL ──
 function renderHitsterPanel(){var c=document.getElementById('hst-teams');c.innerHTML='';var any=false;G.teams.forEach(function(team,i){if(i===G.cur||team.tokens<=0)return;any=true;var placed=G.bets.hasOwnProperty(i);var btn=document.createElement('button');btn.className='hst-btn'+(placed?' placed':'');btn.style.background=team.color;btn.style.color='#07000f';btn.textContent=team.name.split(' ').pop()+' Token!';if(!placed)btn.onclick=function(){startBetMode(i,team);};c.appendChild(btn);});if(any)document.getElementById('hitster-panel').classList.add('show');}
 function startBetMode(ti,team){G.betMode=ti;showHint(`${team.name}: Checkbox im Zeitstrahl wählen!`);}
-function placeBet(ci){if(G.betMode===null)return;var ti=G.betMode;if(G.teams[ti].tokens<=0)return;G.teams[ti].tokens--;G.bets[ti]=ci;G.betMode=null;renderPanels();renderTimeline(G.selBox);renderHitsterPanel();}
+function placeBet(ci){if(G.betMode===null)return;var ti=G.betMode;if(G.teams[ti].tokens<=0)return;G.teams[ti].tokens--;G.bets[ti]=ci;G.betMode=null;renderPanels();renderTimeline(G.selBox);renderHitsterPanel();pushState();}
 
 // ── YEAR TIMELINE ──
 function renderTimeline(preserveSel){
@@ -1915,7 +1915,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=121', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=122', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
