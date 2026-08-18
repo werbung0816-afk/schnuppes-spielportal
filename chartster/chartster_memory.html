@@ -225,7 +225,9 @@ body{
 var EMBEDDED_MODE = (new URLSearchParams(window.location.search)).get('embedded') === '1';
 var embCfg = {};
 if(EMBEDDED_MODE){
-  try { var _mc=JSON.parse(localStorage.getItem('chartsterMiniConfig')||'{}');embCfg=((_mc.ts&&Date.now()-_mc.ts<120000)?_mc:{});var GAME_SEED=embCfg.seed||Math.floor(Math.random()*1000000); } catch(e){}
+  try { var _mc=JSON.parse(localStorage.getItem('chartsterMiniConfig')||'{}');embCfg=((_mc.ts&&Date.now()-_mc.ts<120000)?_mc:{});
+var _urlSeed=parseInt(new URLSearchParams(window.location.search).get('seed')||'0');
+var GAME_SEED=_urlSeed||embCfg.seed||Math.floor(Math.random()*1000000); } catch(e){}
 }
 
 const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f1c','#e0ff4f'];
@@ -401,7 +403,7 @@ function startGame(){
   G.scores=G.players.map(()=>0);
   G.cur=0;G.flipped=[];G.matched=new Set();G.locked=false;
 
-  var chosen=shuffle(pool).slice(0,G.pairs);
+  var chosen=seededShuffle(pool,GAME_SEED).slice(0,G.pairs);
   var cards=[];
   chosen.forEach(function(song,i){
     cards.push({type:'cover',song:song,pair:i});
