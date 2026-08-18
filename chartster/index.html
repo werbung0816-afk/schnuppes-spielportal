@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.8.0</div>
+<div class="version">v4.8.1</div>
 
 <!-- SW Update Toast -->
 
@@ -666,6 +666,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="spec-card">
     <div id="spec-dot" style="display:none"></div>
     <div id="spec-team-name" style="display:none"></div>
+    <div id="spec-current-card" style="display:none;font-size:clamp(22px,3.5vw,48px);font-weight:700;color:#53f6ff;letter-spacing:.06em;text-align:center;width:100%;"></div>
     <div id="spec-timeline-teamname" style="font-size:clamp(44px,8vw,110px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:center;width:100%;"></div>
     <div class="spec-timeline" id="spec-timeline"></div>
     <div class="spec-listening">♫ Hört zu und schätzt …</div>
@@ -936,6 +937,15 @@ function updateSpectatorView(d){
   // Teamname in gleicher Größe wie Jahreszahlen über den Karten
   var tnEl=document.getElementById('spec-timeline-teamname');
   if(tnEl){tnEl.textContent=team.name;tnEl.style.color=team.color;}
+  // Aktuell gesuchte Jahreszahl anzeigen
+  var cardEl=document.getElementById('spec-current-card');
+  if(cardEl && d.card && d.card.y){
+    cardEl.textContent='? → '+d.card.y;
+    cardEl.style.display='block';
+  } else if(cardEl){
+    cardEl.style.display='none';
+  }
+
   var tl = document.getElementById('spec-timeline');
   tl.innerHTML = '';
 
@@ -961,9 +971,23 @@ function updateSpectatorView(d){
           colorIdx++;
           row.appendChild(dot);
         }
+        var yr=years[idx++];
         var card=document.createElement('div');
         card.className='spec-year';
-        card.textContent=years[idx++];
+        card.textContent=yr;
+        // Token-Anzeige
+        if(d.bets){
+          var hasToken=Object.keys(d.bets).some(function(k){
+            return String(d.bets[k])===String(yr);
+          });
+          if(hasToken){
+            var tok=document.createElement('div');
+            tok.style.cssText='position:absolute;top:-10px;right:-8px;background:#ffd700;border-radius:50%;width:clamp(14px,2vw,22px);height:clamp(14px,2vw,22px);font-size:clamp(9px,1.2vw,14px);display:flex;align-items:center;justify-content:center;z-index:2;';
+            tok.textContent='⚡';
+            card.style.position='relative';
+            card.appendChild(tok);
+          }
+        }
         row.appendChild(card);
       }
       tl.appendChild(row);
@@ -1115,7 +1139,7 @@ function applyRemote(d){
   if(d.ts && d.ts < _joinTs - 10000) return; // Signal älter als 10s verwerfen
   if(IS_SPECTATOR) return; // Spectator handled by own listener
   if(d.screen==='game'&&d.teams){G.teams=d.teams;G.cur=d.cur||0;G.currentCard=d.card||null;showScreen('game');renderPanels();updateGameUI();}}
-function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.teams,cur:G.cur,card:G.currentCard||null,ts:Date.now(),host:Date.now()});}
+function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.teams,cur:G.cur,card:G.currentCard||null,bets:G.bets||{},selBox:G.selBox||null,ts:Date.now(),host:Date.now()});}
 initFirebase();
 
 
@@ -1884,7 +1908,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=117', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=118', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
