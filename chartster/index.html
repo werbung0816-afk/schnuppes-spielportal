@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.8.7</div>
+<div class="version">v4.8.8</div>
 
 <!-- SW Update Toast -->
 
@@ -956,9 +956,17 @@ function updateSpectatorView(d){
       var row = document.createElement('div');
       row.style.cssText='display:flex;align-items:center;justify-content:center;gap:clamp(6px,1.2vw,18px);width:100%;';
       for(var j=0;j<rowSize&&idx<years.length;j++){
+        // Edge marker BEFORE first card of row (gap = idx)
+        if(j===0){
+          var edgeL=document.createElement('div');
+          edgeL.dataset.gap=idx;
+          edgeL.dataset.edge='left';
+          edgeL.style.cssText='width:clamp(8px,1.2vw,16px);height:clamp(8px,1.2vw,16px);border-radius:50%;flex-shrink:0;opacity:0;';
+          row.appendChild(edgeL);
+        }
         if(j>0){
           var dot=document.createElement('div');
-          dot.dataset.gap=idx; // gap index = selBox value
+          dot.dataset.gap=idx;
           dot.style.cssText='width:clamp(8px,1.2vw,16px);height:clamp(8px,1.2vw,16px);border-radius:50%;flex-shrink:0;background:'+dotColors[colorIdx%dotColors.length]+';box-shadow:0 0 8px '+dotColors[colorIdx%dotColors.length]+';';
           colorIdx++;
           row.appendChild(dot);
@@ -981,6 +989,14 @@ function updateSpectatorView(d){
           }
         }
         row.appendChild(card);
+        // Edge marker AFTER last card in row
+        if(j===rowSize-1||idx>=years.length){
+          var edgeR=document.createElement('div');
+          edgeR.dataset.gap=idx;
+          edgeR.dataset.edge='right';
+          edgeR.style.cssText='width:clamp(8px,1.2vw,16px);height:clamp(8px,1.2vw,16px);border-radius:50%;flex-shrink:0;opacity:0;';
+          row.appendChild(edgeR);
+        }
       }
       tl.appendChild(row);
     });
@@ -1002,13 +1018,22 @@ function updateSpectatorView(d){
       dot.textContent='';
     }
   });
-  // Für Lücken ohne Punkt (Gap 0, letzte Lücke, Zeilenübergänge): Text-Indikator
-  if(sel>=0&&!Array.from(allDots).some(function(d){return parseInt(d.dataset.gap)===sel;})){
-    var hint=document.createElement('div');
-    hint.style.cssText='font-size:clamp(14px,2vw,22px);color:#53f6ff;text-align:center;width:100%;font-weight:700;letter-spacing:.06em;margin-top:4px;';
-    hint.textContent='✓ Position '+(sel===0?'vor erster Karte':'nach letzter Karte');
-    tl.appendChild(hint);
-  }
+  // Edge markers (invisible by default) → make visible if selected/bet
+  tl.querySelectorAll('[data-edge]').forEach(function(edge){
+    var g=parseInt(edge.dataset.gap);
+    var betColor=null;
+    if(d.bets){Object.keys(d.bets).forEach(function(ti){
+      if(Number(d.bets[ti])===g&&d.teams&&d.teams[parseInt(ti)])
+        betColor=d.teams[parseInt(ti)].color;
+    });}
+    if(g===sel){
+      edge.style.cssText='width:clamp(22px,3vw,36px);height:clamp(22px,3vw,36px);border-radius:50%;flex-shrink:0;background:#53f6ff;box-shadow:0 0 16px #53f6ff;display:flex;align-items:center;justify-content:center;font-size:clamp(13px,1.8vw,22px);font-weight:900;color:#07000f;opacity:1;';
+      edge.textContent='✓';
+    } else if(betColor){
+      edge.style.cssText='width:clamp(18px,2.2vw,28px);height:clamp(18px,2.2vw,28px);border-radius:50%;flex-shrink:0;background:'+betColor+';border:2px solid rgba(0,0,0,.4);box-shadow:0 0 12px '+betColor+';opacity:1;';
+      edge.textContent='';
+    }
+  });
   }
 
   // Scores
@@ -1926,7 +1951,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=124', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=125', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
