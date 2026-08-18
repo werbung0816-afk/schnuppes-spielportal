@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.8.6</div>
+<div class="version">v4.8.7</div>
 
 <!-- SW Update Toast -->
 
@@ -984,19 +984,31 @@ function updateSpectatorView(d){
       }
       tl.appendChild(row);
     });
-  // Markierungen nach dem Rendern setzen
-  tl.querySelectorAll('[data-gap]').forEach(function(dot){
+  // ✓ Auswahl und Token direkt auf Punkte anwenden
+  var allDots=tl.querySelectorAll('[data-gap]');
+  var sel=d.selBox!==null&&d.selBox!==undefined?Number(d.selBox):-1;
+  allDots.forEach(function(dot){
     var g=parseInt(dot.dataset.gap);
-    var sel=d.selBox!==null&&d.selBox!==undefined?Number(d.selBox):-1;
     var betColor=null;
-    if(d.bets){Object.keys(d.bets).forEach(function(ti){if(Number(d.bets[ti])===g){betColor=(d.teams&&d.teams[parseInt(ti)])?d.teams[parseInt(ti)].color:'#ffd700';}});}
+    if(d.bets){Object.keys(d.bets).forEach(function(ti){
+      if(Number(d.bets[ti])===g&&d.teams&&d.teams[parseInt(ti)])
+        betColor=d.teams[parseInt(ti)].color;
+    });}
     if(g===sel){
-      dot.style.cssText='width:clamp(20px,2.5vw,32px);height:clamp(20px,2.5vw,32px);border-radius:50%;flex-shrink:0;background:#53f6ff;box-shadow:0 0 14px #53f6ff;display:flex;align-items:center;justify-content:center;font-size:clamp(12px,1.5vw,20px);font-weight:900;color:#07000f;';
+      dot.style.cssText='width:clamp(22px,3vw,36px);height:clamp(22px,3vw,36px);border-radius:50%;flex-shrink:0;background:#53f6ff;box-shadow:0 0 16px #53f6ff;display:flex;align-items:center;justify-content:center;font-size:clamp(13px,1.8vw,22px);font-weight:900;color:#07000f;transition:all .2s;';
       dot.textContent='✓';
     } else if(betColor){
-      dot.style.cssText='width:clamp(16px,2vw,26px);height:clamp(16px,2vw,26px);border-radius:50%;flex-shrink:0;background:'+betColor+';border:2px solid rgba(0,0,0,.4);box-shadow:0 0 10px '+betColor+';';
+      dot.style.cssText='width:clamp(18px,2.2vw,28px);height:clamp(18px,2.2vw,28px);border-radius:50%;flex-shrink:0;background:'+betColor+';border:2px solid rgba(0,0,0,.4);box-shadow:0 0 12px '+betColor+';transition:all .2s;';
+      dot.textContent='';
     }
   });
+  // Für Lücken ohne Punkt (Gap 0, letzte Lücke, Zeilenübergänge): Text-Indikator
+  if(sel>=0&&!Array.from(allDots).some(function(d){return parseInt(d.dataset.gap)===sel;})){
+    var hint=document.createElement('div');
+    hint.style.cssText='font-size:clamp(14px,2vw,22px);color:#53f6ff;text-align:center;width:100%;font-weight:700;letter-spacing:.06em;margin-top:4px;';
+    hint.textContent='✓ Position '+(sel===0?'vor erster Karte':'nach letzter Karte');
+    tl.appendChild(hint);
+  }
   }
 
   // Scores
@@ -1914,7 +1926,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=123', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=124', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
