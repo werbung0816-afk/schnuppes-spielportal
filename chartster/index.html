@@ -267,7 +267,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 /* ── HINT / CONFETTI / MISC ── */
 #hint-toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(255,79,216,.18);border:1px solid rgba(255,79,216,.4);color:var(--pink);padding:11px 20px;border-radius:12px;font-size:16px;font-weight:600;z-index:900;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;white-space:nowrap;max-width:90vw}
 #hint-toast.show{opacity:1}
-#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:700;overflow:hidden}
+#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9990;overflow:hidden}
 @keyframes cf-fall{0%{opacity:1;transform:translateY(-20px) rotate(0deg)}100%{opacity:0;transform:translateY(105vh) rotate(720deg)}}
 
 /* ── TRANSITION ── */
@@ -575,6 +575,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .spec-sync-btn{font-size:13px;color:var(--muted);background:none;border:1px solid var(--glass-b);border-radius:8px;padding:6px 16px;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.06em;}
 .spec-sync-btn:active{opacity:.6;}
 #sw-update-toast.show{opacity:1!important;pointer-events:auto!important;}
+@keyframes winCardSpin{0%{transform:scale(.3) rotate(-15deg);opacity:0;}60%{transform:scale(1.05) rotate(3deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
 </style>
 </head>
 <body>
@@ -611,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.7.2</div>
+<div class="version">v4.7.3</div>
 
 <!-- SW Update Toast -->
 
@@ -897,25 +898,21 @@ function enterSpectator(){
 
 function initSpectatorListener(){
   if(specListener){ REF.off('value', specListener); }
-  // Dedizierter Sieger-Listener
-  REF.child('victory').on('value', function(snap){
-    if(!IS_SPECTATOR) return;
-    var v=snap.val();
-    if(v&&v.teams){
-      var el=document.getElementById('spec-listening-hint');
-      if(el){el.textContent='🏆 Spiel beendet!';el.style.color='#53f6ff';}
-    }
-  });
-  // Dedizierter Mini-Spiel Listener
-  REF.child('miniGame').on('value', function(snap){
-    if(!IS_SPECTATOR) return;
-    var mg=snap.val();
-    if(mg&&mg.src) showSpectatorMiniGame(mg.src, mg.type);
-    else hideSpectatorMiniGame();
-  });
   specListener = REF.on('value', function(snap){
     var d = snap.val();
-    if(d && d.teams) updateSpectatorView(d);
+    if(!d) return;
+    // Mini-Spiel → Overlay
+    if(d.mg_active && d.mg_src){
+      showSpectatorMiniGame(d.mg_src, d.mg_type);
+    } else {
+      hideSpectatorMiniGame();
+      // Siegeranzeige
+      if(d.screen==='joint-victory' && d.jointWinners){
+        showSpectatorJointVictory(d.jointWinners);
+      } else if(d.teams){
+        updateSpectatorView(d);
+      }
+    }
   });
 }
 
@@ -1120,21 +1117,7 @@ function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){
   if(d.ts && d.ts < _joinTs - 10000) return; // Signal älter als 10s verwerfen
-  if(IS_SPECTATOR){
-    if(d.screen==='joint-victory'&&d.jointWinners){
-      showSpectatorJointVictory(d.jointWinners);
-    } else if(d.screen==='victory'&&d.teams){
-      hideSpectatorMiniGame();
-      updateSpectatorView(d);
-      // Show victory hint
-      var el=document.getElementById('spec-listening-hint');
-      if(el){el.textContent='🏆 Spiel beendet!';el.style.color='#53f6ff';}
-    } else {
-      hideSpectatorMiniGame();
-      if(d.teams) updateSpectatorView(d);
-    }
-    return;
-  }
+  if(IS_SPECTATOR) return; // Spectator handled by own listener
   if(d.screen==='game'&&d.teams){G.teams=d.teams;G.cur=d.cur||0;G.currentCard=d.card||null;showScreen('game');renderPanels();updateGameUI();}}
 function pushState(){if(!IS_HOST)return;REF.update({screen:G.screen,teams:G.teams,cur:G.cur,card:G.currentCard||null,ts:Date.now(),host:Date.now()});}
 initFirebase();
@@ -1491,13 +1474,35 @@ function showJointVictory(winners){
   if(typeof REF!=='undefined') REF.update({screen:'joint-victory',jointWinners:winners});
 }
 
+
+function showWinCardCelebration(card, team){
+  if(!card) { showHint(team.name+' hat gewonnen! Alle spielen noch ihre Runde zu Ende.'); return; }
+  // Konfetti + Applaus
+  spawnConfetti(team.color, 250);
+  try{playApplause();}catch(e){}
+  // Overlay mit Gewinnerkarte
+  var ov = document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;background:rgba(7,0,15,.85);';
+  var inner = '<div style="text-align:center;font-family:Outfit,sans-serif;animation:winCardSpin .6s ease-out;">'
+    +'<div style="font-size:clamp(20px,3vw,32px);color:'+team.color+';font-weight:800;letter-spacing:.1em;margin-bottom:12px;">🏆 '+team.name+'</div>'
+    +(card.c?'<img src="'+card.c+'" style="width:clamp(140px,18vw,220px);height:clamp(140px,18vw,220px);border-radius:16px;object-fit:cover;border:3px solid '+team.color+';box-shadow:0 0 30px '+team.color+';margin-bottom:12px;">':'')
+    +'<div style="font-size:clamp(48px,8vw,96px);font-weight:900;color:#fff;margin-bottom:6px;">'+card.y+'</div>'
+    +'<div style="font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.8);">'+card.t+'</div>'
+    +'<div style="font-size:clamp(12px,1.5vw,16px);color:var(--muted);margin-bottom:20px;">'+card.a+'</div>'
+    +'<div style="font-size:clamp(13px,1.8vw,18px);color:rgba(255,255,255,.5);">Alle spielen noch ihre Runde zu Ende</div>'
+    +'</div>';
+  ov.innerHTML=inner;
+  document.body.appendChild(ov);
+  setTimeout(function(){ ov.remove(); }, 3500);
+}
+
 function showVictory(){var sorted=G.teams.slice().sort((a,b)=>b.years.length-a.years.length);var seq=sorted.map(function(team,rank){var effectiveRank=rank;for(var r=0;r<rank;r++){if(sorted[r].years.length===team.years.length){effectiveRank=r;break;}}var m=MEDALS[effectiveRank]||MEDALS[MEDALS.length-1];return{place:m.place,comment:m.coms[Math.floor(Math.random()*m.coms.length)],name:team.name,color:team.color,score:team.years.length+' Karten',tokens:team.tokens+' Token',cls:m.cls,cf:m.cf};}).reverse();// Gemeinsamer Sieg prüfen
   var winners=sorted.filter(function(t){return t.years.length===sorted[0].years.length;});
   if(winners.length>1){
     showJointVictory(winners);
     return;
   }
-  if(typeof REF!=='undefined'&&IS_HOST){REF.child('miniGame').set(null);REF.child('victory').set({teams:G.teams.map(function(t){return{name:t.name,color:t.color,cards:(t.years||[]).length};})});}
+  if(typeof REF!=='undefined'&&IS_HOST) REF.update({mg_active:false,mg_src:null,mg_type:null});
   var overlay=document.getElementById('victoryOverlay');overlay.classList.add('show');var stage=0;function render(i){var d=seq[i];overlay.innerHTML=buildCfHTML(d.cf)+`<div class="vstage active ${d.cls}"><div class="v-comment">${d.comment}</div><div class="v-place">${d.place}</div><div class="v-card ${d.cls}"><div class="v-name" style="color:${d.color}">${d.name}</div><div class="v-score" style="color:${d.color}">${d.score}</div><div class="v-sub">${d.tokens}</div></div>${i===seq.length-1?`<button class="vfinal-btn" onclick="doReset()">🔄 Neues Spiel</button>`:''}</div>`;playApplause();}render(0);var vt=setInterval(function(){stage++;if(stage>=seq.length){clearInterval(vt);return;}render(stage);},3000);if(IS_HOST)REF.update({screen:'won'});}
 function buildCfHTML(n){var cols=['#ff4d6d','#ffd166','#06d6a0','#4cc9f0','#b5179e','#f72585','#53f6ff','#ff4fd8'];var shp=['50%','4px','0'];var h='';for(var i=0;i<n;i++){var sz=6+Math.random()*14;h+=`<div style="position:absolute;top:-30px;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};border-radius:${shp[i%3]};transform:rotate(${Math.random()*360}deg);animation:cf-fall ${2+Math.random()*4}s ${Math.random()*1.5}s linear both"></div>`;}return h;}
 
@@ -1579,7 +1584,7 @@ localStorage.setItem('chartsterMiniConfig',JSON.stringify({...cfg,ts:Date.now(),
   var src=type==='memory'?'chartster_memory.html?embedded=1':'chartster_paparazzi.html?embedded=1';
   iframe.src=src;
   // Zuschauer-Modus: Mini-Spiel übertragen
-  if(typeof REF!=='undefined') REF.update({screen:'minigame',miniGameType:type,miniGameSrc:src.replace('?embedded=1','?embedded=1&spectator=0')});
+  if(typeof REF!=='undefined'&&IS_HOST) REF.update({mg_active:true,mg_src:src+'&spectator=1',mg_type:type});
   wrap.classList.add('show');
   document.getElementById('mga-skip-btn').style.display='block';
   // store type for result handler
@@ -1593,7 +1598,7 @@ function skipMiniGame(){
 }
 
 function closeMiniGameFrame(){
-  if(typeof REF!=='undefined'&&IS_HOST) REF.child('miniGame').set(null);
+  if(typeof REF!=='undefined'&&IS_HOST) REF.update({mg_active:false,mg_src:null,mg_type:null});
   var wrap=document.getElementById('minigame-frame-wrap');
   var iframe=document.getElementById('minigame-iframe');
   wrap.classList.remove('show');
@@ -1845,7 +1850,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=108', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=109', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
