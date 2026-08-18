@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.7.9</div>
+<div class="version">v4.8.0</div>
 
 <!-- SW Update Toast -->
 
@@ -903,6 +903,8 @@ function initSpectatorListener(){
     // Siegeranzeige
     if(d.screen==='joint-victory' && d.jointWinners){
       showSpectatorJointVictory(d.jointWinners);
+    } else if(d.screen==='won' && d.wonTeams){
+      showSpectatorVictory(d.wonTeams, d.teams);
     } else if(d.teams){
       updateSpectatorView(d);
     }
@@ -1437,6 +1439,34 @@ function hideSpectatorMiniGame(){
   if(overlay) overlay.style.display='none';
 }
 
+
+function showSpectatorVictory(wonTeams, allTeams){
+  try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
+  if(wonTeams[0]) spawnConfetti(wonTeams[0].color, 400);
+  // Show on spectator screen
+  var sc=document.getElementById('screen-spectator');
+  if(!sc) return;
+  var sorted=(allTeams||wonTeams).slice().sort(function(a,b){
+    return (b.years?b.years.length:b.cards||0)-(a.years?a.years.length:a.cards||0);
+  });
+  var rows=sorted.map(function(t,i){
+    var cards=t.years?t.years.length:(t.cards||0);
+    var rank=i===0?'🥇':i===1?'🥈':i===2?'🥉':'🏅';
+    return '<div style="display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1);">'
+      +'<span style="font-size:clamp(28px,4vw,48px);">'+rank+'</span>'
+      +'<span style="font-size:clamp(20px,3vw,36px);font-weight:800;color:'+t.color+';flex:1;">'+t.name+'</span>'
+      +'<span style="font-size:clamp(20px,3vw,36px);font-weight:800;color:'+t.color+';">'+cards+' Karten</span>'
+      +'</div>';
+  }).join('');
+  var html='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#07000f;">'
+    +'<div style="font-family:Outfit,sans-serif;padding:clamp(20px,4vw,60px);max-width:800px;width:90%;">'
+    +'<div style="font-size:clamp(36px,6vw,80px);font-weight:800;color:#fff;text-align:center;margin-bottom:clamp(16px,3vw,40px);">🏆 Spiel beendet!</div>'
+    +rows
+    +'</div></div>';
+  sc.innerHTML=html;
+  sc.classList.add('active');
+}
+
 function showSpectatorJointVictory(winners){
   try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
   if(winners[0]) spawnConfetti(winners[0].color,300);
@@ -1501,7 +1531,7 @@ function showVictory(){var sorted=G.teams.slice().sort((a,b)=>b.years.length-a.y
     return;
   }
 
-  var overlay=document.getElementById('victoryOverlay');overlay.classList.add('show');var stage=0;function render(i){var d=seq[i];overlay.innerHTML=buildCfHTML(d.cf)+`<div class="vstage active ${d.cls}"><div class="v-comment">${d.comment}</div><div class="v-place">${d.place}</div><div class="v-card ${d.cls}"><div class="v-name" style="color:${d.color}">${d.name}</div><div class="v-score" style="color:${d.color}">${d.score}</div><div class="v-sub">${d.tokens}</div></div>${i===seq.length-1?`<button class="vfinal-btn" onclick="doReset()">🔄 Neues Spiel</button>`:''}</div>`;playApplause();}render(0);var vt=setInterval(function(){stage++;if(stage>=seq.length){clearInterval(vt);return;}render(stage);},3000);if(IS_HOST)REF.update({screen:'won'});}
+  var overlay=document.getElementById('victoryOverlay');overlay.classList.add('show');var stage=0;function render(i){var d=seq[i];overlay.innerHTML=buildCfHTML(d.cf)+`<div class="vstage active ${d.cls}"><div class="v-comment">${d.comment}</div><div class="v-place">${d.place}</div><div class="v-card ${d.cls}"><div class="v-name" style="color:${d.color}">${d.name}</div><div class="v-score" style="color:${d.color}">${d.score}</div><div class="v-sub">${d.tokens}</div></div>${i===seq.length-1?`<button class="vfinal-btn" onclick="doReset()">🔄 Neues Spiel</button>`:''}</div>`;playApplause();}render(0);var vt=setInterval(function(){stage++;if(stage>=seq.length){clearInterval(vt);return;}render(stage);},3000);if(IS_HOST) REF.update({screen:'won', wonTeams:G.teams.map(function(t){return{name:t.name,color:t.color,cards:(t.years||[]).length};})});}
 function buildCfHTML(n){var cols=['#ff4d6d','#ffd166','#06d6a0','#4cc9f0','#b5179e','#f72585','#53f6ff','#ff4fd8'];var shp=['50%','4px','0'];var h='';for(var i=0;i<n;i++){var sz=6+Math.random()*14;h+=`<div style="position:absolute;top:-30px;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};border-radius:${shp[i%3]};transform:rotate(${Math.random()*360}deg);animation:cf-fall ${2+Math.random()*4}s ${Math.random()*1.5}s linear both"></div>`;}return h;}
 
 // ── CONFETTI ──
@@ -1854,7 +1884,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=116', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=117', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
