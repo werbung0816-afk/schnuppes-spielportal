@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.7.8</div>
+<div class="version">v4.7.9</div>
 
 <!-- SW Update Toast -->
 
@@ -897,34 +897,14 @@ function enterSpectator(){
 
 function initSpectatorListener(){
   if(specListener){ REF.off('value', specListener); }
-  // Mini-Game State Relay → Spectator iframe
-  REF.child('mgState').on('value', function(snap){
-    if(!IS_SPECTATOR) return;
-    var d=snap.val();
-    if(!d) return;
-    var overlay=document.getElementById('spec-mg-overlay');
-    if(!overlay) return;
-    var iframe=overlay.querySelector('iframe');
-    if(!iframe) return;
-    // Forward cmd to spectator iframe
-    iframe.contentWindow.postMessage({type:'mgCmd',event:d.event,idx:d.idx,
-      a:d.a,b:d.b,scorer:d.scorer,cur:d.cur,
-      imgUrl:d.imgUrl,blur:d.blur,round:d.round,mode:d.mode},'*');
-  });
   specListener = REF.on('value', function(snap){
     var d = snap.val();
     if(!d) return;
-    // Mini-Spiel → Overlay
-    if(d.mg_active && d.mg_src){
-      showSpectatorMiniGame(d.mg_src, d.mg_type);
-    } else {
-      hideSpectatorMiniGame();
-      // Siegeranzeige
-      if(d.screen==='joint-victory' && d.jointWinners){
-        showSpectatorJointVictory(d.jointWinners);
-      } else if(d.teams){
-        updateSpectatorView(d);
-      }
+    // Siegeranzeige
+    if(d.screen==='joint-victory' && d.jointWinners){
+      showSpectatorJointVictory(d.jointWinners);
+    } else if(d.teams){
+      updateSpectatorView(d);
     }
   });
 }
@@ -1459,6 +1439,9 @@ function hideSpectatorMiniGame(){
 
 function showSpectatorJointVictory(winners){
   try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
+  if(winners[0]) spawnConfetti(winners[0].color,300);
+  if(winners[1]) setTimeout(function(){spawnConfetti(winners[1].color,300);},400);
+  try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
   var sc=document.getElementById('screen-spectator');
   if(!sc) return;
   var names=winners.map(function(w){return'<span style="color:'+w.color+'">'+w.name+'</span>';}).join(' &amp; ');
@@ -1517,7 +1500,7 @@ function showVictory(){var sorted=G.teams.slice().sort((a,b)=>b.years.length-a.y
     showJointVictory(winners);
     return;
   }
-  if(typeof REF!=='undefined'&&IS_HOST){REF.update({mg_active:false,mg_src:null,mg_type:null});REF.child('mgState').set(null);}
+
   var overlay=document.getElementById('victoryOverlay');overlay.classList.add('show');var stage=0;function render(i){var d=seq[i];overlay.innerHTML=buildCfHTML(d.cf)+`<div class="vstage active ${d.cls}"><div class="v-comment">${d.comment}</div><div class="v-place">${d.place}</div><div class="v-card ${d.cls}"><div class="v-name" style="color:${d.color}">${d.name}</div><div class="v-score" style="color:${d.color}">${d.score}</div><div class="v-sub">${d.tokens}</div></div>${i===seq.length-1?`<button class="vfinal-btn" onclick="doReset()">🔄 Neues Spiel</button>`:''}</div>`;playApplause();}render(0);var vt=setInterval(function(){stage++;if(stage>=seq.length){clearInterval(vt);return;}render(stage);},3000);if(IS_HOST)REF.update({screen:'won'});}
 function buildCfHTML(n){var cols=['#ff4d6d','#ffd166','#06d6a0','#4cc9f0','#b5179e','#f72585','#53f6ff','#ff4fd8'];var shp=['50%','4px','0'];var h='';for(var i=0;i<n;i++){var sz=6+Math.random()*14;h+=`<div style="position:absolute;top:-30px;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};border-radius:${shp[i%3]};transform:rotate(${Math.random()*360}deg);animation:cf-fall ${2+Math.random()*4}s ${Math.random()*1.5}s linear both"></div>`;}return h;}
 
@@ -1600,8 +1583,7 @@ window._mgSeed=_seed;}catch(e){}
   var src=type==='memory'?'chartster_memory.html?embedded=1':'chartster_paparazzi.html?embedded=1';
   iframe.src=src;
   // Zuschauer-Modus: Mini-Spiel übertragen
-  var _seed=window._mgSeed||Math.floor(Math.random()*1000000);
-  if(typeof REF!=='undefined'&&IS_HOST) REF.update({mg_active:true,mg_src:src+'&spectator=1&seed='+_seed,mg_type:type});
+
   wrap.classList.add('show');
   document.getElementById('mga-skip-btn').style.display='block';
   // store type for result handler
@@ -1615,7 +1597,7 @@ function skipMiniGame(){
 }
 
 function closeMiniGameFrame(){
-  if(typeof REF!=='undefined'&&IS_HOST){REF.update({mg_active:false,mg_src:null,mg_type:null});REF.child('mgState').set(null);}
+
   var wrap=document.getElementById('minigame-frame-wrap');
   var iframe=document.getElementById('minigame-iframe');
   wrap.classList.remove('show');
@@ -1872,7 +1854,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=115', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=116', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
