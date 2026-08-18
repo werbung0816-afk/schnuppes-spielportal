@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.8.1</div>
+<div class="version">v4.8.4</div>
 
 <!-- SW Update Toast -->
 
@@ -666,7 +666,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="spec-card">
     <div id="spec-dot" style="display:none"></div>
     <div id="spec-team-name" style="display:none"></div>
-    <div id="spec-current-card" style="display:none;font-size:clamp(22px,3.5vw,48px);font-weight:700;color:#53f6ff;letter-spacing:.06em;text-align:center;width:100%;"></div>
+    
     <div id="spec-timeline-teamname" style="font-size:clamp(44px,8vw,110px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:center;width:100%;"></div>
     <div class="spec-timeline" id="spec-timeline"></div>
     <div class="spec-listening">♫ Hört zu und schätzt …</div>
@@ -937,15 +937,6 @@ function updateSpectatorView(d){
   // Teamname in gleicher Größe wie Jahreszahlen über den Karten
   var tnEl=document.getElementById('spec-timeline-teamname');
   if(tnEl){tnEl.textContent=team.name;tnEl.style.color=team.color;}
-  // Aktuell gesuchte Jahreszahl anzeigen
-  var cardEl=document.getElementById('spec-current-card');
-  if(cardEl && d.card && d.card.y){
-    cardEl.textContent='? → '+d.card.y;
-    cardEl.style.display='block';
-  } else if(cardEl){
-    cardEl.style.display='none';
-  }
-
   var tl = document.getElementById('spec-timeline');
   tl.innerHTML = '';
 
@@ -967,8 +958,24 @@ function updateSpectatorView(d){
       for(var j=0;j<rowSize&&idx<years.length;j++){
         if(j>0){
           var dot=document.createElement('div');
-          dot.style.cssText='width:clamp(8px,1.2vw,16px);height:clamp(8px,1.2vw,16px);border-radius:50%;flex-shrink:0;background:'+dotColors[colorIdx%dotColors.length]+';box-shadow:0 0 8px '+dotColors[colorIdx%dotColors.length]+';';
-          colorIdx++;
+          var dotPos=idx; // position in timeline = index of card to the right
+          // Check if selBox matches this gap
+          var isSelected=d.selBox!==undefined&&d.selBox!==null&&Number(d.selBox)===dotPos;
+          // Check if a bet is placed at this gap
+          var hasBet=d.bets&&Object.values(d.bets).some(function(v){return Number(v)===dotPos;});
+          if(isSelected){
+            dot.style.cssText='width:clamp(20px,2.5vw,32px);height:clamp(20px,2.5vw,32px);border-radius:50%;flex-shrink:0;background:#53f6ff;box-shadow:0 0 12px #53f6ff;display:flex;align-items:center;justify-content:center;font-size:clamp(12px,1.5vw,20px);font-weight:900;color:#07000f;';
+            dot.textContent='✓';
+          } else if(hasBet){
+            // Teamfarbe des bettenden Spielers
+            var betColor=team.color||'#ffd700';
+            Object.keys(d.bets||{}).forEach(function(ti){if(Number(d.bets[ti])===dotPos&&d.teams[parseInt(ti)])betColor=d.teams[parseInt(ti)].color;});
+            dot.style.cssText='width:clamp(16px,2vw,26px);height:clamp(16px,2vw,26px);border-radius:50%;flex-shrink:0;background:'+betColor+';border:2px solid rgba(0,0,0,.4);box-shadow:0 0 10px '+betColor+';';
+            dot.textContent='';
+          } else {
+            dot.style.cssText='width:clamp(8px,1.2vw,16px);height:clamp(8px,1.2vw,16px);border-radius:50%;flex-shrink:0;background:'+dotColors[colorIdx%dotColors.length]+';box-shadow:0 0 8px '+dotColors[colorIdx%dotColors.length]+';';
+            colorIdx++;
+          }
           row.appendChild(dot);
         }
         var yr=years[idx++];
@@ -1908,7 +1915,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=118', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=121', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
