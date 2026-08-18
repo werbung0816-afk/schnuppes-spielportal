@@ -618,7 +618,7 @@ const scoresRef  = db.ref(ROOM+'/scores');
 const votesRef   = db.ref(ROOM+'/votes');
 
 // ── Constants ───────────────────────────────────────
-const VERSION   = 'v1.8.0';
+const VERSION   = 'v1.9.0';
 const LETTERS   = 'ABCDEFGHIJKLMNOPRSTUVWZ'.split('');
 const DEF_CATS  = ['Stadt','Land','Fluss','Name','Beruf','Tier'];
 const SUG_CATS  = ['Pflanze','Musikinstrument','Firma','Prominenter','im Kino','Fahrzeug','Sportart','Filmtitel','Lebensmittel','Farbe'];
@@ -1293,12 +1293,15 @@ async function renderReveal(){
 
   document.getElementById('reveal-sub').textContent=`Runde ${round} von ${gameState.totalRounds}`;
 
-  // Check if I already submitted votes (reconnect)
+  // Vorhandene Votes laden – auch wenn noch nicht abgeschickt (Korrekturmodus)
   const myVotesSnap=await votesRef.child(round).child(myId).once('value');
   const savedMyVotes=myVotesSnap.val()||{};
+  // Punktewerte übernehmen wenn vorhanden (unabhängig vom _submitted-Flag)
+  cats.forEach(c=>{
+    if(savedMyVotes[c]!==undefined) myVotes[c]=savedMyVotes[c];
+  });
   if(savedMyVotes._submitted){
     myVotesSubmitted=true;
-    cats.forEach(c=>{myVotes[c]=savedMyVotes[c]??0;});
   }
 
   // Fetch all answers
@@ -1537,9 +1540,17 @@ async function goBackToReveal(){
   });
   await playersRef.update(playerUpd);
 
-  // Votes und Scores dieser Runde löschen → alles neu
-  await votesRef.child(round).remove();
+  // Scores löschen (werden nach erneuter Abstimmung neu berechnet)
   await scoresRef.child(round).remove();
+
+  // NUR _submitted-Flag entfernen – Punktewerte bleiben erhalten!
+  const vSnap=await votesRef.child(round).once('value');
+  const existingVotes=vSnap.val()||{};
+  const flagResets={};
+  Object.keys(existingVotes).forEach(pid=>{
+    flagResets['slrf/votes/'+round+'/'+pid+'/_submitted']=null;
+  });
+  if(Object.keys(flagResets).length>0) await db.ref('/').update(flagResets);
 
   // Zurück zur Abstimmung
   await gameRef.update({state:'reveal'});
