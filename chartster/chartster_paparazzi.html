@@ -80,8 +80,6 @@ body{
   position:relative;
   flex:1;
   min-width:0;
-  max-width:min(55vh,55vw);
-  max-height:min(55vh,55vw);
   aspect-ratio:1/1;
   border-radius:20px;
   overflow:hidden;
@@ -393,17 +391,14 @@ body{
 
 /* version */
 .ver{position:fixed;bottom:12px;right:16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.3);z-index:100}
-
-.embedded-mode #screen-lobby{display:none!important;}
 </style>
 </head>
 <body>
-<div id="lobby-bg"></div>
 
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v2.6.3-mini</div>
+<div class="ver">v2.4.1-mini</div>
 
 <!-- Zahnrad-Menü (nur im Spiel) -->
 <div id="gear-btn" onclick="toggleGear()">&#9881;</div>
@@ -414,7 +409,7 @@ body{
 </div>
 
 <!-- ════ LOBBY ════ -->
-<div id="screen-lobby" class="screen">
+<div id="screen-lobby" class="screen active">
 <div class="card">
   <div class="game-title">PAPARAZZI</div>
   <div style="font-size:13px;color:var(--muted);margin-top:-8px">Erkenne den Künstler aus dem verschwommenen Bild</div>
@@ -520,7 +515,6 @@ body{
 var EMBEDDED_MODE = (new URLSearchParams(window.location.search)).get('embedded') === '1';
 var embCfg = {};
 if(EMBEDDED_MODE){
-  document.body.classList.add('embedded-mode');
   try { var _mc=JSON.parse(localStorage.getItem('chartsterMiniConfig')||'{}');embCfg=((_mc.ts&&Date.now()-_mc.ts<120000)?_mc:{}); } catch(e){}
 }
 
@@ -715,12 +709,11 @@ function loadSongs(){
         } else {
           if(hasImg && !artistMap[key].img) artistMap[key].img=imgUrl;
           if((s.fo||0)>artistMap[key].followers) artistMap[key].followers=s.fo||0;
-          if((s.p||99)<artistMap[key].bestPos) artistMap[key].bestPos=s.p||99;
           if(inTop20) artistMap[key].inTop20=true;
         }
       });
       // Nur Künstler MIT Bild UND mindestens einmal in Top 20
-      var pool=Object.values(artistMap).filter(function(a){ return !!a.img && a.inTop20 && a.bestPos<=5; });
+      var pool=Object.values(artistMap).filter(function(a){ return !!a.img && a.inTop20; });
       G.artists=shuffle(pool);
 
       if(G.artists.length===0){
@@ -774,28 +767,15 @@ function setGoal(btn){
 
 // ════ START ════
 function startGame(){
+  var active=getActiveSeats();
+  if(active.length<2){showHint('Mindestens 2 Teams!');return;}
   if(G.artists.length===0){showHint('Songs noch nicht geladen – kurz warten!');return;}
 
-  if(EMBEDDED_MODE){
-    // Spieler direkt aus Chartster-Config lesen
-    var ep=embCfg.players||[];
-    var embPos=['bot-l','bot-r','top-l','top-r','left','right'];
-    ep.forEach(function(p,i){if(p.color) COLORS[i]=p.color;});
-    G.teams=ep.map(function(p,i){
-      return{name:p.name||DEFAULTS[i],color:p.color||COLORS[i],
-             origIdx:p.origIdx!==undefined?p.origIdx:i,
-             pos:embPos[i]||'bot-l'};
-    });
-  } else {
-    var active=getActiveSeats();
-    if(active.length<2){showHint('Mindestens 2 Teams!');return;}
-    G.teams=active.map(function(pos,i){
-      var inp=document.querySelector('.seat[data-pos="'+pos+'"] .seat-inp');
-      var name=inp&&inp.value.trim()?inp.value.trim():DEFAULTS[i];
-      return{name:name,color:COLORS[i],pos:pos,side:SEAT_SIDE[pos],
-             origIdx:i};
-    });
-  }
+  G.teams=active.map(function(pos,i){
+    var inp=document.querySelector('.seat[data-pos="'+pos+'"] .seat-inp');
+    var name=inp&&inp.value.trim()?inp.value.trim():DEFAULTS[i];
+    return{name:name,color:COLORS[i],pos:pos,side:SEAT_SIDE[pos]};
+  });
   G.players=G.teams.map(function(t){return t.name;});
   G.scores=G.teams.map(function(){return 0;});
   G.queue=shuffle(G.artists.map(function(_,i){return i;}));
@@ -855,12 +835,11 @@ function nextArtist(){
   clearTimeout(G.stepTimer);
   clearInterval(G.patchTimer);
   G.patchQueue=[];G.patchIdx=0;G.round++;
-  if(G.round>9){ showPanel(null); setTimeout(showVictory,600); return; }
 
   // Modus-Anzeige aktualisieren
   var modeLabels={blur:'Modus 1 — Blur',patch:'Modus 2 — Patch',mosaic:'Modus 3 — Mosaik'};
   var modeEl=document.getElementById('mode-indicator');
-  if(modeEl) modeEl.textContent=(modeLabels[getCurrentMode()]||'')+(G.round?' — Künstler '+G.round+'/9':'');
+  if(modeEl) modeEl.textContent=modeLabels[getCurrentMode()]||'';
 
   // Canvas-Zustand zurücksetzen
   document.getElementById('patch-canvas').style.display='none';
@@ -1175,7 +1154,7 @@ function judge(correct){
     G.scores[pi]++;
     updateScoreboard();
     spawnConfetti(G.teams[pi].color,50);
-    // Kein Sofortgewinn — nach 9 Künstlern Schluss
+    if(G.scores[pi]>=G.goal){ showPanel(null); setTimeout(showVictory,600); return; }
   } else {
     G.scores[pi]=Math.max(-99,G.scores[pi]-1);
     updateScoreboard();
@@ -1229,7 +1208,6 @@ function showVictory(){
       window.parent.postMessage({
         type:'miniGameResult',
         gameType:'paparazzi',
-        tokenReward:1,
         winnerOrigIdx: winner ? winner.origIdx : -1,
         winnerName: winner ? winner.name : null,
         winnerColor: winner ? winner.color : null,

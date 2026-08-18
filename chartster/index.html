@@ -401,6 +401,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #minigame-frame-wrap{
   position:fixed;inset:0;z-index:970;
   display:none;flex-direction:column;
+  align-items:center;justify-content:center;
   background:var(--bg);
 }
 #minigame-frame-wrap.show{display:flex;}
@@ -610,7 +611,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.6.5</div>
+<div class="version">v4.6.6</div>
 
 <!-- SW Update Toast -->
 
@@ -851,7 +852,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 <!-- ════ MINI-GAME IFRAME ════ -->
 <div id="minigame-frame-wrap">
-  <iframe id="minigame-iframe" src="" allow="autoplay"></iframe>
+  <iframe id="minigame-iframe" src="" allow="autoplay" style="width:100%;height:100%;border:none;flex:1;"></iframe>
 </div>
 <button id="mga-skip-btn" style="display:none" onclick="skipMiniGame()">⏭ Überspringen</button>
 
@@ -1034,7 +1035,7 @@ function discardGame(){
 
 <!-- ════ MINI-GAME IFRAME ════ -->
 <div id="minigame-frame-wrap">
-  <iframe id="minigame-iframe" src="" allow="autoplay"></iframe>
+  <iframe id="minigame-iframe" src="" allow="autoplay" style="width:100%;height:100%;border:none;flex:1;"></iframe>
 </div>
 <button id="mga-skip-btn" style="display:none" onclick="skipMiniGame()">⏭ Überspringen</button>
 
@@ -1108,8 +1109,11 @@ function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');do
 function applyRemote(d){
   if(d.ts && d.ts < _joinTs - 10000) return; // Signal älter als 10s verwerfen
   if(IS_SPECTATOR){
-    // Zuschauer bleibt auf Zuschauer-Screen — nur Daten aktualisieren
-    if(d.teams) updateSpectatorView(d);
+    if(d.screen==='joint-victory'&&d.jointWinners){
+      showSpectatorJointVictory(d.jointWinners);
+    } else if(d.teams){
+      updateSpectatorView(d);
+    }
     return;
   }
   if(d.screen==='game'&&d.teams){G.teams=d.teams;G.cur=d.cur||0;G.currentCard=d.card||null;showScreen('game');renderPanels();updateGameUI();}}
@@ -1414,6 +1418,21 @@ function continueGame(){G.cur=nextTeamIdx();
 
 // ── VICTORY ──
 
+
+function showSpectatorJointVictory(winners){
+  try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
+  var sc=document.getElementById('screen-spectator');
+  if(!sc) return;
+  var names=winners.map(function(w){return'<span style="color:'+w.color+'">'+w.name+'</span>';}).join(' &amp; ');
+  sc.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#07000f;">'
+    +'<div style="text-align:center;font-family:Outfit,sans-serif;padding:40px;">'
+    +'<div style="font-size:clamp(60px,12vw,140px);">🎉</div>'
+    +'<div style="font-size:clamp(28px,5vw,64px);font-weight:800;color:#fff;margin:16px 0;">GEMEINSAMER SIEG!</div>'
+    +'<div style="font-size:clamp(22px,4vw,48px);font-weight:700;margin-bottom:16px;">'+names+'</div>'
+    +'</div></div>';
+  sc.classList.add('active');
+}
+
 function showJointVictory(winners){
   // Update spectator
   if(typeof updateSpectatorVictory==='function') updateSpectatorVictory(winners);
@@ -1427,10 +1446,10 @@ function showJointVictory(winners){
     +'<div style="font-size:clamp(24px,4vw,48px);font-weight:800;color:#fff;margin:12px 0;">GEMEINSAMER SIEG!</div>'
     +'<div style="font-size:clamp(20px,3vw,36px);font-weight:700;margin-bottom:24px;">'+names+'</div>'
     +'<div style="font-size:clamp(16px,2vw,24px);color:rgba(255,255,255,.6);margin-bottom:32px;">'+winners[0].years.length+' Karten — perfekt gleichauf!</div>'
-    +'<button onclick="resetToLobby()" style="background:#53f6ff;color:#07000f;border:none;border-radius:12px;padding:16px 36px;font-size:18px;font-weight:700;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.08em;">NEUES SPIEL</button>'
+    +'<button onclick="location.reload()" style="background:#53f6ff;color:#07000f;border:none;border-radius:12px;padding:16px 36px;font-size:18px;font-weight:700;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.08em;">NEUES SPIEL</button>'
     +'</div>';
   // Push won state to Firebase for spectator
-  if(typeof REF!=='undefined') REF.update({screen:'won',winners:winners.map(function(w){return w.name;})});
+  if(typeof REF!=='undefined') REF.update({screen:'joint-victory',jointWinners:winners});
 }
 
 function showVictory(){var sorted=G.teams.slice().sort((a,b)=>b.years.length-a.years.length);var seq=sorted.map(function(team,rank){var effectiveRank=rank;for(var r=0;r<rank;r++){if(sorted[r].years.length===team.years.length){effectiveRank=r;break;}}var m=MEDALS[effectiveRank]||MEDALS[MEDALS.length-1];return{place:m.place,comment:m.coms[Math.floor(Math.random()*m.coms.length)],name:team.name,color:team.color,score:team.years.length+' Karten',tokens:team.tokens+' Token',cls:m.cls,cf:m.cf};}).reverse();// Gemeinsamer Sieg prüfen
@@ -1782,7 +1801,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=101', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=102', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
