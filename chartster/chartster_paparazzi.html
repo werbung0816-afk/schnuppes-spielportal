@@ -754,7 +754,7 @@ function embeddedStart(){
   });
   // Override COLORS for this session to match Chartster teams
   ep.forEach(function(p,i){ if(p.color) COLORS[i]=p.color; });
-  G.goal=embCfg.goal||3;
+  G.goal=5;
   startGame();
 }
 
@@ -835,6 +835,7 @@ function nextArtist(){
   clearTimeout(G.stepTimer);
   clearInterval(G.patchTimer);
   G.patchQueue=[];G.patchIdx=0;G.round++;
+  if(G.round>5){showPanel(null);setTimeout(showVictory,600);return;}
 
   // Modus-Anzeige aktualisieren
   var modeLabels={blur:'Modus 1 — Blur',patch:'Modus 2 — Patch',mosaic:'Modus 3 — Mosaik'};
@@ -911,7 +912,7 @@ function startReveal(){
 // Reihenfolge: Runden 1-3 Blur, 4-6 Patch, 7-9 Mosaik, dann wiederholen
 function getCurrentMode(){
   if(G.round<=0) return 'blur';
-  return ['blur','patch','mosaic'][Math.floor((G.round-1)/3)%3];
+  return ['blur','mosaic','patch','blur','mosaic'][(G.round-1)%5]||'blur';
 }
 
 function buildPatchQueue(canvasSize, grid){
@@ -1154,7 +1155,7 @@ function judge(correct){
     G.scores[pi]++;
     updateScoreboard();
     spawnConfetti(G.teams[pi].color,50);
-    if(G.scores[pi]>=G.goal){ showPanel(null); setTimeout(showVictory,600); return; }
+    // Kein Sofortgewinn — 5 Bilder werden immer gespielt
   } else {
     G.scores[pi]=Math.max(-99,G.scores[pi]-1);
     updateScoreboard();
