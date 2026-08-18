@@ -401,7 +401,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #minigame-frame-wrap{
   position:fixed;inset:0;z-index:970;
   display:none;flex-direction:column;
-  align-items:center;justify-content:center;
+  align-items:stretch;justify-content:stretch;
   background:var(--bg);
 }
 #minigame-frame-wrap.show{display:flex;}
@@ -611,7 +611,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.6.6</div>
+<div class="version">v4.6.8</div>
 
 <!-- SW Update Toast -->
 
@@ -663,13 +663,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <!-- ════ ZUSCHAUER ════ -->
 <div id="screen-spectator" class="screen">
   <div class="spec-card">
-    <div class="spec-team-row">
-      <div class="spec-dot" id="spec-dot"></div>
-      <div class="spec-team-name" id="spec-team-name">—</div>
-      <div class="spec-badge">▶ Am Zug</div>
-    </div>
+    <div id="spec-dot" style="display:none"></div>
+    <div id="spec-team-name" style="display:none"></div>
     <div id="spec-timeline-teamname" style="font-size:clamp(44px,8vw,110px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:center;width:100%;"></div>
-    <div class="spec-hint">Bereits platzierte Karten</div>
     <div class="spec-timeline" id="spec-timeline"></div>
     <div class="spec-listening">♫ Hört zu und schätzt …</div>
     <div class="spec-sep"></div>
@@ -852,7 +848,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 <!-- ════ MINI-GAME IFRAME ════ -->
 <div id="minigame-frame-wrap">
-  <iframe id="minigame-iframe" src="" allow="autoplay" style="width:100%;height:100%;border:none;flex:1;"></iframe>
+  <iframe id="minigame-iframe" src="" allow="autoplay" style="width:100%;height:100%;border:none;display:block;"></iframe>
 </div>
 <button id="mga-skip-btn" style="display:none" onclick="skipMiniGame()">⏭ Überspringen</button>
 
@@ -1035,7 +1031,7 @@ function discardGame(){
 
 <!-- ════ MINI-GAME IFRAME ════ -->
 <div id="minigame-frame-wrap">
-  <iframe id="minigame-iframe" src="" allow="autoplay" style="width:100%;height:100%;border:none;flex:1;"></iframe>
+  <iframe id="minigame-iframe" src="" allow="autoplay" style="width:100%;height:100%;border:none;display:block;"></iframe>
 </div>
 <button id="mga-skip-btn" style="display:none" onclick="skipMiniGame()">⏭ Überspringen</button>
 
@@ -1111,8 +1107,11 @@ function applyRemote(d){
   if(IS_SPECTATOR){
     if(d.screen==='joint-victory'&&d.jointWinners){
       showSpectatorJointVictory(d.jointWinners);
-    } else if(d.teams){
-      updateSpectatorView(d);
+    } else if(d.screen==='minigame'&&d.miniGameSrc){
+      showSpectatorMiniGame(d.miniGameSrc,d.miniGameType);
+    } else {
+      if(d.teams) updateSpectatorView(d);
+      hideSpectatorMiniGame();
     }
     return;
   }
@@ -1419,6 +1418,24 @@ function continueGame(){G.cur=nextTeamIdx();
 // ── VICTORY ──
 
 
+
+var _specMiniFrame = null;
+function showSpectatorMiniGame(src, type){
+  var sc = document.getElementById('screen-spectator');
+  if(!sc) return;
+  if(_specMiniFrame && _specMiniFrame.src === src.replace('spectator=0','spectator=1')) return;
+  sc.innerHTML = '<iframe id="spec-mini-iframe" src="'
+    + src.replace('spectator=0','spectator=1')
+    + '" style="width:100%;height:100%;border:none;display:block;pointer-events:none;" allowfullscreen></iframe>';
+  _specMiniFrame = sc.querySelector('iframe');
+  document.getElementById('screen-spectator').classList.add('active');
+}
+function hideSpectatorMiniGame(){
+  _specMiniFrame = null;
+  var el = document.getElementById('spec-mini-iframe');
+  if(el) el.remove();
+}
+
 function showSpectatorJointVictory(winners){
   try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
   var sc=document.getElementById('screen-spectator');
@@ -1530,13 +1547,16 @@ function launchMiniGame(type){
     tokenReward:tokenReward,
     filters: Array.from(G.excluded)
   };
-  try{localStorage.setItem('chartsterMiniConfig',JSON.stringify({...cfg,ts:Date.now()}));}catch(e){}
+  try{var _seed=Math.floor(Math.random()*1000000);
+localStorage.setItem('chartsterMiniConfig',JSON.stringify({...cfg,ts:Date.now(),seed:_seed}));}catch(e){}
 
   // Show iframe
   var wrap=document.getElementById('minigame-frame-wrap');
   var iframe=document.getElementById('minigame-iframe');
   var src=type==='memory'?'chartster_memory.html?embedded=1':'chartster_paparazzi.html?embedded=1';
   iframe.src=src;
+  // Zuschauer-Modus: Mini-Spiel übertragen
+  if(typeof REF!=='undefined') REF.update({screen:'minigame',miniGameType:type,miniGameSrc:src.replace('?embedded=1','?embedded=1&spectator=0')});
   wrap.classList.add('show');
   document.getElementById('mga-skip-btn').style.display='block';
   // store type for result handler
@@ -1550,6 +1570,7 @@ function skipMiniGame(){
 }
 
 function closeMiniGameFrame(){
+  if(typeof REF!=='undefined') REF.update({screen:G.screen,miniGameType:null,miniGameSrc:null});
   var wrap=document.getElementById('minigame-frame-wrap');
   var iframe=document.getElementById('minigame-iframe');
   wrap.classList.remove('show');
@@ -1801,7 +1822,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=102', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=104', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {

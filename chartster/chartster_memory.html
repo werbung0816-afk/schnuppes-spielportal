@@ -83,9 +83,9 @@ body{
 .seat.active .seat-circle::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.18),transparent 70%)}
 
 /* ── GAME SCREEN ── */
-#screen-game{justify-content:flex-start;padding:12px 12px 24px;align-items:center}
+#screen-game{justify-content:flex-start;padding:6px 8px 8px;align-items:center;height:100vh;overflow:hidden;box-sizing:border-box;}
 
-.scoreboard{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%;max-width:900px;margin-bottom:10px}
+.scoreboard{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;width:100%;margin-bottom:6px;}
 .s-chip{display:flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--glass-b);border-radius:40px;padding:7px 14px;font-size:14px;font-weight:600;transition:all .25s}
 .s-chip.cur{border-width:2px;box-shadow:0 0 16px rgba(0,0,0,.5)}
 .s-chip .sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
@@ -94,7 +94,8 @@ body{
 .turn-line{font-size:13px;color:var(--muted);height:20px;text-align:center;margin-bottom:8px}
 .turn-line span{font-weight:700;color:var(--text)}
 
-.mem-grid{display:grid;gap:8px;width:100%;max-width:900px}
+.mem-grid{display:grid;gap:clamp(4px,1vw,10px);width:100%;}
+.mem-grid{flex:1;align-content:stretch;}
 .mem-grid.g6 {grid-template-columns:repeat(4,1fr)}
 .mem-grid.g8 {grid-template-columns:repeat(4,1fr)}
 .mem-grid.g10{grid-template-columns:repeat(5,1fr)}
@@ -104,7 +105,7 @@ body{
   .mem-grid.g10{grid-template-columns:repeat(4,1fr)}
 }
 
-.mc{width:100%;aspect-ratio:1/1;perspective:600px;position:relative}
+.mc{width:100%;aspect-ratio:1/1;width:100%;height:100%;perspective:600px;position:relative}
 .mc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .38s cubic-bezier(.4,0,.2,1);border-radius:10px}
 .mc.flipped .mc-inner,.mc.matched .mc-inner{transform:rotateY(180deg)}
 .mc-face{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
@@ -225,7 +226,7 @@ body{
 var EMBEDDED_MODE = (new URLSearchParams(window.location.search)).get('embedded') === '1';
 var embCfg = {};
 if(EMBEDDED_MODE){
-  try { var _mc=JSON.parse(localStorage.getItem('chartsterMiniConfig')||'{}');embCfg=((_mc.ts&&Date.now()-_mc.ts<120000)?_mc:{}); } catch(e){}
+  try { var _mc=JSON.parse(localStorage.getItem('chartsterMiniConfig')||'{}');embCfg=((_mc.ts&&Date.now()-_mc.ts<120000)?_mc:{});var GAME_SEED=embCfg.seed||Math.floor(Math.random()*1000000); } catch(e){}
 }
 
 const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f1c','#e0ff4f'];
@@ -594,6 +595,30 @@ function spawnConfetti(color,count){
 function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+name);if(el)el.classList.add('active');}
 function showHint(msg){var el=document.getElementById('hint-toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3000);}
 function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// Seed-basiertes Mischen für synchrone Darstellung auf Zuschauer-Gerät
+function seededShuffle(arr, seed){
+  var a=arr.slice(),s=seed||12345;
+  for(var i=a.length-1;i>0;i--){
+    s=(s*1664525+1013904223)&0xffffffff;
+    var j=Math.abs(s)%(i+1);
+    var t=a[i];a[i]=a[j];a[j]=t;
+  }
+  return a;
+}
+
+// Zuschauer-Modus: alles sehen, nichts klicken
+var IS_SPECTATOR_VIEW = (new URLSearchParams(window.location.search)).get('spectator') === '1';
+if(IS_SPECTATOR_VIEW){
+  document.addEventListener('DOMContentLoaded', function(){
+    var style = document.createElement('style');
+    style.textContent = 'button,input,a{pointer-events:none!important;}' +
+      '.buzzer,.btn,.seat{pointer-events:none!important;}' +
+      '#hint-toast{display:none!important;}';
+    document.head.appendChild(style);
+  });
+}
+
 </script>
 </body>
 </html>

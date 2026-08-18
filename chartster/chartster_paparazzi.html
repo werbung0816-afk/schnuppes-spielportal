@@ -515,7 +515,7 @@ body{
 var EMBEDDED_MODE = (new URLSearchParams(window.location.search)).get('embedded') === '1';
 var embCfg = {};
 if(EMBEDDED_MODE){
-  try { var _mc=JSON.parse(localStorage.getItem('chartsterMiniConfig')||'{}');embCfg=((_mc.ts&&Date.now()-_mc.ts<120000)?_mc:{}); } catch(e){}
+  try { var _mc=JSON.parse(localStorage.getItem('chartsterMiniConfig')||'{}');embCfg=((_mc.ts&&Date.now()-_mc.ts<120000)?_mc:{});var GAME_SEED=embCfg.seed||Math.floor(Math.random()*1000000); } catch(e){}
 }
 
 
@@ -1263,6 +1263,30 @@ function spawnConfetti(color,count){
     setTimeout(function(el){el.remove();},(dur+1)*1000,p);
   }
 }
+
+// Seed-basiertes Mischen für synchrone Darstellung auf Zuschauer-Gerät
+function seededShuffle(arr, seed){
+  var a=arr.slice(),s=seed||12345;
+  for(var i=a.length-1;i>0;i--){
+    s=(s*1664525+1013904223)&0xffffffff;
+    var j=Math.abs(s)%(i+1);
+    var t=a[i];a[i]=a[j];a[j]=t;
+  }
+  return a;
+}
+
+// Zuschauer-Modus: alles sehen, nichts klicken
+var IS_SPECTATOR_VIEW = (new URLSearchParams(window.location.search)).get('spectator') === '1';
+if(IS_SPECTATOR_VIEW){
+  document.addEventListener('DOMContentLoaded', function(){
+    var style = document.createElement('style');
+    style.textContent = 'button,input,a{pointer-events:none!important;}' +
+      '.buzzer,.btn,.seat{pointer-events:none!important;}' +
+      '#hint-toast{display:none!important;}';
+    document.head.appendChild(style);
+  });
+}
+
 </script>
 </body>
 </html>
