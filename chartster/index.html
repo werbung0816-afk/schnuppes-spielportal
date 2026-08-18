@@ -125,11 +125,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 /* ── CHART MACHINE (full-width, big) ── */
 #screen-slot .card{max-width:700px;width:95%;margin:0}
-.slot-outer{position:relative;width:100%;max-width:480px;margin:0 auto}
+.slot-outer{position:relative;width:100%;max-width:min(700px,90vw);margin:0 auto}
 .slot-machine-body{background:#12041f;border:2px solid rgba(83,246,255,.35);border-radius:24px;padding:20px;box-shadow:0 0 50px rgba(83,246,255,.18)}
-#slot-window{height:160px;overflow:hidden;border-radius:14px;background:#07000f;border:1px solid rgba(83,246,255,.2);position:relative}
+#slot-window{height:clamp(160px,22vw,260px);overflow:hidden;border-radius:14px;background:#07000f;border:1px solid rgba(83,246,255,.2);position:relative}
 #slot-reel{position:absolute;width:100%;will-change:transform}
-.slot-item{height:160px;display:flex;align-items:center;justify-content:center;font-size:90px;font-weight:900;font-family:'Outfit',sans-serif;color:rgba(240,240,255,.9)}
+.slot-item{height:clamp(160px,22vw,260px);display:flex;align-items:center;justify-content:center;font-size:clamp(90px,13vw,150px);font-weight:900;font-family:'Outfit',sans-serif;color:rgba(240,240,255,.9)}
 .slot-overlay-top{position:absolute;top:0;left:0;right:0;height:40px;background:linear-gradient(to bottom,#07000f,transparent);z-index:2;pointer-events:none}
 .slot-overlay-bot{position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,#07000f,transparent);z-index:2;pointer-events:none}
 .slot-line{position:absolute;left:10px;right:10px;top:50%;height:3px;background:var(--cyan);opacity:.6;z-index:3;transform:translateY(-50%)}
@@ -563,7 +563,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 @keyframes spec-pulse{0%,100%{opacity:.6;}50%{opacity:1;}}
 .spec-hint{font-size:clamp(12px,1.5vw,18px);color:var(--muted);letter-spacing:.1em;text-transform:uppercase;text-align:center;}
 .spec-timeline{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,1.2vw,18px);width:100%;flex:1;}
-.spec-year{background:rgba(143,95,255,.22);border:2px solid rgba(143,95,255,.6);border-radius:clamp(10px,1.5vw,18px);width:clamp(170px,22vw,300px);height:clamp(90px,11vw,160px);font-size:clamp(40px,7.5vw,105px);font-weight:800;color:#fff;text-align:center;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.spec-year{background:rgba(70,40,160,1);border:2px solid rgba(143,95,255,.9);border-radius:clamp(10px,1.5vw,18px);width:clamp(170px,22vw,300px);height:clamp(90px,11vw,160px);font-size:clamp(40px,7.5vw,105px);font-weight:800;color:#fff;text-align:center;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .spec-connector{width:clamp(16px,2.5vw,40px);height:3px;background:rgba(255,255,255,.15);flex-shrink:0;}
 .spec-listening{font-size:clamp(16px,2.5vw,28px);color:rgba(255,255,255,.28);letter-spacing:.06em;font-style:italic;text-align:center;}
 .spec-sep{width:100%;height:1px;background:var(--glass-b);}
@@ -611,7 +611,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.7.0</div>
+<div class="version">v4.7.2</div>
 
 <!-- SW Update Toast -->
 
@@ -897,6 +897,15 @@ function enterSpectator(){
 
 function initSpectatorListener(){
   if(specListener){ REF.off('value', specListener); }
+  // Dedizierter Sieger-Listener
+  REF.child('victory').on('value', function(snap){
+    if(!IS_SPECTATOR) return;
+    var v=snap.val();
+    if(v&&v.teams){
+      var el=document.getElementById('spec-listening-hint');
+      if(el){el.textContent='🏆 Spiel beendet!';el.style.color='#53f6ff';}
+    }
+  });
   // Dedizierter Mini-Spiel Listener
   REF.child('miniGame').on('value', function(snap){
     if(!IS_SPECTATOR) return;
@@ -1076,11 +1085,11 @@ const CW_ORDER=['bot-l','left','top-r','top-l','right','bot-r'];
 const SEAT_DEF={'top-l':{side:'top'},'top-r':{side:'top'},'left':{side:'left'},'right':{side:'right'},'bot-l':{side:'bot'},'bot-r':{side:'bot'}};
 const CENTER_ROT={bot:'r0',top:'r180',left:'r90',right:'r270'};
 
-const CP1=[t=>`${t} – Ihr seid dran!`,t=>`Jetzt kommen ${t}!`,t=>`Alle Ohren auf ${t}!`,t=>`${t} – zeigt Euren Musikgeschmack!`,t=>`${t}: Die Bühne gehört Euch!`,t=>`Keine Ausreden – ${t} legt los!`];
+const CP1=[t=>`${t} – Ihr seid dran!`,t=>`Jetzt kommen ${t}!`,t=>`Alle Ohren auf ${t}!`,t=>`${t} – zeigt Euren Musikgeschmack!`,t=>[`Jetzt kommt ${t}!`,`${t}: The stage is yours!`,`${t}: Die Bühne gehört Euch!`,`${t}: Zeigt was Ihr drauf habt!`][Math.floor(Math.random()*4)],t=>`Keine Ausreden – ${t} legt los!`];
 const CP2=[(t)=>`Welches Jahr steckt dahinter?`,(t,o)=>o.length?`${t} gegen ${o[0]}.`:`Lauscht gut, ${t}!`,(t)=>`Vertraut Eurem Bauchgefühl!`,(t,o)=>o.length?`${o.join(' & ')} überlegen…`:`Der Beat verrät alles.`,(t)=>`Hört rein!`];
-const CPI=[(a,b,n)=>`${a} haben ${n} Karte${n===1?'':'n'}. ${b} – Ihr seid dran!`,(a,b)=>`Bühne frei für ${b}!`,(a,b,n)=>`${b}: Schafft Ihr mehr als ${n}?`,(a,b)=>`${a} machen Pause. ${b} – los!`,(a,b)=>`Weiter mit ${b}!`];
+const CPI=[(a,b)=>`Jetzt kommt ${b}!`,(a,b)=>`${b}: Holt Euch Eure Jahreszahl!`,(a,b)=>`Weiter mit ${b}!`,(a,b)=>`${b}: Die Bühne gehört Euch!`];
 const CPW=[t=>`${t} haben gewonnen! Legendäre Musikkenntnis!`,t=>`Chapeau, ${t}! Die wahren Chartster!`,t=>`${t} dominieren die Charts!`,t=>`${t} sind unschlagbar. Respect!`];
-const MEDALS=[{place:'👑 1. PLATZ',coms:['ABSOLUTE MUSIKLEGENDEN!','UNSCHLAGBAR!','DAS WAR EINE SHOW!'],cls:'vgold',cf:500},{place:'🥈 2. PLATZ',coms:['GANZ KNAPP DANEBEN!','SO NAH!'],cls:'vsilver',cf:260},{place:'🥉 3. PLATZ',coms:['STARK GEKÄMPFT!','PODIUM ERREICHT!'],cls:'vbronze',cf:130},{place:'🏅 4. PLATZ',coms:['NÄCHSTE RUNDE!'],cls:'vbronze',cf:60}];
+const MEDALS=[{place:'👑 1. PLATZ',coms:['UNSCHLAGBAR!','CHARTSTÜRMER!','MUSIKLEGENDEN!','MEISTERKLASSE!','HITPROFIS!','LEGENDÄR!','SUPERCHARTSTER!','BRAVO!'],cls:'vgold',cf:500},{place:'🥈 2. PLATZ',coms:['STARKES OHR!','STARK!','KÖNNER!','TREFFSICHER!','MITTELGEWICHTCHAMPIONS!','TREFFER!','NAHE DRAN!'],cls:'vsilver',cf:260},{place:'🥉 3. PLATZ',coms:['GUT GEMACHT!','GUT DABEI!','GUT GERATEN!','DABEI SEIN IST ALLES!','ORDENTLICH!','SAUBER!'],cls:'vbronze',cf:130},{place:'🏅 4. PLATZ',coms:['NÄCHSTE RUNDE!','GUT VERSUCHT!','WEITER SO!'],cls:'vbronze',cf:60}];
 
 // Audio via HTML elements – most reliable on iOS Safari
 function playApplause(){new Audio('applause.mp3').play().catch(function(e){console.log('applause:',e);});}
@@ -1458,17 +1467,16 @@ function showSpectatorJointVictory(winners){
   sc.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#07000f;">'
     +'<div style="text-align:center;font-family:Outfit,sans-serif;padding:40px;">'
     +'<div style="font-size:clamp(60px,12vw,140px);">🎉</div>'
-    +'<div style="font-size:clamp(28px,5vw,64px);font-weight:800;color:#fff;margin:16px 0;">GEMEINSAMER SIEG!</div>'
+    +'<div style="font-size:clamp(28px,5vw,64px);font-weight:800;color:#fff;margin:16px 0;">'+['GEMEINSAMER SIEG!','2 Sieger!','AUF DEM SIEGERPODEST SIND ALLE GLEICH!','KENNSTE EINEN; KENNSTE ALLE!','SAUBER NACHGEZOGEN!','FAST HÄTTEN WIR EINEN EINZELSIEGER GEHABT!'][Math.floor(Math.random()*6)]+'</div>'
     +'<div style="font-size:clamp(22px,4vw,48px);font-weight:700;margin-bottom:16px;">'+names+'</div>'
     +'</div></div>';
   sc.classList.add('active');
 }
 
 function showJointVictory(winners){
-  // Update spectator
-  if(typeof updateSpectatorVictory==='function') updateSpectatorVictory(winners);
-  // Play applause
-  try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
+  try{playApplause();}catch(e){}
+  spawnConfetti(winners[0].color,300);
+  if(winners[1]) setTimeout(function(){spawnConfetti(winners[1].color,300);},400);
   var overlay=document.getElementById('victoryOverlay');
   overlay.classList.add('show');
   var names=winners.map(function(w){return'<span style="color:'+w.color+'">'+w.name+'</span>';}).join(' &amp; ');
@@ -1489,7 +1497,7 @@ function showVictory(){var sorted=G.teams.slice().sort((a,b)=>b.years.length-a.y
     showJointVictory(winners);
     return;
   }
-  if(typeof REF!=='undefined'&&IS_HOST){REF.child('miniGame').set(null);}
+  if(typeof REF!=='undefined'&&IS_HOST){REF.child('miniGame').set(null);REF.child('victory').set({teams:G.teams.map(function(t){return{name:t.name,color:t.color,cards:(t.years||[]).length};})});}
   var overlay=document.getElementById('victoryOverlay');overlay.classList.add('show');var stage=0;function render(i){var d=seq[i];overlay.innerHTML=buildCfHTML(d.cf)+`<div class="vstage active ${d.cls}"><div class="v-comment">${d.comment}</div><div class="v-place">${d.place}</div><div class="v-card ${d.cls}"><div class="v-name" style="color:${d.color}">${d.name}</div><div class="v-score" style="color:${d.color}">${d.score}</div><div class="v-sub">${d.tokens}</div></div>${i===seq.length-1?`<button class="vfinal-btn" onclick="doReset()">🔄 Neues Spiel</button>`:''}</div>`;playApplause();}render(0);var vt=setInterval(function(){stage++;if(stage>=seq.length){clearInterval(vt);return;}render(stage);},3000);if(IS_HOST)REF.update({screen:'won'});}
 function buildCfHTML(n){var cols=['#ff4d6d','#ffd166','#06d6a0','#4cc9f0','#b5179e','#f72585','#53f6ff','#ff4fd8'];var shp=['50%','4px','0'];var h='';for(var i=0;i<n;i++){var sz=6+Math.random()*14;h+=`<div style="position:absolute;top:-30px;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};border-radius:${shp[i%3]};transform:rotate(${Math.random()*360}deg);animation:cf-fall ${2+Math.random()*4}s ${Math.random()*1.5}s linear both"></div>`;}return h;}
 
@@ -1837,7 +1845,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=106', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=108', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
