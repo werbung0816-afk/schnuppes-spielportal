@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.7.3</div>
+<div class="version">v4.7.5</div>
 
 <!-- SW Update Toast -->
 
@@ -898,6 +898,20 @@ function enterSpectator(){
 
 function initSpectatorListener(){
   if(specListener){ REF.off('value', specListener); }
+  // Mini-Game State Relay → Spectator iframe
+  REF.child('mgState').on('value', function(snap){
+    if(!IS_SPECTATOR) return;
+    var d=snap.val();
+    if(!d) return;
+    var overlay=document.getElementById('spec-mg-overlay');
+    if(!overlay) return;
+    var iframe=overlay.querySelector('iframe');
+    if(!iframe) return;
+    // Forward cmd to spectator iframe
+    iframe.contentWindow.postMessage({type:'mgCmd',event:d.event,idx:d.idx,
+      a:d.a,b:d.b,scorer:d.scorer,cur:d.cur,
+      imgUrl:d.imgUrl,blur:d.blur,round:d.round,mode:d.mode},'*');
+  });
   specListener = REF.on('value', function(snap){
     var d = snap.val();
     if(!d) return;
@@ -1245,7 +1259,7 @@ function startGame(){
 // ── CHART MACHINE ──
 var SLOT_H=160,slotYearList=[],slotSpinning=false,slotPulled=false;
 function initSlot(){var years=[];for(var y=1960;y<=2026;y++)years.push(y);slotYearList=[...years,...years,...years,...years,...years];var reel=document.getElementById('slot-reel');reel.style.transition='none';reel.innerHTML=slotYearList.map(y=>`<div class="slot-item">${y}</div>`).join('');reel.style.height=(slotYearList.length*SLOT_H)+'px';var startIdx=years.length*2+Math.floor(Math.random()*years.length);reel.style.transform=`translateY(${-startIdx*SLOT_H}px)`;slotPulled=false;var lever=document.getElementById('slot-lever');if(lever)lever.classList.remove('pulled');}
-function spinSlot(){if(slotSpinning||slotPulled)return;slotSpinning=true;slotPulled=true;var lever=document.getElementById('slot-lever');if(lever)lever.classList.add('pulled');playSlot();document.getElementById('slot-spin-btn').style.display='none';var yearCount=2026-1960+1;var targetIdx=yearCount*3+Math.floor(Math.random()*yearCount);var reel=document.getElementById('slot-reel');setTimeout(function(){reel.style.transition='transform 3.0s cubic-bezier(0.12,0.57,0.14,0.99)';reel.style.transform=`translateY(${-targetIdx*SLOT_H}px)`;},200);setTimeout(function(){slotSpinning=false;stopSlot();var year=slotYearList[targetIdx];G.slotYears.push(year);var el=document.getElementById('slot-result');el.textContent=year;el.style.display='block';el.style.color=G.teams[G.slotTeam].color;document.getElementById('slot-next-btn').style.display='block';reel.querySelectorAll('.slot-item').forEach((item,i)=>{if(i===targetIdx)item.style.color=G.teams[G.slotTeam].color;});},3400);}
+function spinSlot(){if(slotSpinning||slotPulled)return;slotSpinning=true;slotPulled=true;var lever=document.getElementById('slot-lever');if(lever)lever.classList.add('pulled');playSlot();document.getElementById('slot-spin-btn').style.display='none';var yearCount=2026-1960+1;var targetIdx=yearCount*3+(G.currentCard.y-1960);var reel=document.getElementById('slot-reel');setTimeout(function(){reel.style.transition='transform 3.0s cubic-bezier(0.12,0.57,0.14,0.99)';reel.style.transform=`translateY(${-targetIdx*SLOT_H}px)`;},200);setTimeout(function(){slotSpinning=false;stopSlot();var year=slotYearList[targetIdx];G.slotYears.push(year);var el=document.getElementById('slot-result');el.textContent=year;el.style.display='block';el.style.color=G.teams[G.slotTeam].color;document.getElementById('slot-next-btn').style.display='block';reel.querySelectorAll('.slot-item').forEach((item,i)=>{if(i===targetIdx)item.style.color=G.teams[G.slotTeam].color;});},3400);}
 function updateSlotUI(){var team=G.teams[G.slotTeam];var el=document.getElementById('slot-cur-team');el.textContent=team.name;el.style.color=team.color;document.getElementById('slot-spin-btn').style.display='block';document.getElementById('slot-spin-btn').disabled=false;document.getElementById('slot-next-btn').style.display='none';document.getElementById('slot-result').style.display='none';document.getElementById('slot-reel').querySelectorAll('.slot-item').forEach(item=>item.style.color='rgba(240,240,255,.9)');}
 function nextSlotTeam(){G.slotTeam++;if(G.slotTeam>=G.teams.length){var validYears=G.slotYears.slice(0,G.teams.length);G.teams.forEach((t,i)=>{t.years=[validYears[i]||1990];});var activeCW=CW_ORDER.filter(pos=>G.teams.some(t=>t.pos===pos));var startPos=activeCW[Math.floor(Math.random()*activeCW.length)];G.cur=G.teams.findIndex(t=>t.pos===startPos);if(G.cur<0)G.cur=0;beginPlay();}else{updateSlotUI();initSlot();}}
 
@@ -1317,7 +1331,7 @@ function cardNext(){
     G.phase=3;clearCd();
     document.getElementById('sp-overlay').classList.add('gone');document.getElementById('sp-ot').classList.add('gone');document.getElementById('hitster-panel').classList.remove('show');document.getElementById('countdown-wrap').classList.remove('show');document.getElementById('new-song-token-btn').style.display='none';
     document.getElementById('year-tl').classList.add('show');
-    var yr=document.getElementById('c-year');yr.textContent=G.currentCard.y;yr.style.display='block';
+    var yr=document.getElementById('c-year');yr.style.display='none';
     document.getElementById('c-artist').textContent=G.currentCard.a;document.getElementById('c-title').textContent=G.currentCard.t;
     setTimeout(function(){document.getElementById('c-artist').classList.add('on');document.getElementById('c-title').classList.add('on');},50);
     document.getElementById('main-btn').style.display='none';document.getElementById('score-btns').classList.add('show');
@@ -1502,7 +1516,7 @@ function showVictory(){var sorted=G.teams.slice().sort((a,b)=>b.years.length-a.y
     showJointVictory(winners);
     return;
   }
-  if(typeof REF!=='undefined'&&IS_HOST) REF.update({mg_active:false,mg_src:null,mg_type:null});
+  if(typeof REF!=='undefined'&&IS_HOST){REF.update({mg_active:false,mg_src:null,mg_type:null});REF.child('mgState').set(null);}
   var overlay=document.getElementById('victoryOverlay');overlay.classList.add('show');var stage=0;function render(i){var d=seq[i];overlay.innerHTML=buildCfHTML(d.cf)+`<div class="vstage active ${d.cls}"><div class="v-comment">${d.comment}</div><div class="v-place">${d.place}</div><div class="v-card ${d.cls}"><div class="v-name" style="color:${d.color}">${d.name}</div><div class="v-score" style="color:${d.color}">${d.score}</div><div class="v-sub">${d.tokens}</div></div>${i===seq.length-1?`<button class="vfinal-btn" onclick="doReset()">🔄 Neues Spiel</button>`:''}</div>`;playApplause();}render(0);var vt=setInterval(function(){stage++;if(stage>=seq.length){clearInterval(vt);return;}render(stage);},3000);if(IS_HOST)REF.update({screen:'won'});}
 function buildCfHTML(n){var cols=['#ff4d6d','#ffd166','#06d6a0','#4cc9f0','#b5179e','#f72585','#53f6ff','#ff4fd8'];var shp=['50%','4px','0'];var h='';for(var i=0;i<n;i++){var sz=6+Math.random()*14;h+=`<div style="position:absolute;top:-30px;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};border-radius:${shp[i%3]};transform:rotate(${Math.random()*360}deg);animation:cf-fall ${2+Math.random()*4}s ${Math.random()*1.5}s linear both"></div>`;}return h;}
 
@@ -1598,7 +1612,7 @@ function skipMiniGame(){
 }
 
 function closeMiniGameFrame(){
-  if(typeof REF!=='undefined'&&IS_HOST) REF.update({mg_active:false,mg_src:null,mg_type:null});
+  if(typeof REF!=='undefined'&&IS_HOST){REF.update({mg_active:false,mg_src:null,mg_type:null});REF.child('mgState').set(null);}
   var wrap=document.getElementById('minigame-frame-wrap');
   var iframe=document.getElementById('minigame-iframe');
   wrap.classList.remove('show');
@@ -1608,6 +1622,11 @@ function closeMiniGameFrame(){
 
 // ── Listen for result from iframe ──
 window.addEventListener('message',function(ev){
+  // Mini-Game Sync → Firebase → Zuschauer
+  if(ev.data&&ev.data.type==='mgSync'&&IS_HOST&&typeof REF!=='undefined'){
+    REF.child('mgState').set(ev.data);
+    return;
+  }
   if(!ev.data||ev.data.type!=='miniGameResult') return;
   closeMiniGameFrame();
   var tokenReward=ev.data.tokenReward||(WIN===5?1:2);
@@ -1850,7 +1869,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=110', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=112', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {

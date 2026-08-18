@@ -659,6 +659,7 @@ function resetRound(){
   G.stepIdx=0;
   if(mode==='blur'){
     if(revealImg) revealImg.style.filter='blur('+BLUR_STEPS[0]+'px)';
+    if(!IS_SPECTATOR_VIEW) window.parent.postMessage({type:'mgSync',event:'blur',blur:blur},'*');
   } else if(mode==='patch'){
     var pc=document.getElementById('patch-canvas');
     pc.width=cSize;pc.height=cSize;pc.style.display='block';
@@ -734,6 +735,10 @@ function loadSongs(){
 // ════ EMBEDDED START ════
 function embeddedStart(){
   var ep=embCfg.players||[];
+  // Zuschauer-Gerät hat keine localStorage-Config → Dummy-Teams
+  if(ep.length<2 && IS_SPECTATOR_VIEW){
+    ep=[{name:'Team 1',color:'#53f6ff'},{name:'Team 2',color:'#ff4fd8'}];
+  }
   if(ep.length<2){showHint('Mindestens 2 Teams für Paparazzi!');return;}
   // Map embedded config to seat config  
   var embPos=['bot-l','bot-r','top-l','top-r','left','right'];
@@ -836,6 +841,7 @@ function nextArtist(){
   clearInterval(G.patchTimer);
   G.patchQueue=[];G.patchIdx=0;G.round++;
   if(G.round>5){showPanel(null);setTimeout(showVictory,600);return;}
+  if(!IS_SPECTATOR_VIEW && G.cur!==undefined) window.parent.postMessage({type:'mgSync',event:'artist',idx:G.queue[G.queue.length-1],imgUrl:G.cur?G.cur.img:null,round:G.round,mode:getCurrentMode()},'*');
 
   // Modus-Anzeige aktualisieren
   var modeLabels={blur:'Modus 1 — Blur',patch:'Modus 2 — Patch',mosaic:'Modus 3 — Mosaik'};
@@ -1287,6 +1293,21 @@ if(IS_SPECTATOR_VIEW){
     document.head.appendChild(style);
   });
 }
+
+
+// Spectator: empfange Artist/Blur-Befehle
+window.addEventListener('message', function(ev){
+  if(!ev.data || ev.data.type !== 'mgCmd') return;
+  var d = ev.data;
+  if(d.event === 'artist' && d.imgUrl){
+    // Zeige dasselbe Bild wie Host
+    var img = document.getElementById('reveal-img') || document.querySelector('.reveal-img');
+    if(img){ img.src = d.imgUrl; img.style.filter = 'blur(20px)'; }
+  } else if(d.event === 'blur'){
+    var img = document.getElementById('reveal-img') || document.querySelector('.reveal-img');
+    if(img) img.style.filter = d.blur > 0 ? 'blur('+d.blur+'px)' : 'none';
+  }
+});
 
 </script>
 </body>

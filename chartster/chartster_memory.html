@@ -490,6 +490,7 @@ function flipCard(idx){
   if(G.locked)return;if(G.matched.has(idx))return;if(G.flipped.includes(idx))return;if(G.flipped.length>=2)return;
   document.getElementById('mem-grid').children[idx].classList.add('flipped');
   G.flipped.push(idx);
+  if(!IS_SPECTATOR_VIEW) window.parent.postMessage({type:'mgSync',event:'flip',idx:idx},'*');
   if(G.flipped.length===2){G.locked=true;checkMatch();}
 }
 
@@ -502,6 +503,7 @@ function checkMatch(){
       els[a].classList.remove('flipped');els[b].classList.remove('flipped');
       els[a].classList.add('matched','justmatched');els[b].classList.add('matched','justmatched');
       G.matched.add(a);G.matched.add(b);
+      if(!IS_SPECTATOR_VIEW) window.parent.postMessage({type:'mgSync',event:'match',a:a,b:b,scorer:G.cur},'*');
       G.scores[G.cur]++;
       spawnConfetti(G.playerColors[G.cur],40);
       updateScoreboard();
@@ -617,6 +619,25 @@ if(IS_SPECTATOR_VIEW){
     document.head.appendChild(style);
   });
 }
+
+
+// Spectator: empfange Flip/Match-Befehle von Chartster
+window.addEventListener('message', function(ev){
+  if(!ev.data || ev.data.type !== 'mgCmd') return;
+  var d = ev.data;
+  var els = document.getElementById('mem-grid');
+  if(!els) return;
+  var cards = els.children;
+  if(d.event === 'flip' && cards[d.idx]){
+    cards[d.idx].classList.add('flipped');
+  } else if(d.event === 'match' && cards[d.a] && cards[d.b]){
+    cards[d.a].classList.add('matched');
+    cards[d.b].classList.add('matched');
+  } else if(d.event === 'turn'){
+    G.cur = d.cur;
+    if(typeof updateScoreboard==='function') updateScoreboard();
+  }
+});
 
 </script>
 </body>
