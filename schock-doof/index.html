@@ -442,7 +442,7 @@ body{-webkit-user-select:none;user-select:none}
    Ein fester Raum. Erster Spieler = Host (Spiel-Engine). Gäste sehen den
    Zustand und senden auf ihrem Zug Signale; der Host wendet sie an.
    ============================================================ */
-const VERSION='v5.90';
+const VERSION='v5.93';
 const P_COLORS=['#ffd400','#53f6ff','#e2231a','#39d98a'];
 function playerColor(i){ return P_COLORS[i%P_COLORS.length]; }
 const TOTAL_LIDS=13;
@@ -474,10 +474,19 @@ function fitCupName(el,name){
     function _mn(n2,g){ var w=n2*2.2+1.5,s='<svg width="'+w+'" height="8" viewBox="0 0 '+w+' 8" style="display:inline-block;vertical-align:top">';
       for(var i=0;i<n2;i++){var xb=1.0+i*2.2,d=(g*3+i)%3===0?.1:(g*3+i)%3===1?-.07:.05;
         s+=_vl(xb+d,i%2?.2:.5,xb-d*.4,i%2?7.8:7.5);} return s+'</svg>'; }
-    var _gr=Math.floor(_n/5),_rm=_n%5,_th='<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:.5px;margin-top:1px;width:100%;box-sizing:border-box;line-height:0;max-height:28px;overflow:hidden">';
-    for(var _g=0;_g<_gr;_g++) _th+=_m5(_g);
-    if(_rm>0) _th+=_mn(_rm,_gr);
-    _th+='</div>';
+    var _gr=Math.floor(_n/5),_rm=_n%5,_th='';
+    var _perRow=5; // 25 Striche pro Zeile
+    var _rows=Math.ceil((_gr+(_rm>0?1:0))/_perRow)||1;
+    for(var _row=0;_row<_rows;_row++){
+      _th+='<div style="display:flex;justify-content:center;gap:.5px;line-height:0;margin-top:1px">';
+      var _gStart=_row*_perRow, _gEnd=Math.min((_row+1)*_perRow,_gr);
+      for(var _g=_gStart;_g<_gEnd;_g++) _th+=_m5(_g);
+      // Rest-Striche in letzte Zeile wenn kein voller Gruppen-Block mehr folgt
+      if(_rm>0&&_gEnd===_gr&&_gStart<_gr) _th+=_mn(_rm,_gr);
+      // Sonderfall: nur Rest-Striche, keine vollen Gruppen
+      if(_row===0&&_gr===0&&_rm>0) _th+=_mn(_rm,0);
+      _th+='</div>';
+    }
     el.innerHTML+=_th;
   }
 }
@@ -601,7 +610,7 @@ function isMe(idx){ return idx===myIdx(); }
 /* ---------- Firebase: State-Sync ---------- */
 function sanitize(o){ return JSON.parse(JSON.stringify(o,(k,v)=>v===undefined?null:v)); }
 function hydrate(raw){
-  const g=Object.assign({},raw); g.players=g.players||[]; g.players.forEach(p=>{ if(typeof p.lids!=='number')p.lids=0; });
+  const g=JSON.parse(JSON.stringify(raw)); g.players=g.players||[]; g.players.forEach(p=>{ if(typeof p.lids!=='number')p.lids=0; });
   g.turnOrder=g.turnOrder||[]; g.finalists=g.finalists||[]; g.halfLosers=g.halfLosers||[-1,-1];
   g.playerStates=g.playerStates||[];
   g.playerStates.forEach(ps=>{ ps.dice=ps.dice||[1,1,1]; ps.kept=ps.kept||[false,false,false];
@@ -617,6 +626,7 @@ function pushState(){
 
 /* ---------- Firebase: Präsenz / Raum ---------- */
 function enterRoom(){
+  if(ONLINE) try{ ROOM.off(); }catch(e){} // alte Listener vor erneutem Beitritt abmelden
   myName=($('nameInput').value||'Spieler').trim(); seatCount=lobbyCount; G=null; roomEnteredAt=Date.now(); _lastCueTs=Date.now(); _lastChatTs=Date.now(); _confirmedPlayer=false;
   if(ONLINE) try{ ROOM.child('chat').on('value',function(cs){ var msg=cs.val(); if(msg&&msg.ts>_lastChatTs){ _lastChatTs=msg.ts; showChatMsg(msg.sender,msg.text); } }); }catch(ex){}
   try{ if(myName&&myName!=='Spieler') localStorage.setItem('schock_name',myName); }catch(e){}
@@ -657,12 +667,20 @@ function enterRoom(){
       if(!amSpectator&&_activePhase&&!_confirmedPlayer){
         // Echter Zuschauer: CID war noch nie in der Spielerliste
         enterSpectatorMode();
-        G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint(); return;
+        const _prevTN=(G&&!amHost&&G.phase==='rolling'&&G.turnOrder)?((G.playerStates[cur()]||{}).throwNum||0):-1;
+    G=hydrate(raw); if(curScreen!=='game') showScreen('game');
+    if(!amHost&&G.phase==='rolling'&&G.turnOrder&&G.turnOrder.length>0){
+      const _newTN=(G.playerStates[cur()]||{}).throwNum||0;
+      if(_newTN>_prevTN&&_newTN>0){ guestDiceAnim().then(()=>{ renderDice(); }); }
+    }
+    paint(); return;
       }
       if(!amSpectator) return; // Warte-Zustand: noch kein Spiel für diesen Spieler
     }
     // Zuschauer wird Spieler wenn CID jetzt im State
     if(amSpectator&&_inGame) exitSpectatorMode();
+    // Vibration für Gäste wenn man dran ist
+    if(!amHost&&G&&G.phase==='rolling'&&G.turnOrder&&isMe(G.turnOrder[G.turnPtr])&&!G.players[G.turnOrder[G.turnPtr]].isAI) vibe([25,15,25]);
     // Älteren State niemals annehmen (allgemeiner Guard)
     if(G&&G.ts&&raw.ts&&raw.ts<=G.ts) return;
     // Gameover darf nicht überschrieben werden
@@ -670,7 +688,13 @@ function enterRoom(){
     // Sound nachholen: alle Klick-/Würfel-/Fanfaren-Sounds laufen Host-seitig in Funktionen,
     // die auf Gast-Geräten nie ausgeführt werden — daher hier per Cue manuell triggern.
     if(raw.soundCue&&raw.soundCue.ts&&raw.soundCue.ts>_lastCueTs){ _lastCueTs=raw.soundCue.ts; playSoundCue(raw.soundCue); }
-    G=hydrate(raw); if(curScreen!=='game') showScreen('game'); paint();
+    const _prevTN=(G&&!amHost&&G.phase==='rolling'&&G.turnOrder)?((G.playerStates[cur()]||{}).throwNum||0):-1;
+    G=hydrate(raw); if(curScreen!=='game') showScreen('game');
+    if(!amHost&&G.phase==='rolling'&&G.turnOrder&&G.turnOrder.length>0){
+      const _newTN=(G.playerStates[cur()]||{}).throwNum||0;
+      if(_newTN>_prevTN&&_newTN>0){ guestDiceAnim().then(()=>{ renderDice(); }); }
+    }
+    paint();
   });
   // Zuschauer: Toast wenn jemand zuschauen beginnt
   ROOM.child('spectatorJoin').on('value',s=>{
@@ -688,6 +712,8 @@ function enterRoom(){
   ROOM.child('signals').on('child_added',s=>{
     const sig=s.val();
     if(!sig) return;
+    // Veraltete Signale (>10s vor Room-Beitritt) verwerfen — verhindert Replay nach Reconnect
+    if(sig.t&&sig.t<roomEnteredAt-10000){ s.ref.remove(); return; }
     // Kaiser + newgame darf jeder Host jederzeit verarbeiten
     if(sig.type==='kaiser'||sig.type==='newgame'){ if(amHost){ s.ref.remove(); handleSignal(sig); } return; }
     if(!amHost) return;   // Spiel-Signale nur Host
@@ -762,6 +788,7 @@ function beginRound(){
 }
 function startTurn(){
   const idx=cur(); paint(); pushState();
+  if(isMe(idx)&&!G.players[idx].isAI) vibe([25,15,25]); // kurze Doppelvibration: du bist dran
   if(G.players[idx].isAI){ aiTurn(); }
 }
 
@@ -1292,7 +1319,7 @@ document.addEventListener('visibilitychange',()=>{
 
 // Chat
 var _lastChatTs=0,_chatHideTimer=null;
-var CHAT_QUICK=['Prost! \u{1F37B}','Schock Doof! \u{1F631}','Zum Wohl! \u{1F942}','Gl\u00FCck gehabt \u{1F605}','Nochmal! \u{1F3B2}','Nicht schlecht \u{1F440}','H\u00E4?? \u{1F914}','Is klar! \u{1F44C}','Interessant! \u{1F9D0}'];
+var CHAT_QUICK=['Prost! \u{1F37B}','Schock Doof! \u{1F631}','Zum Wohl! \u{1F942}','Gl\u00FCck gehabt \u{1F605}','Nochmal! \u{1F3B2}','Nicht schlecht \u{1F440}','H\u00E4?? \u{1F914}','Is klar! \u{1F44C}','Interessant! \u{1F9D0}','Letzte Runde! \u{1F514}','Gute Nacht! \u{1F634}'];
 var CHAT_EMOJI=['\u{1F602}','\u{1F605}','\u{1F631}','\u{1F926}','\u{1F937}','\u{1F634}','\u{1F480}','\u{1F37A}','\u{1F37B}','\u{1F942}','\u{1F389}','\u{1F525}','\u{1F4AA}','\u{1F44D}','\u{1F44E}','\u{1F3B2}','\u{1F3C6}','\u{1F608}','\u{1FAE0}','\u{1F973}','\u{1F929}','\u{1F62D}'];
 
 function sendChat(text){
@@ -1408,9 +1435,30 @@ function clickJoinNext(){
   toast('Du spielst ab dem nächsten Spiel mit!','ok');
   const btn=document.getElementById('joinNextBtn'); if(btn){ btn.textContent='✓ Angemeldet'; btn.disabled=true; }
 }
+
+// Lokale Würfelanimation für Gäste beim Empfang neuer Würfelergebnisse
+function guestDiceAnim(){
+  const idx=cur(), ps=G.playerStates[idx];
+  if(!ps||ps.throwNum===0) return Promise.resolve();
+  $('cup').classList.add('shake');
+  const dEl=$('dice');
+  // Zeige tumbling dice: behalte kept-Würfel, animiere den Rest
+  dEl.innerHTML=ps.dice.map((d,i)=>`<div class="die${ps.kept[i]?' kept':''}">${ps.kept[i]?pips(d):''}</div>`).join('');
+  const els=[...dEl.children];
+  let frame=0;
+  return new Promise(resolve=>{
+    function step(){
+      if(frame>=4){ $('cup').classList.remove('shake'); resolve(); return; }
+      els.forEach((el,i)=>{ if(!ps.kept[i]) el.innerHTML=pips(rollDie()); el.classList.add('roll'); });
+      frame++;
+      setTimeout(step,70);
+    }
+    step();
+  });
+}
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
   });
 }
 
