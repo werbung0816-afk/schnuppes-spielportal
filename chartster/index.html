@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.9.5</div>
+<div class="version">v4.9.6</div>
 
 <!-- SW Update Toast -->
 
@@ -685,12 +685,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
     <div style="font-size:clamp(16px,2.5vw,22px);color:var(--muted);letter-spacing:.04em;">Wie wollt ihr spielen?</div>
     <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
       <button class="btn btn-primary" onclick="setMode('single')" style="padding:clamp(20px,3vw,28px);font-size:clamp(16px,2.5vw,22px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;width:100%;">
-        <span>Steuerung durch einen Spieler</span>
-        <span style="font-size:clamp(12px,1.5vw,15px);font-weight:400;opacity:.75;">1 Bediengerät · 1 Bediener · Zuschauer-Screen für alle</span>
+        <span>1-Spieler-Steuerung</span>
       </button>
       <button class="btn btn-primary" onclick="setMode('multi')" style="padding:clamp(20px,3vw,28px);font-size:clamp(16px,2.5vw,22px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;width:100%;background:rgba(255,255,255,.08);border:1px solid var(--glass-b);">
-        <span>Steuerung durch mehrere Spieler</span>
-        <span style="font-size:clamp(12px,1.5vw,15px);font-weight:400;opacity:.75;">Gerät wandert von Spieler zu Spieler</span>
+        <span>Mehr-Spieler-Steuerung</span>
       </button>
     </div>
   </div>
@@ -704,7 +702,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="sep"></div>
   <div class="setup-section">
   
-  <!-- Steuerung durch einen Spieler: einfache Teamliste -->
+  <!-- 1-Spieler-Steuerung: einfache Teamliste -->
   <div id="single-team-setup" style="display:none;width:100%;">
     <div class="label">TEAMS</div>
     <div id="single-teams-list" style="display:flex;flex-direction:column;gap:8px;width:100%;"></div>
@@ -2048,7 +2046,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=132', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=133', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
