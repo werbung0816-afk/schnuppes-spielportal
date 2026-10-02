@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.9.2</div>
+<div class="version">v4.9.5</div>
 
 <!-- SW Update Toast -->
 
@@ -683,14 +683,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="card" style="max-width:620px;text-align:center;gap:clamp(16px,3vw,32px);display:flex;flex-direction:column;align-items:center;">
     <div class="game-title" style="font-size:clamp(36px,6vw,64px);">CHARTSTER</div>
     <div style="font-size:clamp(16px,2.5vw,22px);color:var(--muted);letter-spacing:.04em;">Wie wollt ihr spielen?</div>
-    <div style="display:flex;flex-direction:column;gap:16px;width:100%;">
-      <button class="btn btn-primary" onclick="setMode('single')" style="padding:clamp(18px,3vw,28px);font-size:clamp(16px,2.5vw,22px);">
-        👥 Einzel für Teams
-        <div style="font-size:clamp(12px,1.5vw,15px);font-weight:400;opacity:.7;margin-top:4px;">1 Bediengerät · 1 Bediener · Zuschauer-Screen für alle</div>
+    <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
+      <button class="btn btn-primary" onclick="setMode('single')" style="padding:clamp(20px,3vw,28px);font-size:clamp(16px,2.5vw,22px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;width:100%;">
+        <span>Einzel für Teams</span>
+        <span style="font-size:clamp(12px,1.5vw,15px);font-weight:400;opacity:.75;">1 Bediengerät · 1 Bediener · Zuschauer-Screen für alle</span>
       </button>
-      <button class="btn" onclick="setMode('multi')" style="padding:clamp(14px,2.5vw,22px);font-size:clamp(15px,2vw,20px);background:rgba(255,255,255,.06);border:1px solid var(--glass-b);">
-        🎮 Multi für Einzelspieler
-        <div style="font-size:clamp(11px,1.3vw,14px);font-weight:400;opacity:.7;margin-top:4px;">Gerät wandert von Spieler zu Spieler</div>
+      <button class="btn btn-primary" onclick="setMode('multi')" style="padding:clamp(20px,3vw,28px);font-size:clamp(16px,2.5vw,22px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;width:100%;background:rgba(255,255,255,.08);border:1px solid var(--glass-b);">
+        <span>Multi für Einzelspieler</span>
+        <span style="font-size:clamp(12px,1.5vw,15px);font-weight:400;opacity:.75;">Gerät wandert von Spieler zu Spieler</span>
       </button>
     </div>
   </div>
@@ -708,7 +708,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div id="single-team-setup" style="display:none;width:100%;">
     <div class="label">TEAMS</div>
     <div id="single-teams-list" style="display:flex;flex-direction:column;gap:8px;width:100%;"></div>
-    <button class="btn" onclick="addSingleTeam()" style="margin-top:8px;background:rgba(83,246,255,.1);border:1px solid rgba(83,246,255,.3);font-size:14px;padding:10px;">+ Team hinzufügen</button>
+    <button class="btn" onclick="addSingleTeam()" style="margin-top:8px;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.4);font-size:clamp(15px,2vw,18px);padding:12px;color:#53f6ff;font-weight:700;">+ Team hinzufügen</button>
   </div>
 
   <div id="table-selector">
@@ -2044,7 +2044,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=129', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=132', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
