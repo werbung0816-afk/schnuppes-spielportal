@@ -685,11 +685,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
     <div style="font-size:clamp(16px,2.5vw,22px);color:var(--muted);letter-spacing:.04em;">Wie wollt ihr spielen?</div>
     <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
       <button class="btn btn-primary" onclick="setMode('single')" style="padding:clamp(20px,3vw,28px);font-size:clamp(16px,2.5vw,22px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;width:100%;">
-        <span>Einzel für Teams</span>
+        <span>Steuerung durch einen Spieler</span>
         <span style="font-size:clamp(12px,1.5vw,15px);font-weight:400;opacity:.75;">1 Bediengerät · 1 Bediener · Zuschauer-Screen für alle</span>
       </button>
       <button class="btn btn-primary" onclick="setMode('multi')" style="padding:clamp(20px,3vw,28px);font-size:clamp(16px,2.5vw,22px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;width:100%;background:rgba(255,255,255,.08);border:1px solid var(--glass-b);">
-        <span>Multi für Einzelspieler</span>
+        <span>Steuerung durch mehrere Spieler</span>
         <span style="font-size:clamp(12px,1.5vw,15px);font-weight:400;opacity:.75;">Gerät wandert von Spieler zu Spieler</span>
       </button>
     </div>
@@ -704,7 +704,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
   <div class="sep"></div>
   <div class="setup-section">
   
-  <!-- Einzel für Teams: einfache Teamliste -->
+  <!-- Steuerung durch einen Spieler: einfache Teamliste -->
   <div id="single-team-setup" style="display:none;width:100%;">
     <div class="label">TEAMS</div>
     <div id="single-teams-list" style="display:flex;flex-direction:column;gap:8px;width:100%;"></div>
@@ -764,7 +764,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
     <button id="s5-btn" onclick="toggleS5()" style="padding:14px 18px;border-radius:14px;font-family:Outfit,sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(255,79,216,.35);background:rgba(255,79,216,.08);color:var(--muted);white-space:nowrap;flex-shrink:0;transition:all .2s">Schnelle 5</button>
   </div>
   <button onclick="enterSpectator()" style="width:100%;background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.1);font-size:12px;padding:8px;border-radius:10px;font-family:Outfit,sans-serif;letter-spacing:.08em;cursor:pointer;font-weight:600;">👁 Zuschauer-Modus</button>
-  <div class="sep"></div>
+  <div id="minigame-section">
+<div class="sep"></div>
   <div class="mg-cards">
     <a href="../chartster-memory/index.html" class="mg-card" id="mg-memory">
       <div class="mg-covers" id="mg-mem-covers"></div>
@@ -779,6 +780,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
       </div>
     </a>
   </div>
+</div>
   <input type="checkbox" id="schnelle5" style="display:none">
 </div>
 </div>
@@ -1209,18 +1211,20 @@ function initFirebase(){
 function setMode(mode){
   G_MODE = mode;
   showScreen('lobby');
+  setHost();
   if(mode === 'single'){
     document.getElementById('table-selector').style.display = 'none';
     document.getElementById('single-team-setup').style.display = 'block';
-    document.getElementById('minigame-section').style.display = 'none';
-    document.getElementById('mit-minispiel-wrap').style.display = 'none';
+    var mgs=document.getElementById('minigame-section');if(mgs)mgs.style.display='none';
+    var mmw=document.getElementById('mit-minispiel-wrap');if(mmw)mmw.style.display='none';
   } else {
     document.getElementById('table-selector').style.display = '';
     document.getElementById('single-team-setup').style.display = 'none';
-    document.getElementById('minigame-section').style.display = '';
-    document.getElementById('mit-minispiel-wrap').style.display = '';
+    var mgs=document.getElementById('minigame-section');
+    if(mgs) mgs.style.display='';
+    var mmw=document.getElementById('mit-minispiel-wrap');
+    if(mmw) mmw.style.display='';
   }
-  loadSongs();
 }
 
 function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();}}
