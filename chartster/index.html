@@ -600,6 +600,23 @@ body[data-mode=single] .player-outer{
   margin-bottom: calc(var(--spotify-h, 152px) * 0.5);
 }
 
+
+/* Single Mode: kein Rahmen um den Spielbereich */
+body[data-mode=single] .game-card{
+  background:transparent!important;
+  backdrop-filter:none!important;
+  border:none!important;
+  padding:8px 4px!important;
+}
+body[data-mode=single] #game-center{
+  width:100%;
+  max-width:900px;
+  margin:0 auto;
+}
+body[data-mode=single] .player-outer{
+  transform-origin:top center;
+}
+
 </style>
 </head>
 <body>
@@ -636,7 +653,7 @@ body[data-mode=single] .player-outer{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.2.2</div>
+<div class="version">v5.2.3</div>
 
 <!-- SW Update Toast -->
 
@@ -2118,7 +2135,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=155', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=156', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
