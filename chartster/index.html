@@ -627,7 +627,7 @@ body[data-mode=single] #single-team-setup{display:flex!important;flex-direction:
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.1.4</div>
+<div class="version">v5.1.5</div>
 
 <!-- SW Update Toast -->
 
@@ -714,12 +714,12 @@ body[data-mode=single] #single-team-setup{display:flex!important;flex-direction:
     <!-- 1-Spieler-Steuerung: Teameingabe -->
   <div id="single-team-setup">
     <div class="label">TEAMS</div>
-    <div class="st-row"><span class="st-dot" style="background:#53f6ff;box-shadow:0 0 8px #53f6ff"></span><input class="st-inp" id="st-0" placeholder="Team 1" oninput="updateStartBtn()"></div>
-    <div class="st-row"><span class="st-dot" style="background:#ff4fd8;box-shadow:0 0 8px #ff4fd8"></span><input class="st-inp" id="st-1" placeholder="Team 2" oninput="updateStartBtn()"></div>
-    <div class="st-row" id="st-row-2" style="display:none"><span class="st-dot" style="background:#8f5fff;box-shadow:0 0 8px #8f5fff"></span><input class="st-inp" id="st-2" placeholder="Team 3" oninput="updateStartBtn()"></div>
-    <div class="st-row" id="st-row-3" style="display:none"><span class="st-dot" style="background:#4dff91;box-shadow:0 0 8px #4dff91"></span><input class="st-inp" id="st-3" placeholder="Team 4" oninput="updateStartBtn()"></div>
-    <div class="st-row" id="st-row-4" style="display:none"><span class="st-dot" style="background:#ff9f1c;box-shadow:0 0 8px #ff9f1c"></span><input class="st-inp" id="st-4" placeholder="Team 5" oninput="updateStartBtn()"></div>
-    <div class="st-row" id="st-row-5" style="display:none"><span class="st-dot" style="background:#e0ff4f;box-shadow:0 0 8px #e0ff4f"></span><input class="st-inp" id="st-5" placeholder="Team 6" oninput="updateStartBtn()"></div>
+    <div class="st-row"><span class="st-dot" style="background:#53f6ff;box-shadow:0 0 8px #53f6ff"></span><input class="st-inp" id="st-0" placeholder="Die Stars" oninput="updateStartBtn()"></div>
+    <div class="st-row"><span class="st-dot" style="background:#ff4fd8;box-shadow:0 0 8px #ff4fd8"></span><input class="st-inp" id="st-1" placeholder="Die Legenden" oninput="updateStartBtn()"></div>
+    <div class="st-row" id="st-row-2" style="display:none"><span class="st-dot" style="background:#8f5fff;box-shadow:0 0 8px #8f5fff"></span><input class="st-inp" id="st-2" placeholder="Die Helden" oninput="updateStartBtn()"></div>
+    <div class="st-row" id="st-row-3" style="display:none"><span class="st-dot" style="background:#4dff91;box-shadow:0 0 8px #4dff91"></span><input class="st-inp" id="st-3" placeholder="Schlagerfüchse" oninput="updateStartBtn()"></div>
+    <div class="st-row" id="st-row-4" style="display:none"><span class="st-dot" style="background:#ff9f1c;box-shadow:0 0 8px #ff9f1c"></span><input class="st-inp" id="st-4" placeholder="Hitjäger" oninput="updateStartBtn()"></div>
+    <div class="st-row" id="st-row-5" style="display:none"><span class="st-dot" style="background:#e0ff4f;box-shadow:0 0 8px #e0ff4f"></span><input class="st-inp" id="st-5" placeholder="Top-Scorer" oninput="updateStartBtn()"></div>
     <button class="btn" onclick="addSingleTeamRow()" style="margin-top:4px;font-size:clamp(16px,2.5vw,20px);padding:14px;color:#53f6ff;font-weight:700;width:100%;background:rgba(83,246,255,.1);border:1px solid rgba(83,246,255,.4)">＋ Team hinzufügen</button>
   </div>
   <div id="table-selector">
@@ -756,8 +756,8 @@ body[data-mode=single] #single-team-setup{display:flex!important;flex-direction:
       <div class="flt-row">
         <button class="flt off" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500"></button>
         <button class="flt off" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond"></button>
-        <button class="flt" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM"></button>
-        <button class="flt" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino"></button>
+        <button class="flt off" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM"></button>
+        <button class="flt off" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino"></button>
       </div>
       <div style="width:100%"></div>
       <div style="width:100%;display:flex;align-items:center">
@@ -1194,7 +1194,7 @@ function playApplause(){new Audio('applause.mp3').play().catch(function(e){conso
 function playSlot(){console.log('playSlot called');new Audio('slot%20machine.mp3').play().catch(function(e){console.log('slot sound error:',e);});}
 function stopSlot(){}
 
-var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(['RS-500','Bond-Edition','football','kino']),
+var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(['RS-500','Bond-Edition','WM-Edition','Popcorn-Edition']),
   topFilter:null,phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[],miniGames:false,miniGamesDone:{memory:false,paparazzi:false},pendingMiniGame:null};
 ['top-l','top-r','left','right','bot-l','bot-r'].forEach(p=>G.seatCfg[p]=null);
 
@@ -1355,7 +1355,7 @@ function getSingleTeams(){
   for(var i=0;i<=5;i++){
     var inp=document.getElementById('st-'+i);
     var isVisible=(i<2)||((document.getElementById('st-row-'+i)||{style:{display:'none'}}).style.display!=='none');
-    if(inp&&isVisible) res.push({name:inp.value.trim()||inp.placeholder,color:colors[i],pos:'bot-l'});
+    if(inp&&isVisible) res.push({name:inp.value.trim()||inp.placeholder,color:colors[i],pos:'bot-l',side:'bot',years:[],tokens:2});
   }
   return res;
 }
@@ -1369,7 +1369,7 @@ function startGame(){
     var active=getActiveSeats();if(active.length<2){showHint('Mindestens 2 Teams!');return;}
   }
   if(G.songs.length===0){showHint('Songs werden geladen – kurz warten!');return;}
-  G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
+  if(G_MODE!=='single') G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
   var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
   G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
   try{var _el=document.documentElement;(_el.requestFullscreen||_el.webkitRequestFullscreen||function(){}).call(_el);}catch(e){}
@@ -2030,7 +2030,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=147', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=148', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
