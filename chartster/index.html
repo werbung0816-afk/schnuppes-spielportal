@@ -641,6 +641,24 @@ body[data-mode=single] .spec-year{
   font-size:clamp(48px,9vw,130px)!important;
 }
 
+
+/* Spectator Single Mode: größere Jahreskarten + Teamname */
+body[data-mode=single] #spec-timeline-teamname{
+  font-size:clamp(60px,11vw,140px)!important;
+}
+body[data-mode=single] .spec-year{
+  width:clamp(220px,28vw,380px)!important;
+  height:clamp(120px,16vw,220px)!important;
+  font-size:clamp(60px,11vw,150px)!important;
+}
+body[data-mode=single] .spec-card{
+  gap:clamp(12px,2vw,28px)!important;
+}
+body[data-mode=single] #spec-timeline{
+  gap:clamp(12px,2vw,32px)!important;
+  justify-content:center;
+}
+
 </style>
 </head>
 <body>
@@ -677,7 +695,7 @@ body[data-mode=single] .spec-year{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.2.6</div>
+<div class="version">v5.2.7</div>
 
 <!-- SW Update Toast -->
 
@@ -2160,7 +2178,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=159', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=160', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
