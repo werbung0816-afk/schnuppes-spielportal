@@ -24907,13 +24907,8 @@
     "y": 2021,
     "p": 8,
     "a": "atb x Topic x A7S",
-    "t": "Your Love (9PM)",
-    "l": "50Ckkjp5MKZUysCSpSTbQ3",
-    "c": "https://i.scdn.co/image/ab67616d0000b27394b1facb3da0ccc26fc48903",
-    "al": "Black Music",
-    "r": "1998-07-28",
-    "is": "USVT19700017",
-    "ca": "https://i.scdn.co/image/e22b4cb5f059a8842a56dc47006747241cb409de"
+    "t": "nan",
+    "l": null
   },
   {
     "f": "20er",
@@ -29267,14 +29262,14 @@
     "f": "20er",
     "y": 2026,
     "p": 1,
-    "a": "Justin Bieber feat. Nicki Minaj",
+    "a": "Justin Bieber",
     "t": "Beauty And A Beat",
-    "l": "1ycIpa5fyJsEWzJno48gtb",
-    "c": "https://i.scdn.co/image/ab67616d0000b27363240e1b9b36f340dec3b41b",
-    "al": "Beauty and a Beat",
-    "r": "2012-11-26",
-    "is": "USA2P1290180",
-    "ca": "https://cdn-images.dzcdn.net/images/artist/fe097f693cebf1f882e3da79e99e3bf9/1000x1000-000000-80-0-0.jpg"
+    "l": "190jyVPHYjAqEaOGmMzdyk",
+    "c": "https://i.scdn.co/image/ab67616d0000b2736c20c4638a558132ba95bc39",
+    "al": "Believe (Deluxe Edition)",
+    "r": "2012-06-15",
+    "is": "USUM71205367",
+    "ca": "https://i.scdn.co/image/ab6761610000e5ebaf20f7db5288bce9beede034"
   },
   {
     "f": "20er",
@@ -29286,7 +29281,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b2737c8ca044c71fda2957065c06",
     "al": "KITSCHKRIEG ZWEI",
     "r": "2026-06-05",
-    "is": "DEKF22600057"
+    "is": "DEKF22600057",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/27d5fc88e24bb58f8d1e00f8b9707052/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29311,7 +29307,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273e6c2ffe0e77db4b73ccf22d2",
     "al": "KILLY MANJARO (EUROMIX)",
     "r": "2026-07-23",
-    "is": "DEA612600315"
+    "is": "DEA612600315",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/a3a897841fd359249d1d1d1a8249bde3/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29477,7 +29474,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273cf1b99e31d22df504b0c23d4",
     "al": "BALOTELLI",
     "r": "2026-06-11",
-    "is": "DECE72602503"
+    "is": "DECE72602503",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/99cc34484cc1d64f35748fce358a93a5/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29489,7 +29487,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273782b42eacfc05aaa09ff9058",
     "al": "gimme luv <3",
     "r": "2026-07-09",
-    "is": "DECE72602684"
+    "is": "DECE72602684",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/b9b1858636b5dbffaf43712dc1e157a0/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29527,7 +29526,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b2733553feb05f3c9b924b4e0fbf",
     "al": "Hin und Her",
     "r": "2026-06-11",
-    "is": "DECE72602492"
+    "is": "DECE72602492",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/9ba5241f7012290fe83fb689ef82c008/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29552,7 +29552,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273dae2db6b9b0a2d5ef298075f",
     "al": "FREAKED OUT",
     "r": "2026-06-04",
-    "is": "QT3EY2629583"
+    "is": "QT3EY2629583",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/905b2e3747a37c06bd1ce9fd6a2587c6/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29603,7 +29604,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273a1eddd41334d7100b94e602a",
     "al": "Mi Chico (Official - Jason Derulo x Melody)",
     "r": "2026-06-26",
-    "is": "QZTLA2694864"
+    "is": "QZTLA2694864",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/8d96c6618bd37c05208af0c394299181/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29615,7 +29617,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b2738ee092eb7a383ab57bd51dee",
     "al": "L'undertaker, Pt. 1",
     "r": "2025-08-15",
-    "is": "QZWFU2567999"
+    "is": "QZWFU2567999",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/53a24f6cf5d51209e74e606765394e70/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29640,7 +29643,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273b04b481d2ae199867f00c692",
     "al": "Meine Welt",
     "r": "2026-07-17",
-    "is": "CH7812678624"
+    "is": "CH7812678624",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/90a78f7e9ff8052c7012ef05c9bbaab1/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29678,7 +29682,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273aeb168f35ab002d77a4f3918",
     "al": "Withness",
     "r": "2026-06-12",
-    "is": "CBEFB2600137"
+    "is": "CBEFB2600137",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/e9397a0104521972c9d71baaa0a4379f/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29728,7 +29733,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273ecf61285415fd9c2a3f7d384",
     "al": "Mr. Know It All",
     "r": "2026-04-09",
-    "is": "USWB12601324"
+    "is": "USWB12601324",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/b00bd63bc45477674d8f21af2b73f4fd/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29805,7 +29811,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273dacb9f21bfa4b901f2b22da0",
     "al": "Tonight",
     "r": "2026-07-23",
-    "is": "DECE72603157"
+    "is": "DECE72603157",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/081c22ea5e75b078b891322c045570b7/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29946,7 +29953,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273311c1f1ae76a930b1c044227",
     "al": "Ikkimel die Geile EP",
     "r": "2026-07-17",
-    "is": "DEQ322600172"
+    "is": "DEQ322600172",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/3ac816deb64f6877c77abb3cac982bc3/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29958,7 +29966,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b2730029602f3717957ca8387a61",
     "al": "Superhelden",
     "r": "2026-03-06",
-    "is": "DE1FB2600042"
+    "is": "DE1FB2600042",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/92deaec81703940a45b894477cdaa9ac/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -29983,7 +29992,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273158cbe80b9b9573b46d2b50f",
     "al": "Magnetic / Addicted To Your Love",
     "r": "2026-02-27",
-    "is": "DEE862600182"
+    "is": "DEE862600182",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/a51290d973d3ea5af48dc062ab23f5d1/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -30215,7 +30225,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b2739960bd6ef598fe5537e902ca",
     "al": "Makina Time",
     "r": "2026-01-23",
-    "is": "BEIW12500926"
+    "is": "BEIW12500926",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/00d5711cc1fa5db0a6f3ff4c2876a1cb/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -30292,7 +30303,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b27399d876bfeeeaf715d7ff1d16",
     "al": "Stoned ohne Grund",
     "r": "2016-04-08",
-    "is": "DEW921400778"
+    "is": "DEW921400778",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/ab3205db6e22c847466923432c0ffcdd/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -30317,7 +30329,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b27359764240a38993a697595c61",
     "al": "His & Hers",
     "r": "2026-07-23",
-    "is": "DECE72603284"
+    "is": "DECE72603284",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/cc8365471de57b72ecd41161c9a7370c/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "20er",
@@ -30381,7 +30394,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273316b7fde50dfbf4be72735c2",
     "al": "misery.",
     "r": "2026-03-18",
-    "is": "QZTAS2690388"
+    "is": "QZTAS2690388",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/c139b499f3bbaae28793db28f4e475d5/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "60er",
@@ -35338,7 +35352,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273f8acc5384b30790e5254362f",
     "al": "Christie",
     "r": "1970",
-    "is": "GBBBN7000002"
+    "is": "GBBBN7000002",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/d7ca9caee14b814b9581cc49c3650a0f/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "70er",
@@ -36297,7 +36312,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273f8acc5384b30790e5254362f",
     "al": "Christie",
     "r": "1970",
-    "is": "GBBBN7000001"
+    "is": "GBBBN7000001",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/d7ca9caee14b814b9581cc49c3650a0f/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "70er",
@@ -45393,7 +45409,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b27388321d61f924d9437b5e1728",
     "al": "The Sound Of Masquerade",
     "r": "2026-02-06",
-    "is": "DEZC62658339"
+    "is": "DEZC62658339",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/934817bb164a5f9f406ee79d7ec105ca/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "80er",
@@ -49352,7 +49369,8 @@
     "c": "https://i.scdn.co/image/ab67616d0000b273b545dee8926ef375ebd9d016",
     "al": "繁花",
     "r": "2024-01-18",
-    "is": "CHF068825040"
+    "is": "CHF068825040",
+    "ca": "https://cdn-images.dzcdn.net/images/artist/30a9e21ad754cbb9c13ec9db12aa30e8/1000x1000-000000-80-0-0.jpg"
   },
   {
     "f": "80er",
@@ -58461,12 +58479,12 @@
     "y": 1959,
     "p": 268,
     "a": "The Isley Brothers",
-    "t": "Shout (Parts 1 and 2)",
-    "l": "7BkVZRHhZpKfgRtRpbb76j",
-    "c": "https://i.scdn.co/image/ab67616d0000b2733e99fa27b7d4dd38d9e435c7",
-    "al": "SOB X RBE",
-    "r": "2017-01-23",
-    "is": "USUYG1127690",
+    "t": "Shout",
+    "l": "2ZNTPtYmAhN9vCwnAgqKn1",
+    "c": "https://i.scdn.co/image/ab67616d0000b2735dc6b3d32519ca74f94867cd",
+    "al": "Shout!",
+    "r": "1959-08-21",
+    "is": "USRC15903415",
     "ca": "https://cdn-images.dzcdn.net/images/artist/472342bc2131ac40297824a85b1ab546/1000x1000-000000-80-0-0.jpg"
   },
   {

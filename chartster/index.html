@@ -623,7 +623,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.0.2</div>
+<div class="version">v5.0.4</div>
 
 <!-- SW Update Toast -->
 
@@ -1237,11 +1237,14 @@ function setMode(mode){
   showScreen('lobby');
   setHost();
   if(mode==='single'){
-    var list=document.getElementById('single-teams-list');
-    if(list&&list.children.length===0){
-      addSingleTeam();
-      addSingleTeam();
-    }
+    setTimeout(function(){
+      var list=document.getElementById('single-teams-list');
+      if(list&&list.children.length===0){
+        addSingleTeam();
+        addSingleTeam();
+      }
+      applyModeUI();
+    },100);
   }
 }
 
@@ -2076,7 +2079,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=139', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=141', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
