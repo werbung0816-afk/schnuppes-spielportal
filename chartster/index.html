@@ -627,7 +627,7 @@ body[data-mode=single] #single-team-setup{display:flex!important;flex-direction:
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.1.6</div>
+<div class="version">v5.1.8</div>
 
 <!-- SW Update Toast -->
 
@@ -946,6 +946,8 @@ function initSpectatorListener(){
       showSpectatorVictory(d.wonTeams, d.teams);
     } else if(d.teams){
       updateSpectatorView(d);
+      if(d.reveal) showSpectatorReveal(d.reveal);
+      else hideSpectatorReveal();
     }
   });
 }
@@ -1329,7 +1331,7 @@ function syncFlt(id){
 function buildOptFilter(){var w=document.getElementById('opt-filter');w.innerHTML=document.getElementById('flt-wrap').innerHTML;w.querySelectorAll('.flt').forEach(b=>{b.onclick=function(){toggleFlt(b,true);};});syncFlt('opt-filter');}
 
 // ── CLOCKWISE ORDER ──
-function nextTeamIdx(){var activeCW=CW_ORDER.filter(pos=>G.teams.some(t=>t.pos===pos));var curPos=G.teams[G.cur]?G.teams[G.cur].pos:'bot-l';var cwIdx=activeCW.indexOf(curPos);var nextPos=activeCW[(cwIdx+1)%activeCW.length];var ni=G.teams.findIndex(t=>t.pos===nextPos);return ni>=0?ni:(G.cur+1)%G.teams.length;}
+function nextTeamIdx(){if(G_MODE==='single') return (G.cur+1)%G.teams.length;var activeCW=CW_ORDER.filter(pos=>G.teams.some(t=>t.pos===pos));var curPos=G.teams[G.cur]?G.teams[G.cur].pos:'bot-l';var cwIdx=activeCW.indexOf(curPos);var nextPos=activeCW[(cwIdx+1)%activeCW.length];var ni=G.teams.findIndex(t=>t.pos===nextPos);return ni>=0?ni:(G.cur+1)%G.teams.length;}
 
 // ── START ──
 
@@ -1594,6 +1596,28 @@ function hideSpectatorMiniGame(){
   if(overlay) overlay.style.display='none';
 }
 
+
+
+function showSpectatorReveal(rev){
+  var el=document.getElementById('spec-reveal-overlay');
+  if(!el){
+    el=document.createElement('div');
+    el.id='spec-reveal-overlay';
+    el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.93);backdrop-filter:blur(14px);border-top:2px solid rgba(83,246,255,.3);padding:clamp(16px,2.5vw,28px);z-index:200;display:flex;align-items:center;gap:clamp(16px,2.5vw,32px);';
+    document.body.appendChild(el);
+  }
+  el.innerHTML=(rev.c?'<img src="'+rev.c+'" style="width:clamp(80px,10vw,130px);height:clamp(80px,10vw,130px);border-radius:12px;object-fit:cover;flex-shrink:0;">':'')
+    +'<div style="flex:1;min-width:0;">'
+    +'<div style="font-size:clamp(52px,9vw,100px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;">'+rev.y+'</div>'
+    +'<div style="font-size:clamp(20px,3vw,36px);font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+rev.a+'</div>'
+    +'<div style="font-size:clamp(16px,2vw,26px);color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+rev.t+'</div>'
+    +'</div>';
+  el.style.display='flex';
+}
+function hideSpectatorReveal(){
+  var el=document.getElementById('spec-reveal-overlay');
+  if(el) el.style.display='none';
+}
 
 function showSpectatorVictory(wonTeams, allTeams){
   try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
@@ -2039,7 +2063,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=149', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=151', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
