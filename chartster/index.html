@@ -587,6 +587,12 @@ body[data-mode=single] .mg-cards{display:none!important;}
 body[data-mode=single] .sep{display:none!important;}
 body[data-mode=single] #s5-btn{display:none!important;}
 
+
+.st-row{display:flex;align-items:center;gap:12px;width:100%;}
+.st-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:inline-block;}
+.st-inp{flex:1;font-size:clamp(18px,3vw,28px);padding:clamp(14px,2vw,20px) 16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:12px;color:#fff;font-family:Outfit,sans-serif;outline:none;}
+.st-inp:focus{border-color:rgba(83,246,255,.6);background:rgba(255,255,255,.16);}
+
 </style>
 </head>
 <body>
@@ -623,7 +629,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.0.4</div>
+<div class="version">v5.0.5</div>
 
 <!-- SW Update Toast -->
 
@@ -1236,16 +1242,7 @@ function setMode(mode){
   document.body.dataset.mode = mode;
   showScreen('lobby');
   setHost();
-  if(mode==='single'){
-    setTimeout(function(){
-      var list=document.getElementById('single-teams-list');
-      if(list&&list.children.length===0){
-        addSingleTeam();
-        addSingleTeam();
-      }
-      applyModeUI();
-    },100);
-  }
+  if(mode==='single') setTimeout(applyModeUI,50);
 }
 
 function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();applyModeUI();}}
@@ -2079,7 +2076,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=141', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=142', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
