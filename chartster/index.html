@@ -636,7 +636,7 @@ body[data-mode=single] .player-outer{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.2.1</div>
+<div class="version">v5.2.2</div>
 
 <!-- SW Update Toast -->
 
@@ -1526,7 +1526,11 @@ function adminCard(i,delta){
   renderPanels();renderOptTeams();pushState();
 }
 
-function startCd(){G.readyToReveal=true;var btn=document.getElementById('main-btn');if(btn)btn.disabled=false;/*DISABLED*/ if(false){G.cdRemain=10;var wrap=document.getElementById('countdown-wrap');wrap.classList.add('show');var fill=document.getElementById('cd-fill'),secs=document.getElementById('cd-secs');fill.style.width='100%';secs.textContent=10;G.cdTimer=setInterval(function(){G.cdRemain--;fill.style.width=(G.cdRemain/10*100)+'%';secs.textContent=G.cdRemain;if(G.cdRemain<=0){clearCd();G.readyToReveal=true;wrap.classList.remove('show');document.getElementById('hitster-panel').classList.remove('show');if(G.selBox!==null)document.getElementById('main-btn').disabled=false;}},1000);}
+function startCd(){
+  G.readyToReveal=true;
+  var btn=document.getElementById('main-btn');
+  if(btn) btn.disabled=false;
+}
 function clearCd(){clearInterval(G.cdTimer);G.cdTimer=null;}
 
 // ── TOKEN PANEL ──
@@ -1551,7 +1555,6 @@ function renderTimeline(preserveSel){
       G.selBox=preserveSel;
     }
   }
-}
 }
 function getBetDots(idx){var dd='';for(var ti in G.bets){if(parseInt(G.bets[ti])===idx)dd+=`<div class="bet-dot" style="background:${G.teams[parseInt(ti)].color}"></div>`;}return dd;}
 function mkBox(idx,team){
@@ -2115,7 +2118,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=154', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=155', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
