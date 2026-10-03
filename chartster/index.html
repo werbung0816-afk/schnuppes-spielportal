@@ -627,7 +627,7 @@ body[data-mode=single] #single-team-setup{display:flex!important;flex-direction:
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.1.5</div>
+<div class="version">v5.1.6</div>
 
 <!-- SW Update Toast -->
 
@@ -1391,7 +1391,16 @@ function beginPlay(){G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betM
 function drawCard(){if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();}
 
 // ── PANELS ──
-function renderActivePanelOnly(){['area-top','area-bot','side-left-wrap','side-right-wrap'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});var a=document.getElementById('area-bot');if(a&&G.teams[G.cur])a.appendChild(buildPanel(G.cur));}
+function renderActivePanelOnly(){
+  ['area-top','area-bot','side-left-wrap','side-right-wrap'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.innerHTML='';
+  });
+  var a=document.getElementById('area-bot');
+  if(a&&G.teams[G.cur]) a.innerHTML=panelHTML(G.teams[G.cur],G.cur,true);
+  // No rotation in single mode
+  var gc=document.getElementById('game-center');
+  if(gc) gc.className='r0';
+}
 function renderPanels(){
   if(G_MODE==='single'){renderActivePanelOnly();return;}
   document.getElementById('area-top').innerHTML='';
@@ -2030,7 +2039,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=148', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=149', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
