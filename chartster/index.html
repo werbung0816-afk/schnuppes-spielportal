@@ -627,7 +627,7 @@ body[data-mode=single] #single-team-setup{display:flex!important;flex-direction:
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.1.0</div>
+<div class="version">v5.1.1</div>
 
 <!-- SW Update Toast -->
 
@@ -698,8 +698,8 @@ body[data-mode=single] #single-team-setup{display:flex!important;flex-direction:
     <div class="game-title">CHARTSTER</div>
     <div style="font-size:clamp(14px,2vw,18px);color:var(--muted);margin:8px 0 24px;">Wie wollt ihr spielen?</div>
     <div style="display:flex;flex-direction:column;gap:14px;width:100%;">
-      <button class="btn btn-primary" onclick="setMode('single')" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);">1-Spieler-Steuerung</button>
-      <button class="btn" onclick="setMode('multi')" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);">Mehr-Spieler-Steuerung</button>
+      <button onclick="setMode('single')" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);width:100%;border-radius:16px;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">1-SPIELER-STEUERUNG</button>
+      <button onclick="setMode('multi')" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);width:100%;border-radius:16px;background:rgba(143,95,255,.15);border:1px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">MEHR-SPIELER-STEUERUNG</button>
     </div>
   </div>
 </div>
@@ -1200,6 +1200,7 @@ var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(),
 
 // ── FIREBASE ──
 function initFirebase(){
+  if(document.getElementById('screen-mode')&&document.getElementById('screen-mode').classList.contains('active'))return;
   if(fbListener){try{REF.off('value',fbListener);}catch(e){}}fbListener=null;
   var wasHost=sessionStorage.getItem('chartster_host')==='1';
   REF.once('value').then(snap=>{
@@ -2001,7 +2002,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=143', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=144', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
