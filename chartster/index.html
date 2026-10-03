@@ -623,7 +623,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.0.1</div>
+<div class="version">v5.0.2</div>
 
 <!-- SW Update Toast -->
 
@@ -714,10 +714,10 @@ body[data-mode=single] #s5-btn{display:none!important;}
   <div class="setup-section">
   
   <!-- 1-Spieler-Steuerung: einfache Teamliste -->
-  <div id="single-team-setup" style="display:none;width:100%;">
-    <div class="label">TEAMS</div>
-    <div id="single-teams-list" style="display:flex;flex-direction:column;gap:8px;width:100%;"></div>
-    <button class="btn" onclick="addSingleTeam()" style="margin-top:8px;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.4);font-size:clamp(15px,2vw,18px);padding:12px;color:#53f6ff;font-weight:700;">+ Team hinzufügen</button>
+  <div id="single-team-setup" style="width:100%;">
+    <div class="label" style="font-size:clamp(16px,2.5vw,22px);margin-bottom:8px;">TEAMS</div>
+    <div id="single-teams-list" style="display:flex;flex-direction:column;gap:10px;width:100%;min-height:120px;"></div>
+    <button class="btn" onclick="addSingleTeam()" style="margin-top:12px;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.5);font-size:clamp(16px,2.5vw,20px);padding:clamp(14px,2vw,18px);color:#53f6ff;font-weight:700;width:100%;">＋ Team hinzufügen</button>
   </div>
 
   <div id="table-selector">
@@ -1236,6 +1236,13 @@ function setMode(mode){
   document.body.dataset.mode = mode;
   showScreen('lobby');
   setHost();
+  if(mode==='single'){
+    var list=document.getElementById('single-teams-list');
+    if(list&&list.children.length===0){
+      addSingleTeam();
+      addSingleTeam();
+    }
+  }
 }
 
 function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();applyModeUI();}}
@@ -2069,7 +2076,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=138', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=139', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {

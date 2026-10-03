@@ -9,8 +9,8 @@
  *  - Google Fonts → Cache First
  */
 
-const CACHE_NAME = 'chartster-v138';
-const DATA_CACHE = 'chartster-data-v138';
+const CACHE_NAME = 'chartster-v139';
+const DATA_CACHE = 'chartster-data-v139';
 
 // App Shell – alles was für den Grundbetrieb gebraucht wird
 const SHELL_ASSETS = [
