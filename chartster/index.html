@@ -677,7 +677,7 @@ body[data-mode=single] .spec-year{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.2.5</div>
+<div class="version">v5.2.6</div>
 
 <!-- SW Update Toast -->
 
@@ -752,6 +752,7 @@ body[data-mode=single] .spec-year{
     <div style="display:flex;flex-direction:column;gap:14px;width:100%;">
       <button id="mode-single-btn" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);width:100%;border-radius:16px;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">1-SPIELER-STEUERUNG</button>
       <button id="mode-multi-btn" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);width:100%;border-radius:16px;background:rgba(143,95,255,.15);border:1px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">MEHR-SPIELER-STEUERUNG</button>
+      <button id="mode-spectator-btn" style="padding:clamp(14px,2vw,20px);font-size:clamp(15px,2vw,18px);width:100%;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;letter-spacing:.05em;">👁 ZUSCHAUER-MODUS</button>
     </div>
   </div>
 </div>
@@ -1698,16 +1699,16 @@ function showSpectatorReveal(rev){
   if(!el){
     el=document.createElement('div');
     el.id='spec-reveal-overlay';
-    el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-top:2px solid rgba(83,246,255,.3);padding:clamp(20px,3vw,36px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:clamp(6px,1vw,12px);';
+    el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-top:2px solid rgba(83,246,255,.3);padding:clamp(16px,2.5vw,28px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:row;align-items:center;gap:clamp(20px,3vw,40px);';
     document.body.appendChild(el);
   }
-  var coverHtml=rev.c?'<img src="'+rev.c+'" style="width:clamp(70px,8vw,110px);height:clamp(70px,8vw,110px);border-radius:12px;object-fit:cover;margin-bottom:4px;">':'';
-  el.innerHTML=coverHtml
-    +'<div style="font-size:clamp(80px,15vw,180px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;">'+rev.y+'</div>'
-    +'<div style="display:flex;gap:clamp(16px,2.5vw,36px);align-items:baseline;justify-content:center;flex-wrap:wrap;">'
-    +'<span style="font-size:clamp(28px,4.5vw,58px);font-weight:700;color:#fff;">'+rev.a+'</span>'
-    +'<span style="font-size:clamp(34px,5.5vw,70px);color:rgba(255,255,255,.65);">'+rev.t+'</span>'
+  var coverHtml=rev.c?'<img src="'+rev.c+'" style="width:clamp(80px,10vw,140px);height:clamp(80px,10vw,140px);border-radius:14px;object-fit:cover;flex-shrink:0;">':'';
+  var textBlock='<div style="display:flex;flex-direction:column;gap:clamp(4px,0.8vw,10px);justify-content:center;min-width:0;">'
+    +'<div style="font-size:clamp(80px,13vw,160px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;">'+rev.y+'</div>'
+    +'<div style="font-size:clamp(28px,4.5vw,56px);font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+rev.a+'</div>'
+    +'<div style="font-size:clamp(28px,4.5vw,56px);color:rgba(255,255,255,.65);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+rev.t+'</div>'
     +'</div>';
+  el.innerHTML=coverHtml+textBlock;
   el.style.display='flex';
 }
 function hideSpectatorReveal(){
@@ -2159,7 +2160,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=158', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=159', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
@@ -2264,6 +2265,8 @@ if (isInStandaloneMode()) {
   var b1=document.getElementById('mode-single-btn');
   var b2=document.getElementById('mode-multi-btn');
   if(b1) b1.addEventListener('click',function(){setMode('single');});
+  var b3=document.getElementById('mode-spectator-btn');
+  if(b3) b3.addEventListener('click',function(){enterSpectator();});
   if(b2) b2.addEventListener('click',function(){setMode('multi');});
   if(!b1&&!b2){
     // Fallback: onclick direkt setzen
