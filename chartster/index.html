@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.9.6</div>
+<div class="version">v4.9.7</div>
 
 <!-- SW Update Toast -->
 
@@ -1206,26 +1206,27 @@ function initFirebase(){
   }).catch(()=>setHost());
 }
 
+
+function applyModeUI(){
+  var isSingle = G_MODE==='single';
+  var ts=document.getElementById('table-selector');
+  var sts=document.getElementById('single-team-setup');
+  var mgs=document.getElementById('minigame-section');
+  var mmw=document.getElementById('mit-minispiel-wrap');
+  if(ts)  ts.style.display  = isSingle ? 'none' : '';
+  if(sts) sts.style.display = isSingle ? 'block' : 'none';
+  if(mgs) mgs.style.display = isSingle ? 'none' : '';
+  if(mmw) mmw.style.display = isSingle ? 'none' : '';
+}
+
 function setMode(mode){
   G_MODE = mode;
   showScreen('lobby');
   setHost();
-  if(mode === 'single'){
-    document.getElementById('table-selector').style.display = 'none';
-    document.getElementById('single-team-setup').style.display = 'block';
-    var mgs=document.getElementById('minigame-section');if(mgs)mgs.style.display='none';
-    var mmw=document.getElementById('mit-minispiel-wrap');if(mmw)mmw.style.display='none';
-  } else {
-    document.getElementById('table-selector').style.display = '';
-    document.getElementById('single-team-setup').style.display = 'none';
-    var mgs=document.getElementById('minigame-section');
-    if(mgs) mgs.style.display='';
-    var mmw=document.getElementById('mit-minispiel-wrap');
-    if(mmw) mmw.style.display='';
-  }
+  applyModeUI();
 }
 
-function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();}}
+function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();applyModeUI();}}
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){
   if(d.ts && d.ts < _joinTs - 10000) return; // Signal älter als 10s verwerfen
@@ -1236,7 +1237,7 @@ initFirebase();
 
 
 // ── SONGS ──
-function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);updateStartBtn();updateSongCount();decorateMiniGameButtons();}).catch(()=>{if(IS_HOST){document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';}});}
+function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);updateStartBtn();updateSongCount();decorateMiniGameButtons();applyModeUI();}).catch(()=>{if(IS_HOST){document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';}});}
 function filteredSongs(){
   var s=G.songs.filter(x=>x.l);
   if(G.excluded.size===0&&!G.topFilter) return s;
@@ -2046,7 +2047,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=133', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=134', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
