@@ -577,21 +577,19 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #sw-update-toast.show{opacity:1!important;pointer-events:auto!important;}
 @keyframes winCardSpin{0%{transform:scale(.3) rotate(-15deg);opacity:0;}60%{transform:scale(1.05) rotate(3deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
 
-/* ── MODUS-STEUERUNG ── */
-body:not([data-mode=single]) #single-team-setup{display:none!important;}
-body[data-mode=single] #table-selector{display:none!important;}
-body[data-mode=single] #minigame-section{display:none!important;}
-body[data-mode=single] #mit-minispiel-wrap{display:none!important;}
-body[data-mode=single] #mini-btn{display:none!important;}
-body[data-mode=single] .mg-cards{display:none!important;}
-body[data-mode=single] .sep{display:none!important;}
-body[data-mode=single] #s5-btn{display:none!important;}
-
-
-.st-row{display:flex;align-items:center;gap:12px;width:100%;}
-.st-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:inline-block;}
-.st-inp{flex:1;font-size:clamp(18px,3vw,28px);padding:clamp(14px,2vw,20px) 16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:12px;color:#fff;font-family:Outfit,sans-serif;outline:none;}
-.st-inp:focus{border-color:rgba(83,246,255,.6);background:rgba(255,255,255,.16);}
+/* ── 1-SPIELER-STEUERUNG ── */
+body[data-mode=single] #table-selector{display:none!important}
+body[data-mode=single] #minigame-section{display:none!important}
+body[data-mode=single] #mini-btn{display:none!important}
+body[data-mode=single] .mg-cards{display:none!important}
+body[data-mode=single] .sep{display:none!important}
+body[data-mode=single] #s5-btn{display:none!important}
+body:not([data-mode=single]) #single-team-setup{display:none!important}
+body[data-mode=single] #single-team-setup{display:flex!important;flex-direction:column;gap:10px;width:100%}
+.st-row{display:flex;align-items:center;gap:12px;width:100%}
+.st-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;display:inline-block}
+.st-inp{flex:1;font-size:clamp(18px,2.8vw,26px);padding:clamp(14px,2vw,20px) 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;color:#fff;font-family:Outfit,sans-serif}
+.st-inp:focus{border-color:rgba(83,246,255,.6)}
 
 </style>
 </head>
@@ -629,7 +627,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.0.5</div>
+<div class="version">v5.1.0</div>
 
 <!-- SW Update Toast -->
 
@@ -694,19 +692,14 @@ body[data-mode=single] #s5-btn{display:none!important;}
   </div>
 </div>
 
-
 <!-- ════ MODUS-AUSWAHL ════ -->
 <div id="screen-mode" class="screen active">
-  <div class="card" style="max-width:620px;text-align:center;gap:clamp(16px,3vw,32px);display:flex;flex-direction:column;align-items:center;">
-    <div class="game-title" style="font-size:clamp(36px,6vw,64px);">CHARTSTER</div>
-    <div style="font-size:clamp(16px,2.5vw,22px);color:var(--muted);letter-spacing:.04em;">Wie wollt ihr spielen?</div>
-    <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
-      <button class="btn btn-primary" onclick="setMode('single')" style="padding:clamp(20px,3vw,28px);font-size:clamp(16px,2.5vw,22px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;width:100%;">
-        <span>1-Spieler-Steuerung</span>
-      </button>
-      <button class="btn btn-primary" onclick="setMode('multi')" style="padding:clamp(20px,3vw,28px);font-size:clamp(16px,2.5vw,22px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;width:100%;background:rgba(255,255,255,.08);border:1px solid var(--glass-b);">
-        <span>Mehr-Spieler-Steuerung</span>
-      </button>
+  <div class="card" style="max-width:620px;text-align:center;">
+    <div class="game-title">CHARTSTER</div>
+    <div style="font-size:clamp(14px,2vw,18px);color:var(--muted);margin:8px 0 24px;">Wie wollt ihr spielen?</div>
+    <div style="display:flex;flex-direction:column;gap:14px;width:100%;">
+      <button class="btn btn-primary" onclick="setMode('single')" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);">1-Spieler-Steuerung</button>
+      <button class="btn" onclick="setMode('multi')" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);">Mehr-Spieler-Steuerung</button>
     </div>
   </div>
 </div>
@@ -718,14 +711,17 @@ body[data-mode=single] #s5-btn{display:none!important;}
   <div class="game-title" style="font-size:52px;letter-spacing:2px">CHARTSTER</div>
   <div class="sep"></div>
   <div class="setup-section">
-  
-  <!-- 1-Spieler-Steuerung: einfache Teamliste -->
-  <div id="single-team-setup" style="width:100%;">
-    <div class="label" style="font-size:clamp(16px,2.5vw,22px);margin-bottom:8px;">TEAMS</div>
-    <div id="single-teams-list" style="display:flex;flex-direction:column;gap:10px;width:100%;min-height:120px;"></div>
-    <button class="btn" onclick="addSingleTeam()" style="margin-top:12px;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.5);font-size:clamp(16px,2.5vw,20px);padding:clamp(14px,2vw,18px);color:#53f6ff;font-weight:700;width:100%;">＋ Team hinzufügen</button>
+    <!-- 1-Spieler-Steuerung: Teameingabe -->
+  <div id="single-team-setup">
+    <div class="label">TEAMS</div>
+    <div class="st-row"><span class="st-dot" style="background:#53f6ff;box-shadow:0 0 8px #53f6ff"></span><input class="st-inp" id="st-0" placeholder="Team 1" oninput="updateStartBtn()"></div>
+    <div class="st-row"><span class="st-dot" style="background:#ff4fd8;box-shadow:0 0 8px #ff4fd8"></span><input class="st-inp" id="st-1" placeholder="Team 2" oninput="updateStartBtn()"></div>
+    <div class="st-row" id="st-row-2" style="display:none"><span class="st-dot" style="background:#8f5fff;box-shadow:0 0 8px #8f5fff"></span><input class="st-inp" id="st-2" placeholder="Team 3" oninput="updateStartBtn()"></div>
+    <div class="st-row" id="st-row-3" style="display:none"><span class="st-dot" style="background:#4dff91;box-shadow:0 0 8px #4dff91"></span><input class="st-inp" id="st-3" placeholder="Team 4" oninput="updateStartBtn()"></div>
+    <div class="st-row" id="st-row-4" style="display:none"><span class="st-dot" style="background:#ff9f1c;box-shadow:0 0 8px #ff9f1c"></span><input class="st-inp" id="st-4" placeholder="Team 5" oninput="updateStartBtn()"></div>
+    <div class="st-row" id="st-row-5" style="display:none"><span class="st-dot" style="background:#e0ff4f;box-shadow:0 0 8px #e0ff4f"></span><input class="st-inp" id="st-5" placeholder="Team 6" oninput="updateStartBtn()"></div>
+    <button class="btn" onclick="addSingleTeamRow()" style="margin-top:4px;font-size:clamp(16px,2.5vw,20px);padding:14px;color:#53f6ff;font-weight:700;width:100%;background:rgba(83,246,255,.1);border:1px solid rgba(83,246,255,.4)">＋ Team hinzufügen</button>
   </div>
-
   <div id="table-selector">
       <div class="ts-top-row">
         <div class="seat" data-pos="top-l" onclick="toggleSeat('top-l')"><div class="seat-circle"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="9" r="5" fill="currentColor"/><path d="M3 23c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><input class="seat-inp" placeholder="Teamname" onclick="event.stopPropagation()"></div>
@@ -779,8 +775,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
     <button id="s5-btn" onclick="toggleS5()" style="padding:14px 18px;border-radius:14px;font-family:Outfit,sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(255,79,216,.35);background:rgba(255,79,216,.08);color:var(--muted);white-space:nowrap;flex-shrink:0;transition:all .2s">Schnelle 5</button>
   </div>
   <button onclick="enterSpectator()" style="width:100%;background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.1);font-size:12px;padding:8px;border-radius:10px;font-family:Outfit,sans-serif;letter-spacing:.08em;cursor:pointer;font-weight:600;">👁 Zuschauer-Modus</button>
-  <div id="minigame-section">
-<div class="sep"></div>
+  <div id="minigame-section"><div class="sep"></div>
   <div class="mg-cards">
     <a href="../chartster-memory/index.html" class="mg-card" id="mg-memory">
       <div class="mg-covers" id="mg-mem-covers"></div>
@@ -794,8 +789,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
         <div class="mg-overlay-name">Paparazzi</div>
       </div>
     </a>
-  </div>
-</div>
+  </div></div>
   <input type="checkbox" id="schnelle5" style="display:none">
 </div>
 </div>
@@ -950,10 +944,8 @@ function initSpectatorListener(){
       showSpectatorJointVictory(d.jointWinners);
     } else if(d.screen==='won' && d.wonTeams){
       showSpectatorVictory(d.wonTeams, d.teams);
-    } else {
-      if(d.teams) updateSpectatorView(d);
-      if(d.reveal) showSpectatorReveal(d.reveal);
-      else hideSpectatorReveal();
+    } else if(d.teams){
+      updateSpectatorView(d);
     }
   });
 }
@@ -1173,7 +1165,7 @@ const fbCfg={apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",authDomain:"schnup
 firebase.initializeApp(fbCfg);
 const DB=firebase.database(),REF=DB.ref('chartster/game');
 var IS_HOST=false,fbListener=null;
-var G_MODE='multi'; // 'multi' | 'single'
+var G_MODE="multi";
 var IS_SPECTATOR=false;
 var specListener=null;
 var _joinTs=Date.now();
@@ -1222,30 +1214,7 @@ function initFirebase(){
     else{setHost();}
   }).catch(()=>setHost());
 }
-
-
-function applyModeUI(){
-  document.body.dataset.mode = G_MODE;
-  var isSingle = G_MODE==='single';
-  var ts=document.getElementById('table-selector');
-  var sts=document.getElementById('single-team-setup');
-  var mgs=document.getElementById('minigame-section');
-  var mmw=document.getElementById('mit-minispiel-wrap');
-  if(ts)  ts.style.display  = isSingle ? 'none' : '';
-  if(sts) sts.style.display = isSingle ? 'block' : 'none';
-  if(mgs) mgs.style.display = isSingle ? 'none' : '';
-  if(mmw) mmw.style.display = isSingle ? 'none' : '';
-}
-
-function setMode(mode){
-  G_MODE = mode;
-  document.body.dataset.mode = mode;
-  showScreen('lobby');
-  setHost();
-  if(mode==='single') setTimeout(applyModeUI,50);
-}
-
-function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();applyModeUI();}}
+function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();}}
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){
   if(d.ts && d.ts < _joinTs - 10000) return; // Signal älter als 10s verwerfen
@@ -1256,7 +1225,7 @@ initFirebase();
 
 
 // ── SONGS ──
-function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);updateStartBtn();updateSongCount();decorateMiniGameButtons();applyModeUI();}).catch(()=>{if(IS_HOST){document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';}});}
+function loadSongs(){fetch('songs.json').then(r=>r.ok?r.json():Promise.reject(r.status)).then(data=>{G.songs=data.filter(s=>s.l);updateStartBtn();updateSongCount();decorateMiniGameButtons();}).catch(()=>{if(IS_HOST){document.getElementById('lobby-status').textContent='⚠ songs.json nicht gefunden';}});}
 function filteredSongs(){
   var s=G.songs.filter(x=>x.l);
   if(G.excluded.size===0&&!G.topFilter) return s;
@@ -1364,19 +1333,19 @@ function nextTeamIdx(){var activeCW=CW_ORDER.filter(pos=>G.teams.some(t=>t.pos==
 // ── START ──
 function startGame(){
   if(!IS_HOST){return;}
-  if(G_MODE==='single'&&getSingleTeams().length<2){showHint('Mindestens 2 Teams!');return;}
   WIN=document.getElementById('schnelle5').checked?5:10;
-  if(G_MODE==='single'){G.teams=getSingleTeams();G.players=G.teams.map(function(t){return t.name;});}
-  else{var active=getActiveSeats();if(active.length<2){showHint('Mindestens 2 Teams!');return;}}
+  if(G_MODE==='single'){
+    G.teams=getSingleTeams();if(G.teams.length<2){showHint('Mindestens 2 Teams!');return;}
+  } else {
+    var active=getActiveSeats();if(active.length<2){showHint('Mindestens 2 Teams!');return;}
+  }
   if(G.songs.length===0){showHint('Songs werden geladen – kurz warten!');return;}
   G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
   var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
   G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
   try{var _el=document.documentElement;(_el.requestFullscreen||_el.webkitRequestFullscreen||function(){}).call(_el);}catch(e){}
-  document.body.dataset.mode=G_MODE;
-  if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});}
-  else{Object.keys(CENTER_ROT_ORIG).forEach(function(k){CENTER_ROT[k]=CENTER_ROT_ORIG[k];});}
-  document.documentElement.style.setProperty('--spotify-h', G_MODE==='single'?'352px':'152px');
+  if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});document.documentElement.style.setProperty('--spotify-h','352px');}
+  else{Object.keys(CENTER_ROT_ORIG).forEach(function(k){CENTER_ROT[k]=CENTER_ROT_ORIG[k];});document.documentElement.style.setProperty('--spotify-h','152px');}
   showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
 }
 
@@ -1393,20 +1362,7 @@ function beginPlay(){G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betM
 function drawCard(){if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();}
 
 // ── PANELS ──
-
-function renderActivePanelOnly(){
-  ['area-top','area-bot','side-left-wrap','side-right-wrap'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el) el.innerHTML='';
-  });
-  // Only render active team panel at bottom
-  var area=document.getElementById('area-bot');
-  if(!area) return;
-  var team=G.teams[G.cur];
-  if(!team) return;
-  area.appendChild(buildPanel(G.cur));
-}
-
+function renderActivePanelOnly(){['area-top','area-bot','side-left-wrap','side-right-wrap'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});var a=document.getElementById('area-bot');if(a&&G.teams[G.cur])a.appendChild(buildPanel(G.cur));}
 function renderPanels(){
   if(G_MODE==='single'){renderActivePanelOnly();return;}
   document.getElementById('area-top').innerHTML='';
@@ -1473,7 +1429,7 @@ function cardNext(){
     document.getElementById('year-tl').classList.add('show');
     var yr=document.getElementById('c-year');yr.textContent=G.currentCard.y;yr.style.display='block';
     document.getElementById('c-artist').textContent=G.currentCard.a;document.getElementById('c-title').textContent=G.currentCard.t;
-    if(G_MODE==='single'&&typeof REF!=='undefined'&&IS_HOST) REF.update({reveal:{y:G.currentCard.y,a:G.currentCard.a,t:G.currentCard.t,c:G.currentCard.c||null}});
+    if(G_MODE==='single'&&typeof REF!=='undefined'&&IS_HOST)REF.update({reveal:{y:G.currentCard.y,a:G.currentCard.a,t:G.currentCard.t,c:G.currentCard.c||null}});
     setTimeout(function(){document.getElementById('c-artist').classList.add('on');document.getElementById('c-title').classList.add('on');},50);
     document.getElementById('main-btn').style.display='none';document.getElementById('score-btns').classList.add('show');
   }
@@ -1572,18 +1528,9 @@ function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort(
 // ── TRANSITION ──
 function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':' r90','right':' r270','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
 function continueGame(){
-  if(typeof REF!=='undefined'&&IS_HOST) REF.update({reveal:null});
+  if(typeof REF!=='undefined'&&IS_HOST)REF.update({reveal:null});
   G.cur=nextTeamIdx();
-  if(G.finalRound){
-    // Nur Teams die noch aufholen können dürfen nachziehen (WIN-1 Karten nötig)
-    var guard=0;
-    while(G.cur!==G.finalRoundStart){
-      if(G.teams[G.cur]&&G.teams[G.cur].years.length>=WIN-1) break; // kann noch gleichziehen
-      G.cur=nextTeamIdx(); // überspringen
-      if(++guard>G.teams.length){showVictory();return;} // Endlosschutz
-    }
-    if(G.cur===G.finalRoundStart){showVictory();return;}
-  }G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
+  if(G.finalRound && G.cur===G.finalRoundStart){showVictory();return;}G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
 
 // ── VICTORY ──
 
@@ -1609,28 +1556,6 @@ function hideSpectatorMiniGame(){
   if(overlay) overlay.style.display='none';
 }
 
-
-
-function showSpectatorReveal(rev){
-  var el=document.getElementById('spec-reveal-overlay');
-  if(!el){
-    el=document.createElement('div');
-    el.id='spec-reveal-overlay';
-    el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.92);backdrop-filter:blur(12px);border-top:1px solid var(--glass-b);padding:clamp(16px,2.5vw,32px);z-index:100;display:flex;align-items:center;gap:clamp(16px,2.5vw,32px);';
-    document.body.appendChild(el);
-  }
-  el.innerHTML=(rev.c?'<img src="'+rev.c+'" style="width:clamp(80px,10vw,130px);height:clamp(80px,10vw,130px);border-radius:12px;object-fit:cover;flex-shrink:0;">':'')
-    +'<div style="flex:1;min-width:0;">'
-    +'<div style="font-size:clamp(48px,8vw,96px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;">'+rev.y+'</div>'
-    +'<div style="font-size:clamp(18px,2.5vw,32px);font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+rev.a+'</div>'
-    +'<div style="font-size:clamp(14px,2vw,24px);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+rev.t+'</div>'
-    +'</div>';
-  el.style.display='flex';
-}
-function hideSpectatorReveal(){
-  var el=document.getElementById('spec-reveal-overlay');
-  if(el) el.style.display='none';
-}
 
 function showSpectatorVictory(wonTeams, allTeams){
   try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
@@ -2076,7 +2001,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=142', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=143', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
