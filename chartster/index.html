@@ -612,7 +612,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.9.7</div>
+<div class="version">v4.9.8</div>
 
 <!-- SW Update Toast -->
 
@@ -1224,6 +1224,7 @@ function setMode(mode){
   showScreen('lobby');
   setHost();
   applyModeUI();
+  setTimeout(applyModeUI, 300);
 }
 
 function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();applyModeUI();}}
@@ -1554,7 +1555,16 @@ function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var t
 function continueGame(){
   if(typeof REF!=='undefined'&&IS_HOST) REF.update({reveal:null});
   G.cur=nextTeamIdx();
-  if(G.finalRound && G.cur===G.finalRoundStart){showVictory();return;}G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
+  if(G.finalRound){
+    // Nur Teams die noch aufholen können dürfen nachziehen (WIN-1 Karten nötig)
+    var guard=0;
+    while(G.cur!==G.finalRoundStart){
+      if(G.teams[G.cur]&&G.teams[G.cur].years.length>=WIN-1) break; // kann noch gleichziehen
+      G.cur=nextTeamIdx(); // überspringen
+      if(++guard>G.teams.length){showVictory();return;} // Endlosschutz
+    }
+    if(G.cur===G.finalRoundStart){showVictory();return;}
+  }G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
 
 // ── VICTORY ──
 
@@ -2047,7 +2057,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=134', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=135', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
