@@ -582,6 +582,9 @@ body:not([data-mode=single]) #single-team-setup{display:none!important;}
 body[data-mode=single] #table-selector{display:none!important;}
 body[data-mode=single] #minigame-section{display:none!important;}
 body[data-mode=single] #mit-minispiel-wrap{display:none!important;}
+body[data-mode=single] #mini-btn{display:none!important;}
+body[data-mode=single] .mg-cards{display:none!important;}
+body[data-mode=single] .sep{display:none!important;}
 body[data-mode=single] #s5-btn{display:none!important;}
 
 </style>
@@ -620,7 +623,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v4.9.9</div>
+<div class="version">v5.0.0</div>
 
 <!-- SW Update Toast -->
 
@@ -2066,7 +2069,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=136', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=137', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
