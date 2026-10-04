@@ -8,23 +8,32 @@
 <meta name="apple-mobile-web-app-title" content="Rommé Hand">
 <meta name="theme-color" content="#d4af37">
 <title>Ingo's Rommé Hand v3</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Cinzel:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --gold:#d4af37;--gold2:#edd060;--gold3:#9a7015;
-  --bg:#020a04;--bg2:#060f07;--bg3:#0b1a0d;
-  --felt:#0c2b12;--felt2:#071809;
-  --card-light:#f5f0e8;--card-border:#d4d0c8;
-  --red:#c0392b;--green:#27ae60;
-  --text:#e8e0d0;--text2:rgba(232,224,208,.55);
+  /* Eintracht-CI (aus 20.html) */
+  --cyan:#ffd400;--pink:#ffd400;--purple:#173fb0;--pink-soft:#ffe26b;--gold:#ffd400;
+  --blue:#173fb0;--blue-2:#2e6bff;--blue-deep:#0a1f5c;
+  --panel:rgba(8,18,52,.82);--panel-2:rgba(255,255,255,.05);
+  --line:rgba(255,255,255,.12);--danger:#e2231a;--ok:#39d98a;
+  /* Legacy-Namen auf neue Palette umgebogen */
+  --gold2:#ffe26b;--gold3:#caa800;
+  --bg:#041428;--bg2:#062d6a;--bg3:#0a1f5c;
+  --felt:#0e52a0;--felt2:#062d6a;
+  --card-light:#f6f3ec;--card-border:#cfd8ea;
+  --red:#e2231a;--green:#39d98a;
+  --text:#eef3ff;--text2:rgba(238,243,255,.6);
 }
 body{
-  background:var(--bg);
-  font-family:'DM Sans',system-ui,sans-serif;
+  background:
+    repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.035) 0 1px, transparent 1px 42px),
+    radial-gradient(ellipse 130% 110% at 50% 38%, #2178d8 0%, #0e52a0 40%, #062d6a 75%, #041428 100%);
+  background-attachment:fixed;
+  font-family:'Outfit',system-ui,sans-serif;
   color:var(--text);
   min-height:100vh;
   min-height:-webkit-fill-available;
@@ -36,7 +45,7 @@ body{
 #screen-name{
   min-height:100vh;
   display:none;align-items:center;justify-content:center;
-  background:radial-gradient(ellipse at 50% 40%, #0a1f0c 0%, var(--bg) 70%);
+  background:radial-gradient(ellipse 130% 110% at 50% 38%, #2178d8 0%, #0e52a0 40%, #062d6a 75%, #041428 100%);
 }
 #screen-game{display:none;}
 
@@ -49,15 +58,15 @@ body{
   box-shadow:0 40px 100px rgba(0,0,0,.8);
 }
 .name-box h1{
-  font-family:'Cinzel',serif;font-size:38px;font-weight:900;
+  font-family:'Outfit',system-ui,sans-serif;font-size:38px;font-weight:900;
   letter-spacing:8px;color:var(--gold);margin-bottom:4px;
 }
 .name-box .sub{
-  font-family:'Cinzel',serif;font-size:11px;letter-spacing:12px;
+  font-family:'Outfit',system-ui,sans-serif;font-size:11px;letter-spacing:12px;
   color:rgba(212,175,55,.35);margin-bottom:36px;
 }
 .name-box label{
-  font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;
+  font-family:'Outfit',system-ui,sans-serif;font-size:10px;letter-spacing:4px;
   color:rgba(212,175,55,.5);display:block;margin-bottom:10px;
 }
 .name-box input{
@@ -65,7 +74,7 @@ body{
   border:1px solid rgba(212,175,55,.25);
   background:rgba(255,255,255,.04);color:var(--text);
   font-size:17px;outline:none;margin-bottom:8px;
-  font-family:'DM Sans',system-ui,sans-serif;text-align:center;
+  font-family:'Outfit',system-ui,sans-serif;text-align:center;
   transition:border-color .2s;
 }
 .name-box input:focus{border-color:rgba(212,175,55,.5);}
@@ -78,7 +87,7 @@ body{
   border:none;cursor:pointer;
   background:linear-gradient(135deg,var(--gold3),var(--gold),var(--gold2));
   color:#1a0f00;font-weight:700;font-size:15px;
-  font-family:'Cinzel',serif;letter-spacing:3px;
+  font-family:'Outfit',system-ui,sans-serif;letter-spacing:3px;
   transition:filter .2s,transform .1s;
   margin-bottom:10px;
 }
@@ -88,7 +97,7 @@ body{
 /* ── GAME LAYOUT ── */
 #screen-game{
   min-height:100vh;
-  background:linear-gradient(160deg,#020a04 0%,#060f07 55%,#040c05 100%);
+  background:radial-gradient(ellipse 130% 110% at 50% 38%, #2178d8 0%, #0e52a0 40%, #062d6a 75%, #041428 100%);
   padding-bottom:calc(50px + env(safe-area-inset-bottom,0px));
 }
 header{
@@ -99,20 +108,20 @@ header{
 .logo-row{display:flex;align-items:center;gap:14px;}
 .logo-text{display:flex;flex-direction:column;gap:1px;}
 .logo-ingos{
-  font-family:'Cinzel',serif;font-size:9px;letter-spacing:5px;
+  font-family:'Outfit',system-ui,sans-serif;font-size:9px;letter-spacing:5px;
   color:rgba(212,175,55,.55);
 }
 .logo-title-row{display:flex;align-items:baseline;gap:8px;}
 .logo-main{
-  font-family:'Cinzel',serif;font-size:28px;font-weight:900;
+  font-family:'Outfit',system-ui,sans-serif;font-size:28px;font-weight:900;
   letter-spacing:8px;color:var(--gold);line-height:1;
 }
 .logo-hand{
-  font-family:'Cinzel',serif;font-size:11px;letter-spacing:10px;
+  font-family:'Outfit',system-ui,sans-serif;font-size:11px;letter-spacing:10px;
   color:rgba(212,175,55,.45);
 }
 .round-chip{
-  font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;
+  font-family:'Outfit',system-ui,sans-serif;font-size:10px;letter-spacing:4px;
   color:rgba(212,175,55,.6);border:1px solid rgba(212,175,55,.2);
   padding:4px 14px;border-radius:20px;
 }
@@ -139,7 +148,7 @@ header{
 }
 .sc.active .sc-dot{display:block;}
 .sc-name{
-  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  font-family:'Outfit',system-ui,sans-serif;font-size:11px;font-weight:600;
   color:rgba(232,224,208,.7);margin-bottom:3px;letter-spacing:.5px;
 }
 .sc-num{
@@ -175,7 +184,7 @@ header{
 .opp{flex:1;}
 .opp-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .opp-name{
-  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  font-family:'Outfit',system-ui,sans-serif;font-size:11px;font-weight:600;
   color:rgba(232,224,208,.65);
 }
 .badge{
@@ -214,7 +223,7 @@ header{
 .pile-btn:hover:not(:disabled){transform:scale(1.06);}
 .pile-btn:disabled{cursor:default;opacity:.4;}
 .pile-lbl{
-  font-family:'Cinzel',serif;font-size:7px;letter-spacing:3px;
+  font-family:'Outfit',system-ui,sans-serif;font-size:7px;letter-spacing:3px;
   color:rgba(212,175,55,.3);text-transform:uppercase;
 }
 .pile-sep{
@@ -227,7 +236,7 @@ header{
   padding:12px 28px;border-radius:12px;border:none;cursor:pointer;
   background:linear-gradient(135deg,var(--gold3),var(--gold),var(--gold2));
   color:#1a0f00;font-weight:700;font-size:15px;
-  font-family:'Cinzel',serif;letter-spacing:4px;
+  font-family:'Outfit',system-ui,sans-serif;letter-spacing:4px;
   box-shadow:0 6px 24px rgba(212,175,55,.32);
   transition:filter .2s,transform .1s;
   display:none;
@@ -254,7 +263,7 @@ header{
   display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;
 }
 .hand-lbl{
-  font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;
+  font-family:'Outfit',system-ui,sans-serif;font-size:9px;letter-spacing:3px;
   color:rgba(212,175,55,.4);text-transform:uppercase;
 }
 .hand-n{font-size:12px;color:var(--text2);margin-left:8px;}
@@ -334,7 +343,7 @@ header{
   transform:rotate(-45deg);font-size:12px;color:var(--gold);font-weight:700;
 }
 .card.joker .joker-label{
-  font-family:'Cinzel',serif;font-size:8px;font-weight:700;
+  font-family:'Outfit',system-ui,sans-serif;font-size:8px;font-weight:700;
   color:var(--gold);letter-spacing:2px;
 }
 /* Card in sm size */
@@ -371,7 +380,7 @@ header{
   display:flex;align-items:center;justify-content:center;
 }
 .deck-count{
-  font-family:'Cinzel',serif;font-size:14px;font-weight:700;
+  font-family:'Outfit',system-ui,sans-serif;font-size:14px;font-weight:700;
   color:rgba(255,255,255,.8);
 }
 .deck-pattern{
@@ -414,7 +423,7 @@ header{
   max-height:85vh;overflow-y:auto;
 }
 .m-title{
-  font-family:'Cinzel',serif;font-size:20px;font-weight:700;
+  font-family:'Outfit',system-ui,sans-serif;font-size:20px;font-weight:700;
   color:var(--gold);text-align:center;margin-bottom:20px;letter-spacing:3px;
 }
 .pill{
@@ -430,7 +439,7 @@ header{
   border-bottom:1px solid rgba(212,175,55,.1);
 }
 .meld-lbl{
-  font-family:'Cinzel',serif;font-size:7px;letter-spacing:3px;
+  font-family:'Outfit',system-ui,sans-serif;font-size:7px;letter-spacing:3px;
   color:rgba(212,175,55,.35);text-transform:uppercase;margin-bottom:7px;
 }
 .meld-cards{display:flex;gap:5px;flex-wrap:wrap;}
@@ -447,7 +456,7 @@ header{
 .buy-btns{display:flex;gap:10px;margin-top:14px;}
 .btn-buy{
   flex:1;padding:10px 8px;border-radius:8px;cursor:pointer;
-  font-size:12px;font-family:'Cinzel',serif;letter-spacing:1px;font-weight:700;
+  font-size:12px;font-family:'Outfit',system-ui,sans-serif;letter-spacing:1px;font-weight:700;
   transition:all .2s;border:none;
 }
 .btn-buy.yes{background:linear-gradient(135deg,#1e8449,#27ae60);color:#fff;}
@@ -506,7 +515,7 @@ header{
 /* ── CHAT ── */
 #wt-chat{margin-top:14px;border:1px solid rgba(212,175,55,.15);border-radius:12px;overflow:hidden;display:none;flex-direction:column;}
 #wt-chat.show{display:flex;}
-#wt-chat-title{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:rgba(212,175,55,.45);padding:8px 12px 6px;border-bottom:1px solid rgba(255,255,255,.05);}
+#wt-chat-title{font-family:'Outfit',system-ui,sans-serif;font-size:9px;letter-spacing:3px;color:rgba(212,175,55,.45);padding:8px 12px 6px;border-bottom:1px solid rgba(255,255,255,.05);}
 #wt-chat-msgs{height:120px;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:5px;scrollbar-width:thin;scrollbar-color:rgba(212,175,55,.2) transparent;}
 .wt-chat-msg{font-size:13px;line-height:1.4;}
 .wt-chat-msg .cn{font-weight:600;margin-right:4px;}
@@ -515,9 +524,9 @@ header{
 .wt-emoji-btn{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 3px;border-radius:5px;-webkit-tap-highlight-color:transparent;}
 .wt-emoji-btn:hover{background:rgba(255,255,255,.1);}
 #wt-chat-input-row{display:flex;gap:6px;padding:7px 10px;border-top:1px solid rgba(255,255,255,.05);}
-#wt-chat-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:7px 10px;color:#e8e0d0;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;}
+#wt-chat-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:7px 10px;color:#e8e0d0;font-size:13px;font-family:'Outfit',system-ui,sans-serif;outline:none;}
 #wt-chat-input:focus{border-color:rgba(212,175,55,.4);}
-#wt-chat-send{background:linear-gradient(135deg,#9a7015,#d4af37);color:#1a0f00;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;font-size:13px;}
+#wt-chat-send{background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;font-size:13px;}
 /* In-game chat */
 #chat-wrap{
   position:fixed;bottom:0;left:0;right:0;z-index:300;
@@ -527,12 +536,12 @@ header{
   box-shadow:0 -2px 16px rgba(0,0,0,.4);
 }
 #chat-wrap.active{display:flex;}
-#chat-toggle{align-self:flex-end;background:linear-gradient(135deg,#9a7015,#d4af37);color:#1a0f00;border:none;border-radius:20px;padding:8px 16px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;cursor:pointer;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.4);display:flex;align-items:center;gap:6px;}
+#chat-toggle{align-self:flex-end;background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;border:none;border-radius:20px;padding:8px 16px;font-family:'Outfit',system-ui,sans-serif;font-size:11px;letter-spacing:2px;cursor:pointer;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.4);display:flex;align-items:center;gap:6px;}
 #chat-badge{background:#e74c3c;color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;display:none;align-items:center;justify-content:center;font-weight:700;}
 #chat-badge.has-new{display:flex;}
 #chat-panel{background:linear-gradient(160deg,#0b1a0d,#070e08);border:1px solid rgba(212,175,55,.2);border-radius:14px;margin-bottom:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.7);display:none;flex-direction:column;max-height:340px;}
 #chat-panel.open{display:flex;}
-#chat-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;color:rgba(212,175,55,.6);padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,.05);}
+#chat-title{font-family:'Outfit',system-ui,sans-serif;font-size:11px;letter-spacing:3px;color:rgba(212,175,55,.6);padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,.05);}
 #chat-msgs{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:6px;min-height:100px;scrollbar-width:thin;scrollbar-color:rgba(212,175,55,.2) transparent;}
 .chat-msg{font-size:13px;line-height:1.4;}
 .chat-msg .cn{font-weight:600;margin-right:4px;}
@@ -541,45 +550,124 @@ header{
 .chat-emoji-btn{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 3px;border-radius:5px;-webkit-tap-highlight-color:transparent;}
 .chat-emoji-btn:hover{background:rgba(255,255,255,.1);}
 #chat-input-row{display:flex;gap:6px;padding:8px 10px;border-top:1px solid rgba(255,255,255,.05);}
-#chat-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:7px 10px;color:#e8e0d0;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;}
+#chat-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:7px 10px;color:#e8e0d0;font-size:13px;font-family:'Outfit',system-ui,sans-serif;outline:none;}
 #chat-input:focus{border-color:rgba(212,175,55,.4);}
-#chat-send{background:linear-gradient(135deg,#9a7015,#d4af37);color:#1a0f00;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;font-size:13px;}
+#chat-send{background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;font-size:13px;}
 /* iPhone: opponent face-down cards 50% smaller */
 @media(max-width:430px) and (-webkit-min-device-pixel-ratio:2){
   .bcard{width:14px !important;height:21px !important;border-radius:3px !important;}
   .opp-cards{gap:2px !important;}
 }
 @media(min-width:700px){
-  #chat-wrap{left:50%;transform:translateX(-50%);width:600px;border-radius:14px 14px 0 0;}
-  #chat-panel{max-height:340px;}
+  /* Spielfläche nutzt die volle Breite */
+  .scores{padding:10px 24px;gap:10px;}
+  .status{padding:7px 28px;}
+  .felt{margin:0 24px;padding:22px 30px 28px;}
+  .hand-wrap{margin:14px 24px 0;padding:18px 26px 24px;}
+  /* Karten vergrößern (Tablet/Desktop) */
+  .card{width:78px;height:112px;border-radius:10px;}
+  .card-rank{font-size:20px;}
+  .card-suit-small{font-size:14px;}
+  .card-center{font-size:37px;}
+  .card.md{width:68px;height:97px;}
+  .card.md .card-rank{font-size:17px;}
+  .card.md .card-suit-small{font-size:13px;}
+  .card.md .card-center{font-size:31px;}
+  .card.sm{width:52px;height:74px;}
+  .card.sm .card-rank{font-size:13px;}
+  .card.sm .card-suit-small{font-size:10px;}
+  .card.sm .card-center{font-size:24px;}
+  .cards{gap:13px;}
+  .opp-cards{gap:7px;}
+  .opps{gap:40px;}
+  .bcard{width:38px;height:57px;border-radius:6px;}
+  .deck-stack,.deck-stack .dl,.deck-stack .dl-top,.empty-pile{width:68px;height:97px;}
+  .deck-count{font-size:18px;}
+  .pile-sep{height:90px;}
+  .piles{gap:28px;}
 }
+@media(min-width:1100px){
+  .scores{padding:12px 40px;gap:14px;}
+  .status{padding:8px 40px;}
+  .felt{margin:0 40px;padding:26px 40px 32px;}
+  .hand-wrap{margin:16px 40px 0;padding:20px 36px 26px;}
+  .card{width:86px;height:124px;}
+  .card-rank{font-size:22px;}
+  .card-suit-small{font-size:15px;}
+  .card-center{font-size:41px;}
+  .opps{gap:80px;justify-content:space-between;}
+  .cards{gap:15px;}
+}
+
+/* ═══ Eintracht-CI v3.10 Overrides ═══ */
+.grad{background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;backdrop-filter:blur(18px);}
+.lb-card,.wt-card,.modal-box,.name-box{background:var(--panel)!important;border:1px solid var(--line)!important;backdrop-filter:blur(18px);}
+/* Haupt-Buttons blau, Akzent gelb */
+.btn-gold,.lb-prim{background:linear-gradient(135deg,var(--blue),var(--blue-2))!important;color:#fff!important;}
+.btn-gold:hover,.lb-prim:hover{filter:brightness(1.12)!important;}
+.fertig-btn{background:linear-gradient(135deg,#ffe26b,var(--gold))!important;color:#1a1500!important;}
+.m-title{background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+/* Ingo-Foto: gelber Rahmen + dauerhaftes Pulsieren */
+.logo-row img{border:3px solid var(--gold)!important;border-radius:50%!important;animation:ingoPulse 3.4s ease-in-out infinite;}
+@keyframes ingoPulse{0%,100%{box-shadow:0 0 18px #ffd40088;}50%{box-shadow:0 0 36px #ffd400dd;}}
+/* Intro (CI aus Schock Doof) */
+#intro{position:fixed;inset:0;z-index:1000;
+  background:repeating-radial-gradient(circle at 50% 50%,transparent 0px,transparent 70px,rgba(0,0,0,.22) 70px,rgba(0,0,0,.22) 73px,rgba(255,255,255,.06) 73px,rgba(255,255,255,.06) 75px,transparent 75px,transparent 145px),radial-gradient(ellipse 130% 110% at 50% 38%,#2178d8 0%,#0e52a0 40%,#062d6a 75%,#041428 100%);
+  animation:intro-fade .55s ease both;transition:opacity .35s;}
+#intro.hide{opacity:0;}
+@keyframes intro-fade{from{opacity:0}to{opacity:1}}
+.intro-logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:clamp(90px,20vw,120px);height:clamp(90px,20vw,120px);border-radius:50%;object-fit:cover;object-position:50% 16%;border:4px solid #ffd400;box-shadow:0 0 40px #ffd400aa;opacity:0;animation:intro-logo-in .5s cubic-bezier(.3,1.4,.4,1) .1s both}
+@keyframes intro-logo-in{from{opacity:0;transform:translate(-50%,-50%) scale(.55)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.intro-textwrap{position:absolute;left:50%;top:calc(50% + clamp(45px,10vw,60px) + 10px);transform:translateX(-50%);display:flex;flex-direction:column;align-items:flex-start;opacity:0;animation:intro-text-in .45s ease-out .32s both}
+@keyframes intro-text-in{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.intro-sup{font-family:'Outfit',sans-serif;font-size:clamp(.95rem,3.4vw,1.3rem);letter-spacing:.32em;font-weight:900;color:#173fb0;background:#ffd400;padding:3px 10px;border-radius:5px;margin-bottom:4px}
+.intro-title{font-family:'Outfit',sans-serif;white-space:nowrap;font-size:clamp(2rem,10vw,3.8rem);font-weight:900;line-height:1}
+.intro-title span.grad{background:linear-gradient(90deg,#fff 30%,#ffd400);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+/* Lobby-Branding (brand2 aus Schock Doof) */
+.brand2{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.brand2-photo{width:clamp(54px,15vw,76px);height:clamp(54px,15vw,76px);border-radius:50%;object-fit:cover;object-position:50% 16%;border:4px solid #ffd400;box-shadow:0 0 24px #ffd400aa;flex:none;animation:ingo-glow-pulse 3.4s ease-in-out infinite}
+@keyframes ingo-glow-pulse{0%,100%{box-shadow:0 0 18px #ffd40088}50%{box-shadow:0 0 36px #ffd400dd}}
+.brand2-text{line-height:.92;display:flex;flex-direction:column;align-items:flex-start}
+.brand2-sup{font-family:'Outfit',sans-serif;font-size:clamp(.55rem,2.2vw,.72rem);letter-spacing:.28em;font-weight:900;color:#173fb0;background:#ffd400;padding:2px 8px;border-radius:5px;margin-bottom:3px}
+.brand2-title{font-family:'Outfit',sans-serif;white-space:nowrap;font-size:clamp(1.7rem,8vw,3.1rem);font-weight:900;line-height:1}
+.brand2-title .grad{background:linear-gradient(90deg,#fff 30%,#ffd400);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+/* Spruch-Zeilen */
+.go-spruch{font-family:'Outfit',sans-serif;font-weight:900;font-size:clamp(18px,5vw,26px);line-height:1.15;margin:2px 0 16px;text-align:center;}
+.notice-spruch{font-family:'Outfit',sans-serif;font-weight:500;font-size:14px;color:var(--gold);opacity:.92;text-align:center;margin:6px 0 14px;font-style:italic;}
+/* Versions-Tag */
+.ver-tag{position:fixed;right:8px;bottom:6px;z-index:900;font-family:'Outfit',sans-serif;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.28);pointer-events:none;}
+.game-ctrl{display:flex;justify-content:flex-end;gap:8px;padding:6px 14px 0;}
+.gc-btn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);color:var(--gold);cursor:pointer;font-size:15px;-webkit-tap-highlight-color:transparent;}
+.gc-btn:hover{filter:brightness(1.2);}
+.gc-leave{color:rgba(231,76,60,.85);border-color:rgba(231,76,60,.3);}
 </style>
 <style>
-#screen-lobby{display:none;min-height:100vh;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,#0a1f0c 0%,var(--bg) 70%);}
+#screen-lobby{display:none;min-height:100vh;align-items:center;justify-content:center;background:radial-gradient(ellipse 130% 110% at 50% 38%, #2178d8 0%, #0e52a0 40%, #062d6a 75%, #041428 100%);}
 #screen-lobby.active{display:flex;}
-#screen-waiting{display:none;min-height:100vh;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,#0a1f0c 0%,var(--bg) 70%);}
+#screen-waiting{display:none;min-height:100vh;align-items:center;justify-content:center;background:radial-gradient(ellipse 130% 110% at 50% 38%, #2178d8 0%, #0e52a0 40%, #062d6a 75%, #041428 100%);}
 #screen-waiting.active{display:flex;}
 .lb-card{background:linear-gradient(160deg,var(--bg3),#040e06);border:1px solid rgba(212,175,55,.25);border-radius:20px;padding:32px 36px;width:min(460px,94vw);box-shadow:0 40px 100px rgba(0,0,0,.8);}
 .lb-photo{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);box-shadow:0 0 14px rgba(212,175,55,.3);flex-shrink:0;display:block;}
-.lb-lbl{font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:rgba(212,175,55,.5);margin-bottom:8px;margin-top:16px;}
-.lb-input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid rgba(212,175,55,.25);background:rgba(255,255,255,.04);color:var(--text);font-size:16px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;box-sizing:border-box;}
+.lb-lbl{font-family:'Outfit',system-ui,sans-serif;font-size:10px;letter-spacing:4px;color:rgba(212,175,55,.5);margin-bottom:8px;margin-top:16px;}
+.lb-input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid rgba(212,175,55,.25);background:rgba(255,255,255,.04);color:var(--text);font-size:16px;font-family:'Outfit',system-ui,sans-serif;outline:none;transition:border-color .2s;box-sizing:border-box;}
 .lb-input:focus{border-color:rgba(212,175,55,.5);}
 .lb-seg{display:flex;gap:7px;margin-bottom:4px;}
-.lb-btn{flex:1;padding:10px 6px;border-radius:8px;border:1px solid rgba(212,175,55,.2);background:rgba(255,255,255,.03);color:rgba(212,175,55,.5);font-size:13px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent;}
+.lb-btn{flex:1;padding:10px 6px;border-radius:8px;border:1px solid rgba(212,175,55,.2);background:rgba(255,255,255,.03);color:rgba(212,175,55,.5);font-size:13px;cursor:pointer;transition:all .2s;font-family:'Outfit',system-ui,sans-serif;-webkit-tap-highlight-color:transparent;}
 .lb-btn.on{background:rgba(212,175,55,.15);border-color:var(--gold);color:var(--gold);}
 .lb-div{height:1px;background:rgba(212,175,55,.1);margin:18px 0;}
-.lb-prim{display:block;width:100%;padding:14px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--gold3),var(--gold),var(--gold2));color:#1a0f00;font-weight:700;font-size:14px;font-family:'Cinzel',serif;letter-spacing:3px;transition:filter .2s,transform .1s;margin-top:14px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;box-sizing:border-box;}
+.lb-prim{display:block;width:100%;padding:14px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--gold3),var(--gold),var(--gold2));color:#1a0f00;font-weight:700;font-size:14px;font-family:'Outfit',system-ui,sans-serif;letter-spacing:3px;transition:filter .2s,transform .1s;margin-top:14px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;box-sizing:border-box;}
 .lb-prim:hover{filter:brightness(1.1);}
-.lb-ghost{display:block;width:100%;padding:11px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:rgba(255,255,255,.3);cursor:pointer;font-size:13px;margin-top:8px;font-family:'DM Sans',sans-serif;box-sizing:border-box;}
+.lb-ghost{display:block;width:100%;padding:11px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:rgba(255,255,255,.3);cursor:pointer;font-size:13px;margin-top:8px;font-family:'Outfit',system-ui,sans-serif;box-sizing:border-box;}
 .lb-join{display:flex;gap:8px;margin-top:8px;}
 .lb-join .lb-input{flex:1;letter-spacing:4px;text-transform:uppercase;}
 .lb-join .lb-prim{width:auto;padding:12px 18px;margin-top:0;white-space:nowrap;}
 .wt-card{background:linear-gradient(160deg,var(--bg3),#040e06);border:1px solid rgba(212,175,55,.25);border-radius:20px;padding:32px 36px;width:min(460px,94vw);box-shadow:0 40px 100px rgba(0,0,0,.8);text-align:center;}
-.wt-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:3px;}
+.wt-title{font-family:'Outfit',system-ui,sans-serif;font-size:22px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:3px;}
 .wt-sub{font-size:13px;color:var(--text2);margin-bottom:20px;}
 .wt-codebox{background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.2);border-radius:12px;padding:14px;margin-bottom:16px;}
-.wt-codelbl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:4px;color:rgba(212,175,55,.5);margin-bottom:6px;}
-.wt-code{font-family:'Cinzel',serif;font-size:36px;font-weight:700;color:var(--gold);letter-spacing:14px;}
+.wt-codelbl{font-family:'Outfit',system-ui,sans-serif;font-size:9px;letter-spacing:4px;color:rgba(212,175,55,.5);margin-bottom:6px;}
+.wt-code{font-family:'Outfit',system-ui,sans-serif;font-size:36px;font-weight:700;color:var(--gold);letter-spacing:14px;}
 .wt-url{font-size:11px;color:var(--text2);margin-top:6px;word-break:break-all;}
 .wt-slots{display:flex;flex-direction:column;gap:7px;margin-bottom:18px;}
 .wt-slot{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);text-align:left;}
@@ -588,26 +676,28 @@ header{
 .wt-dot.off{background:rgba(255,255,255,.12);}
 .wt-dot.ai{background:rgba(212,175,55,.5);}
 .wt-name{font-size:14px;font-weight:500;}
-.wt-tag{font-size:10px;margin-left:auto;font-family:'Cinzel',serif;letter-spacing:2px;color:var(--text2);}
+.wt-tag{font-size:10px;margin-left:auto;font-family:'Outfit',system-ui,sans-serif;letter-spacing:2px;color:var(--text2);}
 </style>
 </head>
 <body>
+<div id="intro" onclick="hideIntro()">
+  <img id="ingo-intro" class="intro-logo" alt="Ingo">
+  <div class="intro-textwrap">
+    <div class="intro-sup">INGO'S</div>
+    <div class="intro-title"><span class="grad">Rommé Hand</span></div>
+  </div>
+</div>
+<div class="ver-tag" id="ver-tag"></div>
 <canvas id="confetti-canvas"></canvas>
 
 <!-- LOBBY -->
 <div id="screen-lobby">
   <div class="lb-card">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div style="position:relative;flex-shrink:0">
-        <img class="lb-photo" src="data:image/jpeg;base64,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" alt="Ingo">
-        <div style="position:absolute;bottom:-2px;right:-2px;background:linear-gradient(135deg,var(--gold3),var(--gold));border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:8px">&#9733;</div>
-      </div>
-      <div>
-        <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:5px;color:rgba(212,175,55,.55)">I N G O 'S</div>
-        <div style="display:flex;align-items:baseline;gap:8px">
-          <span style="font-family:'Cinzel',serif;font-size:26px;font-weight:900;letter-spacing:8px;color:var(--gold)">ROMM&#201;</span>
-          <span style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:5px;color:rgba(212,175,55,.45)">HAND</span>
-        </div>
+    <div class="brand2">
+      <img id="ingo-lobby" class="brand2-photo" src="" alt="Ingo">
+      <div class="brand2-text">
+        <div class="brand2-sup">INGO'S</div>
+        <div class="brand2-title"><span class="grad">Romm&#233; Hand</span></div>
       </div>
     </div>
     <div id="room-status-badge" style="text-align:center;padding:10px 14px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid rgba(212,175,55,.15);margin-bottom:8px;font-size:13px;color:rgba(232,224,208,.7);min-height:38px;display:flex;align-items:center;justify-content:center;">Verbinde&#8230;</div>
@@ -623,15 +713,6 @@ header{
       </div>
     </div>
     <button class="lb-prim" id="btn-connect" style="margin-top:14px">LOS &#8594;</button>
-    <a href="https://meet.jit.si/ingos-rommehand" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;padding:9px;border-radius:8px;border:1px solid rgba(212,175,55,.2);color:var(--gold);text-decoration:none;font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>SPRACHANRUF
-    </a>
-    <div style="border-top:1px solid rgba(212,175,55,.1);margin-top:14px;padding-top:12px;">
-      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:rgba(212,175,55,.4);margin-bottom:6px">&#128172; CHAT</div>
-      <div id="lobby-chat-msgs" style="height:80px;overflow-y:auto;background:rgba(0,0,0,.2);border:1px solid rgba(212,175,55,.1);border-radius:8px;padding:6px 10px;display:flex;flex-direction:column;gap:3px;margin-bottom:6px;font-size:12px;color:rgba(232,224,208,.8);scrollbar-width:thin;"></div>
-      <div id="lobby-emoji-bar" style="display:flex;flex-wrap:wrap;gap:2px;margin-bottom:5px;"></div>
-      <div style="display:flex;gap:6px;"><input id="lobby-chat-input" class="lb-input" placeholder="Nachricht&#8230;" maxlength="120" style="flex:1;padding:8px 10px;" autocomplete="off"><button id="lobby-chat-send" style="background:linear-gradient(135deg,#9a7015,#d4af37);color:#1a0f00;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:14px;">&#8594;</button></div>
-    </div>
   </div>
 </div>
 
@@ -642,20 +723,11 @@ header{
     <div class="wt-sub" id="wt-sub">Warte auf Spieler&#8230;</div>
     <div class="wt-slots" id="wt-slots"></div>
     <div id="wt-spectators-box" style="display:none;margin-bottom:12px">
-      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:rgba(212,175,55,.4);margin-bottom:4px">&#128065; ZUSCHAUER</div>
+      <div style="font-family:'Outfit',system-ui,sans-serif;font-size:9px;letter-spacing:3px;color:rgba(212,175,55,.4);margin-bottom:4px">&#128065; ZUSCHAUER</div>
       <div id="wt-spectators" style="font-size:12px;color:rgba(232,224,208,.6);"></div>
     </div>
     <button class="lb-prim" id="btn-start" style="display:none">SPIEL STARTEN &#8594;</button>
     <button class="lb-ghost" id="btn-leave">&#8592; Verlassen</button>
-    <div id="wt-chat" style="margin-top:16px;border:1px solid rgba(212,175,55,.15);border-radius:12px;overflow:hidden;display:none;flex-direction:column;">
-      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:rgba(212,175,55,.45);padding:8px 12px 6px;border-bottom:1px solid rgba(255,255,255,.05);">&#128172; CHAT</div>
-      <div id="wt-chat-msgs" style="height:120px;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:5px;scrollbar-width:thin;"></div>
-      <div id="wt-emoji-bar" style="display:flex;flex-wrap:wrap;gap:3px;padding:5px 10px 2px;border-top:1px solid rgba(255,255,255,.04);"></div>
-      <div style="display:flex;gap:6px;padding:7px 10px;border-top:1px solid rgba(255,255,255,.05);">
-        <input id="wt-chat-input" placeholder="Nachricht&#8230;" maxlength="120" autocomplete="off" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:7px 10px;color:#e8e0d0;font-size:13px;outline:none;">
-        <button id="wt-chat-send" style="background:linear-gradient(135deg,#9a7015,#d4af37);color:#1a0f00;border:none;border-radius:8px;padding:7px 12px;font-weight:700;cursor:pointer;font-size:13px;">&#8594;</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -663,36 +735,10 @@ header{
 <canvas id="confetti-canvas"></canvas>
 <!-- NAME ENTRY SCREEN -->
 <div id="screen-game">
-  <header>
-    <div class="logo-row">
-      <div style="position:relative;flex-shrink:0;">
-        <img src="data:image/jpeg;base64,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" alt="Ingo" style="width:46px;height:46px;border-radius:50%;object-fit:cover;object-position:center 25%;border:2px solid var(--gold);box-shadow:0 0 12px rgba(212,175,55,.3);">
-        <div style="position:absolute;bottom:-3px;right:-3px;background:linear-gradient(135deg,var(--gold3),var(--gold));border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:8px;">★</div>
-      </div>
-      <div class="logo-text">
-        <span class="logo-ingos">I N G O ' S</span>
-        <div class="logo-title-row">
-          <span class="logo-main">ROMMÉ</span>
-          <span class="logo-hand">H A N D</span>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <a href="https://meet.jit.si/ingos-rommehand" target="_blank" rel="noopener" title="Sprachanruf"
-        style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;
-        border-radius:50%;border:1px solid rgba(212,175,55,.3);color:var(--gold);text-decoration:none;flex-shrink:0;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-      </a>
-      <button onclick="retrySync()" title="Spiel neu synchronisieren"
-        style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;
-        border-radius:50%;border:1px solid rgba(212,175,55,.3);background:none;color:var(--gold);
-        cursor:pointer;font-size:16px;-webkit-tap-highlight-color:transparent;">&#8635;</button>
-      <button onclick="leaveGame()" title="Spiel verlassen"
-        style="display:flex;align-items:center;justify-content:center;width:30px;height:30px;
-        border-radius:50%;border:1px solid rgba(231,76,60,.25);background:none;color:rgba(231,76,60,.6);
-        cursor:pointer;font-size:14px;">&#10005;</button>
-    </div>
-  </header>
+  <div class="game-ctrl">
+    <button onclick="retrySync()" title="Spiel neu synchronisieren" class="gc-btn">&#8635;</button>
+    <button onclick="leaveGame()" title="Spiel verlassen" class="gc-btn gc-leave">&#10005;</button>
+  </div>
   <div id="spectator-controls" style="display:none;text-align:center;padding:6px 20px;background:rgba(212,175,55,.06);border-bottom:1px solid rgba(212,175,55,.1);">
     <span style="font-size:12px;color:rgba(232,224,208,.6);margin-right:10px;">Du schaust zu</span>
     <button onclick="spectatorWantPlay()" id="btn-want-play" style="font-size:12px;padding:5px 14px;border-radius:8px;border:1px solid rgba(212,175,55,.4);background:rgba(212,175,55,.1);color:var(--gold);cursor:pointer;">KI &#252;bernehmen &#8594;</button>
@@ -727,7 +773,6 @@ header{
       </div>
       <button class="fertig-btn" id="btn-fertig">★ FERTIG!</button>
     </div>
-    <div class="go-hint" id="go-hint">Karte antippen zum Ablegen → Runde gewonnen!</div>
   </div>
 
   <div class="hand-wrap">
@@ -741,7 +786,6 @@ header{
         <button class="sort-btn" id="btn-vsort">A → 2</button>
       </div>
     </div>
-    <div class="hint" id="hint">Karte antippen zum Ablegen · Ziehen zum Umsortieren</div>
     <div class="cards" id="hand-cards"></div>
   </div>
 </div>
@@ -759,7 +803,8 @@ header{
 
 <div class="modal-bg" id="modal-round">
   <div class="modal-box">
-    <div class="m-title" id="round-title"></div>
+    <div class="m-title grad" id="round-title"></div>
+    <div class="notice-spruch" id="round-spruch"></div>
     <div class="res-list" id="round-results"></div>
     <button class="btn-gold" id="btn-next-round">Nächste Runde →</button>
   </div>
@@ -774,7 +819,8 @@ header{
 
 <div class="modal-bg" id="modal-gameover">
   <div class="modal-box" style="text-align:center;">
-    <div class="m-title" id="gameover-title">🏆 Spiel beendet</div>
+    <div class="m-title grad" id="gameover-title">🏆 Spiel beendet</div>
+    <div class="go-spruch grad" id="gameover-spruch"></div>
     <div id="gameover-content" style="margin-bottom:20px;"></div>
     <button class="btn-gold" id="btn-new-game">Neues Spiel</button>
   </div>
@@ -786,6 +832,45 @@ header{
 // ═══ ME = mein Spieler-Index. Solo: 0. Multiplayer: myIdx. ═══
 // Alle Aktionen und Render-Checks nutzen ME statt hardcoded 0
 let ME = 0;
+
+// ═══ CI v3.10 — Intro / Sound / Sprueche (Eintracht-CI aus 20.html) ═══
+const VERSION='v3.14';
+try{ document.title="Ingo's Romm\u00e9 Hand "+VERSION; var _vt=document.getElementById('ver-tag'); if(_vt)_vt.textContent=VERSION; }catch(e){}
+
+const INGO_SRC='data:image/jpeg;base64,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';
+['ingo-intro','ingo-lobby','ingo-header'].forEach(function(id){ var e=document.getElementById(id); if(e)e.src=INGO_SRC; });
+
+// Intro
+let _introDone=false;
+function hideIntro(){ if(_introDone)return; _introDone=true; var el=document.getElementById('intro'); if(!el)return; el.classList.add('hide'); setTimeout(function(){ if(el&&el.parentNode)el.parentNode.removeChild(el); },380); }
+setTimeout(hideIntro,2500);
+
+// Hinweis-Popups bewusst deaktiviert (No-Op)
+function toast(){}
+
+// Sounds: relative Pfade (liegen neben der HTML)
+let jingleAudio=null, applauseAudio=null;
+try{ jingleAudio=new Audio('./Jingle1.mp3'); jingleAudio.preload='auto'; }catch(e){}
+try{ applauseAudio=new Audio('./applause.mp3'); applauseAudio.preload='auto'; }catch(e){}
+function playChain(list){ let i=0; (function next(){ if(i>=list.length)return; var a=list[i++]; if(!a){ next(); return; } try{ a.currentTime=0; a.onended=next; a.play().catch(function(){ next(); }); }catch(e){ next(); } })(); }
+function playJingle1(){ try{ if(jingleAudio){ jingleAudio.currentTime=0; jingleAudio.play().catch(function(){}); } }catch(e){} }
+// Audio bei erster Nutzer-Geste freischalten
+(function(){ function ua(){ [jingleAudio,applauseAudio].forEach(function(a){ if(!a)return; try{ a.muted=true; var p=a.play(); if(p&&p.then){ p.then(function(){ a.pause(); a.currentTime=0; a.muted=false; }).catch(function(){ a.muted=false; }); } else { a.muted=false; } }catch(e){} });
+  document.removeEventListener('touchstart',ua); document.removeEventListener('click',ua); }
+  document.addEventListener('touchstart',ua,{once:true,passive:true}); document.addEventListener('click',ua,{once:true}); })();
+
+// Spruch-Pools (Karten/Romm\u00e9/Ingo — kein Bier, kein Trinkspiel)
+const GAMEOVER_LINES=['\ud83c\udccf ABGER\u00c4UMT \u2014 DER POTT IST DEINER!','\ud83d\udc51 K\u00d6NIG AM KARTENTISCH!','\ud83c\udfaf SAUBER AUSGELEGT, SAUBER GEWONNEN!','\ud83d\udd25 DIE HAND SASS \u2014 GL\u00dcCKWUNSCH!','\ud83c\udfc6 RUNDE F\u00dcR RUNDE ZUM SIEG!','\ud83d\udcaa KARTEN GELESEN WIE EIN BUCH!','\ud83c\udf89 INGO NICKT ANERKENNEND!','\ud83c\udca1 DAS ASS IM \u00c4RMEL HAT GESESSEN!','\u26a1 KEINE CHANCE F\u00dcR DEN REST!','\ud83c\udf1f MEISTERLICH GEMISCHT UND GEWONNEN!','\ud83e\udd1d PARTIE ENTSCHIEDEN \u2014 RESPEKT!','\ud83c\udfb4 VOLLE KONTROLLE \u00dcBER DAS BLATT!','\ud83d\ude0e COOL GEBLIEBEN, POTT KASSIERT!','\ud83d\udcc8 PUNKTE IM GRIFF, SPIEL GEWONNEN!','\ud83d\ude80 DURCHMARSCH AM KARTENTISCH!'];
+const NOTICE_QUOTES=['Noch ist nichts entschieden.','Jetzt die Karten neu sortieren und angreifen.','Ein gutes Blatt dreht jede Runde.','Wer ablegt, gewinnt \u2014 bleib dran.','Die n\u00e4chste Hand k\u00f6nnte deine sein.','Stark gespielt, weiter geht\u2019s.','Ingo mischt schon das n\u00e4chste Blatt.','Konzentration \u2014 der Pott wartet.'];
+function NOTICE_TPL(a,b){ return a+' gegen '+b+' \u2014 jetzt zeigt sich, wer die Nerven beh\u00e4lt.'; }
+let _lastGameover=null, _lastNotice=null;
+function _pickNoRep(pool,last){ var p=pool.filter(function(q){ return q!==last; }); if(!p.length)p=pool.slice(); return p[Math.floor(Math.random()*p.length)]; }
+function setGameOverSpruch(){ var el=document.getElementById('gameover-spruch'); if(!el)return; var q=_pickNoRep(GAMEOVER_LINES,_lastGameover); _lastGameover=q; el.textContent=q; }
+function setNoticeSpruch(){ var el=document.getElementById('round-spruch'); if(!el)return; var q;
+  try{ var act=[]; for(var i=0;i<NP;i++){ if(!G.eliminated.includes(i)&&G.playerNames[i]&&G.scores[i]<MAX)act.push(i); }
+    if(act.length===2){ q=NOTICE_TPL(G.playerNames[act[0]],G.playerNames[act[1]]); _lastNotice=q; el.textContent=q; return; } }catch(e){}
+  q=_pickNoRep(NOTICE_QUOTES,_lastNotice); _lastNotice=q; el.textContent=q; }
+
 
 // ═══════════════════════════════════════════
 // FIREBASE
@@ -1021,8 +1106,8 @@ function launchConfetti(grand){
   canvas.height=window.innerHeight;
   canvas.classList.add('active');
   const colors=grand
-    ?['#d4af37','#edd060','#fff8dc','#ffd700','#fffacd']
-    :['#d4af37','#2ecc71','#3498db','#e74c3c','#9b59b6','#edd060'];
+    ?['#ffd400','#ffe26b','#ffffff','#2e6bff','#173fb0']
+    :['#ffd400','#ffe26b','#ffffff','#2e6bff','#173fb0','#5b8dff'];
   const pieces=[];
   const count=grand?200:120;
   for(let i=0;i<count;i++){
@@ -1478,6 +1563,8 @@ function showRoundEnd(){
   const btn=document.getElementById('btn-next-round');
   if(btn){btn.textContent=MP.on&&!MP.host?'Verstanden →':'Nächste Runde →';}
   launchConfetti(false);
+  if(G.colorSlam)playJingle1();
+  setNoticeSpruch();
   const title=document.getElementById('round-title');
   if(G.colorSlam){
     title.innerHTML=`🌈 <span style="color:var(--gold)">${G.playerNames[G.roundWinner]} — Einfarbig!</span>`;
@@ -1527,7 +1614,7 @@ function showBuyIn(){
       const div=document.createElement('div');div.className='buy-card';
       div.innerHTML=`
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <span style="font-family:'Cinzel',serif;font-size:14px;color:var(--gold)">${G.playerNames[p]}</span>
+          <span style="font-family:'Outfit',system-ui,sans-serif;font-size:14px;color:var(--gold)">${G.playerNames[p]}</span>
           <span style="font-size:11px;padding:2px 10px;border-radius:6px;background:rgba(231,76,60,.1);color:#e74c3c;border:1px solid rgba(231,76,60,.25)">${G.scores[p]} Pkt</span>
         </div>
         <div style="font-size:13px;color:rgba(232,224,208,.5);margin-bottom:12px;line-height:1.7">
@@ -1557,7 +1644,7 @@ function showBuyIn(){
     const div=document.createElement('div');div.className='buy-card';
     div.innerHTML=`
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span style="font-family:'Cinzel',serif;font-size:14px;color:var(--gold)">${G.playerNames[p]}</span>
+        <span style="font-family:'Outfit',system-ui,sans-serif;font-size:14px;color:var(--gold)">${G.playerNames[p]}</span>
         <span style="font-size:11px;padding:2px 10px;border-radius:6px;background:rgba(231,76,60,.1);color:#e74c3c;border:1px solid rgba(231,76,60,.25)">${G.scores[p]} Pkt</span>
       </div>
       <div style="font-size:13px;color:rgba(232,224,208,.5);margin-bottom:12px;line-height:1.7">
@@ -1574,7 +1661,8 @@ function showBuyIn(){
 
 function showGameOver(){
   launchConfetti(true);
-  playGameWin();
+  playChain([jingleAudio,applauseAudio]);
+  setGameOverSpruch();
   const active=[...Array(NP).keys()].filter(i=>!G.eliminated.includes(i)&&G.playerNames[i]);
   const winner=active.length?active.reduce((w,i)=>G.scores[i]<G.scores[w]?i:w,active[0]):0;
   document.getElementById('gameover-title').textContent=`🏆 ${G.playerNames[winner]} gewinnt!`;
@@ -1583,7 +1671,7 @@ function showGameOver(){
   const total=G.totalPot||NP*2;
   gc.innerHTML=`
     <div style="margin-bottom:20px;padding:14px 16px;background:rgba(212,175,55,.07);border-radius:12px;border:1px solid rgba(212,175,55,.2)">
-      <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;color:rgba(212,175,55,.6);margin-bottom:10px">POTT-ABRECHNUNG</div>
+      <div style="font-family:'Outfit',system-ui,sans-serif;font-size:11px;letter-spacing:3px;color:rgba(212,175,55,.6);margin-bottom:10px">POTT-ABRECHNUNG</div>
       ${G.playerNames.map((name,i)=>`
         <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px">
           <span style="color:${i===winner?'var(--gold)':'#e8e0d0'}">${name}</span>
@@ -1593,7 +1681,7 @@ function showGameOver(){
           <span style="color:${i===winner?'#2ecc71':'#e74c3c'};font-weight:600">${contrib[i]} €</span>
         </div>`).join('')}
       <div style="display:flex;justify-content:space-between;padding:10px 0 0;font-size:16px;font-weight:700;margin-top:4px">
-        <span style="color:var(--gold);font-family:'Cinzel',serif">GESAMT</span>
+        <span style="color:var(--gold);font-family:'Outfit',system-ui,sans-serif">GESAMT</span>
         <span style="color:var(--gold)">${total} €</span>
       </div>
       <div style="text-align:center;margin-top:12px;font-size:18px;color:#2ecc71;font-weight:700">
@@ -1749,8 +1837,6 @@ function renderHandOnly(){
   const goOut=G.phase==='goOutDiscard';
   const clickable=myTurn&&G.mustDiscard;
   document.getElementById('hand-count').textContent=`${(G.hands[ME]||[]).length} Karten`;
-  const hint=document.getElementById('hint');
-  hint.className='hint'+(clickable&&!goOut?' visible':'');
   const cardsEl=document.getElementById('hand-cards');
   // Prevent context menu on long-press (iOS "Print", Android share sheet)
   cardsEl.addEventListener('contextmenu',e=>e.preventDefault());
@@ -1925,15 +2011,9 @@ function render(){
   const showFertig=Number(G.currentPlayer)===ME&&G.mustDiscard&&G.phase==='playing';
   fertigBtn.className='fertig-btn'+(showFertig?' visible':'');
 
-  // Go-out hint
-  const goHint=document.getElementById('go-hint');
-  goHint.className='go-hint'+(goOut?' visible':'');
-
   // Hand
   const clickable=myTurn&&G.mustDiscard;
   document.getElementById('hand-count').textContent=`${(G.hands[ME]||[]).length} Karten`;
-  const hint=document.getElementById('hint');
-  hint.className='hint'+(clickable&&!goOut?' visible':'');
 
   const cardsEl=document.getElementById('hand-cards');
   cardsEl.innerHTML='';
@@ -2504,195 +2584,14 @@ window.addEventListener('DOMContentLoaded',()=>{
 // ═══════════════════════════════════════
 // CHAT
 // ═══════════════════════════════════════
-let _chatRef=null,_chatListener=null,_chatOpen=false,_chatUnread=0;
-function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-function chatMsgHtml(msg,myName){
-  const mine=msg.sender===myName;
-  const col=mine?'#2ecc71':'#d4af37';
-  // Format: message text — Name
-  return `<div class="wt-chat-msg"><span class="ct">${escH(msg.text)}</span><span class="cn" style="color:${col};margin-left:6px;">— ${escH(msg.sender)}</span></div>`;
-}
-
-function initWaitChat(){
-  if(!MP.roomRef)return;
-  _chatRef=getDB().ref('rooms/rm_lobby');
-  const chatDiv=document.getElementById('wt-chat');
-  if(chatDiv)chatDiv.classList.add('show');
-  const msgs=document.getElementById('wt-chat-msgs');
-  if(msgs)msgs.innerHTML='';
-  // Emoji bar
-  const eb=document.getElementById('wt-emoji-bar');
-  if(eb){eb.innerHTML='';
-    ['😁', '🥲', '😰', '🥳', '🫣', '🤔', '🤓', '🤪', '💩', '👌', '🥱', '🍻', '🍺', '😂', '🎲', '🙏', '👀', '🪩', '🕺', '😎', '🎁', '🧐', '🙌'].forEach(em=>{const b=document.createElement('button');b.className='wt-emoji-btn';b.textContent=em;
-      b.onclick=()=>{const i=document.getElementById('wt-chat-input');if(i){i.value+=em;i.focus();}};eb.appendChild(b);});
-  }
-  // Listen
-  if(_chatListener)_chatRef.off('child_added',_chatListener);
-  _chatListener=_chatRef.on('child_added',snap=>{
-    const msg=snap.val();if(!msg)return;
-    const m=document.getElementById('wt-chat-msgs');
-    if(m){m.insertAdjacentHTML('beforeend',chatMsgHtml(msg,MP.myName));m.scrollTop=m.scrollHeight;}
-    const gm=document.getElementById('chat-msgs');
-    if(gm){gm.insertAdjacentHTML('beforeend',chatMsgHtml(msg,MP.myName));gm.scrollTop=gm.scrollHeight;}
-    if(!_chatOpen){_chatUnread++;const badge=document.getElementById('chat-badge');
-      if(badge){badge.textContent=_chatUnread>9?'9+':_chatUnread;badge.classList.add('has-new');}}
-  });
-  function sendWt(){
-    const inp=document.getElementById('wt-chat-input');
-    const t=inp?inp.value.trim():'';if(!t||!_chatRef)return;
-    _chatRef.push({sender:MP.myName||'?',text:t,ts:Date.now()});if(inp)inp.value='';
-  }
-  const sb=document.getElementById('wt-chat-send');
-  const inp=document.getElementById('wt-chat-input');
-  if(sb){const sb2=sb.cloneNode(true);sb.replaceWith(sb2);sb2.onclick=sendWt;}
-  if(inp){const i2=inp.cloneNode(true);inp.replaceWith(i2);i2.addEventListener('keydown',e=>{if(e.key==='Enter')sendWt();});}
-}
-
-var _chatPanelOpen=false;
-function toggleChatPanel(){
-  _chatPanelOpen=!_chatPanelOpen;
-  var p=document.getElementById('chat-panel');
-  if(p)p.style.display=_chatPanelOpen?'flex':'none';
-  if(_chatPanelOpen){var m=document.getElementById('chat-msgs');if(m)m.scrollTop=m.scrollHeight;}
-}
-function initGameChat(){
-  const cw=document.getElementById('chat-wrap');
-  if(cw)cw.style.display='flex';
-  // Reset bar text
-  var barEl=document.getElementById('chat-bar-text');if(barEl)barEl.textContent='Antippen zum Chatten…';
-  // Clear old messages
-  var oldMsgs=document.getElementById('chat-msgs');if(oldMsgs)oldMsgs.innerHTML='';
-  window._lastChatHtml=window._lastChatHtml||'';
-  // Emoji bar
-  const eb=document.getElementById('chat-emoji-bar');
-  if(eb){eb.innerHTML='';
-    ['😁', '🥲', '😰', '🥳', '🫣', '🤔', '🤓', '🤪', '💩', '👌', '🥱', '🍻', '🍺', '😂', '🎲', '🙏', '👀', '🪩', '🕺', '😎', '🎁', '🧐', '🙌'].forEach(em=>{const b=document.createElement('button');b.className='chat-emoji-btn';b.textContent=em;
-      b.onclick=()=>{const i=document.getElementById('chat-input');if(i){i.value+=em;i.focus();}};eb.appendChild(b);});
-  }
-  // Always point to game chat ref and reattach listener
-  if(_chatListener&&_chatRef){_chatRef.off('child_added',_chatListener);_chatListener=null;}
-  _chatRef=getDB().ref('rooms/rm_lobby'); // same path as lobby/waiting room
-  if(_chatRef){
-    _chatListener=_chatRef.on('child_added',snap=>{
-      const msg=snap.val();if(!msg)return;
-      // Store last msg globally
-      var safe=(msg.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-      var senderSafe=(msg.sender||'?').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-      window._lastChatHtml='💬 <span style="color:rgba(232,224,208,.85)">'+safe+'</span><span style="color:#d4af37;font-weight:600;margin-left:4px">— '+senderSafe+'</span>';
-      // Update bottom bar text
-      var barEl=document.getElementById('chat-bar-text');
-      if(barEl){barEl.innerHTML='<span style="color:rgba(232,224,208,.95)">'+safe+'</span><span style="color:#d4af37;font-weight:700;margin-left:6px">— '+senderSafe+'</span>';}
-      // Call render() so status-msg gets updated immediately
-      if(typeof render==='function')render();
-      // Flash bar
-      var chatBarEl=document.getElementById('chat-bar');
-      if(chatBarEl){
-        chatBarEl.style.background='rgba(212,175,55,.18)';
-        setTimeout(function(){if(chatBarEl)chatBarEl.style.background='';},2000);
-      }
-      // Ensure chat-wrap visible
-      var cwEl=document.getElementById('chat-wrap');
-      if(cwEl&&cwEl.style.display==='none')cwEl.style.display='flex';
-      const gm=document.getElementById('chat-msgs');
-      if(gm){gm.insertAdjacentHTML('beforeend',chatMsgHtml(msg,MP.myName));gm.scrollTop=gm.scrollHeight;}
-    });
-  }
-  function sendGame(){
-    const inp=document.getElementById('chat-input');
-    const t=inp?inp.value.trim():'';if(!t||!_chatRef)return;
-    _chatRef.push({sender:MP.myName||'?',text:t,ts:Date.now()});if(inp)inp.value='';
-  }
-  const sb=document.getElementById('chat-send');const inp=document.getElementById('chat-input');
-  if(sb){const sb2=sb.cloneNode(true);sb.replaceWith(sb2);sb2.onclick=sendGame;}
-  if(inp){const i2=inp.cloneNode(true);inp.replaceWith(i2);i2.addEventListener('keydown',e=>{if(e.key==='Enter')sendGame();});}
-  const tog=document.getElementById('chat-toggle');
-  if(tog){const tog2=tog.cloneNode(true);tog.replaceWith(tog2);
-    tog2.onclick=()=>{_chatOpen=!_chatOpen;
-      const panel=document.getElementById('chat-panel');if(panel)panel.classList.toggle('open',_chatOpen);
-      if(_chatOpen){_chatUnread=0;const badge=document.getElementById('chat-badge');
-        if(badge){badge.textContent='';badge.classList.remove('has-new');}
-        const gm=document.getElementById('chat-msgs');if(gm)gm.scrollTop=gm.scrollHeight;}
-    };
-  }
-}
-
-function stopChat(){
-  if(_chatRef&&_chatListener){_chatRef.off('child_added',_chatListener);_chatListener=null;}
-  _chatRef=null;_chatOpen=false;_chatUnread=0;
-  const cw=document.getElementById('chat-wrap');if(cw)cw.style.display='none';
-  const cp=document.getElementById('chat-panel');if(cp)cp.classList.remove('open');
-  const gm=document.getElementById('chat-msgs');if(gm)gm.innerHTML='';
-  const wc=document.getElementById('wt-chat');if(wc)wc.classList.remove('show');
-  const wm=document.getElementById('wt-chat-msgs');if(wm)wm.innerHTML='';
-  const badge=document.getElementById('chat-badge');if(badge)badge.classList.remove('has-new');
-}
-
-
-// ── LOBBY CHAT (Rommé Hand) ──
-function initLobbyChat(){
-  var db;try{db=getDB();}catch(e){return;}if(!db)return;
-  var ref=db.ref('rooms/rm_lobby');
-  var msgsEl=document.getElementById('lobby-chat-msgs');
-  var inpEl=document.getElementById('lobby-chat-input');
-  var sendEl=document.getElementById('lobby-chat-send');
-  var emojiEl=document.getElementById('lobby-emoji-bar');
-  if(!msgsEl||!inpEl||!sendEl)return;
-  if(emojiEl&&!emojiEl.children.length){
-    ['😁', '🥲', '😰', '🥳', '🫣', '🤔', '🤓', '🤪', '💩', '👌', '🥱', '🍻', '🍺', '😂', '🎲', '🙏', '👀', '🪩', '🕺', '😎', '🎁', '🧐', '🙌'].forEach(function(em){
-      var b=document.createElement('button');b.textContent=em;
-      b.style.cssText='background:none;border:none;cursor:pointer;font-size:15px;padding:2px 3px;';
-      b.onclick=function(){inpEl.value+=em;inpEl.focus();};
-      emojiEl.appendChild(b);
-    });
-  }
-  ref.remove(function(){
-    ref.push({sender:'Ingo',text:'Na? Kannste auch nicht schlafen?',ts:Date.now()});
-  });
-  ref.limitToLast(20).on('child_added',function(snap){
-    var msg=snap.val();if(!msg)return;
-    var d=document.createElement('div');d.style.cssText='line-height:1.4;';
-    var t=String(msg.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-    var n=String(msg.sender||'?').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-    var reCode=/\b(\d{4})\b/;
-    var cm=t.match(reCode);
-    if(cm){
-      var c4=cm[1];
-      var linked=t.replace(c4,'<b class="lobby-code" data-code="'+c4+'" style="color:#f0d060;cursor:pointer;border-bottom:1px solid #d4af37">'+c4+'</b>');
-      d.innerHTML='<span>'+linked+'</span><span style="color:#d4af37;font-weight:600;margin-left:5px;">— '+n+'</span>';
-    } else {
-      d.innerHTML='<span>'+t+'</span><span style="color:#d4af37;font-weight:600;margin-left:5px;">— '+n+'</span>';
-    }
-    msgsEl.appendChild(d);msgsEl.scrollTop=msgsEl.scrollHeight;
-  });
-  msgsEl.addEventListener('click',function(e){
-    var el=e.target.closest&&e.target.closest('.lobby-code');
-    if(el){var jc=document.getElementById('lb-join-code');if(jc){jc.value=el.dataset.code;jc.focus();}}
-  });
-  function send(){
-    var t=inpEl.value.trim();if(!t)return;
-    var nm=(document.getElementById('lb-name')&&document.getElementById('lb-name').value.trim())||'Gast';
-    ref.push({sender:nm,text:t,ts:Date.now()});inpEl.value='';
-  }
-  sendEl.onclick=send;
-  inpEl.addEventListener('keydown',function(e){if(e.key==='Enter')send();});
-}
+let _chatRef=null;
+// ── Chat entfernt (v3.11) ──
+function initLobbyChat(){}
+function initWaitChat(){}
+function initGameChat(){}
+function toggleChatPanel(){}
+function stopChat(){}
 </script>
 
-<div id="chat-wrap">
-  <div id="chat-bar" onclick="toggleChatPanel()" style="display:flex;align-items:center;gap:8px;padding:8px 14px 7px;cursor:pointer;min-height:36px;transition:background .3s;">
-    <span style="font-size:16px;flex-shrink:0">💬</span>
-    <span id="chat-bar-text" style="font-size:13px;color:rgba(232,224,208,.75);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">Antippen zum Chatten…</span>
-    <span id="chat-badge" style="background:#e74c3c;color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;display:none;align-items:center;justify-content:center;font-weight:700;flex-shrink:0"></span>
-  </div>
-  <div id="chat-panel" style="display:none;flex-direction:column;border-top:1px solid rgba(255,255,255,.06);max-height:45vh;">
-    <div id="chat-msgs" style="flex:1;overflow-y:auto;padding:10px 16px 6px;display:flex;flex-direction:column;gap:5px;scrollbar-width:thin;scrollbar-color:rgba(212,175,55,.2) transparent;"></div>
-    <div id="chat-emoji-bar" style="display:flex;flex-wrap:wrap;gap:4px;padding:6px 12px 4px;border-top:1px solid rgba(255,255,255,.05);"></div>
-    <div id="chat-input-row" style="display:flex;gap:8px;padding:8px 12px 12px;">
-      <input id="chat-input" placeholder="Nachricht…" maxlength="120" autocomplete="off" style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:9px 12px;color:#e8e0d0;font-size:14px;font-family:inherit;outline:none;">
-      <button id="chat-send" style="background:linear-gradient(135deg,#9a7015,#d4af37);color:#1a0f00;border:none;border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:15px;">→</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
