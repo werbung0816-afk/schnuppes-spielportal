@@ -565,7 +565,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .spec-timeline{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,1.2vw,18px);width:100%;flex:1;}
 .spec-year{background:rgba(70,40,160,1);border:2px solid rgba(143,95,255,.9);border-radius:clamp(10px,1.5vw,18px);width:clamp(170px,22vw,300px);height:clamp(90px,11vw,160px);font-size:clamp(40px,7.5vw,105px);font-weight:800;color:#fff;text-align:center;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .spec-connector{width:clamp(16px,2.5vw,40px);height:3px;background:rgba(255,255,255,.15);flex-shrink:0;}
-.spec-listening{font-size:clamp(16px,2.5vw,28px);color:rgba(255,255,255,.28);letter-spacing:.06em;font-style:italic;text-align:center;}
+.spec-listening{display:none!important;}
 .spec-sep{width:100%;height:1px;background:var(--glass-b);}
 .spec-scores{display:flex;flex-wrap:wrap;gap:clamp(16px,3vw,40px);width:100%;justify-content:center;flex-shrink:0;align-items:center;}
 .spec-score-card{flex:0 0 auto;background:transparent;border:none;padding:6px 16px;display:flex;align-items:center;gap:10px;}
@@ -801,7 +801,7 @@ body[data-mode=single] #new-song-token-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.4.7</div>
+<div class="version">v5.4.8</div>
 
 <!-- SW Update Toast -->
 
@@ -860,7 +860,7 @@ body[data-mode=single] #new-song-token-btn{display:none!important;}
     
     <div id="spec-timeline-teamname" style="font-size:clamp(44px,8vw,110px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:center;width:100%;"></div>
     <div class="spec-timeline" id="spec-timeline"></div>
-    <div class="spec-listening">♫ Hört zu und schätzt …</div>
+    
     <div class="spec-sep"></div>
     <div class="spec-scores" id="spec-scores"></div>
     <div id="spec-offline-hint" style="display:none;font-size:13px;color:#ff6060;letter-spacing:.06em;text-align:center;">⚠ Verbindung unterbrochen</div>
@@ -1110,6 +1110,9 @@ function enterSpectator(){
   showScreen('spectator');
   initSpectatorListener();
   requestWakeLock();
+  // Hintergrundanimation
+  if(G.songs.length===0){fetch('songs.json').then(function(r){return r.json();}).then(function(data){G.songs=data.filter(function(s){return s.l;});buildLobbyBg();}).catch(function(){});}
+  else{setTimeout(buildLobbyBg,100);}
 }
 
 function initSpectatorListener(){
@@ -1586,15 +1589,15 @@ function renderActivePanelOnly(){
     var bar=document.createElement('div');
     bar.style.cssText='display:flex;gap:10px;width:100%;padding:0 8px;';
     var btns=[
-      {fn:'scoreYear',label:'✓ Karte gewonnen',c:'#53f6ff',bg:'rgba(83,246,255,.25)'},
-      {fn:'scoreBoth',label:'⬡ Karte + Token',c:'#ffd700',bg:'rgba(255,215,0,.2)'},
-      {fn:'scoreNone',label:'✗ Leider nicht',c:'#ff4fd8',bg:'rgba(255,79,216,.2)'}
+      {fn:'scoreYear',label:'✓ Karte\ngewonnen',c:'#53f6ff',bg:'rgba(83,246,255,.25)'},
+      {fn:'scoreBoth',label:'⬡ Karte + Token\ngewonnen',c:'#ffd700',bg:'rgba(255,215,0,.2)'},
+      {fn:'scoreNone',label:'✗ Leider nichts\ngewonnen',c:'#ff4fd8',bg:'rgba(255,79,216,.2)'}
     ];
     btns.forEach(function(b){
       var btn=document.createElement('button');
       btn.textContent=b.label;
       btn.onclick=window[b.fn];
-      btn.style.cssText='flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:'+b.bg+';border:2px solid '+b.c+';color:'+b.c+';border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.04em;';
+      btn.style.cssText='flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:'+b.bg+';border:2px solid '+b.c+';color:'+b.c+';border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.04em;white-space:pre-line;line-height:1.3;';
       bar.appendChild(btn);
     });
     a.innerHTML='';
@@ -2319,7 +2322,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=180', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=181', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
