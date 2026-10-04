@@ -781,7 +781,7 @@ body[data-mode=single] #screen-game{overflow:hidden;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.4.1</div>
+<div class="version">v5.4.3</div>
 
 <!-- SW Update Toast -->
 
@@ -1533,8 +1533,8 @@ function startGame(){
   var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
   G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
   try{var _el=document.documentElement;(_el.requestFullscreen||_el.webkitRequestFullscreen||function(){}).call(_el);}catch(e){}
-  if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});document.documentElement.style.setProperty('--spotify-h','352px');}
-  else{Object.keys(CENTER_ROT_ORIG).forEach(function(k){CENTER_ROT[k]=CENTER_ROT_ORIG[k];});document.documentElement.style.setProperty('--spotify-h','352px');}
+  if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});document.documentElement.style.setProperty('--spotify-h','152px');}
+  else{Object.keys(CENTER_ROT_ORIG).forEach(function(k){CENTER_ROT[k]=CENTER_ROT_ORIG[k];});document.documentElement.style.setProperty('--spotify-h','152px');}
   showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
 }
 
@@ -1827,12 +1827,12 @@ function showSpectatorReveal(rev){
     el.id='spec-reveal-overlay';
     document.body.appendChild(el);
   }
-  el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-top:2px solid rgba(83,246,255,.3);padding:clamp(12px,2vw,20px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(20px,3vw,48px);';
-  var cover=rev.c?'<img src="'+rev.c+'" style="width:clamp(70px,8vw,110px);height:clamp(70px,8vw,110px);border-radius:10px;object-fit:cover;flex-shrink:0;">':'';
-  var year='<div style="font-size:clamp(80px,13vw,160px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;flex-shrink:0;">'+rev.y+'</div>';
-  var meta='<div style="display:flex;flex-direction:column;gap:clamp(2px,0.4vw,6px);min-width:0;flex:1;">'
-    +'<div style="font-size:clamp(32px,5vw,64px);font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+rev.a+'</div>'
-    +'<div style="font-size:clamp(28px,4.5vw,58px);color:rgba(255,255,255,.75);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+rev.t+'</div>'
+  el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-top:2px solid rgba(83,246,255,.3);padding:clamp(20px,3vw,40px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(24px,4vw,56px);text-align:center;';
+  var cover=rev.c?'<img src="'+rev.c+'" style="width:clamp(100px,12vw,160px);height:clamp(100px,12vw,160px);border-radius:14px;object-fit:cover;flex-shrink:0;">':'';
+  var year='<div style="font-size:clamp(100px,16vw,200px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;flex-shrink:0;">'+rev.y+'</div>';
+  var meta='<div style="display:flex;flex-direction:column;gap:clamp(4px,0.8vw,10px);text-align:left;min-width:0;">'
+    +'<div style="font-size:clamp(36px,5.5vw,72px);font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+rev.a+'</div>'
+    +'<div style="font-size:clamp(32px,5vw,64px);color:rgba(255,255,255,.75);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+rev.t+'</div>'
     +'</div>';
   el.innerHTML=cover+year+meta;
   el.style.display='flex';
@@ -2286,7 +2286,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=174', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=176', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
