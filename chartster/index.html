@@ -253,11 +253,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .s-none:active{background:rgba(255,60,60,.2)}
 
 /* ── OPTIONS ── */
-#opt-panel{min-width:min(500px,92vw)!important;font-size:clamp(15px,2vw,18px)!important;position:fixed;bottom:0;left:0;right:0;background:rgba(8,2,18,.97);backdrop-filter:blur(20px);border-top:1px solid var(--glass-b);border-radius:20px 20px 0 0;padding:22px 20px 34px;z-index:850;display:none;flex-direction:column;gap:14px;transform:translateY(100%);transition:transform .3s ease}
+#opt-panel{position:fixed;bottom:0;left:0;right:0;background:rgba(8,2,18,.97);backdrop-filter:blur(20px);border-top:1px solid var(--glass-b);border-radius:20px 20px 0 0;padding:clamp(20px,3vw,36px) clamp(16px,3vw,40px) clamp(24px,4vw,48px);z-index:850;display:none;flex-direction:column;gap:clamp(12px,2vw,20px);transform:translateY(100%);transition:transform .3s ease;font-size:clamp(17px,2.5vw,22px)}
 #opt-panel.show{display:flex;transform:translateY(0)}
 .opt-title{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.opt-row{display:flex;gap:10px}
-.opt-btn{min-height:54px!important;font-size:clamp(15px,2vw,18px)!important;padding:14px 18px!important;flex:1;padding:14px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;transition:all .2s;border:1px solid var(--glass-b);background:var(--glass);color:var(--text)}
+.opt-row{display:flex;gap:clamp(10px,1.5vw,18px)}
+.opt-btn{min-height:clamp(60px,8vw,88px)!important;font-size:clamp(17px,2.5vw,24px)!important;padding:clamp(16px,2.5vw,24px) clamp(16px,2.5vw,28px)!important;flex:1;border-radius:16px;font-family:'Outfit',sans-serif;font-weight:700;transition:all .2s;border:1px solid var(--glass-b);background:var(--glass);color:var(--text);cursor:pointer;}
 .opt-btn:active{background:rgba(255,255,255,.12)}
 .opt-btn.danger{color:#ff6060;border-color:rgba(255,60,60,.3)}
 #opt-confirm{background:rgba(255,60,60,.08);border-radius:12px;padding:14px;display:none;flex-direction:column;gap:10px;border:1px solid rgba(255,60,60,.3)}
@@ -781,7 +781,7 @@ body[data-mode=single] #screen-game{overflow:hidden;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.3.8</div>
+<div class="version">v5.4.1</div>
 
 <!-- SW Update Toast -->
 
@@ -1534,7 +1534,7 @@ function startGame(){
   G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
   try{var _el=document.documentElement;(_el.requestFullscreen||_el.webkitRequestFullscreen||function(){}).call(_el);}catch(e){}
   if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});document.documentElement.style.setProperty('--spotify-h','352px');}
-  else{Object.keys(CENTER_ROT_ORIG).forEach(function(k){CENTER_ROT[k]=CENTER_ROT_ORIG[k];});document.documentElement.style.setProperty('--spotify-h','152px');}
+  else{Object.keys(CENTER_ROT_ORIG).forEach(function(k){CENTER_ROT[k]=CENTER_ROT_ORIG[k];});document.documentElement.style.setProperty('--spotify-h','352px');}
   showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
 }
 
@@ -1663,14 +1663,14 @@ function renderOptTeams(){
   G.teams.forEach(function(t,i){
     var row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;gap:8px;padding:8px;background:rgba(255,255,255,.05);border-radius:10px;';
-    row.innerHTML='<span style="font-weight:700;color:'+t.color+';min-width:90px;font-size:13px;">'+t.name+'</span>'
-      +'<span style="font-size:12px;color:var(--muted);flex:1;">'+
+    row.innerHTML='<span style="font-weight:700;color:'+t.color+';min-width:120px;font-size:clamp(16px,2.5vw,22px);">'+t.name+'</span>'
+      +'<span style="font-size:clamp(14px,2vw,18px);color:var(--muted);flex:1;">'+
         '<span style="color:'+t.color+'">⬡</span> '+(t.tokens||0)+' Token &nbsp;'
         +'<span style="color:'+t.color+'">📅</span> '+(t.years?t.years.length:0)+' Karten</span>'
-      +'<button onclick="adminToken('+i+',1)" style="padding:4px 8px;border-radius:6px;background:rgba(83,246,255,.2);border:none;color:#53f6ff;cursor:pointer;font-size:14px;">+T</button>'
-      +'<button onclick="adminToken('+i+',-1)" style="padding:4px 8px;border-radius:6px;background:rgba(255,79,216,.2);border:none;color:#ff4fd8;cursor:pointer;font-size:14px;">-T</button>'
-      +'<button onclick="adminCard('+i+',1)" style="padding:4px 8px;border-radius:6px;background:rgba(83,246,255,.2);border:none;color:#53f6ff;cursor:pointer;font-size:14px;">+K</button>'
-      +'<button onclick="adminCard('+i+',-1)" style="padding:4px 8px;border-radius:6px;background:rgba(255,79,216,.2);border:none;color:#ff4fd8;cursor:pointer;font-size:14px;">-K</button>';
+      +'<button onclick="adminToken('+i+',1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(83,246,255,.2);border:1px solid #53f6ff;color:#53f6ff;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">+T</button>'
+      +'<button onclick="adminToken('+i+',-1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(255,79,216,.2);border:1px solid #ff4fd8;color:#ff4fd8;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">-T</button>'
+      +'<button onclick="adminCard('+i+',1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(83,246,255,.2);border:1px solid #53f6ff;color:#53f6ff;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">+K</button>'
+      +'<button onclick="adminCard('+i+',-1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(255,79,216,.2);border:1px solid #ff4fd8;color:#ff4fd8;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">-K</button>';
     c.appendChild(row);
   });
 }
@@ -2286,7 +2286,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=171', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=174', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
