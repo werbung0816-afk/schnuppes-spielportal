@@ -686,6 +686,40 @@ body[data-mode=single] #area-bot{
   overflow:hidden;
 }
 
+
+/* Zuschauer: Zentrierung mit Platz für Reveal-Overlay */
+.spec-card{
+  padding-bottom:clamp(140px,18vh,220px)!important;
+}
+.spec-year{
+  width:clamp(260px,38vw,560px)!important;
+  height:clamp(160px,22vw,320px)!important;
+  font-size:clamp(90px,15vw,220px)!important;
+}
+.spec-timeline{
+  justify-content:center!important;
+  align-items:center!important;
+  flex:1!important;
+}
+#spec-timeline-teamname{
+  font-size:clamp(52px,9vw,120px)!important;
+}
+
+
+/* Single Mode: area-bot als Button-Leiste unten */
+body[data-mode=single] #area-bot{
+  width:100%;
+  padding:8px 0;
+}
+body[data-mode=single] .t-panel{
+  display:none!important;
+}
+body[data-mode=single] #game-center{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+}
+
 </style>
 </head>
 <body>
@@ -722,7 +756,7 @@ body[data-mode=single] #area-bot{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.3.2</div>
+<div class="version">v5.3.5</div>
 
 <!-- SW Update Toast -->
 
@@ -1493,14 +1527,30 @@ function drawCard(){if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.curre
 
 // ── PANELS ──
 function renderActivePanelOnly(){
+  // Clear all panel areas
   ['area-top','area-bot','side-left-wrap','side-right-wrap'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.innerHTML='';
   });
-  var a=document.getElementById('area-bot');
-  if(a&&G.teams[G.cur]) a.innerHTML=panelHTML(G.teams[G.cur],G.cur,true);
-  // No rotation in single mode
   var gc=document.getElementById('game-center');
   if(gc) gc.className='r0';
+  // Show result buttons as full-width bar (only in phase 3 = after reveal)
+  var a=document.getElementById('area-bot');
+  if(a&&G.teams[G.cur]){
+    var t=G.teams[G.cur];
+    var phase=G.phase||1;
+    if(phase>=3){
+      // Result buttons: full width, large
+      a.innerHTML='<div style="display:flex;gap:10px;width:100%;padding:0 8px;">'
+        +'<button onclick="score('year')" style="flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:rgba(83,246,255,.25);border:2px solid #53f6ff;color:#53f6ff;border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.04em;">✓ Karte gewonnen</button>'
+        +'<button onclick="score('both')" style="flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:rgba(255,215,0,.2);border:2px solid #ffd700;color:#ffd700;border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.04em;">⬡ Karte + Token</button>'
+        +'<button onclick="score('none')" style="flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:rgba(255,79,216,.2);border:2px solid #ff4fd8;color:#ff4fd8;border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.04em;">✗ Leider nicht</button>'
+        +'</div>';
+    } else {
+      // Just tokens display
+      var tH='';for(var i=0;i<(t.tokens||0);i++)tH+='<span style="color:'+t.color+';font-size:clamp(20px,3vw,32px)">⬡</span>';
+      a.innerHTML='<div style="text-align:center;padding:8px;font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.5);">'+tH+'</div>';
+    }
+  }
 }
 function renderPanels(){
   if(G_MODE==='single'){renderActivePanelOnly();return;}
@@ -1563,7 +1613,7 @@ function cardNext(){
   } else if(G.phase===2){
     if(G.selBox===null){showHint('Bitte erst eine Position im Zeitstrahl markieren!');return;}
     if(!G.readyToReveal){showHint('Countdown läuft noch – kurz warten!');return;}
-    G.phase=3;clearCd();
+    G.phase=3;if(G_MODE==='single')renderActivePanelOnly();clearCd();
     document.getElementById('sp-overlay').classList.add('gone');document.getElementById('sp-ot').classList.add('gone');document.getElementById('hitster-panel').classList.remove('show');document.getElementById('countdown-wrap').classList.remove('show');document.getElementById('new-song-token-btn').style.display='none';
     document.getElementById('year-tl').classList.add('show');
     var yr=document.getElementById('c-year');yr.textContent=G.currentCard.y;yr.style.display='block';
@@ -1745,16 +1795,16 @@ function showSpectatorReveal(rev){
   if(!el){
     el=document.createElement('div');
     el.id='spec-reveal-overlay';
-    el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-top:2px solid rgba(83,246,255,.3);padding:clamp(16px,2.5vw,28px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:row;align-items:center;gap:clamp(20px,3vw,40px);';
     document.body.appendChild(el);
   }
-  var coverHtml=rev.c?'<img src="'+rev.c+'" style="width:clamp(90px,13vw,180px);height:clamp(90px,13vw,180px);border-radius:14px;object-fit:cover;flex-shrink:0;">':'';
-  var textBlock='<div style="display:flex;flex-direction:column;gap:clamp(4px,0.8vw,10px);justify-content:center;min-width:0;">'
-    +'<div style="font-size:clamp(80px,13vw,160px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;">'+rev.y+'</div>'
-    +'<div style="font-size:clamp(28px,4.5vw,56px);font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+rev.a+'</div>'
-    +'<div style="font-size:clamp(28px,4.5vw,56px);color:rgba(255,255,255,.65);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+rev.t+'</div>'
+  el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-top:2px solid rgba(83,246,255,.3);padding:clamp(14px,2vw,24px) clamp(20px,3vw,48px);z-index:200;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(16px,2.5vw,36px);';
+  var cover=rev.c?'<img src="'+rev.c+'" style="width:clamp(80px,9vw,130px);height:clamp(80px,9vw,130px);border-radius:12px;object-fit:cover;flex-shrink:0;">':'';
+  var info='<div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(2px,0.5vw,8px);min-width:0;">'
+    +'<div style="font-size:clamp(72px,12vw,150px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;">'+rev.y+'</div>'
+    +'<div style="font-size:clamp(28px,4.5vw,60px);font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70vw;">'+rev.a+'</div>'
+    +'<div style="font-size:clamp(26px,4vw,54px);color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70vw;">'+rev.t+'</div>'
     +'</div>';
-  el.innerHTML=coverHtml+textBlock;
+  el.innerHTML=cover+info;
   el.style.display='flex';
 }
 function hideSpectatorReveal(){
@@ -2206,7 +2256,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=165', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=168', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
