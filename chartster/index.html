@@ -620,7 +620,7 @@ body[data-mode=single] .player-outer{
 
 /* Single Mode: Auflösung größer für Querformat-Tablet */
 body[data-mode=single] .year-reveal{
-  font-size:clamp(80px,14vw,160px)!important;
+  font-size:clamp(100px,16vw,190px)!important;
 }
 body[data-mode=single] .rev-artist{
   font-size:clamp(28px,4.5vw,52px)!important;
@@ -748,9 +748,9 @@ body[data-mode=single] #screen-game{overflow:hidden;}
 
 
 /* Zuschauer: Teamname unten */
-body[data-mode=single] #spec-timeline-teamname{
+#spec-timeline-teamname{
   order:10;
-  font-size:clamp(40px,7vw,90px)!important;
+  font-size:clamp(52px,9vw,120px)!important;
   margin-top:auto;
 }
 
@@ -801,7 +801,7 @@ body[data-mode=single] #new-song-token-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.4.6</div>
+<div class="version">v5.4.7</div>
 
 <!-- SW Update Toast -->
 
@@ -876,7 +876,7 @@ body[data-mode=single] #new-song-token-btn{display:none!important;}
     <div style="display:flex;flex-direction:column;gap:14px;width:100%;">
       <button id="mode-single-btn" onclick="onModeSingle()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);width:100%;border-radius:20px;background:rgba(83,246,255,.15);border:2px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">1-SPIELER-STEUERUNG</button>
       <button id="mode-multi-btn" onclick="onModeMulti()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);width:100%;border-radius:20px;background:rgba(143,95,255,.15);border:2px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">MEHR-SPIELER-STEUERUNG</button>
-      <button id="mode-spectator-btn" onclick="onModeSpectator()" style="padding:clamp(20px,3vw,32px);font-size:clamp(18px,2.5vw,26px);width:100%;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;letter-spacing:.05em;">👁 ZUSCHAUER-MODUS</button>
+      <button id="mode-spectator-btn" onclick="onModeSpectator()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);width:100%;border-radius:20px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;letter-spacing:.05em;">ZUSCHAUER-MODUS</button>
     </div>
   </div>
 </div>
@@ -1260,9 +1260,11 @@ function updateSpectatorView(d){
   d.teams.forEach(function(t){
     var card=document.createElement('div');
     card.className='spec-score-card';
-    card.innerHTML='<div class="spec-score-dot" style="background:'+t.color+'"></div>'+
+    var tokStr='';for(var i=0;i<(t.tokens||0);i++)tokStr+='<span style="color:'+t.color+';font-size:clamp(14px,2vw,22px)">⬡</span>';
+    card.innerHTML='<div class="spec-score-dot" style="background:'+t.color+';width:14px;height:14px;border-radius:50%;flex-shrink:0;"></div>'+
       '<div class="spec-score-name">'+t.name+'</div>'+
-      '<div class="spec-score-val" style="color:'+t.color+'">'+(t.years||[]).length+'</div>';
+      '<div class="spec-score-val" style="color:'+t.color+';font-size:clamp(28px,4vw,52px);font-weight:800;">'+(t.years||[]).length+'</div>'+
+      (tokStr?'<div style="display:flex;gap:3px;align-items:center;">'+tokStr+'</div>':'');
     sc.appendChild(card);
   });
 }
@@ -1606,7 +1608,7 @@ function renderActivePanelOnly(){
     // Token button right below coins
     var tokenBtnHtml='';
     if((t.tokens||0)>0){
-      tokenBtnHtml='<button onclick="newSongToken()" style="margin-top:8px;padding:clamp(10px,1.5vw,16px) clamp(16px,2.5vw,28px);border-radius:12px;background:rgba(143,95,255,.2);border:1px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-size:clamp(15px,2vw,22px);font-weight:700;cursor:pointer;">🔄 Neuer Song – 1 Token</button>';
+      tokenBtnHtml='<button onclick="newSongToken()" style="margin-top:8px;padding:clamp(10px,1.5vw,16px) clamp(16px,2.5vw,28px);border-radius:12px;background:rgba(143,95,255,.2);border:1px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-size:clamp(15px,2vw,22px);font-weight:700;cursor:pointer;">Neuer Song – 1 Token</button>';
     }
     a.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;">'+
       '<div style="display:flex;gap:clamp(6px,1vw,14px);align-items:center;">'+tH+'</div>'+
@@ -2317,7 +2319,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=179', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=180', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
