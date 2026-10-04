@@ -689,7 +689,7 @@ body[data-mode=single] #area-bot{
 
 /* Zuschauer: Zentrierung mit Platz für Reveal-Overlay */
 .spec-card{
-  padding-bottom:clamp(140px,18vh,220px)!important;
+  padding-bottom:clamp(180px,22vh,260px)!important;
 }
 .spec-year{
   width:clamp(260px,38vw,560px)!important;
@@ -738,6 +738,13 @@ body[data-mode=single] #screen-game{
   padding:8px 12px!important;
 }
 
+
+/* Single Mode: leere Bereiche kollabieren */
+body[data-mode=single] .score-btns{height:0!important;overflow:hidden!important;margin:0!important;padding:0!important;}
+body[data-mode=single] .game-card .sep{display:none!important;}
+body[data-mode=single] .game-card{min-height:0!important;flex-shrink:1!important;}
+body[data-mode=single] #screen-game{overflow:hidden;}
+
 </style>
 </head>
 <body>
@@ -774,7 +781,7 @@ body[data-mode=single] #screen-game{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.3.7</div>
+<div class="version">v5.3.8</div>
 
 <!-- SW Update Toast -->
 
@@ -1820,7 +1827,7 @@ function showSpectatorReveal(rev){
     el.id='spec-reveal-overlay';
     document.body.appendChild(el);
   }
-  el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-top:2px solid rgba(83,246,255,.3);padding:clamp(12px,2vw,20px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:row;align-items:center;gap:clamp(20px,3vw,48px);';
+  el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-top:2px solid rgba(83,246,255,.3);padding:clamp(12px,2vw,20px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(20px,3vw,48px);';
   var cover=rev.c?'<img src="'+rev.c+'" style="width:clamp(70px,8vw,110px);height:clamp(70px,8vw,110px);border-radius:10px;object-fit:cover;flex-shrink:0;">':'';
   var year='<div style="font-size:clamp(80px,13vw,160px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;flex-shrink:0;">'+rev.y+'</div>';
   var meta='<div style="display:flex;flex-direction:column;gap:clamp(2px,0.4vw,6px);min-width:0;flex:1;">'
@@ -2279,7 +2286,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=170', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=171', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
