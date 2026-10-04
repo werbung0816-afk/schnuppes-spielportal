@@ -756,7 +756,7 @@ body[data-mode=single] #game-center{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.3.5</div>
+<div class="version">v5.3.6</div>
 
 <!-- SW Update Toast -->
 
@@ -829,9 +829,9 @@ body[data-mode=single] #game-center{
     <div class="game-title">CHARTSTER</div>
     <div style="font-size:clamp(14px,2vw,18px);color:var(--muted);margin:8px 0 24px;">Wie wollt ihr spielen?</div>
     <div style="display:flex;flex-direction:column;gap:14px;width:100%;">
-      <button id="mode-single-btn" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);width:100%;border-radius:16px;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">1-SPIELER-STEUERUNG</button>
-      <button id="mode-multi-btn" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);width:100%;border-radius:16px;background:rgba(143,95,255,.15);border:1px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">MEHR-SPIELER-STEUERUNG</button>
-      <button id="mode-spectator-btn" style="padding:clamp(14px,2vw,20px);font-size:clamp(15px,2vw,18px);width:100%;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;letter-spacing:.05em;">👁 ZUSCHAUER-MODUS</button>
+      <button id="mode-single-btn" onclick="onModeSingle()" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);width:100%;border-radius:16px;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">1-SPIELER-STEUERUNG</button>
+      <button id="mode-multi-btn" onclick="onModeMulti()" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);width:100%;border-radius:16px;background:rgba(143,95,255,.15);border:1px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">MEHR-SPIELER-STEUERUNG</button>
+      <button id="mode-spectator-btn" onclick="onModeSpectator()" style="padding:clamp(14px,2vw,20px);font-size:clamp(15px,2vw,18px);width:100%;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;letter-spacing:.05em;">👁 ZUSCHAUER-MODUS</button>
     </div>
   </div>
 </div>
@@ -1527,29 +1527,34 @@ function drawCard(){if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.curre
 
 // ── PANELS ──
 function renderActivePanelOnly(){
-  // Clear all panel areas
   ['area-top','area-bot','side-left-wrap','side-right-wrap'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.innerHTML='';
   });
   var gc=document.getElementById('game-center');
   if(gc) gc.className='r0';
-  // Show result buttons as full-width bar (only in phase 3 = after reveal)
   var a=document.getElementById('area-bot');
-  if(a&&G.teams[G.cur]){
-    var t=G.teams[G.cur];
-    var phase=G.phase||1;
-    if(phase>=3){
-      // Result buttons: full width, large
-      a.innerHTML='<div style="display:flex;gap:10px;width:100%;padding:0 8px;">'
-        +'<button onclick="score('year')" style="flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:rgba(83,246,255,.25);border:2px solid #53f6ff;color:#53f6ff;border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.04em;">✓ Karte gewonnen</button>'
-        +'<button onclick="score('both')" style="flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:rgba(255,215,0,.2);border:2px solid #ffd700;color:#ffd700;border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.04em;">⬡ Karte + Token</button>'
-        +'<button onclick="score('none')" style="flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:rgba(255,79,216,.2);border:2px solid #ff4fd8;color:#ff4fd8;border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.04em;">✗ Leider nicht</button>'
-        +'</div>';
-    } else {
-      // Just tokens display
-      var tH='';for(var i=0;i<(t.tokens||0);i++)tH+='<span style="color:'+t.color+';font-size:clamp(20px,3vw,32px)">⬡</span>';
-      a.innerHTML='<div style="text-align:center;padding:8px;font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.5);">'+tH+'</div>';
-    }
+  if(!a||!G.teams[G.cur]) return;
+  var t=G.teams[G.cur];
+  if((G.phase||1)>=3){
+    var bar=document.createElement('div');
+    bar.style.cssText='display:flex;gap:10px;width:100%;padding:0 8px;';
+    var btns=[
+      {fn:'scoreYear',label:'✓ Karte gewonnen',c:'#53f6ff',bg:'rgba(83,246,255,.25)'},
+      {fn:'scoreBoth',label:'⬡ Karte + Token',c:'#ffd700',bg:'rgba(255,215,0,.2)'},
+      {fn:'scoreNone',label:'✗ Leider nicht',c:'#ff4fd8',bg:'rgba(255,79,216,.2)'}
+    ];
+    btns.forEach(function(b){
+      var btn=document.createElement('button');
+      btn.textContent=b.label;
+      btn.onclick=window[b.fn];
+      btn.style.cssText='flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:'+b.bg+';border:2px solid '+b.c+';color:'+b.c+';border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.04em;';
+      bar.appendChild(btn);
+    });
+    a.innerHTML='';
+    a.appendChild(bar);
+  } else {
+    var tH='';for(var i=0;i<(t.tokens||0);i++)tH+='<span style="color:'+t.color+';font-size:clamp(20px,3vw,32px)">⬡</span>';
+    a.innerHTML='<div style="text-align:center;padding:8px;font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.5);">'+tH+'</div>';
   }
 }
 function renderPanels(){
@@ -2256,7 +2261,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=168', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=169', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
@@ -2356,24 +2361,15 @@ if (isInStandaloneMode()) {
   document.documentElement.classList.add('pwa-standalone');
 }
 
-// Modus-Auswahl Buttons - direkt ausführen
-(function(){
-  var b1=document.getElementById('mode-single-btn');
-  var b2=document.getElementById('mode-multi-btn');
-  if(b1) b1.addEventListener('click',function(){setMode('single');});
-  var b3=document.getElementById('mode-spectator-btn');
-  if(b3) b3.addEventListener('click',function(){G_MODE='single';enterSpectator();});
-  if(b2) b2.addEventListener('click',function(){setMode('multi');});
-  if(!b1&&!b2){
-    // Fallback: onclick direkt setzen
-    setTimeout(function(){
-      var bb1=document.getElementById('mode-single-btn');
-      var bb2=document.getElementById('mode-multi-btn');
-      if(bb1) bb1.onclick=function(){setMode('single');};
-      if(bb2) bb2.onclick=function(){setMode('multi');};
-    },500);
-  }
-})();
+// Modus-Auswahl - globale Hilfsfunktionen für onclick
+
+function scoreYear(){score('year');}
+function scoreBoth(){score('both');}
+function scoreNone(){score('none');}
+
+function onModeSingle(){setMode('single');}
+function onModeMulti(){setMode('multi');}
+function onModeSpectator(){G_MODE='single';enterSpectator();}
 </script>
 
 
