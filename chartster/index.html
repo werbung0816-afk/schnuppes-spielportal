@@ -253,11 +253,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .s-none:active{background:rgba(255,60,60,.2)}
 
 /* ── OPTIONS ── */
-#opt-panel{position:fixed;bottom:0;left:0;right:0;background:rgba(8,2,18,.97);backdrop-filter:blur(20px);border-top:1px solid var(--glass-b);border-radius:20px 20px 0 0;padding:22px 20px 34px;z-index:850;display:none;flex-direction:column;gap:14px;transform:translateY(100%);transition:transform .3s ease}
+#opt-panel{min-width:min(500px,92vw);font-size:clamp(15px,2vw,18px);position:fixed;bottom:0;left:0;right:0;background:rgba(8,2,18,.97);backdrop-filter:blur(20px);border-top:1px solid var(--glass-b);border-radius:20px 20px 0 0;padding:22px 20px 34px;z-index:850;display:none;flex-direction:column;gap:14px;transform:translateY(100%);transition:transform .3s ease}
 #opt-panel.show{display:flex;transform:translateY(0)}
 .opt-title{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .opt-row{display:flex;gap:10px}
-.opt-btn{flex:1;padding:14px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;transition:all .2s;border:1px solid var(--glass-b);background:var(--glass);color:var(--text)}
+.opt-btn{min-height:54px;font-size:clamp(15px,2vw,18px);padding:14px 18px;flex:1;padding:14px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;transition:all .2s;border:1px solid var(--glass-b);background:var(--glass);color:var(--text)}
 .opt-btn:active{background:rgba(255,255,255,.12)}
 .opt-btn.danger{color:#ff6060;border-color:rgba(255,60,60,.3)}
 #opt-confirm{background:rgba(255,60,60,.08);border-radius:12px;padding:14px;display:none;flex-direction:column;gap:10px;border:1px solid rgba(255,60,60,.3)}
@@ -657,6 +657,35 @@ body[data-mode=single] #spec-timeline{
   flex-wrap:wrap;
 }
 
+
+/* Spectator: immer groß (data-mode unabhängig) */
+#spec-timeline-teamname{
+  font-size:clamp(56px,10vw,130px);
+}
+.spec-year{
+  width:clamp(180px,26vw,400px);
+  height:clamp(110px,15vw,240px);
+  font-size:clamp(60px,11vw,180px);
+}
+
+
+/* Single Mode Spielgerät: Panel kompakt */
+body[data-mode=single] .t-panel{
+  padding:10px 12px!important;
+  gap:6px!important;
+}
+body[data-mode=single] .t-panel .team-name{
+  font-size:clamp(18px,2.5vw,28px)!important;
+}
+body[data-mode=single] .t-panel .btn{
+  padding:10px 14px!important;
+  font-size:clamp(14px,1.8vw,18px)!important;
+}
+body[data-mode=single] #area-bot{
+  max-height:220px;
+  overflow:hidden;
+}
+
 </style>
 </head>
 <body>
@@ -693,7 +722,7 @@ body[data-mode=single] #spec-timeline{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.3.0</div>
+<div class="version">v5.3.1</div>
 
 <!-- SW Update Toast -->
 
@@ -997,6 +1026,7 @@ document.addEventListener('visibilitychange', function(){
 function enterSpectator(){
   IS_SPECTATOR = true;
   IS_HOST = false;
+  document.body.dataset.mode = G_MODE||'single';
   sessionStorage.removeItem('chartster_host');
   showScreen('spectator');
   initSpectatorListener();
@@ -2176,7 +2206,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=163', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=164', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
@@ -2282,7 +2312,7 @@ if (isInStandaloneMode()) {
   var b2=document.getElementById('mode-multi-btn');
   if(b1) b1.addEventListener('click',function(){setMode('single');});
   var b3=document.getElementById('mode-spectator-btn');
-  if(b3) b3.addEventListener('click',function(){enterSpectator();});
+  if(b3) b3.addEventListener('click',function(){G_MODE='single';enterSpectator();});
   if(b2) b2.addEventListener('click',function(){setMode('multi');});
   if(!b1&&!b2){
     // Fallback: onclick direkt setzen
