@@ -174,8 +174,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .p-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#07000f;flex-shrink:0}
 .p-name{font-weight:700;font-size:19px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .p-tokens{display:flex;gap:3px;flex-shrink:0}
-.coin{width:18px;height:18px;border-radius:50%;border:2px solid;font-size:8px;font-weight:800;color:#07000f;display:flex;align-items:center;justify-content:center}
-.coin.empty{background:transparent!important;opacity:.2}
+.coin{width:clamp(24px,3.5vw,40px);height:clamp(24px,3.5vw,40px);border-radius:50%;border:2px solid;font-size:clamp(10px,1.4vw,16px);font-weight:800;color:#07000f;display:flex;align-items:center;justify-content:center}
+.coin.empty{opacity:.3}
 .active-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:4px 10px;border-radius:7px;text-align:center}
 .year-chips{display:flex;flex-wrap:wrap;gap:4px}
 .y-chip{height:28px;min-width:52px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
@@ -209,7 +209,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #year-tl{display:none;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;width:100%;padding:8px 0}
 #year-tl.show{display:flex}
 .tl-chip{padding:16px 32px;border-radius:18px;font-size:42px;font-weight:900;color:#07000f}
-.tl-box{width:72px;height:72px;border-radius:16px;border:4px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;position:relative;font-size:28px}
+.tl-box{width:clamp(72px,9vw,120px);height:clamp(72px,9vw,120px);border-radius:16px;border:4px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;position:relative;font-size:clamp(22px,3vw,40px)}
 .tl-box.sel{color:#07000f}
 .bet-dots{position:absolute;top:-8px;right:-5px;display:flex;gap:2px}
 .bet-dot{width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.4)}
@@ -568,9 +568,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .spec-listening{font-size:clamp(16px,2.5vw,28px);color:rgba(255,255,255,.28);letter-spacing:.06em;font-style:italic;text-align:center;}
 .spec-sep{width:100%;height:1px;background:var(--glass-b);}
 .spec-scores{display:flex;flex-wrap:wrap;gap:8px;width:100%;justify-content:center;flex-shrink:0;}
-.spec-score-card{flex:1;min-width:120px;max-width:180px;background:rgba(255,255,255,.04);border:1px solid var(--glass-b);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:8px;}
+.spec-score-card{flex:1;min-width:140px;background:transparent;border:none;padding:8px 12px;display:flex;align-items:center;gap:8px;}
 .spec-score-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.spec-score-name{font-size:clamp(13px,1.8vw,20px);color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.spec-score-name{font-size:clamp(16px,2.2vw,26px);color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .spec-score-val{font-size:clamp(20px,3vw,36px);font-weight:800;}
 .spec-sync-btn{font-size:13px;color:var(--muted);background:none;border:1px solid var(--glass-b);border-radius:8px;padding:6px 16px;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.06em;}
 .spec-sync-btn:active{opacity:.6;}
@@ -754,6 +754,16 @@ body[data-mode=single] #spec-timeline-teamname{
   margin-top:auto;
 }
 
+
+body[data-mode=single] #token-btn{
+  order:-1;
+  margin-bottom:8px;
+}
+body[data-mode=single] .t-panel-coins{
+  justify-content:center!important;
+  gap:clamp(6px,1vw,12px)!important;
+}
+
 </style>
 </head>
 <body>
@@ -790,7 +800,7 @@ body[data-mode=single] #spec-timeline-teamname{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.4.4</div>
+<div class="version">v5.4.5</div>
 
 <!-- SW Update Toast -->
 
@@ -2295,7 +2305,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=177', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=178', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
