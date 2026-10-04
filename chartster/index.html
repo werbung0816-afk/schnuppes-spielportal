@@ -567,8 +567,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .spec-connector{width:clamp(16px,2.5vw,40px);height:3px;background:rgba(255,255,255,.15);flex-shrink:0;}
 .spec-listening{font-size:clamp(16px,2.5vw,28px);color:rgba(255,255,255,.28);letter-spacing:.06em;font-style:italic;text-align:center;}
 .spec-sep{width:100%;height:1px;background:var(--glass-b);}
-.spec-scores{display:flex;flex-wrap:wrap;gap:8px;width:100%;justify-content:center;flex-shrink:0;}
-.spec-score-card{flex:1;min-width:140px;background:transparent;border:none;padding:8px 12px;display:flex;align-items:center;gap:8px;}
+.spec-scores{display:flex;flex-wrap:wrap;gap:clamp(16px,3vw,40px);width:100%;justify-content:center;flex-shrink:0;align-items:center;}
+.spec-score-card{flex:0 0 auto;background:transparent;border:none;padding:6px 16px;display:flex;align-items:center;gap:10px;}
 .spec-score-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .spec-score-name{font-size:clamp(16px,2.2vw,26px);color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .spec-score-val{font-size:clamp(20px,3vw,36px);font-weight:800;}
@@ -693,9 +693,9 @@ body[data-mode=single] #area-bot{
   padding-bottom:0!important;
 }
 .spec-year{
-  width:clamp(260px,38vw,560px)!important;
-  height:clamp(160px,22vw,320px)!important;
-  font-size:clamp(90px,15vw,220px)!important;
+  width:clamp(180px,24vw,360px)!important;
+  height:clamp(110px,14vw,210px)!important;
+  font-size:clamp(70px,11vw,160px)!important;
 }
 .spec-timeline{
   justify-content:center!important;
@@ -764,6 +764,7 @@ body[data-mode=single] .t-panel-coins{
   gap:clamp(6px,1vw,12px)!important;
 }
 
+body[data-mode=single] #new-song-token-btn{display:none!important;}
 </style>
 </head>
 <body>
@@ -800,7 +801,7 @@ body[data-mode=single] .t-panel-coins{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.4.5</div>
+<div class="version">v5.4.6</div>
 
 <!-- SW Update Toast -->
 
@@ -1597,8 +1598,19 @@ function renderActivePanelOnly(){
     a.innerHTML='';
     a.appendChild(bar);
   } else {
-    var tH='';for(var i=0;i<(t.tokens||0);i++)tH+='<span style="color:'+t.color+';font-size:clamp(20px,3vw,32px)">⬡</span>';
-    a.innerHTML='<div style="text-align:center;padding:8px;font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.5);">'+tH+'</div>';
+    var tH='';
+    for(var i=0;i<MAX_TOK;i++){
+      var filled=i<(t.tokens||0);
+      tH+='<span style="color:'+t.color+';font-size:clamp(28px,4vw,48px);opacity:'+(filled?1:0.25)+'">'+(filled?'⬡':'⬡')+'</span>';
+    }
+    // Token button right below coins
+    var tokenBtnHtml='';
+    if((t.tokens||0)>0){
+      tokenBtnHtml='<button onclick="newSongToken()" style="margin-top:8px;padding:clamp(10px,1.5vw,16px) clamp(16px,2.5vw,28px);border-radius:12px;background:rgba(143,95,255,.2);border:1px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-size:clamp(15px,2vw,22px);font-weight:700;cursor:pointer;">🔄 Neuer Song – 1 Token</button>';
+    }
+    a.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;">'+
+      '<div style="display:flex;gap:clamp(6px,1vw,14px);align-items:center;">'+tH+'</div>'+
+      tokenBtnHtml+'</div>';
   }
 }
 function renderPanels(){
@@ -2305,7 +2317,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=178', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=179', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
