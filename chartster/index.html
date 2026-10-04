@@ -125,11 +125,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 /* ── CHART MACHINE (full-width, big) ── */
 #screen-slot .card{max-width:700px;width:95%;margin:0}
-.slot-outer{position:relative;width:100%;max-width:min(700px,90vw);margin:0 auto}
+.slot-outer{position:relative;width:100%;max-width:min(860px,94vw);margin:0 auto}
 .slot-machine-body{background:#12041f;border:2px solid rgba(83,246,255,.35);border-radius:24px;padding:20px;box-shadow:0 0 50px rgba(83,246,255,.18)}
-#slot-window{height:clamp(160px,22vw,260px);overflow:hidden;border-radius:14px;background:#07000f;border:1px solid rgba(83,246,255,.2);position:relative}
+#slot-window{height:clamp(200px,28vw,340px);overflow:hidden;border-radius:14px;background:#07000f;border:1px solid rgba(83,246,255,.2);position:relative}
 #slot-reel{position:absolute;width:100%;will-change:transform}
-.slot-item{height:clamp(160px,22vw,260px);display:flex;align-items:center;justify-content:center;font-size:clamp(90px,13vw,150px);font-weight:900;font-family:'Outfit',sans-serif;color:rgba(240,240,255,.9)}
+.slot-item{height:clamp(200px,28vw,340px);display:flex;align-items:center;justify-content:center;font-size:clamp(110px,17vw,200px);font-weight:900;font-family:'Outfit',sans-serif;color:rgba(240,240,255,.9)}
 .slot-overlay-top{position:absolute;top:0;left:0;right:0;height:40px;background:linear-gradient(to bottom,#07000f,transparent);z-index:2;pointer-events:none}
 .slot-overlay-bot{position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,#07000f,transparent);z-index:2;pointer-events:none}
 .slot-line{position:absolute;left:10px;right:10px;top:50%;height:3px;background:var(--cyan);opacity:.6;z-index:3;transform:translateY(-50%)}
@@ -199,7 +199,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .cd-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .1s linear}
 
 /* ── TOKEN PANEL ── */
-#hitster-panel{background:var(--glass);border:1px solid rgba(255,79,216,.25);border-radius:14px;padding:14px 18px;display:none;flex-direction:column;gap:10px}
+#hitster-panel{background:var(--glass);border:1px solid rgba(255,79,216,.25);border-radius:14px;padding:clamp(16px,2.5vw,28px);display:none;flex-direction:column;gap:12px;align-items:center;text-align:center;width:100%;}
 #hitster-panel.show{display:flex}
 .hst-title{font-size:14px;font-weight:700;color:var(--pink);text-transform:uppercase;letter-spacing:.06em}
 .hst-btn{padding:11px 18px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:#07000f}
@@ -689,7 +689,8 @@ body[data-mode=single] #area-bot{
 
 /* Zuschauer: Zentrierung mit Platz für Reveal-Overlay */
 .spec-card{
-  padding-bottom:clamp(180px,22vh,260px)!important;
+  padding-top:clamp(160px,20vh,240px)!important;
+  padding-bottom:0!important;
 }
 .spec-year{
   width:clamp(260px,38vw,560px)!important;
@@ -745,6 +746,14 @@ body[data-mode=single] .game-card .sep{display:none!important;}
 body[data-mode=single] .game-card{min-height:0!important;flex-shrink:1!important;}
 body[data-mode=single] #screen-game{overflow:hidden;}
 
+
+/* Zuschauer: Teamname unten */
+body[data-mode=single] #spec-timeline-teamname{
+  order:10;
+  font-size:clamp(40px,7vw,90px)!important;
+  margin-top:auto;
+}
+
 </style>
 </head>
 <body>
@@ -781,7 +790,7 @@ body[data-mode=single] #screen-game{overflow:hidden;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.4.3</div>
+<div class="version">v5.4.4</div>
 
 <!-- SW Update Toast -->
 
@@ -854,9 +863,9 @@ body[data-mode=single] #screen-game{overflow:hidden;}
     <div class="game-title">CHARTSTER</div>
     <div style="font-size:clamp(14px,2vw,18px);color:var(--muted);margin:8px 0 24px;">Wie wollt ihr spielen?</div>
     <div style="display:flex;flex-direction:column;gap:14px;width:100%;">
-      <button id="mode-single-btn" onclick="onModeSingle()" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);width:100%;border-radius:16px;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">1-SPIELER-STEUERUNG</button>
-      <button id="mode-multi-btn" onclick="onModeMulti()" style="padding:clamp(20px,3vw,28px);font-size:clamp(17px,2.5vw,22px);width:100%;border-radius:16px;background:rgba(143,95,255,.15);border:1px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">MEHR-SPIELER-STEUERUNG</button>
-      <button id="mode-spectator-btn" onclick="onModeSpectator()" style="padding:clamp(14px,2vw,20px);font-size:clamp(15px,2vw,18px);width:100%;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;letter-spacing:.05em;">👁 ZUSCHAUER-MODUS</button>
+      <button id="mode-single-btn" onclick="onModeSingle()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);width:100%;border-radius:20px;background:rgba(83,246,255,.15);border:2px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">1-SPIELER-STEUERUNG</button>
+      <button id="mode-multi-btn" onclick="onModeMulti()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);width:100%;border-radius:20px;background:rgba(143,95,255,.15);border:2px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">MEHR-SPIELER-STEUERUNG</button>
+      <button id="mode-spectator-btn" onclick="onModeSpectator()" style="padding:clamp(20px,3vw,32px);font-size:clamp(18px,2.5vw,26px);width:100%;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;letter-spacing:.05em;">👁 ZUSCHAUER-MODUS</button>
     </div>
   </div>
 </div>
@@ -1827,7 +1836,7 @@ function showSpectatorReveal(rev){
     el.id='spec-reveal-overlay';
     document.body.appendChild(el);
   }
-  el.style.cssText='position:fixed;bottom:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-top:2px solid rgba(83,246,255,.3);padding:clamp(20px,3vw,40px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(24px,4vw,56px);text-align:center;';
+  el.style.cssText='position:fixed;top:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-bottom:2px solid rgba(83,246,255,.3);padding:clamp(16px,2.5vw,32px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(24px,4vw,56px);text-align:center;';
   var cover=rev.c?'<img src="'+rev.c+'" style="width:clamp(100px,12vw,160px);height:clamp(100px,12vw,160px);border-radius:14px;object-fit:cover;flex-shrink:0;">':'';
   var year='<div style="font-size:clamp(100px,16vw,200px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;flex-shrink:0;">'+rev.y+'</div>';
   var meta='<div style="display:flex;flex-direction:column;gap:clamp(4px,0.8vw,10px);text-align:left;min-width:0;">'
@@ -2286,7 +2295,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=176', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=177', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
