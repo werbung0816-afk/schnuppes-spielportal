@@ -693,7 +693,7 @@ body[data-mode=single] #spec-timeline{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.2.8</div>
+<div class="version">v5.2.9</div>
 
 <!-- SW Update Toast -->
 
@@ -2176,7 +2176,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=161', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=162', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
