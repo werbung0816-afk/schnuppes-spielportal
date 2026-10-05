@@ -638,7 +638,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.6.3</div>
+<div class="version">v5.6.4</div>
 
 <!-- SW Update Toast -->
 
@@ -1174,9 +1174,13 @@ function pickMode(mode){
   if(mode === 'spectator'){
     enterSpectator();
   } else if(mode === 'single'){
-    // Single: Team-Eingabe zeigen, Tisch verstecken
+    // Single: Host sicherstellen + Button aktivieren
+    if(!IS_HOST) setHost();
     applyModeUI();
-    if(typeof loadTeamNames === 'function') setTimeout(loadTeamNames, 200);
+    setTimeout(function(){
+      if(typeof loadTeamNames==='function') loadTeamNames();
+      updateStartBtn();
+    }, 300);
   }
   // Multi: Lobby ist bereits bereit (initFirebase lief schon)
 }
@@ -2042,7 +2046,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=194', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=195', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
