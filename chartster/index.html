@@ -193,7 +193,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 /* ── COUNTDOWN ── */
 #countdown-wrap{background:var(--glass);border:1px solid rgba(83,246,255,.2);border-radius:14px;padding:14px 18px;display:none;flex-direction:column;gap:7px}
-#countdown-wrap.show{display:flex}
+#countdown-wrap.show{display:none}
 .cd-row{display:flex;align-items:center;justify-content:space-between;font-size:18px;font-weight:700}
 .cd-bar{width:100%;height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
 .cd-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .1s linear}
@@ -586,6 +586,19 @@ body[data-mode=single] .mg-cards{display:none!important;}
 body[data-mode=single] .sep{display:none!important;}
 body[data-mode=single] #s5-btn{display:none!important;}
 
+
+/* ── SINGLE MODE: Spielgerät ── */
+body[data-mode=single] .banner{display:none!important;}
+body[data-mode=single] .score-btns{height:0!important;overflow:hidden!important;margin:0!important;padding:0!important;}
+body[data-mode=single] .score-btns.show{display:none!important;}
+body[data-mode=single] .game-card{background:transparent!important;border:none!important;backdrop-filter:none!important;padding:4px 0!important;gap:8px!important;}
+body[data-mode=single] .game-card .sep{display:none!important;}
+body[data-mode=single] #new-song-token-btn{display:none!important;}
+
+
+.spec-card{padding-top:clamp(160px,20vh,240px)!important;padding-bottom:0!important;}
+.spec-listening{display:none!important;}
+
 </style>
 </head>
 <body>
@@ -622,7 +635,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.6.2</div>
+<div class="version">v5.7.1</div>
 
 <!-- SW Update Toast -->
 
@@ -679,7 +692,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
     
     <div id="spec-timeline-teamname" style="font-size:clamp(44px,8vw,110px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:center;width:100%;"></div>
     <div class="spec-timeline" id="spec-timeline"></div>
-    <div class="spec-listening">♫ Hört zu und schätzt …</div>
+    
     <div class="spec-sep"></div>
     <div class="spec-scores" id="spec-scores"></div>
     <div id="spec-offline-hint" style="display:none;font-size:13px;color:#ff6060;letter-spacing:.06em;text-align:center;">⚠ Verbindung unterbrochen</div>
@@ -751,10 +764,10 @@ body[data-mode=single] #s5-btn{display:none!important;}
         <button class="flt off" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10"></button>
       </div>
       <div class="flt-row">
-        <button class="flt" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500"></button>
-        <button class="flt" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond"></button>
-        <button class="flt" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM"></button>
-        <button class="flt" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino"></button>
+        <button class="flt off" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500"></button>
+        <button class="flt off" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond"></button>
+        <button class="flt off" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM"></button>
+        <button class="flt off" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino"></button>
       </div>
       <div style="width:100%"></div>
       <div style="width:100%;display:flex;align-items:center">
@@ -943,6 +956,8 @@ function initSpectatorListener(){
       showSpectatorVictory(d.wonTeams, d.teams);
     } else if(d.teams){
       updateSpectatorView(d);
+      if(d.reveal) showSpectatorReveal(d.reveal);
+      else hideSpectatorReveal();
     }
   });
 }
@@ -1077,9 +1092,11 @@ function updateSpectatorView(d){
   d.teams.forEach(function(t){
     var card=document.createElement('div');
     card.className='spec-score-card';
-    card.innerHTML='<div class="spec-score-dot" style="background:'+t.color+'"></div>'+
+    var tokStr='';for(var i=0;i<(t.tokens||0);i++)tokStr+='<span style="color:'+t.color+';font-size:clamp(14px,2vw,22px)">⬡</span>';
+    card.innerHTML='<div class="spec-score-dot" style="background:'+t.color+';width:14px;height:14px;border-radius:50%;flex-shrink:0;"></div>'+
       '<div class="spec-score-name">'+t.name+'</div>'+
-      '<div class="spec-score-val" style="color:'+t.color+'">'+(t.years||[]).length+'</div>';
+      '<div class="spec-score-val" style="color:'+t.color+'">'+(t.years||[]).length+'</div>'+
+      (tokStr?'<div style="display:flex;gap:3px;">'+tokStr+'</div>':'');
     sc.appendChild(card);
   });
 }
@@ -1192,7 +1209,7 @@ function playApplause(){new Audio('applause.mp3').play().catch(function(e){conso
 function playSlot(){console.log('playSlot called');new Audio('slot%20machine.mp3').play().catch(function(e){console.log('slot sound error:',e);});}
 function stopSlot(){}
 
-var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(),
+var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(['RS-500','Bond-Edition','WM-Edition','Popcorn-Edition']),
   topFilter:null,phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[],miniGames:false,miniGamesDone:{memory:false,paparazzi:false},pendingMiniGame:null};
 ['top-l','top-r','left','right','bot-l','bot-r'].forEach(p=>G.seatCfg[p]=null);
 
@@ -1236,6 +1253,7 @@ function setMode(mode){
 function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();}}
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){
+  if(IS_HOST) return; // Host nie überschreiben
   if(d.ts && d.ts < _joinTs - 10000) return; // Signal älter als 10s verwerfen
   if(IS_SPECTATOR) return; // Spectator handled by own listener
   if(d.screen==='game'&&d.teams){G.teams=d.teams;G.cur=d.cur||0;G.currentCard=d.card||null;showScreen('game');renderPanels();updateGameUI();}}
@@ -1480,7 +1498,7 @@ function cardNext(){
 }
 
 // ── COUNTDOWN ──
-function startCd(){G.cdRemain=10;var wrap=document.getElementById('countdown-wrap');wrap.classList.add('show');var fill=document.getElementById('cd-fill'),secs=document.getElementById('cd-secs');fill.style.width='100%';secs.textContent=10;G.cdTimer=setInterval(function(){G.cdRemain--;fill.style.width=(G.cdRemain/10*100)+'%';secs.textContent=G.cdRemain;if(G.cdRemain<=0){clearCd();G.readyToReveal=true;wrap.classList.remove('show');document.getElementById('hitster-panel').classList.remove('show');if(G.selBox!==null)document.getElementById('main-btn').disabled=false;}},1000);}
+function startCd(){G.readyToReveal=true;var btn=document.getElementById('main-btn');if(btn)btn.disabled=false;}
 function clearCd(){clearInterval(G.cdTimer);G.cdTimer=null;}
 
 // ── TOKEN PANEL ──
@@ -1599,6 +1617,38 @@ function hideSpectatorMiniGame(){
 }
 
 
+
+function showSpectatorReveal(rev){
+  var el=document.getElementById('spec-reveal-overlay');
+  if(!el){el=document.createElement('div');el.id='spec-reveal-overlay';document.body.appendChild(el);}
+  el.style.cssText='position:fixed;top:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-bottom:2px solid rgba(83,246,255,.3);padding:clamp(16px,2.5vw,32px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(24px,4vw,56px);';
+  var cover=rev.c?'<img src="'+rev.c+'" style="width:clamp(90px,11vw,150px);height:clamp(90px,11vw,150px);border-radius:12px;object-fit:cover;flex-shrink:0;">':'';
+  var year='<div style="font-size:clamp(90px,14vw,180px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;flex-shrink:0;">'+rev.y+'</div>';
+  var meta='<div style="display:flex;flex-direction:column;gap:clamp(2px,0.5vw,8px);min-width:0;">'
+    +'<div style="font-size:clamp(36px,5.5vw,70px);font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+rev.a+'</div>'
+    +'<div style="font-size:clamp(32px,5vw,64px);color:rgba(255,255,255,.75);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+rev.t+'</div>'
+    +'</div>';
+  el.innerHTML=cover+year+meta;el.style.display='flex';
+}
+function hideSpectatorReveal(){var el=document.getElementById('spec-reveal-overlay');if(el)el.style.display='none';}
+
+
+function renderOptTeams(){
+  var c=document.getElementById('opt-team-controls');if(!c||!G.teams)return;c.innerHTML='';
+  G.teams.forEach(function(t,i){
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;padding:10px;background:rgba(255,255,255,.05);border-radius:10px;';
+    row.innerHTML='<span style="font-weight:700;color:'+t.color+';min-width:120px;font-size:clamp(16px,2.5vw,22px);">'+t.name+'</span>'
+      +'<span style="font-size:clamp(14px,2vw,18px);color:var(--muted);flex:1;"><span style="color:'+t.color+'">⬡</span> '+(t.tokens||0)+'&nbsp;📅 '+(t.years?t.years.length:0)+'</span>'
+      +'<button onclick="adminToken('+i+',1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(83,246,255,.2);border:1px solid #53f6ff;color:#53f6ff;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">+T</button>'
+      +'<button onclick="adminToken('+i+',-1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(255,79,216,.2);border:1px solid #ff4fd8;color:#ff4fd8;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">-T</button>'
+      +'<button onclick="adminCard('+i+',1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(83,246,255,.2);border:1px solid #53f6ff;color:#53f6ff;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">+K</button>'
+      +'<button onclick="adminCard('+i+',-1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(255,79,216,.2);border:1px solid #ff4fd8;color:#ff4fd8;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">-K</button>';
+    c.appendChild(row);});
+}
+function adminToken(i,delta){if(!G.teams[i])return;G.teams[i].tokens=Math.max(0,(G.teams[i].tokens||0)+delta);renderPanels();renderOptTeams();pushState();}
+function adminCard(i,delta){if(!G.teams[i])return;if(!G.teams[i].years)G.teams[i].years=[];if(delta>0){var y=1970+Math.floor(Math.random()*55);while(G.teams[i].years.includes(y))y++;G.teams[i].years.push(y);G.teams[i].years.sort(function(a,b){return a-b;});}else if(G.teams[i].years.length>0)G.teams[i].years.pop();renderPanels();renderOptTeams();pushState();}
+
 function showSpectatorVictory(wonTeams, allTeams){
   try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
   if(wonTeams[0]) spawnConfetti(wonTeams[0].color, 400);
@@ -1697,7 +1747,7 @@ function buildCfHTML(n){var cols=['#ff4d6d','#ffd166','#06d6a0','#4cc9f0','#b517
 function spawnConfetti(color,count,withWave){var c=document.getElementById('confetti');var cols=[color,'#fff','#ffd84d',COLORS[Math.floor(Math.random()*COLORS.length)]];for(var i=0;i<count;i++){var p=document.createElement('div');var sz=5+Math.random()*12;var dur=1.2+Math.random()*1.8;p.style.cssText=`position:absolute;top:-20px;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};border-radius:${['50%','3px','0'][i%3]};transform:rotate(${Math.random()*360}deg);animation:cf-fall ${dur}s ${Math.random()*.6}s linear both`;c.appendChild(p);setTimeout(function(el){el.remove();},Math.ceil((dur+0.8)*1000),p);}if(withWave!==false)setTimeout(function(){spawnConfetti(color,Math.floor(count*.4),false);},700);}
 
 // ── OPTIONS ──
-function openOpt(){buildOptFilter();document.getElementById('opt-panel').classList.add('show');document.getElementById('opt-confirm').classList.remove('show');}
+function openOpt(){renderOptTeams();buildOptFilter();document.getElementById('opt-panel').classList.add('show');document.getElementById('opt-confirm').classList.remove('show');}
 function closeOpt(){document.getElementById('opt-panel').classList.remove('show');document.getElementById('opt-confirm').classList.remove('show');}
 function optNewSong(){closeOpt();clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();showHint('Schiedsrichter: Neuer Song! ⚖️');}
 function optResetPrompt(){document.getElementById('opt-confirm').classList.add('show');}
@@ -2043,7 +2093,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=193', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=200', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
