@@ -766,6 +766,48 @@ body[data-mode=single] .t-panel-coins{
 
 body[data-mode=single] #new-song-token-btn{display:none!important;}
 .spec-sync-btn{position:fixed;bottom:8px;right:60px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Outfit,sans-serif;z-index:50;}
+
+/* ── TISCHRUNDEN-MODUS: Alles größer ── */
+body:not([data-mode=single]) .s-year,
+body:not([data-mode=single]) .s-both,
+body:not([data-mode=single]) .s-none{
+  padding:clamp(18px,2.5vw,28px) clamp(10px,1.5vw,18px)!important;
+  font-size:clamp(16px,2.2vw,22px)!important;
+  border-radius:16px!important;
+}
+body:not([data-mode=single]) .banner-team{
+  font-size:clamp(24px,3.5vw,40px)!important;
+}
+body:not([data-mode=single]) .team-name{
+  font-size:clamp(20px,3vw,32px)!important;
+}
+body:not([data-mode=single]) .y-chip{
+  height:clamp(32px,4vw,48px)!important;
+  min-width:clamp(56px,7vw,88px)!important;
+  font-size:clamp(14px,1.8vw,22px)!important;
+  border-radius:10px!important;
+}
+body:not([data-mode=single]) .coin{
+  width:clamp(22px,3vw,32px)!important;
+  height:clamp(22px,3vw,32px)!important;
+}
+body:not([data-mode=single]) .seat-circle{
+  width:clamp(60px,8vw,80px)!important;
+  height:clamp(60px,8vw,80px)!important;
+}
+body:not([data-mode=single]) .seat-inp{
+  font-size:clamp(16px,2.2vw,22px)!important;
+  padding:10px 12px!important;
+}
+body:not([data-mode=single]) .tl-box{
+  width:clamp(90px,11vw,140px)!important;
+  height:clamp(90px,11vw,140px)!important;
+  font-size:clamp(26px,3.5vw,46px)!important;
+}
+body:not([data-mode=single]) .t-panel{
+  width:clamp(300px,38vw,440px)!important;
+}
+
 </style>
 </head>
 <body>
@@ -802,7 +844,7 @@ body[data-mode=single] #new-song-token-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.4.9</div>
+<div class="version">v5.5.4</div>
 
 <!-- SW Update Toast -->
 
@@ -2323,7 +2365,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=182', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=187', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
