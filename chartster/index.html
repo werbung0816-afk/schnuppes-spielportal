@@ -585,12 +585,28 @@ body[data-mode=single] #mini-btn{display:none!important;}
 body[data-mode=single] .mg-cards{display:none!important;}
 body[data-mode=single] .sep{display:none!important;}
 body[data-mode=single] #s5-btn{display:none!important;}
+.st-row{display:flex;align-items:center;gap:12px;width:100%;}
+.st-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;display:inline-block;}
+.st-inp{flex:1;font-size:clamp(18px,2.8vw,26px);padding:clamp(14px,2vw,20px) 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;color:#fff;font-family:Outfit,sans-serif;}
 
 </style>
 </head>
 <body>
 
 <!-- ═══ PWA: Install Banner (Android/Desktop) ═══ -->
+<!-- ════ MODUS-OVERLAY (über Lobby) ════ -->
+<div id="mode-overlay" style="position:fixed;inset:0;z-index:9800;background:rgba(7,0,15,.97);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;">
+  <div style="max-width:640px;width:90%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(16px,2.5vw,28px);">
+    <div class="game-title">CHARTSTER</div>
+    <div style="font-size:clamp(14px,2vw,18px);color:var(--muted);">Wie wollt ihr spielen?</div>
+    <div style="display:flex;flex-direction:column;gap:14px;width:100%;">
+      <button onclick="pickMode('single')" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);min-height:clamp(90px,12vw,130px);width:100%;border-radius:20px;background:rgba(83,246,255,.15);border:2px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;">SPIELLEITER-MODUS</button>
+      <button onclick="pickMode('multi')" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);min-height:clamp(90px,12vw,130px);width:100%;border-radius:20px;background:rgba(143,95,255,.15);border:2px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;">TISCHRUNDEN-MODUS</button>
+      <button onclick="pickMode('spectator')" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);min-height:clamp(90px,12vw,130px);width:100%;border-radius:20px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;">ZUSCHAUER-MODUS</button>
+    </div>
+  </div>
+</div>
+
 <div id="pwa-banner">
   <div id="pwa-banner-icon"><img src="icons/icon-192x192.png" alt="Chartster"></div>
   <div id="pwa-banner-text">
@@ -622,7 +638,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.6.2</div>
+<div class="version">v5.6.3</div>
 
 <!-- SW Update Toast -->
 
@@ -687,22 +703,9 @@ body[data-mode=single] #s5-btn{display:none!important;}
   </div>
 </div>
 
-<!-- ════ MODUS-AUSWAHL ════ -->
-<div id="screen-mode" class="screen active">
-  <div class="card" style="max-width:640px;text-align:center;">
-    <div class="game-title">CHARTSTER</div>
-    <div style="font-size:clamp(14px,2vw,18px);color:var(--muted);margin:8px 0 24px;">Wie wollt ihr spielen?</div>
-    <div style="display:flex;flex-direction:column;gap:14px;width:100%;">
-      <button id="mode-single-btn" onclick="onModeSingle()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);min-height:clamp(90px,12vw,130px);width:100%;border-radius:20px;background:rgba(83,246,255,.15);border:2px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;">SPIELLEITER-MODUS</button>
-      <button id="mode-multi-btn" onclick="onModeMulti()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);min-height:clamp(90px,12vw,130px);width:100%;border-radius:20px;background:rgba(143,95,255,.15);border:2px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;">TISCHRUNDEN-MODUS</button>
-      <button id="mode-spectator-btn" onclick="onModeSpectator()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);min-height:clamp(90px,12vw,130px);width:100%;border-radius:20px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;">ZUSCHAUER-MODUS</button>
-    </div>
-  </div>
-</div>
-
 <!-- ════ LOBBY ════ -->
 <div id="lobby-bg"></div>
-<div id="screen-lobby" class="screen">
+<div id="screen-lobby" class="screen active">
 <div class="card" style="margin-top:24px">
   <div class="game-title" style="font-size:52px;letter-spacing:2px">CHARTSTER</div>
   <div class="sep"></div>
@@ -1162,8 +1165,27 @@ const fbCfg={apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",authDomain:"schnup
 firebase.initializeApp(fbCfg);
 const DB=firebase.database(),REF=DB.ref('chartster/game');
 var IS_HOST=false,fbListener=null;
+
+function pickMode(mode){
+  G_MODE = mode;
+  document.body.dataset.mode = mode;
+  var ov = document.getElementById('mode-overlay');
+  if(ov) ov.style.display = 'none';
+  if(mode === 'spectator'){
+    enterSpectator();
+  } else if(mode === 'single'){
+    // Single: Team-Eingabe zeigen, Tisch verstecken
+    applyModeUI();
+    if(typeof loadTeamNames === 'function') setTimeout(loadTeamNames, 200);
+  }
+  // Multi: Lobby ist bereits bereit (initFirebase lief schon)
+}
+
+function applyModeUI(){
+  document.body.dataset.mode = G_MODE;
+}
+
 var G_MODE="multi";
-var MODE_SELECTED=false;
 var IS_SPECTATOR=false;
 var specListener=null;
 var _joinTs=Date.now();
@@ -1198,15 +1220,8 @@ var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(),
 
 // ── FIREBASE ──
 function initFirebase(){
-  // Listener immer aufbauen (für Zuschauer/Gäste)
   if(fbListener){try{REF.off('value',fbListener);}catch(e){}}fbListener=null;
-  fbListener=REF.on('value',function(snap){var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});
-  // Nur navigieren wenn Modus gewählt wurde
-  if(!MODE_SELECTED) return;
-  // Modus wurde explizit gewählt → immer Host werden (ignoriert alte Firebase-Sessions)
-  setHost();
-  return;
-  // (original logic disabled) var wasHost=sessionStorage.getItem('chartster_host')==='1';
+  var wasHost=sessionStorage.getItem('chartster_host')==='1';
   REF.once('value').then(snap=>{
     var d=snap.val();
     var hasGame=d&&d.screen==='game'&&d.teams&&d.teams.length>0;
@@ -1219,20 +1234,6 @@ function initFirebase(){
     else{setHost();}
   }).catch(()=>setHost());
 }
-
-function onModeSingle(){ setMode('single'); }
-function onModeMulti(){ setMode('multi'); }
-function onModeSpectator(){ G_MODE='single'; MODE_SELECTED=true; enterSpectator(); }
-
-function setMode(mode){
-  G_MODE = mode;
-  MODE_SELECTED = true;
-  document.body.dataset.mode = mode;
-  showScreen('lobby');
-  initFirebase(); // Jetzt läuft es vollständig durch
-  if(mode==='single') setTimeout(loadTeamNames, 200);
-}
-
 function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();}}
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){
@@ -1357,35 +1358,9 @@ function addSingleTeamRow(){for(var i=2;i<=5;i++){var r=document.getElementById(
 function getSingleTeams(){var res=[];for(var i=0;i<=5;i++){var inp=document.getElementById('st-'+i);var vis=i<2||(document.getElementById('st-row-'+i)||{style:{display:'none'}}).style.display!=='none';if(inp&&vis)res.push({name:inp.value.trim()||inp.placeholder,color:SINGLE_COLORS[i],pos:'bot-l',side:'bot',years:[],tokens:2});}return res;}
 function saveTeamNames(){var n=[];for(var i=0;i<=5;i++){var inp=document.getElementById('st-'+i);if(inp&&inp.value.trim())n.push({i:i,name:inp.value.trim()});}if(n.length)localStorage.setItem('chartsterTeams',JSON.stringify({names:n,ts:Date.now()}));}
 function loadTeamNames(){try{var d=JSON.parse(localStorage.getItem('chartsterTeams')||'null');if(!d||Date.now()-d.ts>14*24*60*60*1000){localStorage.removeItem('chartsterTeams');return;}d.names.forEach(function(t){var inp=document.getElementById('st-'+t.i);if(inp)inp.value=t.name;});updateStartBtn();}catch(e){}}
-
-function startGame(){
-  if(!IS_HOST){return;}
-  WIN=document.getElementById('schnelle5').checked?5:10;
-  if(G_MODE==='single'){saveTeamNames();G.teams=getSingleTeams();if(G.teams.length<2){showHint('Mindestens 2 Teams!');return;}}
-  else{var active=getActiveSeats();if(active.length<2){showHint('Mindestens 2 Teams!');return;}}
-  if(G.songs.length===0){showHint('Songs werden geladen – kurz warten!');return;}
-  if(G_MODE!=='single') G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
-  var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
-  G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
-  try{var _el=document.documentElement;(_el.requestFullscreen||_el.webkitRequestFullscreen||function(){}).call(_el);}catch(e){}
-  if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});}
-  else{var cr=CENTER_ROT_ORIG||{bot:'r0',top:'r180',left:'r90',right:'r270'};Object.keys(cr).forEach(function(k){CENTER_ROT[k]=cr[k];});}
-  showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
-}
-
-// ── CHART MACHINE ──
-var SLOT_H=160,slotYearList=[],slotSpinning=false,slotPulled=false;
-function getSlotH(){var item=document.querySelector('.slot-item');return item?item.getBoundingClientRect().height:160;}
-function initSlot(){var years=[];for(var y=1960;y<=2026;y++)years.push(y);slotYearList=[...years,...years,...years,...years,...years];var reel=document.getElementById('slot-reel');reel.style.transition='none';reel.innerHTML=slotYearList.map(y=>`<div class="slot-item">${y}</div>`).join('');var slotH=getSlotH();reel.style.height=(slotYearList.length*slotH)+'px';var startIdx=years.length*2+Math.floor(Math.random()*years.length);reel.style.transform=`translateY(${-startIdx*slotH}px)`;slotPulled=false;var lever=document.getElementById('slot-lever');if(lever)lever.classList.remove('pulled');}
-function spinSlot(){if(slotSpinning||slotPulled)return;slotSpinning=true;slotPulled=true;var lever=document.getElementById('slot-lever');if(lever)lever.classList.add('pulled');playSlot();document.getElementById('slot-spin-btn').style.display='none';var yearCount=2026-1960+1;var targetIdx=yearCount*3+Math.floor(Math.random()*yearCount);var reel=document.getElementById('slot-reel');setTimeout(function(){var slotH2=getSlotH();reel.style.transition='transform 3.0s cubic-bezier(0.12,0.57,0.14,0.99)';reel.style.transform=`translateY(${-targetIdx*slotH2}px)`;},200);setTimeout(function(){slotSpinning=false;stopSlot();var year=slotYearList[targetIdx];G.slotYears.push(year);var el=document.getElementById('slot-result');el.textContent=year;el.style.display='block';el.style.color=G.teams[G.slotTeam].color;document.getElementById('slot-next-btn').style.display='block';reel.querySelectorAll('.slot-item').forEach((item,i)=>{if(i===targetIdx)item.style.color=G.teams[G.slotTeam].color;});},3400);}
-function updateSlotUI(){var team=G.teams[G.slotTeam];var el=document.getElementById('slot-cur-team');el.textContent=team.name;el.style.color=team.color;document.getElementById('slot-spin-btn').style.display='block';document.getElementById('slot-spin-btn').disabled=false;document.getElementById('slot-next-btn').style.display='none';document.getElementById('slot-result').style.display='none';document.getElementById('slot-reel').querySelectorAll('.slot-item').forEach(item=>item.style.color='rgba(240,240,255,.9)');}
-function nextSlotTeam(){G.slotTeam++;if(G.slotTeam>=G.teams.length){var validYears=G.slotYears.slice(0,G.teams.length);G.teams.forEach((t,i)=>{t.years=[validYears[i]||1990];});var activeCW=CW_ORDER.filter(pos=>G.teams.some(t=>t.pos===pos));var startPos=activeCW[Math.floor(Math.random()*activeCW.length)];G.cur=G.teams.findIndex(t=>t.pos===startPos);if(G.cur<0)G.cur=0;beginPlay();}else{updateSlotUI();initSlot();}}
-
-// ── PLAY ──
-function beginPlay(){G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.readyToReveal=false;clearCd();if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();var gc=document.getElementById('game-center');if(gc)gc.className=CENTER_ROT[G.teams[G.cur].side]||'r0';showScreen('game');buildOptFilter();renderPanels();updateGameUI();pushState();}
-function drawCard(){if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();}
-
-// ── PANELS ──
+function scoreYear(){score('year');}
+function scoreBoth(){score('both');}
+function scoreNone(){score('none');}
 function renderActivePanelOnly(){
   ['area-top','area-bot','side-left-wrap','side-right-wrap'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});
   var gc=document.getElementById('game-center');if(gc)gc.className='r0';
@@ -1404,10 +1379,34 @@ function renderActivePanelOnly(){
     a.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;"><div style="display:flex;gap:clamp(6px,1vw,14px);">'+tH+'</div>'+tb+'</div>';
   }
 }
-function scoreYear(){score('year');}
-function scoreBoth(){score('both');}
-function scoreNone(){score('none');}
 
+function startGame(){
+  if(!IS_HOST){return;}
+  WIN=document.getElementById('schnelle5').checked?5:10;
+  if(G_MODE==='single'){saveTeamNames();G.teams=getSingleTeams();if(G.teams.length<2){showHint('Mindestens 2 Teams!');return;}}
+  else{var active=getActiveSeats();if(active.length<2){showHint('Mindestens 2 Teams!');return;}}
+  if(G.songs.length===0){showHint('Songs werden geladen – kurz warten!');return;}
+  if(G_MODE!=='single') G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
+  var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
+  G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
+  try{var _el=document.documentElement;(_el.requestFullscreen||_el.webkitRequestFullscreen||function(){}).call(_el);}catch(e){}
+  if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});}
+  showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
+}
+
+// ── CHART MACHINE ──
+var SLOT_H=160,slotYearList=[],slotSpinning=false,slotPulled=false;
+function getSlotH(){var item=document.querySelector('.slot-item');return item?item.getBoundingClientRect().height:160;}
+function initSlot(){var years=[];for(var y=1960;y<=2026;y++)years.push(y);slotYearList=[...years,...years,...years,...years,...years];var reel=document.getElementById('slot-reel');reel.style.transition='none';reel.innerHTML=slotYearList.map(y=>`<div class="slot-item">${y}</div>`).join('');var slotH=getSlotH();reel.style.height=(slotYearList.length*slotH)+'px';var startIdx=years.length*2+Math.floor(Math.random()*years.length);reel.style.transform=`translateY(${-startIdx*slotH}px)`;slotPulled=false;var lever=document.getElementById('slot-lever');if(lever)lever.classList.remove('pulled');}
+function spinSlot(){if(slotSpinning||slotPulled)return;slotSpinning=true;slotPulled=true;var lever=document.getElementById('slot-lever');if(lever)lever.classList.add('pulled');playSlot();document.getElementById('slot-spin-btn').style.display='none';var yearCount=2026-1960+1;var targetIdx=yearCount*3+Math.floor(Math.random()*yearCount);var reel=document.getElementById('slot-reel');setTimeout(function(){var slotH2=getSlotH();reel.style.transition='transform 3.0s cubic-bezier(0.12,0.57,0.14,0.99)';reel.style.transform=`translateY(${-targetIdx*slotH2}px)`;},200);setTimeout(function(){slotSpinning=false;stopSlot();var year=slotYearList[targetIdx];G.slotYears.push(year);var el=document.getElementById('slot-result');el.textContent=year;el.style.display='block';el.style.color=G.teams[G.slotTeam].color;document.getElementById('slot-next-btn').style.display='block';reel.querySelectorAll('.slot-item').forEach((item,i)=>{if(i===targetIdx)item.style.color=G.teams[G.slotTeam].color;});},3400);}
+function updateSlotUI(){var team=G.teams[G.slotTeam];var el=document.getElementById('slot-cur-team');el.textContent=team.name;el.style.color=team.color;document.getElementById('slot-spin-btn').style.display='block';document.getElementById('slot-spin-btn').disabled=false;document.getElementById('slot-next-btn').style.display='none';document.getElementById('slot-result').style.display='none';document.getElementById('slot-reel').querySelectorAll('.slot-item').forEach(item=>item.style.color='rgba(240,240,255,.9)');}
+function nextSlotTeam(){G.slotTeam++;if(G.slotTeam>=G.teams.length){var validYears=G.slotYears.slice(0,G.teams.length);G.teams.forEach((t,i)=>{t.years=[validYears[i]||1990];});var activeCW=CW_ORDER.filter(pos=>G.teams.some(t=>t.pos===pos));var startPos=activeCW[Math.floor(Math.random()*activeCW.length)];G.cur=G.teams.findIndex(t=>t.pos===startPos);if(G.cur<0)G.cur=0;beginPlay();}else{updateSlotUI();initSlot();}}
+
+// ── PLAY ──
+function beginPlay(){G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.readyToReveal=false;clearCd();if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();var gc=document.getElementById('game-center');if(gc)gc.className=CENTER_ROT[G.teams[G.cur].side]||'r0';showScreen('game');buildOptFilter();renderPanels();updateGameUI();pushState();}
+function drawCard(){if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();}
+
+// ── PANELS ──
 function renderPanels(){
   if(G_MODE==='single'){renderActivePanelOnly();return;}
   document.getElementById('area-top').innerHTML='';
@@ -2043,7 +2042,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=193', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=194', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
