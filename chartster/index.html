@@ -567,10 +567,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .spec-connector{width:clamp(16px,2.5vw,40px);height:3px;background:rgba(255,255,255,.15);flex-shrink:0;}
 .spec-listening{font-size:clamp(16px,2.5vw,28px);color:rgba(255,255,255,.28);letter-spacing:.06em;font-style:italic;text-align:center;}
 .spec-sep{width:100%;height:1px;background:var(--glass-b);}
-.spec-scores{display:flex;flex-wrap:wrap;gap:clamp(12px,2vw,32px);width:100%;justify-content:center;flex-shrink:0;}
+.spec-scores{display:flex;flex-wrap:wrap;gap:clamp(16px,2.5vw,40px);width:100%;justify-content:center;flex-shrink:0;align-items:center;}
 .spec-score-card{flex:1;min-width:120px;max-width:180px;background:rgba(255,255,255,.04);border:1px solid var(--glass-b);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:8px;}
 .spec-score-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.spec-score-name{font-size:clamp(16px,2.2vw,26px);color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:100px;}
+.spec-score-name{font-size:clamp(16px,2.2vw,26px);color:var(--muted);flex:0 0 auto;white-space:nowrap;}
 .spec-score-val{font-size:clamp(20px,3vw,36px);font-weight:800;}
 .spec-sync-btn{font-size:13px;color:var(--muted);background:none;border:1px solid var(--glass-b);border-radius:8px;padding:6px 16px;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.06em;}
 .spec-sync-btn:active{opacity:.6;}
@@ -627,7 +627,12 @@ body[data-mode=single] .slot-outer{max-width:min(860px,94vw)!important;}
 /* Spielleiter-Lobby größer */
 body[data-mode=single] .card{min-height:55vh;}
 body[data-mode=single] .game-title{font-size:clamp(36px,6vw,72px)!important;}
-.st-inp{flex:1;font-size:clamp(18px,2.8vw,26px);padding:clamp(14px,2vw,20px) 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;color:#fff;font-family:Outfit,sans-serif;}
+.st-inp{flex:1;width:100%;font-size:clamp(18px,2.8vw,26px);padding:clamp(14px,2vw,20px) 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;color:#fff;font-family:Outfit,sans-serif;box-sizing:border-box;}
+
+
+/* Spielgerät: Timeline größer */
+body[data-mode=single] #year-tl{gap:clamp(8px,1.5vw,18px)!important;justify-content:center;width:100%;padding:0 8px;}
+body[data-mode=single] .tl-box{width:clamp(90px,12vw,150px)!important;height:clamp(90px,12vw,150px)!important;font-size:clamp(26px,3.8vw,52px)!important;}
 
 </style>
 </head>
@@ -665,7 +670,7 @@ body[data-mode=single] .game-title{font-size:clamp(36px,6vw,72px)!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.7.3</div>
+<div class="version">v5.7.4</div>
 
 <!-- SW Update Toast -->
 
@@ -701,7 +706,7 @@ body[data-mode=single] .game-title{font-size:clamp(36px,6vw,72px)!important;}
   </div>
   <div class="opt-row">
     <button class="opt-btn" onclick="enterSpectator();closeOpt()">👁 Zuschauer-Modus</button>
-    <button class="opt-btn" onclick="syncSpectator()" style="position:fixed;bottom:6px;right:56px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:Outfit,sans-serif;">↻ Sync</button>
+    <button class="opt-btn" onclick="syncSpectator()" style="position:fixed;bottom:6px;right:80px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:Outfit,sans-serif;z-index:50;">↻ Sync</button>
   </div>
   <div id="opt-confirm">
     <div style="font-size:15px;font-weight:600;color:#ff6060">Wirklich zurücksetzen? Alle Punkte gehen verloren.</div>
@@ -726,7 +731,7 @@ body[data-mode=single] .game-title{font-size:clamp(36px,6vw,72px)!important;}
     <div class="spec-sep"></div>
     <div class="spec-scores" id="spec-scores"></div>
     <div id="spec-offline-hint" style="display:none;font-size:13px;color:#ff6060;letter-spacing:.06em;text-align:center;">⚠ Verbindung unterbrochen</div>
-    <button class="spec-sync-btn" onclick="syncSpectator()" style="position:fixed;bottom:6px;right:56px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:Outfit,sans-serif;">↻ Sync</button>
+    <button class="spec-sync-btn" onclick="syncSpectator()" style="position:fixed;bottom:6px;right:80px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:Outfit,sans-serif;z-index:50;">↻ Sync</button>
   </div>
 </div>
 
@@ -890,7 +895,7 @@ body[data-mode=single] .game-title{font-size:clamp(36px,6vw,72px)!important;}
           <div class="sp-ot" id="sp-ot"><div class="sp-name" id="sp-team">Team</div><div class="sp-q" id="sp-comment">kennt Ihr den Song?</div></div>
         </div>
         <button id="new-song-token-btn" onclick="newSongToken()">🔄 Neuer Song – 1 Token</button>
-        <button class="btn btn-primary" id="main-btn" onclick="cardNext()" style="font-size:20px;padding:18px">Wir sind bereit …</button>
+        <button class="btn btn-primary" id="main-btn" onclick="cardNext()" style="font-size:20px;padding:18px">Los geht's …</button>
         <div class="score-btns" id="score-btns">
           <button class="s-year" onclick="score('year')">Karte gewonnen</button>
           <button class="s-both" onclick="score('both')">Karte + Token</button>
@@ -968,10 +973,12 @@ document.addEventListener('visibilitychange', function(){
 function enterSpectator(){
   IS_SPECTATOR = true;
   IS_HOST = false;
+  document.body.dataset.mode = G_MODE||'single';
   sessionStorage.removeItem('chartster_host');
   showScreen('spectator');
   initSpectatorListener();
   requestWakeLock();
+  if(G.songs.length===0){fetch('songs.json').then(function(r){return r.json();}).then(function(d){G.songs=d.filter(function(s){return s.l;});buildLobbyBg();}).catch(function(){});}else{setTimeout(buildLobbyBg,100);}
 }
 
 function initSpectatorListener(){
@@ -1499,7 +1506,7 @@ function updateGameUI(){
   document.getElementById('player-outer').classList.remove('show');document.getElementById('sp-overlay').classList.remove('gone');document.getElementById('sp-ot').classList.remove('gone');document.getElementById('sp-frame').src='';
   document.getElementById('sp-team').textContent=team.name;document.getElementById('sp-team').style.color=team.color;
   document.getElementById('year-tl').classList.remove('show');document.getElementById('countdown-wrap').classList.remove('show');document.getElementById('hitster-panel').classList.remove('show');document.getElementById('new-song-token-btn').style.display='none';
-  var btn=document.getElementById('main-btn');btn.textContent='Wir sind bereit …';btn.className='btn btn-primary';btn.style.display='';btn.disabled=false;
+  var btn=document.getElementById('main-btn');btn.textContent='Los geht\'s …';btn.className='btn btn-primary';btn.style.display='';btn.disabled=false;
   document.getElementById('score-btns').classList.remove('show');
 }
 
@@ -2126,7 +2133,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=202', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=203', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
