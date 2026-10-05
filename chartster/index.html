@@ -599,6 +599,30 @@ body[data-mode=single] #new-song-token-btn{display:none!important;}
 .spec-card{padding-top:clamp(160px,20vh,240px)!important;padding-bottom:0!important;}
 .spec-listening{display:none!important;}
 
+
+/* ── SINGLE MODE: Größen ── */
+body[data-mode=single] .year-reveal{font-size:clamp(100px,16vw,190px)!important;}
+body[data-mode=single] #c-artist{font-size:clamp(28px,4.5vw,52px)!important;}
+body[data-mode=single] #c-title{font-size:clamp(30px,5vw,60px)!important;}
+body[data-mode=single] #slot-current-team{font-size:clamp(40px,6vw,72px)!important;}
+body[data-mode=single] .slot-outer{max-width:min(860px,94vw)!important;}
+/* Jahreskarten Zuschauer-Stil */
+.tl-box{border:2px solid rgba(143,95,255,.7)!important;background:rgba(70,40,160,.9)!important;font-weight:800!important;color:#fff!important;}
+/* Zuschauer: größere Karten */
+.spec-year{width:clamp(160px,20vw,300px)!important;height:clamp(95px,12vw,180px)!important;font-size:clamp(60px,9vw,130px)!important;}
+#spec-timeline-teamname{font-size:clamp(52px,9vw,120px)!important;order:10;margin-top:auto;}
+.spec-score-card{flex:0 0 auto;background:transparent;border:none;padding:6px 16px;}
+.spec-score-name{font-size:clamp(16px,2.2vw,26px)!important;}
+.spec-score-val{font-size:clamp(28px,4.5vw,52px)!important;font-weight:800!important;}
+/* Admin Panel */
+#opt-panel{font-size:clamp(17px,2.5vw,22px)!important;}
+.opt-btn{min-height:clamp(60px,8vw,88px)!important;font-size:clamp(17px,2.5vw,24px)!important;padding:clamp(16px,2.5vw,24px) clamp(16px,2.5vw,28px)!important;cursor:pointer;}
+/* Slot Machine */
+.slot-item{height:clamp(200px,28vw,340px)!important;font-size:clamp(110px,17vw,200px)!important;}
+#slot-window{height:clamp(200px,28vw,340px)!important;}
+/* Token */
+.coin{width:clamp(24px,3.5vw,40px)!important;height:clamp(24px,3.5vw,40px)!important;}
+
 </style>
 </head>
 <body>
@@ -635,7 +659,7 @@ body[data-mode=single] #new-song-token-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.7.1</div>
+<div class="version">v5.7.2</div>
 
 <!-- SW Update Toast -->
 
@@ -1487,11 +1511,12 @@ function cardNext(){
   } else if(G.phase===2){
     if(G.selBox===null){showHint('Bitte erst eine Position im Zeitstrahl markieren!');return;}
     if(!G.readyToReveal){showHint('Countdown läuft noch – kurz warten!');return;}
-    G.phase=3;clearCd();
+    G.phase=3;clearCd();if(G_MODE==='single')renderActivePanelOnly();
     document.getElementById('sp-overlay').classList.add('gone');document.getElementById('sp-ot').classList.add('gone');document.getElementById('hitster-panel').classList.remove('show');document.getElementById('countdown-wrap').classList.remove('show');document.getElementById('new-song-token-btn').style.display='none';
     document.getElementById('year-tl').classList.add('show');
     var yr=document.getElementById('c-year');yr.textContent=G.currentCard.y;yr.style.display='block';
     document.getElementById('c-artist').textContent=G.currentCard.a;document.getElementById('c-title').textContent=G.currentCard.t;
+    if(G_MODE==='single'&&IS_HOST)REF.update({reveal:{y:G.currentCard.y,a:G.currentCard.a,t:G.currentCard.t,c:G.currentCard.c||null}});
     setTimeout(function(){document.getElementById('c-artist').classList.add('on');document.getElementById('c-title').classList.add('on');},50);
     document.getElementById('main-btn').style.display='none';document.getElementById('score-btns').classList.add('show');
   }
@@ -1589,7 +1614,9 @@ function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort(
 
 // ── TRANSITION ──
 function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':' r90','right':' r270','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
-function continueGame(){G.cur=nextTeamIdx();
+function continueGame(){
+  if(IS_HOST)REF.update({reveal:null});
+  G.cur=nextTeamIdx();
   if(G.finalRound && G.cur===G.finalRoundStart){showVictory();return;}G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
 
 // ── VICTORY ──
@@ -2093,7 +2120,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=200', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=201', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
