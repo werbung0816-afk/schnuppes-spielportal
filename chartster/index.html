@@ -622,7 +622,7 @@ body[data-mode=single] #s5-btn{display:none!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.6.0</div>
+<div class="version">v5.6.2</div>
 
 <!-- SW Update Toast -->
 
@@ -1203,8 +1203,10 @@ function initFirebase(){
   fbListener=REF.on('value',function(snap){var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});
   // Nur navigieren wenn Modus gewählt wurde
   if(!MODE_SELECTED) return;
-  // original initFirebase logic continues below
-  var wasHost=sessionStorage.getItem('chartster_host')==='1';
+  // Modus wurde explizit gewählt → immer Host werden (ignoriert alte Firebase-Sessions)
+  setHost();
+  return;
+  // (original logic disabled) var wasHost=sessionStorage.getItem('chartster_host')==='1';
   REF.once('value').then(snap=>{
     var d=snap.val();
     var hasGame=d&&d.screen==='game'&&d.teams&&d.teams.length>0;
@@ -2041,7 +2043,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=191', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=193', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
