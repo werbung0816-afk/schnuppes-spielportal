@@ -125,11 +125,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 /* ── CHART MACHINE (full-width, big) ── */
 #screen-slot .card{max-width:700px;width:95%;margin:0}
-.slot-outer{position:relative;width:100%;max-width:min(860px,94vw);margin:0 auto}
+.slot-outer{position:relative;width:100%;max-width:min(700px,90vw);margin:0 auto}
 .slot-machine-body{background:#12041f;border:2px solid rgba(83,246,255,.35);border-radius:24px;padding:20px;box-shadow:0 0 50px rgba(83,246,255,.18)}
-#slot-window{height:clamp(200px,28vw,340px);overflow:hidden;border-radius:14px;background:#07000f;border:1px solid rgba(83,246,255,.2);position:relative}
+#slot-window{height:clamp(160px,22vw,260px);overflow:hidden;border-radius:14px;background:#07000f;border:1px solid rgba(83,246,255,.2);position:relative}
 #slot-reel{position:absolute;width:100%;will-change:transform}
-.slot-item{height:clamp(200px,28vw,340px);display:flex;align-items:center;justify-content:center;font-size:clamp(110px,17vw,200px);font-weight:900;font-family:'Outfit',sans-serif;color:rgba(240,240,255,.9)}
+.slot-item{height:clamp(160px,22vw,260px);display:flex;align-items:center;justify-content:center;font-size:clamp(90px,13vw,150px);font-weight:900;font-family:'Outfit',sans-serif;color:rgba(240,240,255,.9)}
 .slot-overlay-top{position:absolute;top:0;left:0;right:0;height:40px;background:linear-gradient(to bottom,#07000f,transparent);z-index:2;pointer-events:none}
 .slot-overlay-bot{position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,#07000f,transparent);z-index:2;pointer-events:none}
 .slot-line{position:absolute;left:10px;right:10px;top:50%;height:3px;background:var(--cyan);opacity:.6;z-index:3;transform:translateY(-50%)}
@@ -174,8 +174,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .p-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#07000f;flex-shrink:0}
 .p-name{font-weight:700;font-size:19px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .p-tokens{display:flex;gap:3px;flex-shrink:0}
-.coin{width:clamp(24px,3.5vw,40px);height:clamp(24px,3.5vw,40px);border-radius:50%;border:2px solid;font-size:clamp(10px,1.4vw,16px);font-weight:800;color:#07000f;display:flex;align-items:center;justify-content:center}
-.coin.empty{opacity:.3}
+.coin{width:18px;height:18px;border-radius:50%;border:2px solid;font-size:8px;font-weight:800;color:#07000f;display:flex;align-items:center;justify-content:center}
+.coin.empty{background:transparent!important;opacity:.2}
 .active-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:4px 10px;border-radius:7px;text-align:center}
 .year-chips{display:flex;flex-wrap:wrap;gap:4px}
 .y-chip{height:28px;min-width:52px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
@@ -193,13 +193,13 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 
 /* ── COUNTDOWN ── */
 #countdown-wrap{background:var(--glass);border:1px solid rgba(83,246,255,.2);border-radius:14px;padding:14px 18px;display:none;flex-direction:column;gap:7px}
-#countdown-wrap.show{display:none}
+#countdown-wrap.show{display:flex}
 .cd-row{display:flex;align-items:center;justify-content:space-between;font-size:18px;font-weight:700}
 .cd-bar{width:100%;height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
 .cd-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .1s linear}
 
 /* ── TOKEN PANEL ── */
-#hitster-panel{background:var(--glass);border:1px solid rgba(255,79,216,.25);border-radius:14px;padding:clamp(16px,2.5vw,28px);display:none;flex-direction:column;gap:12px;align-items:center;text-align:center;width:100%;}
+#hitster-panel{background:var(--glass);border:1px solid rgba(255,79,216,.25);border-radius:14px;padding:14px 18px;display:none;flex-direction:column;gap:10px}
 #hitster-panel.show{display:flex}
 .hst-title{font-size:14px;font-weight:700;color:var(--pink);text-transform:uppercase;letter-spacing:.06em}
 .hst-btn{padding:11px 18px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:#07000f}
@@ -209,7 +209,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 #year-tl{display:none;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;width:100%;padding:8px 0}
 #year-tl.show{display:flex}
 .tl-chip{padding:16px 32px;border-radius:18px;font-size:42px;font-weight:900;color:#07000f}
-.tl-box{width:clamp(80px,10vw,130px);height:clamp(80px,10vw,130px);border-radius:16px;border:2px solid rgba(143,95,255,.7);background:rgba(70,40,160,.9);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;position:relative;font-size:clamp(24px,3.2vw,44px);font-weight:800;color:#fff;}
+.tl-box{width:72px;height:72px;border-radius:16px;border:4px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;position:relative;font-size:28px}
 .tl-box.sel{color:#07000f}
 .bet-dots{position:absolute;top:-8px;right:-5px;display:flex;gap:2px}
 .bet-dot{width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.4)}
@@ -227,7 +227,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .rev-artist.on,.rev-title.on{opacity:1}
 
 /* ── SPOTIFY ── */
-.player-outer{position:relative;width:100%;height:var(--spotify-h,152px);border-radius:14px;overflow:hidden;border:1px solid rgba(83,246,255,.2);box-shadow:0 0 24px rgba(83,246,255,.08);opacity:0;pointer-events:none;transition:opacity .3s ease}
+.player-outer{position:relative;width:100%;height:152px;border-radius:14px;overflow:hidden;border:1px solid rgba(83,246,255,.2);box-shadow:0 0 24px rgba(83,246,255,.08);opacity:0;pointer-events:none;transition:opacity .3s ease}
 .player-outer.show{opacity:1;pointer-events:auto}
 .player-outer iframe{position:absolute;top:0;left:0;width:100%;height:152px;border:none}
 #sp-overlay.gone{opacity:0}
@@ -253,11 +253,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .s-none:active{background:rgba(255,60,60,.2)}
 
 /* ── OPTIONS ── */
-#opt-panel{position:fixed;bottom:0;left:0;right:0;background:rgba(8,2,18,.97);backdrop-filter:blur(20px);border-top:1px solid var(--glass-b);border-radius:20px 20px 0 0;padding:clamp(20px,3vw,36px) clamp(16px,3vw,40px) clamp(24px,4vw,48px);z-index:850;display:none;flex-direction:column;gap:clamp(12px,2vw,20px);transform:translateY(100%);transition:transform .3s ease;font-size:clamp(17px,2.5vw,22px)}
+#opt-panel{position:fixed;bottom:0;left:0;right:0;background:rgba(8,2,18,.97);backdrop-filter:blur(20px);border-top:1px solid var(--glass-b);border-radius:20px 20px 0 0;padding:22px 20px 34px;z-index:850;display:none;flex-direction:column;gap:14px;transform:translateY(100%);transition:transform .3s ease}
 #opt-panel.show{display:flex;transform:translateY(0)}
 .opt-title{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.opt-row{display:flex;gap:clamp(10px,1.5vw,18px)}
-.opt-btn{min-height:clamp(60px,8vw,88px)!important;font-size:clamp(17px,2.5vw,24px)!important;padding:clamp(16px,2.5vw,24px) clamp(16px,2.5vw,28px)!important;flex:1;border-radius:16px;font-family:'Outfit',sans-serif;font-weight:700;transition:all .2s;border:1px solid var(--glass-b);background:var(--glass);color:var(--text);cursor:pointer;}
+.opt-row{display:flex;gap:10px}
+.opt-btn{flex:1;padding:14px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;transition:all .2s;border:1px solid var(--glass-b);background:var(--glass);color:var(--text)}
 .opt-btn:active{background:rgba(255,255,255,.12)}
 .opt-btn.danger{color:#ff6060;border-color:rgba(255,60,60,.3)}
 #opt-confirm{background:rgba(255,60,60,.08);border-radius:12px;padding:14px;display:none;flex-direction:column;gap:10px;border:1px solid rgba(255,60,60,.3)}
@@ -565,248 +565,26 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .spec-timeline{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,1.2vw,18px);width:100%;flex:1;}
 .spec-year{background:rgba(70,40,160,1);border:2px solid rgba(143,95,255,.9);border-radius:clamp(10px,1.5vw,18px);width:clamp(170px,22vw,300px);height:clamp(90px,11vw,160px);font-size:clamp(40px,7.5vw,105px);font-weight:800;color:#fff;text-align:center;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .spec-connector{width:clamp(16px,2.5vw,40px);height:3px;background:rgba(255,255,255,.15);flex-shrink:0;}
-.spec-listening{display:none!important;}
+.spec-listening{font-size:clamp(16px,2.5vw,28px);color:rgba(255,255,255,.28);letter-spacing:.06em;font-style:italic;text-align:center;}
 .spec-sep{width:100%;height:1px;background:var(--glass-b);}
-.spec-scores{display:flex;flex-wrap:wrap;gap:clamp(16px,3vw,40px);width:100%;justify-content:center;flex-shrink:0;align-items:center;}
-.spec-score-card{flex:0 0 auto;background:transparent;border:none;padding:6px 16px;display:flex;align-items:center;gap:10px;}
+.spec-scores{display:flex;flex-wrap:wrap;gap:8px;width:100%;justify-content:center;flex-shrink:0;}
+.spec-score-card{flex:1;min-width:120px;max-width:180px;background:rgba(255,255,255,.04);border:1px solid var(--glass-b);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:8px;}
 .spec-score-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.spec-score-name{font-size:clamp(16px,2.2vw,26px);color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.spec-score-name{font-size:clamp(13px,1.8vw,20px);color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .spec-score-val{font-size:clamp(20px,3vw,36px);font-weight:800;}
 .spec-sync-btn{font-size:13px;color:var(--muted);background:none;border:1px solid var(--glass-b);border-radius:8px;padding:6px 16px;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.06em;}
 .spec-sync-btn:active{opacity:.6;}
 #sw-update-toast.show{opacity:1!important;pointer-events:auto!important;}
 @keyframes winCardSpin{0%{transform:scale(.3) rotate(-15deg);opacity:0;}60%{transform:scale(1.05) rotate(3deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
 
-/* ── 1-SPIELER-STEUERUNG ── */
-body[data-mode=single] #table-selector{display:none!important}
-body[data-mode=single] #minigame-section{display:none!important}
-body[data-mode=single] #mini-btn{display:none!important}
-body[data-mode=single] .mg-cards{display:none!important}
-body[data-mode=single] .sep{display:none!important}
-body[data-mode=single] #s5-btn{display:none!important}
-body:not([data-mode=single]) #single-team-setup{display:none!important}
-body[data-mode=single] #single-team-setup{display:flex!important;flex-direction:column;gap:10px;width:100%}
-.st-row{display:flex;align-items:center;gap:12px;width:100%}
-.st-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;display:inline-block}
-.st-inp{flex:1;font-size:clamp(18px,2.8vw,26px);padding:clamp(14px,2vw,20px) 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;color:#fff;font-family:Outfit,sans-serif}
-.st-inp:focus{border-color:rgba(83,246,255,.6)}
-
-
-/* Spotify vergrößert im Single Mode */
-body[data-mode=single] .player-outer{
-  transform-origin: top left;
-  transform: scale(1.5);
-  width: 66.67%;
-  margin-bottom: calc(var(--spotify-h, 152px) * 0.5);
-}
-
-
-/* Single Mode: kein Rahmen um den Spielbereich */
-body[data-mode=single] .game-card{
-  background:transparent!important;
-  backdrop-filter:none!important;
-  border:none!important;
-  padding:8px 4px!important;
-}
-body[data-mode=single] #game-center{
-  width:100%;
-  max-width:900px;
-  margin:0 auto;
-}
-body[data-mode=single] .player-outer{
-  transform-origin:top center;
-}
-
-
-/* Single Mode: Auflösung größer für Querformat-Tablet */
-body[data-mode=single] .year-reveal{
-  font-size:clamp(100px,16vw,190px)!important;
-}
-body[data-mode=single] .rev-artist{
-  font-size:clamp(28px,4.5vw,52px)!important;
-}
-body[data-mode=single] .rev-title{
-  font-size:clamp(30px,5vw,60px)!important;
-}
-body[data-mode=single] #c-artist{
-  font-size:clamp(28px,4.5vw,52px)!important;
-}
-body[data-mode=single] #c-title{
-  font-size:clamp(30px,5vw,60px)!important;
-}
-/* Timeline card bigger */
-/* spec-year override moved to later rule */
-
-
-/* Spectator Single Mode: größere Jahreskarten + Teamname */
-body[data-mode=single] #spec-timeline-teamname{
-  font-size:clamp(60px,11vw,140px)!important;
-}
-body[data-mode=single] .spec-year{
-  width:clamp(200px,32vw,480px)!important;
-  height:clamp(130px,19vw,280px)!important;
-  font-size:clamp(70px,13vw,200px)!important;
-}
-body[data-mode=single] .spec-card{
-  gap:clamp(8px,1.5vw,20px)!important;
-}
-body[data-mode=single] #spec-timeline{
-  gap:clamp(8px,1.5vw,20px)!important;
-  justify-content:center;
-  align-items:center;
-  flex-wrap:wrap;
-}
-
-
-/* Spectator: immer groß (data-mode unabhängig) */
-#spec-timeline-teamname{
-  font-size:clamp(56px,10vw,130px)!important;
-}
-.spec-year{
-  width:clamp(180px,26vw,400px)!important;
-  height:clamp(110px,15vw,240px)!important;
-  font-size:clamp(60px,11vw,180px)!important;
-}
-
-
-/* Single Mode Spielgerät: Panel kompakt */
-body[data-mode=single] .t-panel{
-  padding:10px 12px!important;
-  gap:6px!important;
-}
-body[data-mode=single] .t-panel .team-name{
-  font-size:clamp(18px,2.5vw,28px)!important;
-}
-body[data-mode=single] .t-panel .btn{
-  padding:10px 14px!important;
-  font-size:clamp(14px,1.8vw,18px)!important;
-}
-body[data-mode=single] #area-bot{
-  max-height:220px;
-  overflow:hidden;
-}
-
-
-/* Zuschauer: Zentrierung mit Platz für Reveal-Overlay */
-.spec-card{
-  padding-top:clamp(160px,20vh,240px)!important;
-  padding-bottom:0!important;
-}
-.spec-year{
-  width:clamp(160px,20vw,300px)!important;
-  height:clamp(95px,12vw,180px)!important;
-  font-size:clamp(60px,9vw,130px)!important;
-}
-.spec-timeline{
-  justify-content:center!important;
-  align-items:center!important;
-  flex:1!important;
-}
-#spec-timeline-teamname{
-  font-size:clamp(52px,9vw,120px)!important;
-}
-
-
-/* Single Mode: area-bot als Button-Leiste unten */
-body[data-mode=single] #area-bot{
-  width:100%;
-  padding:8px 0;
-}
-body[data-mode=single] .t-panel{
-  display:none!important;
-}
-body[data-mode=single] #game-center{
-  display:flex;
-  flex-direction:column;
-  width:100%;
-}
-
-
-/* Single Mode: Banner und alte Buttons ausblenden */
-body[data-mode=single] .banner{display:none!important;}
-body[data-mode=single] .score-btns{display:none!important;}
-body[data-mode=single] .score-btns.show{display:none!important;}
-/* Leerer Rahmen: game-card komplett transparent + kein Padding */
-body[data-mode=single] .game-card{
-  background:transparent!important;
-  border:none!important;
-  backdrop-filter:none!important;
-  padding:4px 0!important;
-  gap:8px!important;
-}
-/* Mehr Platz: game-center nutzt volle Höhe */
-body[data-mode=single] #screen-game{
-  padding:8px 12px!important;
-}
-
-
-/* Single Mode: leere Bereiche kollabieren */
-body[data-mode=single] .score-btns{height:0!important;overflow:hidden!important;margin:0!important;padding:0!important;}
-body[data-mode=single] .game-card .sep{display:none!important;}
-body[data-mode=single] .game-card{min-height:0!important;flex-shrink:1!important;}
-body[data-mode=single] #screen-game{overflow:hidden;}
-
-
-/* Zuschauer: Teamname unten */
-#spec-timeline-teamname{
-  order:10;
-  font-size:clamp(52px,9vw,120px)!important;
-  margin-top:auto;
-}
-
-
-body[data-mode=single] #token-btn{
-  order:-1;
-  margin-bottom:8px;
-}
-body[data-mode=single] .t-panel-coins{
-  justify-content:center!important;
-  gap:clamp(6px,1vw,12px)!important;
-}
-
-body[data-mode=single] #new-song-token-btn{display:none!important;}
-.spec-sync-btn{position:fixed;bottom:8px;right:60px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Outfit,sans-serif;z-index:50;}
-
-/* ── TISCHRUNDEN-MODUS: Alles größer ── */
-body:not([data-mode=single]) .s-year,
-body:not([data-mode=single]) .s-both,
-body:not([data-mode=single]) .s-none{
-  padding:clamp(18px,2.5vw,28px) clamp(10px,1.5vw,18px)!important;
-  font-size:clamp(16px,2.2vw,22px)!important;
-  border-radius:16px!important;
-}
-body:not([data-mode=single]) .banner-team{
-  font-size:clamp(24px,3.5vw,40px)!important;
-}
-body:not([data-mode=single]) .team-name{
-  font-size:clamp(20px,3vw,32px)!important;
-}
-body:not([data-mode=single]) .y-chip{
-  height:clamp(32px,4vw,48px)!important;
-  min-width:clamp(56px,7vw,88px)!important;
-  font-size:clamp(14px,1.8vw,22px)!important;
-  border-radius:10px!important;
-}
-body:not([data-mode=single]) .coin{
-  width:clamp(22px,3vw,32px)!important;
-  height:clamp(22px,3vw,32px)!important;
-}
-body:not([data-mode=single]) .seat-circle{
-  width:clamp(60px,8vw,80px)!important;
-  height:clamp(60px,8vw,80px)!important;
-}
-body:not([data-mode=single]) .seat-inp{
-  font-size:clamp(16px,2.2vw,22px)!important;
-  padding:10px 12px!important;
-}
-body:not([data-mode=single]) .tl-box{
-  width:clamp(90px,11vw,140px)!important;
-  height:clamp(90px,11vw,140px)!important;
-  font-size:clamp(26px,3.5vw,46px)!important;
-}
-body:not([data-mode=single]) .t-panel{
-  width:clamp(300px,38vw,440px)!important;
-}
+body:not([data-mode=single]) #single-team-setup{display:none!important;}
+body[data-mode=single] #single-team-setup{display:flex!important;flex-direction:column;gap:10px;width:100%;}
+body[data-mode=single] #table-selector{display:none!important;}
+body[data-mode=single] #minigame-section{display:none!important;}
+body[data-mode=single] #mini-btn{display:none!important;}
+body[data-mode=single] .mg-cards{display:none!important;}
+body[data-mode=single] .sep{display:none!important;}
+body[data-mode=single] #s5-btn{display:none!important;}
 
 </style>
 </head>
@@ -844,7 +622,7 @@ body:not([data-mode=single]) .t-panel{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.5.7</div>
+<div class="version">v5.6.0</div>
 
 <!-- SW Update Toast -->
 
@@ -882,8 +660,6 @@ body:not([data-mode=single]) .t-panel{
     <button class="opt-btn" onclick="enterSpectator();closeOpt()">👁 Zuschauer-Modus</button>
     <button class="opt-btn" onclick="syncSpectator()">↻ Synchronisieren</button>
   </div>
-  <div class="opt-title" style="margin-top:12px;font-size:14px;">⚖ Teams anpassen</div>
-  <div id="opt-team-controls" style="display:flex;flex-direction:column;gap:8px;width:100%;"></div>
   <div id="opt-confirm">
     <div style="font-size:15px;font-weight:600;color:#ff6060">Wirklich zurücksetzen? Alle Punkte gehen verloren.</div>
     <div class="opt-row">
@@ -903,7 +679,7 @@ body:not([data-mode=single]) .t-panel{
     
     <div id="spec-timeline-teamname" style="font-size:clamp(44px,8vw,110px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:center;width:100%;"></div>
     <div class="spec-timeline" id="spec-timeline"></div>
-    
+    <div class="spec-listening">♫ Hört zu und schätzt …</div>
     <div class="spec-sep"></div>
     <div class="spec-scores" id="spec-scores"></div>
     <div id="spec-offline-hint" style="display:none;font-size:13px;color:#ff6060;letter-spacing:.06em;text-align:center;">⚠ Verbindung unterbrochen</div>
@@ -913,13 +689,13 @@ body:not([data-mode=single]) .t-panel{
 
 <!-- ════ MODUS-AUSWAHL ════ -->
 <div id="screen-mode" class="screen active">
-  <div class="card" style="max-width:620px;text-align:center;">
+  <div class="card" style="max-width:640px;text-align:center;">
     <div class="game-title">CHARTSTER</div>
     <div style="font-size:clamp(14px,2vw,18px);color:var(--muted);margin:8px 0 24px;">Wie wollt ihr spielen?</div>
     <div style="display:flex;flex-direction:column;gap:14px;width:100%;">
-      <button id="mode-single-btn" onclick="onModeSingle()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);width:100%;border-radius:20px;background:rgba(83,246,255,.15);border:2px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">SPIELLEITER-MODUS</button>
-      <button id="mode-multi-btn" onclick="onModeMulti()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);width:100%;border-radius:20px;background:rgba(143,95,255,.15);border:2px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;letter-spacing:.05em;">TISCHRUNDEN-MODUS</button>
-      <button id="mode-spectator-btn" onclick="onModeSpectator()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);width:100%;border-radius:20px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;letter-spacing:.05em;">ZUSCHAUER-MODUS</button>
+      <button id="mode-single-btn" onclick="onModeSingle()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);min-height:clamp(90px,12vw,130px);width:100%;border-radius:20px;background:rgba(83,246,255,.15);border:2px solid rgba(83,246,255,.5);color:#53f6ff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;">SPIELLEITER-MODUS</button>
+      <button id="mode-multi-btn" onclick="onModeMulti()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);min-height:clamp(90px,12vw,130px);width:100%;border-radius:20px;background:rgba(143,95,255,.15);border:2px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-weight:700;cursor:pointer;">TISCHRUNDEN-MODUS</button>
+      <button id="mode-spectator-btn" onclick="onModeSpectator()" style="padding:clamp(28px,4vw,44px);font-size:clamp(22px,3.5vw,32px);min-height:clamp(90px,12vw,130px);width:100%;border-radius:20px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);font-family:Outfit,sans-serif;font-weight:600;cursor:pointer;">ZUSCHAUER-MODUS</button>
     </div>
   </div>
 </div>
@@ -931,16 +707,17 @@ body:not([data-mode=single]) .t-panel{
   <div class="game-title" style="font-size:52px;letter-spacing:2px">CHARTSTER</div>
   <div class="sep"></div>
   <div class="setup-section">
-    <!-- 1-Spieler-Steuerung: Teameingabe -->
-  <div id="single-team-setup">
+    <div id="single-team-setup">
     <div class="label">TEAMS</div>
-    <div class="st-row"><span class="st-dot" style="background:#53f6ff;box-shadow:0 0 8px #53f6ff"></span><input class="st-inp" id="st-0" placeholder="Die Stars" oninput="updateStartBtn()"></div>
-    <div class="st-row"><span class="st-dot" style="background:#ff4fd8;box-shadow:0 0 8px #ff4fd8"></span><input class="st-inp" id="st-1" placeholder="Die Legenden" oninput="updateStartBtn()"></div>
-    <div class="st-row" id="st-row-2" style="display:none"><span class="st-dot" style="background:#8f5fff;box-shadow:0 0 8px #8f5fff"></span><input class="st-inp" id="st-2" placeholder="Die Helden" oninput="updateStartBtn()"></div>
-    <div class="st-row" id="st-row-3" style="display:none"><span class="st-dot" style="background:#4dff91;box-shadow:0 0 8px #4dff91"></span><input class="st-inp" id="st-3" placeholder="Schlagerfüchse" oninput="updateStartBtn()"></div>
-    <div class="st-row" id="st-row-4" style="display:none"><span class="st-dot" style="background:#ff9f1c;box-shadow:0 0 8px #ff9f1c"></span><input class="st-inp" id="st-4" placeholder="Hitjäger" oninput="updateStartBtn()"></div>
-    <div class="st-row" id="st-row-5" style="display:none"><span class="st-dot" style="background:#e0ff4f;box-shadow:0 0 8px #e0ff4f"></span><input class="st-inp" id="st-5" placeholder="Top-Scorer" oninput="updateStartBtn()"></div>
-    <button class="btn" onclick="addSingleTeamRow()" style="margin-top:4px;font-size:clamp(16px,2.5vw,20px);padding:14px;color:#53f6ff;font-weight:700;width:100%;background:rgba(83,246,255,.1);border:1px solid rgba(83,246,255,.4)">＋ Team hinzufügen</button>
+    <div id="single-teams-list" style="display:flex;flex-direction:column;gap:10px;width:100%;">
+      <div class="st-row"><span class="st-dot" style="background:#53f6ff;box-shadow:0 0 8px #53f6ff"></span><input class="st-inp" id="st-0" placeholder="Die Stars" oninput="updateStartBtn()"></div>
+      <div class="st-row"><span class="st-dot" style="background:#ff4fd8;box-shadow:0 0 8px #ff4fd8"></span><input class="st-inp" id="st-1" placeholder="Die Legenden" oninput="updateStartBtn()"></div>
+      <div class="st-row" id="st-row-2" style="display:none"><span class="st-dot" style="background:#8f5fff;box-shadow:0 0 8px #8f5fff"></span><input class="st-inp" id="st-2" placeholder="Die Helden" oninput="updateStartBtn()"></div>
+      <div class="st-row" id="st-row-3" style="display:none"><span class="st-dot" style="background:#4dff91;box-shadow:0 0 8px #4dff91"></span><input class="st-inp" id="st-3" placeholder="Schlagerfüchse" oninput="updateStartBtn()"></div>
+      <div class="st-row" id="st-row-4" style="display:none"><span class="st-dot" style="background:#ff9f1c;box-shadow:0 0 8px #ff9f1c"></span><input class="st-inp" id="st-4" placeholder="Hitjäger" oninput="updateStartBtn()"></div>
+      <div class="st-row" id="st-row-5" style="display:none"><span class="st-dot" style="background:#e0ff4f;box-shadow:0 0 8px #e0ff4f"></span><input class="st-inp" id="st-5" placeholder="Top-Scorer" oninput="updateStartBtn()"></div>
+    </div>
+    <button class="btn" onclick="addSingleTeamRow()" style="margin-top:12px;font-size:clamp(16px,2.5vw,20px);padding:14px;color:#53f6ff;font-weight:700;width:100%;background:rgba(83,246,255,.1);border:1px solid rgba(83,246,255,.4)">＋ Team hinzufügen</button>
   </div>
   <div id="table-selector">
       <div class="ts-top-row">
@@ -974,10 +751,10 @@ body:not([data-mode=single]) .t-panel{
         <button class="flt off" data-f="top10" onclick="toggleFlt(this)"><img src="filter/filter-top10.png" alt="Top 10"></button>
       </div>
       <div class="flt-row">
-        <button class="flt off" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500"></button>
-        <button class="flt off" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond"></button>
-        <button class="flt off" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM"></button>
-        <button class="flt off" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino"></button>
+        <button class="flt" data-f="RS-500" onclick="toggleFlt(this)"><img src="filter/filter-rs500.png" alt="RS-500"></button>
+        <button class="flt" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond"></button>
+        <button class="flt" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM"></button>
+        <button class="flt" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino"></button>
       </div>
       <div style="width:100%"></div>
       <div style="width:100%;display:flex;align-items:center">
@@ -1070,7 +847,7 @@ body:not([data-mode=single]) .t-panel{
           <div class="sp-ot" id="sp-ot"><div class="sp-name" id="sp-team">Team</div><div class="sp-q" id="sp-comment">kennt Ihr den Song?</div></div>
         </div>
         <button id="new-song-token-btn" onclick="newSongToken()">🔄 Neuer Song – 1 Token</button>
-        <button class="btn btn-primary" id="main-btn" onclick="cardNext()" style="font-size:20px;padding:18px">Los geht's …</button>
+        <button class="btn btn-primary" id="main-btn" onclick="cardNext()" style="font-size:20px;padding:18px">Wir sind bereit …</button>
         <div class="score-btns" id="score-btns">
           <button class="s-year" onclick="score('year')">Karte gewonnen</button>
           <button class="s-both" onclick="score('both')">Karte + Token</button>
@@ -1148,14 +925,10 @@ document.addEventListener('visibilitychange', function(){
 function enterSpectator(){
   IS_SPECTATOR = true;
   IS_HOST = false;
-  document.body.dataset.mode = G_MODE||'single';
   sessionStorage.removeItem('chartster_host');
   showScreen('spectator');
   initSpectatorListener();
   requestWakeLock();
-  // Hintergrundanimation
-  if(G.songs.length===0){fetch('songs.json').then(function(r){return r.json();}).then(function(data){G.songs=data.filter(function(s){return s.l;});buildLobbyBg();}).catch(function(){});}
-  else{setTimeout(buildLobbyBg,100);}
 }
 
 function initSpectatorListener(){
@@ -1170,8 +943,6 @@ function initSpectatorListener(){
       showSpectatorVictory(d.wonTeams, d.teams);
     } else if(d.teams){
       updateSpectatorView(d);
-      if(d.reveal) showSpectatorReveal(d.reveal);
-      else hideSpectatorReveal();
     }
   });
 }
@@ -1306,11 +1077,9 @@ function updateSpectatorView(d){
   d.teams.forEach(function(t){
     var card=document.createElement('div');
     card.className='spec-score-card';
-    var tokStr='';for(var i=0;i<(t.tokens||0);i++)tokStr+='<span style="color:'+t.color+';font-size:clamp(14px,2vw,22px)">⬡</span>';
-    card.innerHTML='<div class="spec-score-dot" style="background:'+t.color+';width:14px;height:14px;border-radius:50%;flex-shrink:0;"></div>'+
+    card.innerHTML='<div class="spec-score-dot" style="background:'+t.color+'"></div>'+
       '<div class="spec-score-name">'+t.name+'</div>'+
-      '<div class="spec-score-val" style="color:'+t.color+';font-size:clamp(28px,4vw,52px);font-weight:800;">'+(t.years||[]).length+'</div>'+
-      (tokStr?'<div style="display:flex;gap:3px;align-items:center;">'+tokStr+'</div>':'');
+      '<div class="spec-score-val" style="color:'+t.color+'">'+(t.years||[]).length+'</div>';
     sc.appendChild(card);
   });
 }
@@ -1394,6 +1163,7 @@ firebase.initializeApp(fbCfg);
 const DB=firebase.database(),REF=DB.ref('chartster/game');
 var IS_HOST=false,fbListener=null;
 var G_MODE="multi";
+var MODE_SELECTED=false;
 var IS_SPECTATOR=false;
 var specListener=null;
 var _joinTs=Date.now();
@@ -1422,14 +1192,18 @@ function playApplause(){new Audio('applause.mp3').play().catch(function(e){conso
 function playSlot(){console.log('playSlot called');new Audio('slot%20machine.mp3').play().catch(function(e){console.log('slot sound error:',e);});}
 function stopSlot(){}
 
-var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(['RS-500','Bond-Edition','WM-Edition','Popcorn-Edition']),
+var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(),
   topFilter:null,phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[],miniGames:false,miniGamesDone:{memory:false,paparazzi:false},pendingMiniGame:null};
 ['top-l','top-r','left','right','bot-l','bot-r'].forEach(p=>G.seatCfg[p]=null);
 
 // ── FIREBASE ──
 function initFirebase(){
-  if(document.getElementById('screen-mode')&&document.getElementById('screen-mode').classList.contains('active'))return;
+  // Listener immer aufbauen (für Zuschauer/Gäste)
   if(fbListener){try{REF.off('value',fbListener);}catch(e){}}fbListener=null;
+  fbListener=REF.on('value',function(snap){var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});
+  // Nur navigieren wenn Modus gewählt wurde
+  if(!MODE_SELECTED) return;
+  // original initFirebase logic continues below
   var wasHost=sessionStorage.getItem('chartster_host')==='1';
   REF.once('value').then(snap=>{
     var d=snap.val();
@@ -1443,6 +1217,20 @@ function initFirebase(){
     else{setHost();}
   }).catch(()=>setHost());
 }
+
+function onModeSingle(){ setMode('single'); }
+function onModeMulti(){ setMode('multi'); }
+function onModeSpectator(){ G_MODE='single'; MODE_SELECTED=true; enterSpectator(); }
+
+function setMode(mode){
+  G_MODE = mode;
+  MODE_SELECTED = true;
+  document.body.dataset.mode = mode;
+  showScreen('lobby');
+  initFirebase(); // Jetzt läuft es vollständig durch
+  if(mode==='single') setTimeout(loadTeamNames, 200);
+}
+
 function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();}}
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){
@@ -1484,7 +1272,6 @@ function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.flo
 
 // ── SEAT SELECTOR ──
 function toggleSeat(pos){
-  if(!IS_HOST&&G_MODE!=='single') setHost();
   var seat=document.querySelector(`.seat[data-pos="${pos}"]`);
   if(G.seatCfg[pos]){G.seatCfg[pos]=null;seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';reassignSeatColors();}
   else{var active=getActiveSeats();if(active.length>=MAX_TEAMS){showHint(`Maximal ${MAX_TEAMS} Teams!`);return;}var ci=active.length;G.seatCfg[pos]={name:'',colorIdx:ci};seat.classList.add('active');var circ=seat.querySelector('.seat-circle');circ.style.background=COLORS[ci];circ.style.borderColor=COLORS[ci];circ.style.borderStyle='solid';circ.textContent=DEFAULTS[ci].substring(0,2);var inp=seat.querySelector('.seat-inp');inp.style.display='block';inp.placeholder=DEFAULTS[ci];}
@@ -1558,52 +1345,29 @@ function syncFlt(id){
 function buildOptFilter(){var w=document.getElementById('opt-filter');w.innerHTML=document.getElementById('flt-wrap').innerHTML;w.querySelectorAll('.flt').forEach(b=>{b.onclick=function(){toggleFlt(b,true);};});syncFlt('opt-filter');}
 
 // ── CLOCKWISE ORDER ──
-function nextTeamIdx(){if(G_MODE==='single') return (G.cur+1)%G.teams.length;var activeCW=CW_ORDER.filter(pos=>G.teams.some(t=>t.pos===pos));var curPos=G.teams[G.cur]?G.teams[G.cur].pos:'bot-l';var cwIdx=activeCW.indexOf(curPos);var nextPos=activeCW[(cwIdx+1)%activeCW.length];var ni=G.teams.findIndex(t=>t.pos===nextPos);return ni>=0?ni:(G.cur+1)%G.teams.length;}
+function nextTeamIdx(){if(G_MODE==='single') return (G.cur+1)%G.teams.length;
+  var activeCW=CW_ORDER.filter(pos=>G.teams.some(t=>t.pos===pos));var curPos=G.teams[G.cur]?G.teams[G.cur].pos:'bot-l';var cwIdx=activeCW.indexOf(curPos);var nextPos=activeCW[(cwIdx+1)%activeCW.length];var ni=G.teams.findIndex(t=>t.pos===nextPos);return ni>=0?ni:(G.cur+1)%G.teams.length;}
 
 // ── START ──
 
-var G_MODE='multi';
-
-function setMode(mode){
-  G_MODE=mode;
-  document.body.dataset.mode=mode;
-  showScreen('lobby');
-  setHost();
-}
-
-function addSingleTeamRow(){
-  for(var i=2;i<=5;i++){
-    var row=document.getElementById('st-row-'+i);
-    if(row&&row.style.display==='none'){row.style.display='flex';updateStartBtn();return;}
-  }
-}
-
-function getSingleTeams(){
-  var colors=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f1c','#e0ff4f'];
-  var res=[];
-  for(var i=0;i<=5;i++){
-    var inp=document.getElementById('st-'+i);
-    var isVisible=(i<2)||((document.getElementById('st-row-'+i)||{style:{display:'none'}}).style.display!=='none');
-    if(inp&&isVisible) res.push({name:inp.value.trim()||inp.placeholder,color:colors[i],pos:'bot-l',side:'bot',years:[],tokens:2});
-  }
-  return res;
-}
+var SINGLE_COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ff9f1c','#e0ff4f'];
+function addSingleTeamRow(){for(var i=2;i<=5;i++){var r=document.getElementById('st-row-'+i);if(r&&r.style.display==='none'){r.style.display='flex';updateStartBtn();return;}}}
+function getSingleTeams(){var res=[];for(var i=0;i<=5;i++){var inp=document.getElementById('st-'+i);var vis=i<2||(document.getElementById('st-row-'+i)||{style:{display:'none'}}).style.display!=='none';if(inp&&vis)res.push({name:inp.value.trim()||inp.placeholder,color:SINGLE_COLORS[i],pos:'bot-l',side:'bot',years:[],tokens:2});}return res;}
+function saveTeamNames(){var n=[];for(var i=0;i<=5;i++){var inp=document.getElementById('st-'+i);if(inp&&inp.value.trim())n.push({i:i,name:inp.value.trim()});}if(n.length)localStorage.setItem('chartsterTeams',JSON.stringify({names:n,ts:Date.now()}));}
+function loadTeamNames(){try{var d=JSON.parse(localStorage.getItem('chartsterTeams')||'null');if(!d||Date.now()-d.ts>14*24*60*60*1000){localStorage.removeItem('chartsterTeams');return;}d.names.forEach(function(t){var inp=document.getElementById('st-'+t.i);if(inp)inp.value=t.name;});updateStartBtn();}catch(e){}}
 
 function startGame(){
-  if(!IS_HOST){setHost();setTimeout(startGame,400);return;}
+  if(!IS_HOST){return;}
   WIN=document.getElementById('schnelle5').checked?5:10;
-  if(G_MODE==='single'){
-    G.teams=getSingleTeams();if(G.teams.length<2){showHint('Mindestens 2 Teams!');return;}
-  } else {
-    var active=getActiveSeats();if(active.length<2){showHint('Mindestens 2 Teams!');return;}
-  }
+  if(G_MODE==='single'){saveTeamNames();G.teams=getSingleTeams();if(G.teams.length<2){showHint('Mindestens 2 Teams!');return;}}
+  else{var active=getActiveSeats();if(active.length<2){showHint('Mindestens 2 Teams!');return;}}
   if(G.songs.length===0){showHint('Songs werden geladen – kurz warten!');return;}
   if(G_MODE!=='single') G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
   var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
   G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
   try{var _el=document.documentElement;(_el.requestFullscreen||_el.webkitRequestFullscreen||function(){}).call(_el);}catch(e){}
-  if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});document.documentElement.style.setProperty('--spotify-h','152px');}
-  else{Object.keys(CENTER_ROT_ORIG).forEach(function(k){CENTER_ROT[k]=CENTER_ROT_ORIG[k];});document.documentElement.style.setProperty('--spotify-h','152px');}
+  if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});}
+  else{var cr=CENTER_ROT_ORIG||{bot:'r0',top:'r180',left:'r90',right:'r270'};Object.keys(cr).forEach(function(k){CENTER_ROT[k]=cr[k];});}
   showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
 }
 
@@ -1621,47 +1385,27 @@ function drawCard(){if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.curre
 
 // ── PANELS ──
 function renderActivePanelOnly(){
-  ['area-top','area-bot','side-left-wrap','side-right-wrap'].forEach(function(id){
-    var el=document.getElementById(id);if(el)el.innerHTML='';
-  });
-  var gc=document.getElementById('game-center');
-  if(gc) gc.className='r0';
-  var a=document.getElementById('area-bot');
-  if(!a||!G.teams[G.cur]) return;
+  ['area-top','area-bot','side-left-wrap','side-right-wrap'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});
+  var gc=document.getElementById('game-center');if(gc)gc.className='r0';
+  var a=document.getElementById('area-bot');if(!a||!G.teams[G.cur])return;
   var t=G.teams[G.cur];
   if((G.phase||1)>=3){
-    var bar=document.createElement('div');
-    bar.style.cssText='display:flex;gap:10px;width:100%;padding:0 8px;';
-    var btns=[
-      {fn:'scoreYear',label:'✓ Karte\ngewonnen',c:'#53f6ff',bg:'rgba(83,246,255,.25)'},
-      {fn:'scoreBoth',label:'⬡ Karte + Token\ngewonnen',c:'#ffd700',bg:'rgba(255,215,0,.2)'},
-      {fn:'scoreNone',label:'✗ Leider nichts\ngewonnen',c:'#ff4fd8',bg:'rgba(255,79,216,.2)'}
-    ];
-    btns.forEach(function(b){
-      var btn=document.createElement('button');
-      btn.textContent=b.label;
-      btn.onclick=window[b.fn];
-      btn.style.cssText='flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:'+b.bg+';border:2px solid '+b.c+';color:'+b.c+';border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;letter-spacing:.04em;white-space:pre-line;line-height:1.3;';
-      bar.appendChild(btn);
-    });
-    a.innerHTML='';
+    var bar=document.createElement('div');bar.style.cssText='display:flex;gap:10px;width:100%;padding:0 8px;';
+    [{fn:'scoreYear',label:'✓ Karte\ngewonnen',c:'#53f6ff',bg:'rgba(83,246,255,.25)'},{fn:'scoreBoth',label:'⬡ Karte + Token\ngewonnen',c:'#ffd700',bg:'rgba(255,215,0,.2)'},{fn:'scoreNone',label:'✗ Leider nichts\ngewonnen',c:'#ff4fd8',bg:'rgba(255,79,216,.2)'}].forEach(function(b){
+      var btn=document.createElement('button');btn.textContent=b.label;btn.onclick=window[b.fn];
+      btn.style.cssText='flex:1;padding:clamp(16px,3vw,28px);font-size:clamp(18px,3vw,28px);font-weight:800;background:'+b.bg+';border:2px solid '+b.c+';color:'+b.c+';border-radius:16px;font-family:Outfit,sans-serif;cursor:pointer;white-space:pre-line;line-height:1.3;';
+      bar.appendChild(btn);});
     a.appendChild(bar);
   } else {
-    var tH='';
-    for(var i=0;i<MAX_TOK;i++){
-      var filled=i<(t.tokens||0);
-      tH+='<span style="color:'+t.color+';font-size:clamp(28px,4vw,48px);opacity:'+(filled?1:0.25)+'">'+(filled?'⬡':'⬡')+'</span>';
-    }
-    // Token button right below coins
-    var tokenBtnHtml='';
-    if((t.tokens||0)>0){
-      tokenBtnHtml='<button onclick="newSongToken()" style="margin-top:8px;padding:clamp(10px,1.5vw,16px) clamp(16px,2.5vw,28px);border-radius:12px;background:rgba(143,95,255,.2);border:1px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-size:clamp(15px,2vw,22px);font-weight:700;cursor:pointer;">Neuer Song – 1 Token</button>';
-    }
-    a.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;">'+
-      '<div style="display:flex;gap:clamp(6px,1vw,14px);align-items:center;">'+tH+'</div>'+
-      tokenBtnHtml+'</div>';
+    var tH='';for(var i=0;i<MAX_TOK;i++){var f=i<(t.tokens||0);tH+='<span style="color:'+t.color+';font-size:clamp(28px,4vw,48px);opacity:'+(f?1:0.25)+'">⬡</span>';}
+    var tb=(t.tokens||0)>0?'<button onclick="newSongToken()" style="margin-top:8px;padding:clamp(10px,1.5vw,16px) clamp(16px,2.5vw,28px);border-radius:12px;background:rgba(143,95,255,.2);border:1px solid rgba(143,95,255,.5);color:#8f5fff;font-family:Outfit,sans-serif;font-size:clamp(15px,2vw,22px);font-weight:700;cursor:pointer;">Neuer Song – 1 Token</button>':'';
+    a.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;"><div style="display:flex;gap:clamp(6px,1vw,14px);">'+tH+'</div>'+tb+'</div>';
   }
 }
+function scoreYear(){score('year');}
+function scoreBoth(){score('both');}
+function scoreNone(){score('none');}
+
 function renderPanels(){
   if(G_MODE==='single'){renderActivePanelOnly();return;}
   document.getElementById('area-top').innerHTML='';
@@ -1705,7 +1449,7 @@ function updateGameUI(){
   document.getElementById('player-outer').classList.remove('show');document.getElementById('sp-overlay').classList.remove('gone');document.getElementById('sp-ot').classList.remove('gone');document.getElementById('sp-frame').src='';
   document.getElementById('sp-team').textContent=team.name;document.getElementById('sp-team').style.color=team.color;
   document.getElementById('year-tl').classList.remove('show');document.getElementById('countdown-wrap').classList.remove('show');document.getElementById('hitster-panel').classList.remove('show');document.getElementById('new-song-token-btn').style.display='none';
-  var btn=document.getElementById('main-btn');btn.textContent='Los geht\'s …';btn.className='btn btn-primary';btn.style.display='';btn.disabled=false;
+  var btn=document.getElementById('main-btn');btn.textContent='Wir sind bereit …';btn.className='btn btn-primary';btn.style.display='';btn.disabled=false;
   document.getElementById('score-btns').classList.remove('show');
 }
 
@@ -1723,62 +1467,18 @@ function cardNext(){
   } else if(G.phase===2){
     if(G.selBox===null){showHint('Bitte erst eine Position im Zeitstrahl markieren!');return;}
     if(!G.readyToReveal){showHint('Countdown läuft noch – kurz warten!');return;}
-    G.phase=3;if(G_MODE==='single')renderActivePanelOnly();clearCd();
+    G.phase=3;clearCd();
     document.getElementById('sp-overlay').classList.add('gone');document.getElementById('sp-ot').classList.add('gone');document.getElementById('hitster-panel').classList.remove('show');document.getElementById('countdown-wrap').classList.remove('show');document.getElementById('new-song-token-btn').style.display='none';
     document.getElementById('year-tl').classList.add('show');
     var yr=document.getElementById('c-year');yr.textContent=G.currentCard.y;yr.style.display='block';
     document.getElementById('c-artist').textContent=G.currentCard.a;document.getElementById('c-title').textContent=G.currentCard.t;
-    if(G_MODE==='single'&&typeof REF!=='undefined'&&IS_HOST)REF.update({reveal:{y:G.currentCard.y,a:G.currentCard.a,t:G.currentCard.t,c:G.currentCard.c||null}});
     setTimeout(function(){document.getElementById('c-artist').classList.add('on');document.getElementById('c-title').classList.add('on');},50);
     document.getElementById('main-btn').style.display='none';document.getElementById('score-btns').classList.add('show');
   }
 }
 
 // ── COUNTDOWN ──
-
-function renderOptTeams(){
-  var c=document.getElementById('opt-team-controls');
-  if(!c||!G.teams) return;
-  c.innerHTML='';
-  G.teams.forEach(function(t,i){
-    var row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;gap:8px;padding:8px;background:rgba(255,255,255,.05);border-radius:10px;';
-    row.innerHTML='<span style="font-weight:700;color:'+t.color+';min-width:120px;font-size:clamp(16px,2.5vw,22px);">'+t.name+'</span>'
-      +'<span style="font-size:clamp(14px,2vw,18px);color:var(--muted);flex:1;">'+
-        '<span style="color:'+t.color+'">⬡</span> '+(t.tokens||0)+' Token &nbsp;'
-        +'<span style="color:'+t.color+'">📅</span> '+(t.years?t.years.length:0)+' Karten</span>'
-      +'<button onclick="adminToken('+i+',1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(83,246,255,.2);border:1px solid #53f6ff;color:#53f6ff;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">+T</button>'
-      +'<button onclick="adminToken('+i+',-1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(255,79,216,.2);border:1px solid #ff4fd8;color:#ff4fd8;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">-T</button>'
-      +'<button onclick="adminCard('+i+',1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(83,246,255,.2);border:1px solid #53f6ff;color:#53f6ff;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">+K</button>'
-      +'<button onclick="adminCard('+i+',-1)" style="padding:clamp(10px,1.5vw,16px) clamp(12px,2vw,20px);border-radius:10px;background:rgba(255,79,216,.2);border:1px solid #ff4fd8;color:#ff4fd8;cursor:pointer;font-size:clamp(16px,2vw,20px);font-weight:700;">-K</button>';
-    c.appendChild(row);
-  });
-}
-function adminToken(i,delta){
-  if(!G.teams[i]) return;
-  G.teams[i].tokens=Math.max(0,(G.teams[i].tokens||0)+delta);
-  renderPanels();renderOptTeams();pushState();
-}
-function adminCard(i,delta){
-  if(!G.teams[i]) return;
-  if(!G.teams[i].years) G.teams[i].years=[];
-  if(delta>0){
-    // Add a dummy year (admin override)
-    var y=1970+Math.floor(Math.random()*55);
-    while(G.teams[i].years.includes(y)) y++;
-    G.teams[i].years.push(y);
-    G.teams[i].years.sort(function(a,b){return a-b;});
-  } else {
-    if(G.teams[i].years.length>0) G.teams[i].years.pop();
-  }
-  renderPanels();renderOptTeams();pushState();
-}
-
-function startCd(){
-  G.readyToReveal=true;
-  var btn=document.getElementById('main-btn');
-  if(btn) btn.disabled=false;
-}
+function startCd(){G.cdRemain=10;var wrap=document.getElementById('countdown-wrap');wrap.classList.add('show');var fill=document.getElementById('cd-fill'),secs=document.getElementById('cd-secs');fill.style.width='100%';secs.textContent=10;G.cdTimer=setInterval(function(){G.cdRemain--;fill.style.width=(G.cdRemain/10*100)+'%';secs.textContent=G.cdRemain;if(G.cdRemain<=0){clearCd();G.readyToReveal=true;wrap.classList.remove('show');document.getElementById('hitster-panel').classList.remove('show');if(G.selBox!==null)document.getElementById('main-btn').disabled=false;}},1000);}
 function clearCd(){clearInterval(G.cdTimer);G.cdTimer=null;}
 
 // ── TOKEN PANEL ──
@@ -1869,9 +1569,7 @@ function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort(
 
 // ── TRANSITION ──
 function showTransition(){var from=G.teams[G.cur];var nxtIdx=nextTeamIdx();var to=G.teams[nxtIdx];document.getElementById('tr-from').textContent='War dran: '+from.name;document.getElementById('tr-to').textContent=to.name;document.getElementById('tr-to').style.color=to.color;document.getElementById('tr-comment').textContent=comment('tr',to,[from.name,from.years.length]);var ts=document.getElementById('screen-transition');var tsRot={'top':' r180','left':' r90','right':' r270','bot':''};ts.className='screen active'+(tsRot[to.side]||'');G.screen='transition';document.querySelectorAll('.screen').forEach(s=>{if(s!==ts)s.classList.remove('active');});}
-function continueGame(){
-  if(typeof REF!=='undefined'&&IS_HOST)REF.update({reveal:null});
-  G.cur=nextTeamIdx();
+function continueGame(){G.cur=nextTeamIdx();
   if(G.finalRound && G.cur===G.finalRoundStart){showVictory();return;}G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;clearCd();drawCard();showScreen('game');renderPanels();updateGameUI();pushState();}
 
 // ── VICTORY ──
@@ -1898,29 +1596,6 @@ function hideSpectatorMiniGame(){
   if(overlay) overlay.style.display='none';
 }
 
-
-
-function showSpectatorReveal(rev){
-  var el=document.getElementById('spec-reveal-overlay');
-  if(!el){
-    el=document.createElement('div');
-    el.id='spec-reveal-overlay';
-    document.body.appendChild(el);
-  }
-  el.style.cssText='position:fixed;top:0;left:0;right:0;background:rgba(7,0,15,.95);backdrop-filter:blur(16px);border-bottom:2px solid rgba(83,246,255,.3);padding:clamp(16px,2.5vw,32px) clamp(24px,4vw,60px);z-index:200;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(24px,4vw,56px);text-align:center;';
-  var cover=rev.c?'<img src="'+rev.c+'" style="width:clamp(100px,12vw,160px);height:clamp(100px,12vw,160px);border-radius:14px;object-fit:cover;flex-shrink:0;">':'';
-  var year='<div style="font-size:clamp(100px,16vw,200px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;flex-shrink:0;">'+rev.y+'</div>';
-  var meta='<div style="display:flex;flex-direction:column;gap:clamp(4px,0.8vw,10px);text-align:left;min-width:0;">'
-    +'<div style="font-size:clamp(36px,5.5vw,72px);font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+rev.a+'</div>'
-    +'<div style="font-size:clamp(32px,5vw,64px);color:rgba(255,255,255,.75);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+rev.t+'</div>'
-    +'</div>';
-  el.innerHTML=cover+year+meta;
-  el.style.display='flex';
-}
-function hideSpectatorReveal(){
-  var el=document.getElementById('spec-reveal-overlay');
-  if(el) el.style.display='none';
-}
 
 function showSpectatorVictory(wonTeams, allTeams){
   try{var a=new Audio('applause.mp3');a.volume=0.8;a.play();}catch(e){}
@@ -2020,7 +1695,7 @@ function buildCfHTML(n){var cols=['#ff4d6d','#ffd166','#06d6a0','#4cc9f0','#b517
 function spawnConfetti(color,count,withWave){var c=document.getElementById('confetti');var cols=[color,'#fff','#ffd84d',COLORS[Math.floor(Math.random()*COLORS.length)]];for(var i=0;i<count;i++){var p=document.createElement('div');var sz=5+Math.random()*12;var dur=1.2+Math.random()*1.8;p.style.cssText=`position:absolute;top:-20px;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cols[i%cols.length]};border-radius:${['50%','3px','0'][i%3]};transform:rotate(${Math.random()*360}deg);animation:cf-fall ${dur}s ${Math.random()*.6}s linear both`;c.appendChild(p);setTimeout(function(el){el.remove();},Math.ceil((dur+0.8)*1000),p);}if(withWave!==false)setTimeout(function(){spawnConfetti(color,Math.floor(count*.4),false);},700);}
 
 // ── OPTIONS ──
-function openOpt(){renderOptTeams();buildOptFilter();document.getElementById('opt-panel').classList.add('show');document.getElementById('opt-confirm').classList.remove('show');}
+function openOpt(){buildOptFilter();document.getElementById('opt-panel').classList.add('show');document.getElementById('opt-confirm').classList.remove('show');}
 function closeOpt(){document.getElementById('opt-panel').classList.remove('show');document.getElementById('opt-confirm').classList.remove('show');}
 function optNewSong(){closeOpt();clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();showHint('Schiedsrichter: Neuer Song! ⚖️');}
 function optResetPrompt(){document.getElementById('opt-confirm').classList.add('show');}
@@ -2366,7 +2041,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=190', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=191', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
@@ -2465,16 +2140,6 @@ if (isInStandaloneMode()) {
   console.log('[PWA] Läuft als installierte App');
   document.documentElement.classList.add('pwa-standalone');
 }
-
-// Modus-Auswahl - globale Hilfsfunktionen für onclick
-
-function scoreYear(){score('year');}
-function scoreBoth(){score('both');}
-function scoreNone(){score('none');}
-
-function onModeSingle(){setMode('single');}
-function onModeMulti(){setMode('multi');}
-function onModeSpectator(){G_MODE='single';enterSpectator();}
 </script>
 
 
