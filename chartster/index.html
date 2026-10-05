@@ -639,6 +639,35 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
 #spec-sync-fixed{position:fixed;bottom:6px;right:76px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:Outfit,sans-serif;z-index:50;display:none;}
 .screen-spectator.active ~ #spec-sync-fixed, #screen-spectator.active ~ #spec-sync-fixed{display:block;}
 
+
+/* Timeline Karten = Zuschauer-Stil */
+.tl-box{
+  width:clamp(88px,11vw,140px)!important;
+  height:clamp(88px,11vw,140px)!important;
+  border-radius:16px!important;
+  border:3px solid rgba(143,95,255,.5)!important;
+  background:rgba(40,20,100,.6)!important;
+  font-size:clamp(24px,3.2vw,42px)!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.25)!important;
+  padding:6px!important;
+}
+.tl-box.filled{
+  background:rgba(70,40,160,.95)!important;
+  border-color:rgba(143,95,255,.9)!important;
+  color:#fff!important;
+  box-shadow:0 0 16px rgba(143,95,255,.3)!important;
+}
+.tl-box.sel{
+  background:rgba(83,246,255,.2)!important;
+  border-color:#53f6ff!important;
+  color:#53f6ff!important;
+}
+.tl-box:hover:not(.filled){
+  border-color:rgba(83,246,255,.6)!important;
+  background:rgba(83,246,255,.08)!important;
+}
+
 </style>
 </head>
 <body>
@@ -675,7 +704,7 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.7.5</div>
+<div class="version">v5.7.6</div>
 
 <!-- SW Update Toast -->
 
@@ -715,9 +744,6 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
   </div>
   <div class="opt-title" style="margin-top:12px;font-size:clamp(14px,2vw,18px);">⚖ Teams anpassen</div>
   <div id="opt-team-controls" style="display:flex;flex-direction:column;gap:8px;width:100%;"></div>
-  <div class="opt-row" style="display:none">
-  </div>
-  </div>
   <div id="opt-confirm">
     <div style="font-size:15px;font-weight:600;color:#ff6060">Wirklich zurücksetzen? Alle Punkte gehen verloren.</div>
     <div class="opt-row">
@@ -2144,7 +2170,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=204', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=205', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
