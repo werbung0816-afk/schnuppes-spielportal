@@ -192,16 +192,16 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .icon-btn:active{color:var(--text)}
 
 /* ── COUNTDOWN ── */
-#countdown-wrap{background:var(--glass);border:1px solid rgba(83,246,255,.2);border-radius:14px;padding:14px 18px;display:none;flex-direction:column;gap:7px}
+#countdown-wrap{display:none!important;}
 #countdown-wrap.show{display:none}
 .cd-row{display:flex;align-items:center;justify-content:space-between;font-size:18px;font-weight:700}
 .cd-bar{width:100%;height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
 .cd-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .1s linear}
 
 /* ── TOKEN PANEL ── */
-#hitster-panel{background:var(--glass);border:1px solid rgba(255,79,216,.25);border-radius:14px;padding:14px 18px;display:none;flex-direction:column;gap:10px}
+#hitster-panel{background:var(--glass);border:1px solid rgba(255,79,216,.25);border-radius:14px;align-items:center;padding:14px 18px;display:none;flex-direction:column;gap:10px}
 #hitster-panel.show{display:flex}
-.hst-title{font-size:14px;font-weight:700;color:var(--pink);text-transform:uppercase;letter-spacing:.06em}
+.hst-title{font-size:clamp(14px,2vw,18px);font-weight:700;color:var(--pink);text-transform:uppercase;text-align:center;letter-spacing:.06em}
 .hst-btn{padding:11px 18px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:#07000f}
 .hst-btn.placed{opacity:.5;pointer-events:none}
 
@@ -567,10 +567,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);
 .spec-connector{width:clamp(16px,2.5vw,40px);height:3px;background:rgba(255,255,255,.15);flex-shrink:0;}
 .spec-listening{font-size:clamp(16px,2.5vw,28px);color:rgba(255,255,255,.28);letter-spacing:.06em;font-style:italic;text-align:center;}
 .spec-sep{width:100%;height:1px;background:var(--glass-b);}
-.spec-scores{display:flex;flex-wrap:wrap;gap:8px;width:100%;justify-content:center;flex-shrink:0;}
+.spec-scores{display:flex;flex-wrap:wrap;gap:clamp(12px,2vw,32px);width:100%;justify-content:center;flex-shrink:0;}
 .spec-score-card{flex:1;min-width:120px;max-width:180px;background:rgba(255,255,255,.04);border:1px solid var(--glass-b);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:8px;}
 .spec-score-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.spec-score-name{font-size:clamp(13px,1.8vw,20px);color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.spec-score-name{font-size:clamp(16px,2.2vw,26px);color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:100px;}
 .spec-score-val{font-size:clamp(20px,3vw,36px);font-weight:800;}
 .spec-sync-btn{font-size:13px;color:var(--muted);background:none;border:1px solid var(--glass-b);border-radius:8px;padding:6px 16px;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.06em;}
 .spec-sync-btn:active{opacity:.6;}
@@ -609,7 +609,7 @@ body[data-mode=single] .slot-outer{max-width:min(860px,94vw)!important;}
 /* Jahreskarten Zuschauer-Stil */
 .tl-box{border:2px solid rgba(143,95,255,.7)!important;background:rgba(70,40,160,.9)!important;font-weight:800!important;color:#fff!important;}
 /* Zuschauer: größere Karten */
-.spec-year{width:clamp(160px,20vw,300px)!important;height:clamp(95px,12vw,180px)!important;font-size:clamp(60px,9vw,130px)!important;}
+.spec-year{width:clamp(150px,18vw,280px)!important;height:clamp(88px,11vw,165px)!important;font-size:clamp(52px,8vw,115px)!important;}
 #spec-timeline-teamname{font-size:clamp(52px,9vw,120px)!important;order:10;margin-top:auto;}
 .spec-score-card{flex:0 0 auto;background:transparent;border:none;padding:6px 16px;}
 .spec-score-name{font-size:clamp(16px,2.2vw,26px)!important;}
@@ -622,6 +622,12 @@ body[data-mode=single] .slot-outer{max-width:min(860px,94vw)!important;}
 #slot-window{height:clamp(200px,28vw,340px)!important;}
 /* Token */
 .coin{width:clamp(24px,3.5vw,40px)!important;height:clamp(24px,3.5vw,40px)!important;}
+
+
+/* Spielleiter-Lobby größer */
+body[data-mode=single] .card{min-height:55vh;}
+body[data-mode=single] .game-title{font-size:clamp(36px,6vw,72px)!important;}
+.st-inp{flex:1;font-size:clamp(18px,2.8vw,26px);padding:clamp(14px,2vw,20px) 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;color:#fff;font-family:Outfit,sans-serif;}
 
 </style>
 </head>
@@ -659,7 +665,7 @@ body[data-mode=single] .slot-outer{max-width:min(860px,94vw)!important;}
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.7.2</div>
+<div class="version">v5.7.3</div>
 
 <!-- SW Update Toast -->
 
@@ -695,7 +701,7 @@ body[data-mode=single] .slot-outer{max-width:min(860px,94vw)!important;}
   </div>
   <div class="opt-row">
     <button class="opt-btn" onclick="enterSpectator();closeOpt()">👁 Zuschauer-Modus</button>
-    <button class="opt-btn" onclick="syncSpectator()">↻ Synchronisieren</button>
+    <button class="opt-btn" onclick="syncSpectator()" style="position:fixed;bottom:6px;right:56px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:Outfit,sans-serif;">↻ Sync</button>
   </div>
   <div id="opt-confirm">
     <div style="font-size:15px;font-weight:600;color:#ff6060">Wirklich zurücksetzen? Alle Punkte gehen verloren.</div>
@@ -720,7 +726,7 @@ body[data-mode=single] .slot-outer{max-width:min(860px,94vw)!important;}
     <div class="spec-sep"></div>
     <div class="spec-scores" id="spec-scores"></div>
     <div id="spec-offline-hint" style="display:none;font-size:13px;color:#ff6060;letter-spacing:.06em;text-align:center;">⚠ Verbindung unterbrochen</div>
-    <button class="spec-sync-btn" onclick="syncSpectator()">↻ Synchronisieren</button>
+    <button class="spec-sync-btn" onclick="syncSpectator()" style="position:fixed;bottom:6px;right:56px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:Outfit,sans-serif;">↻ Sync</button>
   </div>
 </div>
 
@@ -867,7 +873,7 @@ body[data-mode=single] .slot-outer{max-width:min(860px,94vw)!important;}
         </div>
       </div>
       <div id="countdown-wrap"><div class="cd-row"><span id="cd-label" style="color:var(--pink)">⚡ Token jetzt setzen!</span><span id="cd-secs" style="color:var(--pink)">10</span></div><div class="cd-bar"><div class="cd-fill" id="cd-fill" style="width:100%"></div></div></div>
-      <div id="hitster-panel"><div class="hst-title">⚡ Token setzen &amp; Jahreszahl stehlen</div><div id="hst-teams" style="display:flex;flex-wrap:wrap;gap:10px"></div></div>
+      <div id="hitster-panel"><div class="hst-title" style="text-align:center;">Token setzen &amp; Jahreszahl stehlen</div><div id="hst-teams" style="display:flex;flex-wrap:wrap;gap:10px"></div></div>
       <div class="game-card">
         <div class="c-info">
           <div class="team-name-big" id="c-team-name"></div>
@@ -2120,7 +2126,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=201', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=202', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
