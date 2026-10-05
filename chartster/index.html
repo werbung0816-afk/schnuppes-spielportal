@@ -609,7 +609,7 @@ body[data-mode=single] .slot-outer{max-width:min(860px,94vw)!important;}
 /* Jahreskarten Zuschauer-Stil */
 .tl-box{border:2px solid rgba(143,95,255,.7)!important;background:rgba(70,40,160,.9)!important;font-weight:800!important;color:#fff!important;}
 /* Zuschauer: größere Karten */
-.spec-year{width:clamp(150px,18vw,280px)!important;height:clamp(88px,11vw,165px)!important;font-size:clamp(52px,8vw,115px)!important;}
+.spec-year{width:clamp(160px,20vw,300px)!important;height:clamp(100px,12.5vw,185px)!important;font-size:clamp(52px,7.5vw,105px)!important;padding:clamp(8px,1.2vw,16px)!important;}
 #spec-timeline-teamname{font-size:clamp(52px,9vw,120px)!important;order:10;margin-top:auto;}
 .spec-score-card{flex:0 0 auto;background:transparent;border:none;padding:6px 16px;}
 .spec-score-name{font-size:clamp(16px,2.2vw,26px)!important;}
@@ -704,7 +704,7 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.7.7</div>
+<div class="version">v5.7.8</div>
 
 <!-- SW Update Toast -->
 
@@ -1583,20 +1583,82 @@ function placeBet(ci){if(G.betMode===null)return;var ti=G.betMode;if(G.teams[ti]
 
 // ── YEAR TIMELINE ──
 function renderTimeline(preserveSel){
-  var team=G.teams[G.cur];var sorted=team.years.slice().sort((a,b)=>a-b);
-  var tl=document.getElementById('year-tl');tl.innerHTML='';G.selBox=null;
-  tl.appendChild(mkBox(0,team));
-  sorted.forEach(function(year,i){var chip=document.createElement('div');chip.className='tl-chip';chip.style.background=team.color;chip.textContent=year;tl.appendChild(chip);tl.appendChild(mkBox(i+1,team));});
-  // Restore previous active team selection
+  var team=G.teams[G.cur];
+  var sorted=team.years.slice().sort(function(a,b){return a-b;});
+  var tl=document.getElementById('year-tl');
+  tl.innerHTML='';G.selBox=null;
+  tl.style.cssText='display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.2vw,14px);width:100%;';
+
+  var isSchnelle=WIN===5;
+  var rowSizes=isSchnelle?[3,2]:[4,4,2];
+  var n=sorted.length;
+  var gapIdx=0;
+
+  function mkGap(idx){
+    var dot=document.createElement('div');
+    dot.dataset.idx=idx;
+    dot.className='tl-box';
+    dot.style.cssText='width:clamp(28px,4vw,48px);height:clamp(28px,4vw,48px);border-radius:50%;flex-shrink:0;border:2px solid rgba(83,246,255,.3);background:rgba(83,246,255,.06);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;';
+    // Bet indicator
+    for(var ti in G.bets){
+      if(parseInt(G.bets[ti])===idx&&G.teams[parseInt(ti)]){
+        dot.style.background=G.teams[parseInt(ti)].color;
+        dot.style.boxShadow='0 0 16px '+G.teams[parseInt(ti)].color;
+        break;
+      }
+    }
+    dot.onclick=(function(i){return function(){
+      tl.querySelectorAll('.tl-box').forEach(function(b){
+        b.style.background='rgba(83,246,255,.06)';
+        b.style.border='2px solid rgba(83,246,255,.3)';
+        b.style.boxShadow='';
+        b.style.width=b.style.height='clamp(28px,4vw,48px)';
+        b.style.fontSize='';b.textContent='';
+      });
+      dot.style.cssText='width:clamp(48px,6.5vw,80px);height:clamp(48px,6.5vw,80px);border-radius:50%;flex-shrink:0;border:3px solid #53f6ff;background:#53f6ff;box-shadow:0 0 28px #53f6ff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:clamp(26px,4vw,52px);font-weight:900;color:#07000f;transition:all .15s;';
+      dot.textContent='✓';
+      G.selBox=i;
+      var mb=document.getElementById('main-btn');
+      if(mb&&G_MODE==='single')mb.disabled=false;
+    };})(idx);
+    return dot;
+  }
+
+  function mkChip(year){
+    var chip=document.createElement('div');
+    chip.className='tl-chip';
+    chip.textContent=year;
+    chip.style.cssText='background:rgba(70,40,160,.95);border:2px solid rgba(143,95,255,.9);border-radius:14px;color:#fff;font-weight:800;font-size:clamp(20px,2.8vw,38px);padding:clamp(8px,1.2vw,16px) clamp(10px,1.5vw,20px);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 12px rgba(143,95,255,.2);';
+    return chip;
+  }
+
+  var yIdx=0;
+  rowSizes.forEach(function(rowSize){
+    if(yIdx>=n&&gapIdx>n) return;
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;justify-content:center;gap:clamp(4px,0.8vw,10px);width:100%;';
+    // Left gap
+    row.appendChild(mkGap(gapIdx++));
+    for(var j=0;j<rowSize&&yIdx<n;j++){
+      row.appendChild(mkChip(sorted[yIdx++]));
+      row.appendChild(mkGap(gapIdx++));
+    }
+    tl.appendChild(row);
+  });
+  // Extra row for final gap if needed
+  if(gapIdx<=n){
+    var lastRow=document.createElement('div');
+    lastRow.style.cssText='display:flex;align-items:center;justify-content:center;gap:clamp(4px,0.8vw,10px);width:100%;';
+    lastRow.appendChild(mkGap(gapIdx));
+    tl.appendChild(lastRow);
+  }
+
+  // Restore selection
   if(preserveSel!=null){
     var boxes=tl.querySelectorAll('.tl-box');
-    if(boxes[preserveSel]){
-      var b=boxes[preserveSel];
-      // Only restore if no bet is on that position
-      var hasBet=false;for(var ti in G.bets){if(parseInt(G.bets[ti])===preserveSel){hasBet=true;break;}}
-      if(!hasBet){b.classList.add('sel');b.style.background=team.color;b.style.borderColor=team.color;b.style.color='#07000f';b.textContent='✓';}
-      G.selBox=preserveSel;
-    }
+    boxes.forEach(function(b){
+      if(parseInt(b.dataset.idx)===preserveSel) b.click();
+    });
   }
 }
 function getBetDots(idx){var dd='';for(var ti in G.bets){if(parseInt(G.bets[ti])===idx)dd+=`<div class="bet-dot" style="background:${G.teams[parseInt(ti)].color}"></div>`;}return dd;}
@@ -2170,7 +2232,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=206', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=207', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
