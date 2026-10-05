@@ -844,7 +844,7 @@ body:not([data-mode=single]) .t-panel{
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.5.6</div>
+<div class="version">v5.5.7</div>
 
 <!-- SW Update Toast -->
 
@@ -1484,6 +1484,7 @@ function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.flo
 
 // ── SEAT SELECTOR ──
 function toggleSeat(pos){
+  if(!IS_HOST&&G_MODE!=='single') setHost();
   var seat=document.querySelector(`.seat[data-pos="${pos}"]`);
   if(G.seatCfg[pos]){G.seatCfg[pos]=null;seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';reassignSeatColors();}
   else{var active=getActiveSeats();if(active.length>=MAX_TEAMS){showHint(`Maximal ${MAX_TEAMS} Teams!`);return;}var ci=active.length;G.seatCfg[pos]={name:'',colorIdx:ci};seat.classList.add('active');var circ=seat.querySelector('.seat-circle');circ.style.background=COLORS[ci];circ.style.borderColor=COLORS[ci];circ.style.borderStyle='solid';circ.textContent=DEFAULTS[ci].substring(0,2);var inp=seat.querySelector('.seat-inp');inp.style.display='block';inp.placeholder=DEFAULTS[ci];}
@@ -1589,14 +1590,13 @@ function getSingleTeams(){
 }
 
 function startGame(){
-  if(!IS_HOST){showHint('Debug: IS_HOST=false');return;}
+  if(!IS_HOST){setHost();setTimeout(startGame,400);return;}
   WIN=document.getElementById('schnelle5').checked?5:10;
   if(G_MODE==='single'){
     G.teams=getSingleTeams();if(G.teams.length<2){showHint('Mindestens 2 Teams!');return;}
   } else {
     var active=getActiveSeats();if(active.length<2){showHint('Mindestens 2 Teams!');return;}
   }
-  showHint('Debug: IS_HOST='+IS_HOST+' Songs='+G.songs.length+' Seats='+getActiveSeats().length);
   if(G.songs.length===0){showHint('Songs werden geladen – kurz warten!');return;}
   if(G_MODE!=='single') G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
   var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
@@ -2366,7 +2366,7 @@ const PWA_DISMISSED_KEY = 'chartster_pwa_dismissed';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     var _hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=189', {
+    navigator.serviceWorker.register('/schnuppes-spielportal/chartster/sw.js?v=190', {
       scope: '/schnuppes-spielportal/chartster/',
       updateViaCache: 'none'
     }).then(reg => {
