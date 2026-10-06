@@ -704,7 +704,7 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.8.1</div>
+<div class="version">v5.8.2</div>
 
 <!-- SW Update Toast -->
 
@@ -1461,7 +1461,7 @@ function startGame(){
   G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
   try{var _el=document.documentElement;(_el.requestFullscreen||_el.webkitRequestFullscreen||function(){}).call(_el);}catch(e){}
   if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});}
-  else{var cr=CENTER_ROT_ORIG||{bot:'r0',top:'r180',left:'r90',right:'r270'};Object.keys(cr).forEach(function(k){CENTER_ROT[k]=cr[k];});}
+  else{var cr={bot:'r0',top:'r180',left:'r90',right:'r270'};Object.keys(cr).forEach(function(k){CENTER_ROT[k]=cr[k];});}
   showScreen('slot');document.getElementById('slot-mode-badge').style.display=WIN===5?'block':'none';initSlot();updateSlotUI();
 }
 
