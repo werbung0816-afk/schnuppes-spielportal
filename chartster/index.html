@@ -704,7 +704,7 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.8.0</div>
+<div class="version">v5.8.1</div>
 
 <!-- SW Update Toast -->
 
@@ -1593,33 +1593,40 @@ function renderTimeline(preserveSel){
   var n=sorted.length;
   var gapIdx=0;
 
+  var GAP_S='clamp(28px,4vw,48px)', GAP_L='clamp(48px,6.5vw,80px)';
+  function gapBetColor(idx){for(var ti in G.bets){if(parseInt(G.bets[ti])===idx&&G.teams[parseInt(ti)])return G.teams[parseInt(ti)].color;}return null;}
+  function styleGap(dot,selected){
+    var bc=gapBetColor(parseInt(dot.dataset.idx));
+    var base='border-radius:50%;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:900;color:#07000f;transition:all .15s;box-sizing:border-box;';
+    if(selected){
+      dot.style.cssText=base+'width:'+GAP_L+';height:'+GAP_L+';border:3px solid #53f6ff;background:#53f6ff;box-shadow:0 0 28px #53f6ff;font-size:clamp(26px,4vw,52px);';
+      dot.textContent='\u2713';
+    } else if(bc){
+      dot.style.cssText=base+'width:'+GAP_L+';height:'+GAP_L+';border:3px solid rgba(0,0,0,.4);background:'+bc+';box-shadow:0 0 24px '+bc+';';
+      dot.textContent='';
+    } else {
+      dot.style.cssText=base+'width:'+GAP_S+';height:'+GAP_S+';border:2px solid rgba(83,246,255,.3);background:rgba(83,246,255,.06);';
+      dot.textContent='';
+    }
+  }
   function mkGap(idx){
     var dot=document.createElement('div');
     dot.dataset.idx=idx;
-    dot.className='tl-box';
-    dot.style.cssText='width:clamp(28px,4vw,48px);height:clamp(28px,4vw,48px);border-radius:50%;flex-shrink:0;border:2px solid rgba(83,246,255,.3);background:rgba(83,246,255,.06);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;';
-    // Bet indicator
-    for(var ti in G.bets){
-      if(parseInt(G.bets[ti])===idx&&G.teams[parseInt(ti)]){
-        dot.style.background=G.teams[parseInt(ti)].color;
-        dot.style.boxShadow='0 0 16px '+G.teams[parseInt(ti)].color;
-        break;
-      }
-    }
+    dot.className='tl-gap';
+    styleGap(dot,false);
     dot.onclick=(function(i){return function(){
-      tl.querySelectorAll('.tl-box').forEach(function(b){
-        b.style.background='rgba(83,246,255,.06)';
-        b.style.border='2px solid rgba(83,246,255,.3)';
-        b.style.boxShadow='';
-        b.style.width=b.style.height='clamp(28px,4vw,48px)';
-        b.style.fontSize='';b.textContent='';
-      });
-      dot.style.cssText='width:clamp(48px,6.5vw,80px);height:clamp(48px,6.5vw,80px);border-radius:50%;flex-shrink:0;border:3px solid #53f6ff;background:#53f6ff;box-shadow:0 0 28px #53f6ff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:clamp(26px,4vw,52px);font-weight:900;color:#07000f;transition:all .15s;';
-      dot.textContent='✓';
+      if(G.betMode!==null){
+        if(gapBetColor(i)!==null){showHint('Diese Position ist bereits belegt!');return;}
+        placeBet(i);return;
+      }
+      tl.querySelectorAll('.tl-gap').forEach(function(b){styleGap(b,false);});
+      styleGap(dot,true);
       G.selBox=i;
       G.readyToReveal=true;
       var mb=document.getElementById('main-btn');
       if(mb)mb.disabled=false;
+      pushState();
+      if(!G.hitsterStarted){G.hitsterStarted=true;renderHitsterPanel();}
     };})(idx);
     return dot;
   }
@@ -1655,9 +1662,8 @@ function renderTimeline(preserveSel){
 
   // Restore selection
   if(preserveSel!=null){
-    var boxes=tl.querySelectorAll('.tl-box');
-    boxes.forEach(function(b){
-      if(parseInt(b.dataset.idx)===preserveSel) b.click();
+    tl.querySelectorAll('.tl-gap').forEach(function(b){
+      if(parseInt(b.dataset.idx)===preserveSel){styleGap(b,true);G.selBox=preserveSel;}
     });
   }
 }
