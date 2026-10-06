@@ -704,7 +704,7 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.7.9</div>
+<div class="version">v5.8.0</div>
 
 <!-- SW Update Toast -->
 
@@ -1556,11 +1556,10 @@ function cardNext(){
     document.getElementById('sp-comment').textContent=comment('p2',G.teams[G.cur]);
     renderTimeline();document.getElementById('year-tl').classList.add('show');
     G.readyToReveal=false;G.hitsterStarted=false;
-    var btn=document.getElementById('main-btn');btn.textContent='Aufdecken';btn.className='btn btn-secondary';btn.disabled=true;
+    var btn=document.getElementById('main-btn');btn.textContent='Aufdecken';btn.className='btn btn-secondary';btn.disabled=false;
     var team=G.teams[G.cur];var nsBtn=document.getElementById('new-song-token-btn');nsBtn.style.display='block';nsBtn.disabled=(team.tokens<=0);nsBtn.textContent=`🔄 Neuer Song – 1 Token (${team.tokens} verfügbar)`;
   } else if(G.phase===2){
     if(G.selBox===null){showHint('Bitte erst eine Position im Zeitstrahl markieren!');return;}
-    if(!G.readyToReveal){showHint('Countdown läuft noch – kurz warten!');return;}
     G.phase=3;clearCd();if(G_MODE==='single')renderActivePanelOnly();
     document.getElementById('sp-overlay').classList.add('gone');document.getElementById('sp-ot').classList.add('gone');document.getElementById('hitster-panel').classList.remove('show');document.getElementById('countdown-wrap').classList.remove('show');document.getElementById('new-song-token-btn').style.display='none';
     document.getElementById('year-tl').classList.add('show');
