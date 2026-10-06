@@ -704,7 +704,7 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.8.2</div>
+<div class="version">v5.8.3</div>
 
 <!-- SW Update Toast -->
 
@@ -1565,7 +1565,7 @@ function cardNext(){
     document.getElementById('year-tl').classList.add('show');
     var yr=document.getElementById('c-year');yr.textContent=G.currentCard.y;yr.style.display='block';
     document.getElementById('c-artist').textContent=G.currentCard.a;document.getElementById('c-title').textContent=G.currentCard.t;
-    if(G_MODE==='single'&&IS_HOST)REF.update({reveal:{y:G.currentCard.y,a:G.currentCard.a,t:G.currentCard.t,c:G.currentCard.c||null}});
+    if(IS_HOST)REF.update({reveal:{y:G.currentCard.y,a:G.currentCard.a,t:G.currentCard.t,c:G.currentCard.c||null}});
     setTimeout(function(){document.getElementById('c-artist').classList.add('on');document.getElementById('c-title').classList.add('on');},50);
     document.getElementById('main-btn').style.display='none';document.getElementById('score-btns').classList.add('show');
   }
