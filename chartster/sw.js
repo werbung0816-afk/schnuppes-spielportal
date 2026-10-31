@@ -9,8 +9,8 @@
  *  - Google Fonts → Cache First
  */
 
-const CACHE_NAME = 'chartster-v212';
-const DATA_CACHE = 'chartster-data-v212';
+const CACHE_NAME = 'chartster-v214';
+const DATA_CACHE = 'chartster-data-v214';
 
 // App Shell – alles was für den Grundbetrieb gebraucht wird
 const SHELL_ASSETS = [
@@ -29,6 +29,7 @@ const SHELL_ASSETS = [
   '/schnuppes-spielportal/chartster/filter/filter-bondedition.png',
   '/schnuppes-spielportal/chartster/filter/filter-football.png',
   '/schnuppes-spielportal/chartster/filter/filter-kino.png',
+  '/schnuppes-spielportal/chartster/filter/filter-xmas.png',
 ];
 
 const FONT_URLS = [

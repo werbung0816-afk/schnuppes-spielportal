@@ -152,7 +152,7 @@ body{
 <body>
 
 <div id="hint-toast"></div>
-<div class="version">v1.1.1</div>
+<div class="version">v1.1.2</div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
 
@@ -249,7 +249,9 @@ var G={
   cards:[],
   flipped:[],
   matched:new Set(),
-  locked:false
+  locked:false,
+  // Ausschlüsse (wie Chartster): Editionen + abgewählte Jahrzehnte ('70er' …)
+  excl:new Set(['RS-500','Bond-Edition','WM-Edition','Popcorn-Edition','XMas-Edition'])
 };
 
 // ════ SEAT LOGIC ════
@@ -298,13 +300,8 @@ if(EMBEDDED_MODE){
   document.getElementById('pairs-section').style.display='none';
   document.getElementById('table-selector').style.display='none';
   document.querySelector('[data-pos]') && (document.querySelector('.setup-section .label').textContent = '');
-  // Apply filters from config
-  if(embCfg.filters && embCfg.filters.length){
-    embCfg.filters.forEach(function(f){
-      var btn=document.querySelector('.flt[data-f="'+f+'"]');
-      if(btn){btn.classList.add('on');G.filters.add(f);}
-    });
-  }
+  // Ausschlüsse aus Chartster übernehmen (abgewählte Jahrzehnte + Editionen)
+  if(Array.isArray(embCfg.filters)) G.excl=new Set(embCfg.filters);
   if(embCfg.pairs) G.pairs=embCfg.pairs;
   document.getElementById('start-btn').textContent='Memory starten!';
 }
@@ -334,8 +331,14 @@ function toggleFlt(btn){
   updateFltInfo();
 }
 
+function isExcluded(x){
+  if(x.f) return G.excl.has(x.f);
+  var d=x.y>=2020?'20er':x.y>=2010?'10er':x.y>=2000?'00er':x.y>=1990?'90er':x.y>=1980?'80er':x.y>=1970?'70er':'';
+  return d!=='' && G.excl.has(d);
+}
 function filteredSongs(){
-  var s=G.songs.slice();
+  var s=G.songs.filter(function(x){return !isExcluded(x);});
+  if(EMBEDDED_MODE && G.excl.size>0) s=s.filter(function(x){return !x.legacy;});
   if(G.filters.size===0) return s;
   var dec=DECADES.filter(d=>G.filters.has(d));
   if(dec.length){
@@ -395,6 +398,8 @@ function startGame(){
   }
 
   var pool=filteredSongs();
+  // Eingebettet: nie hängen bleiben – notfalls ohne Filter spielen
+  if(EMBEDDED_MODE && pool.length<G.pairs) pool=G.songs.slice();
   if(pool.length<G.pairs){
     showHint('Nicht genug Songs mit Cover für '+G.pairs+' Paare!');
     return;

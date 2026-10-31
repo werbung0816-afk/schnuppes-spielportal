@@ -704,7 +704,7 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.8.3</div>
+<div class="version">v5.8.5</div>
 
 <!-- SW Update Toast -->
 
@@ -839,6 +839,7 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
         <button class="flt off" data-f="Bond-Edition" onclick="toggleFlt(this)"><img src="filter/filter-bondedition.png" alt="Bond"></button>
         <button class="flt off" data-f="WM-Edition" onclick="toggleFlt(this)"><img src="filter/filter-football.png" alt="WM"></button>
         <button class="flt off" data-f="Popcorn-Edition" onclick="toggleFlt(this)"><img src="filter/filter-kino.png" alt="Kino"></button>
+        <button class="flt off" data-f="XMas-Edition" onclick="toggleFlt(this)"><img src="filter/filter-xmas.png" alt="XMas"></button>
       </div>
       <div style="width:100%"></div>
       <div style="width:100%;display:flex;align-items:center">
@@ -1266,7 +1267,7 @@ const COLORS=['#53f6ff','#ff4fd8','#8f5fff','#4dff91','#ffd84d','#ff6b35'];
 const DEFAULTS=['Helden','Legenden','Stars','Cracks','Profis','Champs'];
 const MAX_TEAMS=6,MAX_TOK=5;var WIN=10;
 const DECADES=['70er','80er','90er','00er','10er','20er'];
-const EDITIONS=['RS-500','Bond-Edition','WM-Edition','Popcorn-Edition'];
+const EDITIONS=['RS-500','Bond-Edition','WM-Edition','Popcorn-Edition','XMas-Edition'];
 // Clockwise from top-left (viewed from above): top→right→bottom→left
 const CW_ORDER=['bot-l','left','top-r','top-l','right','bot-r'];
 const SEAT_DEF={'top-l':{side:'top'},'top-r':{side:'top'},'left':{side:'left'},'right':{side:'right'},'bot-l':{side:'bot'},'bot-r':{side:'bot'}};
@@ -1283,7 +1284,7 @@ function playApplause(){new Audio('applause.mp3').play().catch(function(e){conso
 function playSlot(){console.log('playSlot called');new Audio('slot%20machine.mp3').play().catch(function(e){console.log('slot sound error:',e);});}
 function stopSlot(){}
 
-var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(['RS-500','Bond-Edition','WM-Edition','Popcorn-Edition']),
+var G={seatCfg:{},teams:[],cur:0,songs:[],deck:[],excluded:new Set(['RS-500','Bond-Edition','WM-Edition','Popcorn-Edition','XMas-Edition']),
   topFilter:null,phase:1,cardLoaded:false,selBox:null,commentIdx:0,bets:{},betMode:null,hitsterStarted:false,cdTimer:null,cdRemain:0,readyToReveal:false,currentCard:null,screen:'lobby',slotTeam:0,slotYears:[],miniGames:false,miniGamesDone:{memory:false,paparazzi:false},pendingMiniGame:null};
 ['top-l','top-r','left','right','bot-l','bot-r'].forEach(p=>G.seatCfg[p]=null);
 
