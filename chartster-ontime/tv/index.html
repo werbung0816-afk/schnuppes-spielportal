@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChartsterOnTime – TV</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Chartster-CI für den TV-Browser (Samsung 2017): keine CSS-Variablen, kein clamp(), kein gap,
+   kein backdrop-filter/drop-shadow – Größen in vh, damit es bei 100 % und 125 % Zoom passt. */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Outfit',sans-serif;background:#07000f;color:#f0f0ff;
+  background-image:radial-gradient(ellipse 60% 50% at 15% 40%,rgba(143,95,255,.18) 0%,transparent 70%),radial-gradient(ellipse 50% 40% at 85% 15%,rgba(83,246,255,.12) 0%,transparent 60%),radial-gradient(ellipse 45% 45% at 65% 85%,rgba(255,79,216,.12) 0%,transparent 60%)}
+.flex{display:-webkit-flex;display:flex}
+.col{-webkit-flex-direction:column;flex-direction:column}
+.center{-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center}
+.grad{color:#53f6ff;background:linear-gradient(135deg,#53f6ff,#ff4fd8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.screen{position:relative;z-index:1;height:100%;display:none}
+.screen.on{display:-webkit-flex;display:flex}
+
+/* ── Cover-Hintergrund (Lobby) ── */
+#bg{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:0}
+.cv{position:absolute;border-radius:10px;background-size:cover;background-position:center;opacity:0;
+  -webkit-animation:emerge 40s ease-in-out infinite;animation:emerge 40s ease-in-out infinite}
+@-webkit-keyframes emerge{0%,100%{opacity:0;-webkit-transform:scale(.7)}22%,78%{opacity:.30;-webkit-transform:scale(1)}50%{opacity:.36;-webkit-transform:scale(1.03)}}
+@keyframes emerge{0%,100%{opacity:0;transform:scale(.7)}22%,78%{opacity:.30;transform:scale(1)}50%{opacity:.36;transform:scale(1.03)}}
+
+/* ── Lobby ── */
+#lobby{-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:3vh 4vw}
+.title{font-size:10vh;font-weight:900;letter-spacing:.3vh;line-height:1.15;padding-bottom:.6vh}
+.sub{font-size:3.6vh;color:rgba(240,240,255,.55);font-weight:600;margin:.5vh 0 3.5vh}
+.row{display:-webkit-flex;display:flex;-webkit-align-items:stretch;align-items:stretch;-webkit-justify-content:center;justify-content:center;width:100%}
+.card{background:rgba(20,8,40,.72);border:1px solid rgba(255,255,255,.10);border-radius:3vh;padding:2.6vh 2.4vw;margin:0 1vw;
+  display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;
+  box-shadow:0 0 4vh rgba(83,246,255,.06)}
+.step{font-size:2.2vh;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#53f6ff;margin-bottom:1.8vh}
+.step.p{color:#ff4fd8}
+.qr{width:27vh;height:27vh;border-radius:1.6vh;background:#fff;padding:.6vh;box-shadow:0 0 3vh rgba(83,246,255,.25)}
+.qrtxt{font-size:2.4vh;color:rgba(240,240,255,.7);margin-top:1.6vh;font-weight:600;text-align:center;max-width:30vh;word-wrap:break-word}
+.qrtxt b{color:#fff}
+.plcard{min-width:52vh;-webkit-align-items:stretch;align-items:stretch}
+.pl{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;font-size:4.2vh;font-weight:800;padding:.7vh 1vh;
+  border-radius:1.4vh;margin-bottom:.5vh;-webkit-transition:opacity .4s;transition:opacity .4s}
+.pl.off{opacity:.3}
+.pl.free{font-size:3vh;font-weight:600;color:rgba(240,240,255,.22);border:2px dashed rgba(255,255,255,.08)}
+.pl .dot{width:2.6vh;height:2.6vh;border-radius:50%;margin-right:1.6vh;-webkit-flex-shrink:0;flex-shrink:0}
+.pl .adm{font-size:1.7vh;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,240,255,.45);margin-left:1.4vh;font-weight:700}
+.pl .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info{font-size:2.8vh;color:rgba(240,240,255,.6);margin-top:3.5vh;font-weight:600;text-align:center}
+.info b{color:#ff4fd8}
+.info .warn{color:#ff6060}
+#fsBtn{position:fixed;bottom:1.2vh;left:1.4vw;font-family:'Outfit',sans-serif;font-size:1.8vh;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:#53f6ff;background:rgba(83,246,255,.1);border:1px solid rgba(83,246,255,.4);border-radius:1vh;padding:.8vh 1.4vh;z-index:5;text-decoration:none}
+
+/* ── Frage / Auflösung ── */
+#quiz{-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;padding:3vh 4vw 0}
+#qtop{width:100%;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;min-height:13vh}
+.round{font-size:2.6vh;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,240,255,.45);width:18vw}
+.qcat{font-size:8.5vh;font-weight:900;line-height:1.15;padding-bottom:.5vh;text-align:center;-webkit-flex:1;flex:1}
+.timer{width:18vw;text-align:right;font-size:3.4vh;font-weight:800;color:rgba(240,240,255,.7)}
+.tbar{width:100%;height:1vh;background:rgba(255,255,255,.1);border-radius:.5vh;overflow:hidden;margin:1.2vh 0 2.6vh}
+.tfill{height:100%;border-radius:.5vh;background:linear-gradient(90deg,#53f6ff,#8f5fff);-webkit-transition:width 1s linear;transition:width 1s linear}
+.tfill.hot{background:linear-gradient(90deg,#ff4fd8,#ff6060)}
+#cd{position:absolute;right:4vw;top:2vh;width:16vh;height:16vh;border-radius:50%;background:rgba(20,8,40,.9);border:.6vh solid #ff4fd8;
+  font-size:10vh;font-weight:900;color:#ff4fd8;text-align:center;line-height:14.8vh;box-shadow:0 0 5vh rgba(255,79,216,.6);display:none;z-index:4}
+#cd.red{border-color:#ff6060;color:#ff6060;box-shadow:0 0 5vh rgba(255,96,96,.7)}
+/* Auflösung oben – wie der Zuschauer-Modus in Chartster */
+#rev{display:none;width:100%;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;margin-bottom:2.4vh}
+#rev img{width:22vh;height:22vh;border-radius:1.6vh;object-fit:cover;margin-right:3vw;border:.3vh solid rgba(83,246,255,.5);box-shadow:0 0 4vh rgba(83,246,255,.3)}
+#rev .yr{font-size:17vh;font-weight:900;line-height:1.1;padding-bottom:.8vh;margin-right:3vw}
+#rev .meta{min-width:0;max-width:52vw}
+#rev .ar{font-family:'DM Sans',sans-serif;font-size:5.4vh;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rev .ti{font-family:'DM Sans',sans-serif;font-size:4.6vh;color:#53f6ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 5 Antworten */
+#opts{width:76vw}
+.opt{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;min-height:7.2vh;padding:.9vh 1.6vw;margin-bottom:1.2vh;border-radius:1.8vh;
+  background:rgba(20,8,40,.72);border:.3vh solid rgba(255,255,255,.12);-webkit-transition:all .4s;transition:all .4s}
+.opt .lt{width:5vh;height:5vh;border-radius:1.2vh;background:#53f6ff;color:#07000f;font-size:3vh;font-weight:900;text-align:center;line-height:5vh;margin-right:1.6vw;-webkit-flex-shrink:0;flex-shrink:0}
+.opt .tx{-webkit-flex:1;flex:1;font-size:3.8vh;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opt .cnt{font-size:3vh;font-weight:800;color:rgba(240,240,255,.6);margin-left:1vw}
+.opt.right{border-color:#4dff91;background:rgba(77,255,145,.18);box-shadow:0 0 4vh rgba(77,255,145,.35)}
+.opt.right .lt{background:#4dff91}
+.opt.dim{opacity:.35}
+.opt.wrong{border-color:#ff6060;background:rgba(255,96,96,.15);opacity:1}
+.opt .who{font-size:2.6vh;font-weight:800;margin-left:1vw;padding:.3vh 1vh;border-radius:1vh;color:#07000f}
+/* Paparazzi: Künstlerfoto wird aufgedeckt – Unscharf / Kacheln / Mosaik (wie Chartster Paparazzi) */
+#qbody{width:100%;-webkit-justify-content:center;justify-content:center;-webkit-align-items:flex-start;align-items:flex-start}
+#papBox{position:relative;width:47vh;height:47vh;margin-right:3vw;border-radius:2vh;overflow:hidden;border:.4vh solid rgba(83,246,255,.5);
+  box-shadow:0 0 4vh rgba(83,246,255,.3);background:#12041f;-webkit-flex-shrink:0;flex-shrink:0;display:none}
+#papImg,#papCv,#papTiles{position:absolute;top:0;left:0;width:100%;height:100%}
+#papImg{background-size:cover;background-position:center 30%}
+#papTiles div{position:absolute;background:#1a1030;border:1px solid rgba(255,255,255,.05);-webkit-transition:opacity .8s;transition:opacity .8s}
+#papSong{position:absolute;left:0;right:0;bottom:0;padding:1vh;text-align:center;font-size:2.4vh;font-weight:800;color:#53f6ff;background:rgba(7,0,15,.75);display:none}
+#rev .pimg{width:30vh;height:30vh;border-radius:2vh;background-size:cover;background-position:center 30%;margin-right:3vw;border:.4vh solid rgba(83,246,255,.6);box-shadow:0 0 4vh rgba(83,246,255,.35);-webkit-flex-shrink:0;flex-shrink:0}
+#rev .pname{font-size:9vh;font-weight:900;line-height:1.15;padding-bottom:.5vh}
+#rev .pres{font-size:3.6vh;font-weight:800;margin-top:1vh}
+/* Spielerleiste unten */
+#pbar{position:fixed;left:0;right:0;bottom:2vh;-webkit-justify-content:center;justify-content:center;z-index:3}
+.pc{position:relative;min-width:14vw;margin:0 .8vw;padding:1.2vh 1.4vw;border-radius:1.8vh;background:rgba(20,8,40,.85);border:.3vh solid rgba(255,255,255,.1);
+  display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-transition:opacity .4s;transition:opacity .4s}
+.pc.off{opacity:.35}
+.pc .dot{width:2.2vh;height:2.2vh;border-radius:50%;margin-right:1vw;-webkit-flex-shrink:0;flex-shrink:0}
+.pc .nm{font-size:3.2vh;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:16vw;-webkit-flex:1;flex:1}
+.pc .sc{font-size:4.6vh;font-weight:900;margin-left:1vw}
+.pc .chk{position:absolute;top:-1.6vh;right:-1vh;width:4vh;height:4vh;border-radius:50%;background:#4dff91;color:#07000f;font-size:2.6vh;font-weight:900;
+  text-align:center;line-height:4vh;box-shadow:0 0 2vh rgba(77,255,145,.7)}
+.pc .gain{position:absolute;top:-2.2vh;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);white-space:nowrap;font-size:2.4vh;font-weight:900;
+  padding:.3vh 1vh;border-radius:1vh;background:#4dff91;color:#07000f}
+.pc .gain.two{background:#ffd84d;box-shadow:0 0 3vh rgba(255,216,77,.8)}
+
+/* ── Spielende ── */
+#won{-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:4vh 4vw}
+.wt{font-size:10vh;font-weight:900;color:#ffd84d;text-shadow:0 0 5vh rgba(255,216,77,.5);text-align:center;line-height:1.15}
+.ws{font-size:3.2vh;color:rgba(240,240,255,.55);font-weight:600;margin:1vh 0 4vh}
+.rk{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;width:60vw;padding:1.4vh 2vw;margin-bottom:1.2vh;border-radius:2vh;
+  background:rgba(20,8,40,.8);border:.3vh solid rgba(255,255,255,.1)}
+.rk .pos{font-size:4vh;font-weight:900;width:8vh;color:rgba(240,240,255,.5)}
+.rk .dot{width:2.6vh;height:2.6vh;border-radius:50%;margin-right:1.6vw}
+.rk .nm{-webkit-flex:1;flex:1;font-size:4.6vh;font-weight:900}
+.rk .sc{font-size:5vh;font-weight:900}
+.rk.first{border-color:#ffd84d;box-shadow:0 0 4vh rgba(255,216,77,.35)}
+/* Siegerehrung 1:1 nach Chartster (.vstage, .v-comment, .v-place, .v-card, Medaillenfarben) – in vh */
+.vstage{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;text-align:center;
+  -webkit-animation:zoomIn .5s ease;animation:zoomIn .5s ease}
+@-webkit-keyframes zoomIn{from{opacity:0;-webkit-transform:scale(.8)}to{opacity:1;-webkit-transform:scale(1)}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.v-comment{font-size:7vh;font-weight:900;line-height:1.2;margin-bottom:2.4vh}
+.v-place{font-size:12vh;font-weight:900;line-height:1;margin-bottom:3.4vh}
+.v-card{min-width:56vh;padding:3.6vh 5vh;border-radius:3vh;background:rgba(20,20,40,.9);border:.4vh solid rgba(255,255,255,.15)}
+.v-name{font-size:8vh;font-weight:900;margin-bottom:1.2vh;line-height:1.1}
+.v-score{font-size:10vh;font-weight:900;line-height:1}
+.v-sub{font-size:2.6vh;color:rgba(240,240,255,.55);margin-top:1vh;font-weight:600}
+.vgold{color:#ffd84d;border-color:#ffd84d;box-shadow:0 0 8vh rgba(255,216,77,.5);text-shadow:0 0 4vh rgba(255,216,77,.6)}
+.vsilver{color:#dce8ff;border-color:#dce8ff;box-shadow:0 0 6vh rgba(200,220,255,.4);text-shadow:0 0 4vh rgba(200,220,255,.5)}
+.vbronze{color:#ffb36b;border-color:#ffb36b;box-shadow:0 0 6vh rgba(255,180,100,.4);text-shadow:0 0 4vh rgba(255,180,100,.5)}
+.v-comment.vgold,.v-comment.vsilver,.v-comment.vbronze,.v-place.vgold,.v-place.vsilver,.v-place.vbronze,.v-score.vgold{box-shadow:none}
+.endline{font-size:3vh;font-weight:700;color:rgba(240,240,255,.6);margin-top:4vh}
+#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9;overflow:hidden}
+/* Jahr genau */
+.gwait{text-align:center;font-size:6vh;font-weight:900;color:#53f6ff;padding:6vh 0}
+.gwait small{display:block;font-size:3.2vh;font-weight:700;color:rgba(240,240,255,.6);margin-top:1.6vh}
+.opt.near{border-color:#ffd84d;background:rgba(255,216,77,.14);box-shadow:0 0 4vh rgba(255,216,77,.3)}
+.opt .gy{font-size:4.6vh;font-weight:900;margin-left:auto;margin-right:1.6vw}
+.opt .gd{font-size:3vh;font-weight:800;color:rgba(240,240,255,.6);min-width:9vw;text-align:right}
+.opt .gg{font-size:2.8vh;font-weight:900;margin-left:1.2vw;padding:.3vh 1vh;border-radius:1vh;color:#07000f;background:#4dff91}
+.opt .gg.one{background:#ffd84d}
+/* Zwischenstand */
+#stand{-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:4vh 6vw}
+#stand .st-t{font-size:3vh;font-weight:800;letter-spacing:.3em;color:rgba(240,240,255,.55)}
+#stand .st-c{font-size:7.5vh;font-weight:900;line-height:1.15;padding-bottom:.8vh;margin:.8vh 0 2.6vh;text-align:center}
+.srow2{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;width:70vw;padding:.7vh 2vw;margin-bottom:.9vh;border-radius:2vh;
+  background:rgba(20,8,40,.75);border:.3vh solid rgba(255,255,255,.1);-webkit-animation:zoomIn .5s both;animation:zoomIn .5s both}
+.srow2 .s-rk{font-size:3.6vh;font-weight:900;width:6vw;color:rgba(240,240,255,.5)}
+.srow2 .s-nm{font-size:4.2vh;font-weight:900;width:22vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow2 .s-bar{-webkit-flex:1;flex:1;height:2.2vh;border-radius:1.1vh;background:rgba(255,255,255,.08);margin:0 2vw;overflow:hidden}
+.srow2 .s-bar div{height:100%;border-radius:1.1vh}
+.srow2 .s-pt{font-size:4.4vh;font-weight:900;min-width:7vw;text-align:right}
+.srow2 .s-to{font-size:2.4vh;font-weight:700;color:rgba(240,240,255,.5);min-width:11vw;text-align:right}
+/* Schnee (X-Mas) */
+#snow{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2;pointer-events:none;overflow:hidden;display:none}
+#snow div{position:absolute;top:-3vh;border-radius:50%;background:#fff;-webkit-animation:snow linear infinite;animation:snow linear infinite}
+@-webkit-keyframes snow{0%{-webkit-transform:translate(0,0)}50%{-webkit-transform:translate(3vw,55vh)}100%{-webkit-transform:translate(-1vw,108vh)}}
+@keyframes snow{0%{transform:translate(0,0)}50%{transform:translate(3vw,55vh)}100%{transform:translate(-1vw,108vh)}}
+@-webkit-keyframes cf-fall{0%{opacity:1;-webkit-transform:translateY(-20px) rotate(0deg)}100%{opacity:0;-webkit-transform:translateY(105vh) rotate(720deg)}}
+@keyframes cf-fall{0%{opacity:1;transform:translateY(-20px) rotate(0deg)}100%{opacity:0;transform:translateY(105vh) rotate(720deg)}}
+
+.version{position:fixed;bottom:1.2vh;right:1.4vw;font-size:1.8vh;font-weight:700;color:rgba(255,255,255,.4);background:rgba(0,0,0,.4);padding:.4vh 1vh;border-radius:1vh;z-index:5}
+#offline{position:fixed;top:2vh;left:50%;margin-left:-25vh;width:50vh;text-align:center;font-size:2.4vh;font-weight:700;color:#ff6060;
+  background:rgba(20,8,40,.9);border:1px solid rgba(255,96,96,.5);border-radius:1.4vh;padding:1vh;z-index:10;display:none}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="confetti"></div>
+<div id="offline">Verbindung unterbrochen …</div>
+
+<!-- ════ LOBBY ════ -->
+<div class="screen on" id="lobby">
+  <div class="title grad">CHARTSTER ON TIME</div>
+  <div class="sub">Gleich geht's los – macht alle mit!</div>
+  <div class="row">
+    <div class="card" id="wifiCard" style="display:none">
+      <div class="step">1 · WLAN verbinden</div>
+      <img class="qr" id="qrWifi" alt="">
+      <div class="qrtxt" id="wifiName"></div>
+    </div>
+    <div class="card">
+      <div class="step p" id="joinStep">2 · Mitspielen</div>
+      <img class="qr" id="qrGame" alt="">
+      <div class="qrtxt" id="gameUrl"></div>
+    </div>
+    <div class="card plcard">
+      <div class="step" id="plHead">Dabei</div>
+      <div id="players"></div>
+    </div>
+  </div>
+  <div class="info" id="info"></div>
+</div>
+<a href="#" id="fsBtn">Vollbild</a>
+
+<!-- ════ FRAGE / AUFLÖSUNG ════ -->
+<div class="screen" id="quiz">
+  <div class="flex" id="qtop">
+    <div class="round" id="round"></div>
+    <div class="qcat grad" id="qcat"></div>
+    <div class="timer" id="timer"></div>
+  </div>
+  <div class="flex" id="rev"></div>
+  <div class="tbar" id="tbar"><div class="tfill" id="tfill"></div></div>
+  <div id="cd"></div>
+  <div class="flex" id="qbody">
+    <div id="papBox"><div id="papImg"></div><canvas id="papCv"></canvas><div id="papTiles"></div><div id="papSong">♪ mit Song als Hilfe</div></div>
+    <div id="opts"></div>
+  </div>
+</div>
+<div class="flex" id="pbar" style="display:none"></div>
+
+<!-- ════ ZWISCHENSTAND (alle 3 Runden) ════ -->
+<div class="screen" id="stand">
+  <div class="st-t" id="stT">ZWISCHENSTAND</div>
+  <div class="st-c grad" id="stC"></div>
+  <div id="stRows"></div>
+</div>
+<div id="snow"></div>
+
+<!-- ════ SPIELENDE ════ -->
+<div class="screen" id="won">
+  <div id="stage"></div>
+  <div id="rankBox" style="display:none">
+    <div class="wt" id="wt"></div>
+    <div class="ws" id="ws"></div>
+    <div id="rank"></div>
+  </div>
+</div>
+
+<div class="version" id="ver">TV v0.4.3</div>
+
+<script src="../qrcode.js"></script>
+<script>
+/* Bewusst ES5 (var, function, XMLHttpRequest) – der TV-Browser kann kein neueres JavaScript. */
+/* Mobil: Zustand kommt über die Firebase-REST-Schnittstelle (einfaches XMLHttpRequest – klappt auch im alten TV-Browser) */
+var DB = 'https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app/cotmobil/rooms/';
+var ROOM = (function(){ var m = /[?&]r=([A-Za-z]{4})/.exec(location.search); return m ? m[1].toUpperCase() : ''; })();
+/* JavaScript-Fehler in den Raum schreiben (…/tvlog) – zum Nachsehen bei Problemen */
+function reportError(msg, line, col, kind){
+  try {
+    if (!ROOM) return;
+    var x = new XMLHttpRequest();
+    x.open('POST', DB + ROOM + '/tvlog.json', true);
+    x.setRequestHeader('Content-Type', 'application/json');
+    x.send(JSON.stringify({ m: String(msg), l: line, c: col, k: kind || 'err', v: typeof PAGE_V !== 'undefined' ? PAGE_V : '?', ua: navigator.userAgent }));
+  } catch(e){}
+}
+window.onerror = function(msg, src, line, col){ reportError(msg, line, col); };
+var S = null, lastJson = '', fails = 0, optKey = '', revKey = '';
+var PAGE_V = '0.1.0';                          // Mobil-Version – muss zur Version des Gastgebers passen
+var DECADES = ['70er', '80er', '90er', '00er', '10er', '20er'];
+var EDITIONS = { 'RS-500': 'RS-500', 'Bond-Edition': 'Bond', 'WM-Edition': 'WM', 'Popcorn-Edition': 'Kino', 'XMas-Edition': 'X-Mas' };
+var LETTERS = 'ABCDE';
+
+function $(id){ return document.getElementById(id); }
+function esc(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]; }); }
+function get(url, cb){
+  var x = new XMLHttpRequest();
+  x.open('GET', url, true);
+  x.timeout = 4000;
+  x.onload = function(){ var j = null; try { j = JSON.parse(x.responseText); } catch(e){} cb(x.status === 200 ? j : null); };
+  x.onerror = x.ontimeout = function(){ cb(null); };
+  x.send();
+}
+/* #rev ist per CSS ausgeblendet – zum Zeigen ausdrücklich flex setzen (alter Browser: -webkit-flex) */
+function setFlex(el, on){
+  if (!on) { el.style.display = 'none'; return; }
+  el.style.display = '-webkit-flex';
+  el.style.display = 'flex';
+}
+function inArr(a, v){ for (var i = 0; i < a.length; i++) if (a[i] === v) return true; return false; }
+function show(id){
+  var ids = ['lobby', 'quiz', 'won', 'stand'];
+  for (var i = 0; i < ids.length; i++) $(ids[i]).className = 'screen' + (ids[i] === id ? ' on' : '');
+  $('bg').style.display = id === 'lobby' ? '' : 'none';
+  $('fsBtn').style.display = id === 'lobby' && !isFull() ? '' : 'none';
+  $('pbar').style.display = id === 'quiz' ? '' : 'none';
+}
+
+function render(){
+  $('ver').textContent = 'Anzeige v' + PAGE_V + (S.v !== PAGE_V ? ' · Gastgeber v' + S.v : '') + ' · Raum ' + ROOM;   // Version der Seite selbst
+  snow(S.settings && !inArr(S.settings.excluded || [], 'XMas-Edition'));
+  if (S.phase === 'reveal' && S.standNow) { show('stand'); renderStand(); }
+  else if (S.phase === 'question' || S.phase === 'reveal') { show('quiz'); renderQuiz(); }
+  else if (S.phase === 'won') { show('won'); renderWon(); }
+  else { show('lobby'); renderLobby(); }
+  if (S.phase !== 'won') { wonStage = -1; stageComs = {}; }
+}
+
+/* ───────── Lobby ───────── */
+function renderLobby(){
+  var i, h = '', p;
+  if (S.wifi) {
+    $('wifiCard').style.display = '';
+    $('wifiName').innerHTML = 'WLAN <b>' + esc(S.wifi) + '</b>';
+    $('joinStep').textContent = '2 · Mitspielen';
+  } else {
+    $('wifiCard').style.display = 'none';
+    $('joinStep').textContent = 'Mitspielen';
+  }
+  $('gameUrl').textContent = S.gameUrl.replace(/^https?:\/\//, '');
+  if (qrFor !== S.gameUrl) { qrFor = S.gameUrl; $('qrGame').src = qrImg(S.gameUrl); }
+  $('plHead').textContent = 'Dabei · ' + S.players.length + ' / ' + S.maxPlayers;
+  for (i = 0; i < S.maxPlayers; i++) {
+    p = S.players[i];
+    if (p) h += '<div class="pl' + (p.online ? '' : ' off') + '"><span class="dot" style="background:' + p.color + ';box-shadow:0 0 1.6vh ' + p.color +
+      '"></span><span class="nm" style="color:' + p.color + '">' + esc(p.name) + '</span>' + (p.admin ? '<span class="adm">Gastgeber</span>' : '') + '</div>';
+    else h += '<div class="pl free"><span class="dot" style="border:2px dashed rgba(255,255,255,.15)"></span>frei</div>';
+  }
+  $('players').innerHTML = h;
+  $('info').innerHTML = infoText();
+}
+
+function infoText(){
+  var st = S.settings, sc = S.songs, parts = [], dec = [], ed = [], i;
+  if (sc.loading) return 'Songs werden geladen …';
+  if (!sc.found) return '<span class="warn">Songs konnten nicht geladen werden – Gastgeber: Seite neu laden</span>';
+  for (i = 0; i < DECADES.length; i++) if (!inArr(st.excluded, DECADES[i])) dec.push(DECADES[i]);
+  for (var k in EDITIONS) if (!inArr(st.excluded, k)) ed.push(EDITIONS[k]);
+  parts.push('Ziel <b>' + st.target + ' Punkte</b>');
+  parts.push(dec.length === DECADES.length ? 'alle Jahrzehnte' : (dec.length ? dec.join(' · ') : 'keine Jahrzehnte'));
+  if (ed.length) parts.push(ed.join(' · '));
+  if (st.top) parts.push(st.top === 'top10' ? 'nur Top 10' : 'nur Top 20');
+  parts.push(sc.pool + ' Songs');
+  return parts.join(' &nbsp;·&nbsp; ');
+}
+
+/* ───────── Frage und Auflösung ───────── */
+function renderQuiz(){
+  var q = S.q, rev = S.phase === 'reveal', i, h = '';
+  $('round').textContent = 'Runde ' + S.round;
+  $('qtop').style.display = rev ? 'none' : '';
+  setFlex($('rev'), rev);
+
+  if (!rev) {
+    $('qcat').textContent = q.text;
+    var showCd = !q.paused && !q.waiting && q.mode === 'after';      // ab der ersten Antwort: 15 s Countdown
+    $('timer').textContent = q.paused ? 'PAUSE' : q.waiting ? '\u266a gleich …' : '';
+    $('timer').style.color = q.paused ? '#ffd84d' : '';
+    $('tbar').style.visibility = 'visible';
+    var f = $('tfill');
+    f.style.width = Math.max(0, Math.min(100, q.left / q.total * 100)) + '%';
+    f.className = 'tfill' + (q.mode === 'after' ? ' hot' : '');
+    $('cd').style.display = showCd ? 'block' : 'none';
+    if (showCd) { $('cd').textContent = q.left; $('cd').className = q.left <= 5 ? 'red' : ''; }
+  } else {
+    $('tbar').style.visibility = 'hidden';
+    $('cd').style.display = 'none';
+    var s = q.song, key = S.round + '|' + s.a + '|' + s.t;
+    if (key !== revKey) {
+      revKey = key;
+      if (q.cat === 'paparazzi') {
+        var bc = buzzColor(q.buzzer);
+        var res = !q.buzzer ? '<span style="color:rgba(240,240,255,.55)">Niemand hat getippt</span>'
+          : q.buzzRight ? '<span style="color:' + bc + '">' + esc(q.buzzer) + '</span> <span style="color:#4dff91">hat es erkannt! +1</span>'
+          : '<span style="color:' + bc + '">' + esc(q.buzzer) + '</span> <span style="color:#ff6060">lag falsch – alle anderen +1</span>';
+        $('rev').innerHTML = '<div class="pimg" style="background-image:url(&quot;' + esc(q.photo) + '&quot;)"></div>' +
+          '<div class="meta"><div class="pname grad">' + esc(s.a) + '</div>' +
+          (q.music ? '<div class="ti">♪ ' + esc(s.t) + ' (' + esc(s.y) + ')</div>' : '') + '<div class="pres">' + res + '</div></div>';
+        if (q.buzzRight) confetti(bc, 120);
+      } else {
+        $('rev').innerHTML = (s.c ? '<img src="' + esc(s.c) + '" alt="">' : '') +
+          '<div class="yr grad">' + esc(s.y) + '</div><div class="meta"><div class="ar">' + esc(s.a) + '</div><div class="ti">' + esc(s.t) + '</div></div>';
+        if (q.alone) confetti('#ffd84d', 120);
+      }
+    }
+  }
+  renderPap(q, rev);
+
+  if (q.cat === 'jahrgenau') { renderGuess(q, rev); renderBar(rev); return; }
+  var ok = S.round + '|' + S.phase + '|' + q.options.join('|') + '|' + (rev ? q.counts.join(',') : '');
+  if (ok !== optKey) {
+    optKey = ok;
+    for (i = 0; i < q.options.length; i++) {
+      var buzzed = q.cat === 'paparazzi' && rev && q.buzzer && i === buzzChoice(q);
+      var cls = 'opt' + (rev ? (i === q.correct ? ' right' : buzzed ? ' wrong' : ' dim') : '');
+      var cnt = rev && q.cat !== 'paparazzi' && q.counts[i] ? '<span class="cnt">' + q.counts[i] + '×</span>' : '';
+      var who = buzzed ? '<span class="who" style="background:' + buzzColor(q.buzzer) + '">' + esc(q.buzzer) + '</span>' : '';
+      h += '<div class="' + cls + '"><span class="lt">' + LETTERS.charAt(i) + '</span><span class="tx">' + esc(q.options[i]) + '</span>' + cnt + who + '</div>';
+    }
+    $('opts').innerHTML = h;
+  }
+  renderBar(rev);
+}
+
+/* ───────── Jahr genau: während der Frage Hinweis, bei der Auflösung alle Tipps mit Abstand ───────── */
+function renderGuess(q, rev){
+  var k = S.round + '|' + S.phase + '|' + (rev ? JSON.stringify(q.guesses) : ''), h = '', i, g, cls, d;
+  if (k === optKey) return;
+  optKey = k;
+  $('opts').style.width = '76vw';
+  if (!rev) { $('opts').innerHTML = '<div class="gwait">\ud83d\udcf1 Jahr am Handy eintippen<small>genau richtig +2 \u00b7 sonst am n\u00e4chsten dran +1</small></div>'; return; }
+  if (!q.guesses.length) { $('opts').innerHTML = '<div class="gwait">Niemand hat getippt</div>'; return; }
+  for (i = 0; i < q.guesses.length && i < 6; i++) {
+    g = q.guesses[i];
+    cls = 'opt' + (g.gain === 2 ? ' right' : g.gain === 1 ? ' near' : ' dim');
+    d = g.diff === 0 ? 'genau!' : (g.diff > 0 ? '+' : '\u2212') + Math.abs(g.diff);
+    h += '<div class="' + cls + '"><span class="lt" style="background:' + g.color + '"></span><span class="tx" style="color:' + g.color + '">' + esc(g.name) + '</span>' +
+      '<span class="gy">' + g.year + '</span><span class="gd">' + d + '</span>' +
+      (g.gain ? '<span class="gg' + (g.gain === 1 ? ' one' : '') + '">+' + g.gain + '</span>' : '') + '</div>';
+  }
+  $('opts').innerHTML = h;
+  if (q.guesses[0].gain === 2) confetti('#4dff91', 120);
+}
+
+/* ───────── Zwischenstand: Rangliste mit Spruch ───────── */
+var standKey = '';
+function renderStand(){
+  var ps = S.players.slice(0), i, p, h = '', tgt = S.settings.target, c;
+  ps.sort(function(a, b){ return b.score - a.score || (a.name < b.name ? -1 : 1); });
+  var k = S.round + '|' + JSON.stringify(ps);
+  if (k === standKey) return;
+  standKey = k;
+  var a = ps[0], b = ps[1];
+  if (!a || a.score === 0) c = 'NOCH IST ALLES OFFEN!';
+  else if (b && a.score === b.score) c = 'KOPF-AN-KOPF-RENNEN!';
+  else if (a.score >= tgt - 2) c = a.name.toUpperCase() + ' HAT DAS ZIEL VOR AUGEN!';
+  else if (b && a.score - b.score >= 3) c = a.name.toUpperCase() + ' ZIEHT DAVON!';
+  else c = 'SPANNEND BLEIBT\u2019S!';
+  $('stT').textContent = 'ZWISCHENSTAND \u00b7 NACH RUNDE ' + S.round;
+  $('stC').textContent = c;
+  var rank = 0;
+  for (i = 0; i < ps.length; i++) {
+    p = ps[i];
+    if (i === 0 || p.score !== ps[i - 1].score) rank = i + 1;
+    h += '<div class="srow2" style="-webkit-animation-delay:' + (i * 0.15) + 's;animation-delay:' + (i * 0.15) + 's;border-color:' + (rank === 1 && p.score ? p.color : 'rgba(255,255,255,.1)') + '">' +
+      '<span class="s-rk">' + rank + '.</span><span class="s-nm" style="color:' + p.color + '">' + esc(p.name) + '</span>' +
+      '<span class="s-bar"><div style="width:' + Math.min(100, p.score / tgt * 100) + '%;background:' + p.color + '"></div></span>' +
+      '<span class="s-pt" style="color:' + p.color + '">' + p.score + '</span><span class="s-to">' + (p.score >= tgt ? 'am Ziel' : 'noch ' + (tgt - p.score)) + '</span></div>';
+  }
+  $('stRows').innerHTML = h;
+}
+
+/* ───────── Schnee, wenn X-Mas gewählt ist ───────── */
+var snowOn = null;
+function snow(on){
+  if (on === snowOn) return;
+  snowOn = on;
+  var box = $('snow'), i, f, sz;
+  box.style.display = on ? 'block' : 'none';
+  if (!on || box.childNodes.length) return;
+  for (i = 0; i < 45; i++) {
+    f = document.createElement('div');
+    sz = 0.5 + Math.random() * 1.1;
+    f.style.width = f.style.height = sz + 'vh';
+    f.style.left = (Math.random() * 100) + '%';
+    f.style.opacity = (0.35 + Math.random() * 0.5).toFixed(2);
+    var dur = (9 + Math.random() * 10).toFixed(1) + 's', del = (-Math.random() * 18).toFixed(1) + 's';
+    f.style.webkitAnimationDuration = f.style.animationDuration = dur;
+    f.style.webkitAnimationDelay = f.style.animationDelay = del;
+    box.appendChild(f);
+  }
+}
+
+/* ───────── Paparazzi: Foto aufdecken – 10 Stufen über 30 s (Zeit kommt vom Server, steht in der Pause) ───────── */
+var BLUR_OK = (function(){ try { return !!(window.CSS && CSS.supports && (CSS.supports('filter', 'blur(2px)') || CSS.supports('-webkit-filter', 'blur(2px)'))); } catch(e){ return false; } })();
+var pap = { key: '', mode: '', img: null, tiles: [], step: -1 };
+var MOSAIC = [5, 7, 9, 12, 16, 22, 30, 42, 60, 90];
+function buzzColor(name){ for (var i = 0; i < S.players.length; i++) if (S.players[i].name === name) return S.players[i].color; return '#fff'; }
+function buzzChoice(q){ for (var i = 0; i < q.counts.length; i++) if (q.counts[i]) return i; return -1; }   // nur der Tipper hat geantwortet
+
+function renderPap(q, rev){
+  var box = $('papBox'), isPap = q.cat === 'paparazzi' && !rev;
+  box.style.display = isPap ? 'block' : 'none';
+  $('opts').style.width = isPap ? '46vw' : '76vw';
+  if (!isPap) return;
+  if (pap.key !== S.round + '|' + q.photo) setupPap(q);      // neue Runde oder neues Spiel mit gleicher Rundennummer
+  var steps = 10, step = Math.min(steps, Math.floor(q.elapsed / (q.reveal / steps)));
+  if (step !== pap.step) { pap.step = step; drawPap(step, steps); }
+}
+function setupPap(q){
+  pap.key = S.round + '|' + q.photo; pap.step = -1;
+  pap.mode = q.pmode === 'blur' && !BLUR_OK ? (Math.random() < .5 ? 'tiles' : 'mosaic') : q.pmode;   // Rückfall, falls keine Unschärfe
+  $('papSong').style.display = q.music ? 'block' : 'none';          // Top-20-Künstler: Song läuft als Hilfe
+  var img = $('papImg'), cv = $('papCv'), tl = $('papTiles'), i, j;
+  img.style.backgroundImage = 'url("' + q.photo + '")';
+  var probe = new Image();                                       // lädt das Foto nicht, steht es im Log
+  probe.onerror = function(){ reportError('Paparazzi-Foto lädt nicht: ' + q.photo, 0, 0); };
+  probe.onload = function(){                                       // was sieht der Fernseher wirklich? → Log [TV-Info]
+    setTimeout(function(){
+      var b = $('papBox'), im = $('papImg'), cs = window.getComputedStyle ? getComputedStyle(im) : {};
+      reportError('Paparazzi: Foto ' + probe.width + 'x' + probe.height + ', Box ' + b.offsetWidth + 'x' + b.offsetHeight +
+        ', Bild ' + im.offsetWidth + 'x' + im.offsetHeight + ', Modus ' + pap.mode + ' (Server ' + q.pmode + '), Unschaerfe ' + BLUR_OK +
+        ', display ' + b.style.display + '/' + im.style.display + ', bg ' + String(cs.backgroundImage || '').slice(0, 60) +
+        ', filter ' + (cs.webkitFilter || cs.filter || '-') + ', Kacheln offen ' + openTiles(), 0, 0, 'info');
+    }, 4000);
+  };
+  probe.src = q.photo;
+  img.style.filter = img.style.webkitFilter = '';
+  img.style.display = pap.mode === 'mosaic' ? 'none' : 'block';
+  cv.style.display = pap.mode === 'mosaic' ? 'block' : 'none';
+  tl.innerHTML = ''; pap.tiles = [];
+  if (pap.mode === 'tiles') {
+    for (j = 0; j < 4; j++) for (i = 0; i < 4; i++) {
+      var d = document.createElement('div');
+      d.style.left = (i * 25) + '%'; d.style.top = (j * 25) + '%'; d.style.width = '25.5%'; d.style.height = '25.5%';
+      tl.appendChild(d); pap.tiles.push(d);
+    }
+    pap.tiles.sort(function(){ return Math.random() - .5; });
+  }
+  if (pap.mode === 'mosaic') {
+    pap.img = new Image();
+    pap.img.onload = function(){ pap.step = -1; };              // neu zeichnen, sobald das Foto da ist
+    pap.img.src = q.photo;
+  }
+}
+function openTiles(){ var n = 0; for (var i = 0; i < pap.tiles.length; i++) if (pap.tiles[i].style.opacity === '0') n++; return n + '/' + pap.tiles.length; }
+function drawPap(step, steps){
+  var left = 1 - step / steps;
+  if (pap.mode === 'blur') {
+    var b = 'blur(' + Math.round(left * 28) + 'px)';
+    $('papImg').style.webkitFilter = b; $('papImg').style.filter = b;
+  } else if (pap.mode === 'tiles') {
+    var hide = Math.round(pap.tiles.length * left), show0 = 2;          // von Anfang an 2 Kacheln offen
+    for (var i = 0; i < pap.tiles.length; i++) pap.tiles[i].style.opacity = i >= show0 && i < Math.max(show0, hide) ? '1' : '0';
+  } else if (pap.mode === 'mosaic' && pap.img && pap.img.complete && pap.img.naturalWidth) {
+    var cv = $('papCv'), W = cv.offsetWidth || 400, n = step >= steps ? 0 : MOSAIC[step];
+    cv.width = W; cv.height = W;
+    var ctx = cv.getContext('2d'), im = pap.img, s = Math.min(im.naturalWidth, im.naturalHeight);
+    var sx = (im.naturalWidth - s) / 2, sy = (im.naturalHeight - s) * 0.3;
+    if (!n) { ctx.drawImage(im, sx, sy, s, s, 0, 0, W, W); return; }
+    var sm = document.createElement('canvas'); sm.width = n; sm.height = n;
+    sm.getContext('2d').drawImage(im, sx, sy, s, s, 0, 0, n, n);
+    ctx.imageSmoothingEnabled = false; ctx.webkitImageSmoothingEnabled = false;
+    ctx.drawImage(sm, 0, 0, n, n, 0, 0, W, W);                           // grobe Pixel – das Foto wird nie ausgelesen
+  }
+}
+
+function renderBar(rev){
+  var h = '', i, p, badge;
+  for (i = 0; i < S.players.length; i++) {
+    p = S.players[i];
+    badge = '';
+    if (!rev && p.answered) badge = '<span class="chk">✓</span>';
+    if (rev && p.gain === 2) badge = '<span class="gain two">+2 Allein richtig!</span>';
+    else if (rev && p.gain === 1) badge = '<span class="gain">+1</span>';
+    h += '<div class="pc' + (p.online ? '' : ' off') + '" style="' + (p.answered || p.gain ? 'border-color:' + p.color : '') + '">' + badge +
+      '<span class="dot" style="background:' + p.color + ';box-shadow:0 0 1.4vh ' + p.color + '"></span>' +
+      '<span class="nm" style="color:' + p.color + '">' + esc(p.name) + '</span><span class="sc" style="color:' + p.color + '">' + p.score + '</span></div>';
+  }
+  $('pbar').innerHTML = h;
+}
+
+/* ───────── Siegerehrung wie Chartster: vom letzten zum ersten Platz, alle 3 s eine Stufe ─────────
+   Das Tablet spielt im selben Takt den Applaus (Zeit kommt vom Server: wonAgo). */
+var MEDALS = [
+  { place:'1. PLATZ', coms:['UNSCHLAGBAR!','CHARTSTÜRMER!','MUSIKLEGENDEN!','MEISTERKLASSE!','HITPROFIS!','LEGENDÄR!','SUPERCHARTSTER!','BRAVO!'], cls:'vgold', cf:300 },
+  { place:'2. PLATZ', coms:['STARKES OHR!','STARK!','KÖNNER!','TREFFSICHER!','MITTELGEWICHTCHAMPIONS!','TREFFER!','NAHE DRAN!'], cls:'vsilver', cf:180 },
+  { place:'3. PLATZ', coms:['GUT GEMACHT!','GUT DABEI!','GUT GERATEN!','DABEI SEIN IST ALLES!','ORDENTLICH!','SAUBER!'], cls:'vbronze', cf:110 },
+  { place:'4. PLATZ', coms:['NÄCHSTE RUNDE!','GUT VERSUCHT!','WEITER SO!'], cls:'vbronze', cf:60 }
+];
+var JOINT = ['GEMEINSAMER SIEG!','AUF DEM SIEGERPODEST SIND ALLE GLEICH!','KENNSTE EINEN; KENNSTE ALLE!','SAUBER NACHGEZOGEN!','FAST HÄTTEN WIR EINEN EINZELSIEGER GEHABT!'];
+var STAGE_SEC = 3, wonStage = -1, stageComs = {};
+
+function ranking(){
+  var list = S.players.slice(), i, rank = 0;
+  list.sort(function(a, b){ return b.score - a.score || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0); });
+  for (i = 0; i < list.length; i++) { if (i && list[i].score !== list[i - 1].score) rank = i; list[i].rank = rank; }
+  return list;
+}
+function pick(arr, key){                       // Spruch einmal auswählen und merken (sonst wechselt er jede Sekunde)
+  if (!stageComs[key]) stageComs[key] = arr[Math.floor(Math.random() * arr.length)];
+  return stageComs[key];
+}
+function renderWon(){
+  var w = S.winners || [], list = ranking(), i, p, m;
+  if (!w.length) { renderRankOnly(list); return; }
+  $('rankBox').style.display = 'none'; $('stage').style.display = '';
+  var seq = [];                                                   // Nicht-Sieger vom letzten Platz aufwärts, dann die Sieger
+  for (i = list.length - 1; i >= 0; i--) if (!inArr(w, list[i].name)) seq.push(list[i]);
+  var n = seq.length + 1, st = Math.min(n - 1, Math.floor((S.wonAgo || 0) / STAGE_SEC));
+  if (st === wonStage) return;
+  wonStage = st;
+  var h = '';
+  if (st < seq.length) {
+    p = seq[st]; m = MEDALS[Math.min(p.rank, 3)];
+    h = '<div class="vstage"><div class="v-comment ' + m.cls + '">' + pick(m.coms, 's' + st) + '</div><div class="v-place ' + m.cls + '">' + (p.rank + 1) + '. PLATZ</div>' +
+      '<div class="v-card ' + m.cls + '"><div class="v-name" style="color:' + p.color + '">' + esc(p.name) + '</div>' +
+      '<div class="v-score" style="color:' + p.color + '">' + p.score + ' Punkte</div></div></div>';
+    confetti(p.color, m.cf);
+  } else if (w.length === 1) {
+    for (i = 0; i < list.length; i++) if (list[i].name === w[0]) p = list[i];
+    m = MEDALS[0];
+    h = '<div class="vstage"><div class="v-comment vgold">' + pick(m.coms, 'win') + '</div><div class="v-place vgold">1. PLATZ</div>' +
+      '<div class="v-card vgold"><div class="v-name" style="color:' + p.color + '">' + esc(p.name) + '</div>' +
+      '<div class="v-score" style="color:' + p.color + '">' + p.score + ' Punkte</div><div class="v-sub">Ziel ' + S.settings.target + ' Punkte</div></div>' +
+      endLine(list) + '</div>';
+    confetti(p.color, m.cf); setTimeout(function(){ confetti('#ffd84d', 150); }, 700);
+  } else {                                                        // gemeinsamer Sieg wie Chartster showJointVictory()
+    var names = [], cols = [];
+    for (i = 0; i < list.length; i++) if (inArr(w, list[i].name)) { names.push('<span style="color:' + list[i].color + '">' + esc(list[i].name) + '</span>'); cols.push(list[i].color); }
+    h = '<div class="vstage"><div class="v-comment vgold">' + pick(JOINT, 'joint') + '</div>' +
+      '<div class="v-card vgold"><div class="v-name">' + names.join(' &amp; ') + '</div>' +
+      '<div class="v-score vgold">' + list[0].score + ' Punkte</div><div class="v-sub">perfekt gleichauf!</div></div>' + endLine(list) + '</div>';
+    for (i = 0; i < cols.length; i++) (function(c, d){ setTimeout(function(){ confetti(c, 220); }, d); })(cols[i], i * 400);
+  }
+  $('stage').innerHTML = h;
+}
+function endLine(list){
+  var parts = [], i;
+  for (i = 0; i < list.length; i++) parts.push('<span style="color:' + list[i].color + '">' + (list[i].rank + 1) + '. ' + esc(list[i].name) + ' ' + list[i].score + '</span>');
+  return '<div class="endline">' + parts.join(' &nbsp;·&nbsp; ') + '</div>';
+}
+function renderRankOnly(list){                                    // Spiel ohne Punkte beendet – nur Endstand
+  var h = '', i, p;
+  $('stage').style.display = 'none'; $('rankBox').style.display = '';
+  $('wt').textContent = 'Spiel beendet';
+  $('ws').textContent = 'Endstand';
+  for (i = 0; i < list.length; i++) {
+    p = list[i];
+    h += '<div class="rk"><span class="pos">' + (p.rank + 1) + '.</span><span class="dot" style="background:' + p.color + '"></span>' +
+      '<span class="nm" style="color:' + p.color + '">' + esc(p.name) + '</span><span class="sc" style="color:' + p.color + '">' + p.score + '</span></div>';
+  }
+  $('rank').innerHTML = h;
+}
+
+/* Konfetti wie Chartster spawnConfetti() */
+function confetti(color, n){
+  var c = $('confetti'), cols = [color, '#fff', '#ffd84d', '#ff4fd8', '#53f6ff'];
+  for (var i = 0; i < n; i++) {
+    var p = document.createElement('div'), sz = 6 + Math.random() * 12, dur = 1.6 + Math.random() * 2;
+    var anim = 'cf-fall ' + dur + 's ' + (Math.random() * .8) + 's linear both';
+    p.style.cssText = 'position:absolute;top:-20px;left:' + (Math.random() * 100) + '%;width:' + sz + 'px;height:' + sz +
+      'px;background:' + cols[i % cols.length] + ';border-radius:' + ['50%', '3px', '0'][i % 3] + ';-webkit-animation:' + anim + ';animation:' + anim;
+    c.appendChild(p);
+    (function(el, ms){ setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, ms); })(p, Math.ceil((dur + 1) * 1000));
+  }
+}
+
+/* ───────── Vollbild (mit der TV-Fernbedienung anklicken) ───────── */
+function isFull(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+$('fsBtn').onclick = function(e){
+  e.preventDefault();
+  var d = document.documentElement;
+  try { (d.requestFullscreen || d.webkitRequestFullscreen).call(d); } catch(err){}
+  setTimeout(function(){ $('fsBtn').style.display = isFull() ? 'none' : ''; }, 800);
+  return false;
+};
+
+/* Erste Taste der Fernbedienung (OK, Pfeile …) schaltet auf Vollbild – vorher erlaubt es der Browser nicht */
+function goFull(){
+  if (isFull()) return;
+  var d = document.documentElement;
+  try { (d.requestFullscreen || d.webkitRequestFullscreen).call(d); } catch(err){}
+  setTimeout(function(){ $('fsBtn').style.display = isFull() ? 'none' : ''; }, 800);
+}
+document.addEventListener('keydown', goFull, true);
+document.addEventListener('click', goFull, true);
+
+/* Versionsabgleich: neue Server-Version → Seite neu laden (höchstens 3-mal hintereinander) */
+function vnum(v){ var a = String(v || '0').split('.'), n = 0; for (var i = 0; i < a.length; i++) n = n * 1000 + (+a[i] || 0); return n; }
+function versionCheck(sv){
+  var n = 0;
+  if (!sv || sv === PAGE_V) { try { sessionStorage.removeItem('cot_reload'); } catch(e){} return false; }
+  if (vnum(sv) > vnum(PAGE_V)) {
+    try { n = +(sessionStorage.getItem('cot_reload') || 0); if (n < 3) sessionStorage.setItem('cot_reload', n + 1); } catch(e){}
+    if (n < 3) { location.reload(); return true; }
+  }
+  $('offline').style.display = 'block';
+  $('offline').textContent = 'Versionen passen nicht: Anzeige ' + PAGE_V + ', Gastgeber ' + sv + ' – Seite neu laden';
+  return false;
+}
+
+var reloadBase = null;
+var qrFor = '';
+function qrImg(text){ var q = qrcode(0, 'M'); q.addData(text); q.make(); return q.createDataURL(8, 2); }
+function poll(){
+  get(DB + ROOM + '/tv.json', function(t){
+    var j = null;
+    try { j = typeof t === 'string' ? JSON.parse(t) : null; } catch(e){}
+    if (!j) { fails++; if (fails >= 3) { $('offline').style.display = 'block'; $('offline').textContent = t === null && fails > 3 ? 'Raum ' + ROOM + ' noch ohne Spielstand – Gastgeber-Seite geöffnet?' : 'Verbindung unterbrochen …'; } return; }
+    fails = 0; $('offline').style.display = 'none';
+    if (versionCheck(j.v)) return;
+    // „Spieleabend starten“ bei schon offener TV-Seite: nur neu laden statt neuem Tab
+    if (reloadBase === null) reloadBase = j.tvReload;
+    else if (j.tvReload !== reloadBase) { location.reload(); return; }
+    var txt = JSON.stringify(j);
+    S = j;
+    if (txt !== lastJson) {
+      lastJson = txt;
+      try { render(); } catch(e){ reportError((e && e.message) || e, e && e.lineNumber, 0); }
+    }
+  });
+}
+
+/* Cover-Hintergrund wie die Chartster-Lobby: nur an den Rändern, langsam auf- und abblenden */
+var SLOTS = [[3,8],[3,40],[3,72],[13,24],[13,56],[13,86],[87,8],[87,40],[87,72],[77,24],[77,56],[77,86],[30,2],[50,2],[68,2],[30,90],[50,90],[68,90]];
+function buildBg(covers){
+  if (!covers || !covers.length) return;
+  var bg = $('bg'), idx = 0;
+  function next(){ var c = covers[idx % covers.length]; idx++; return c; }
+  for (var i = 0; i < SLOTS.length; i++) {
+    var d = document.createElement('div'), sz = 9 + Math.random() * 9, dur = 38 + Math.random() * 24;
+    d.className = 'cv';
+    d.style.width = sz + 'vh'; d.style.height = sz + 'vh';
+    d.style.left = SLOTS[i][0] + '%'; d.style.top = SLOTS[i][1] + '%';
+    d.style.marginLeft = (-sz / 2) + 'vh';
+    d.style.backgroundImage = 'url("' + next() + '")';
+    d.style.webkitAnimationDuration = d.style.animationDuration = dur + 's';
+    d.style.webkitAnimationDelay = d.style.animationDelay = (-Math.random() * dur) + 's';
+    (function(el){
+      function swap(){ el.style.backgroundImage = 'url("' + next() + '")'; }
+      el.addEventListener('animationiteration', swap);
+      el.addEventListener('webkitAnimationIteration', swap);
+    })(d);
+    bg.appendChild(d);
+  }
+}
+
+if (!ROOM) {
+  $('offline').style.display = 'block';
+  $('offline').textContent = 'Bitte die Adresse mit Raumcode öffnen – sie steht auf dem Gerät des Gastgebers (…/tv/?r=CODE).';
+} else {
+  (function covers(){                                  // Cover schreibt der Gastgeber, sobald seine Songs geladen sind
+    get(DB + ROOM + '/covers.json', function(t){ var c = null; try { c = JSON.parse(t); } catch(e){} if (c && c.length) buildBg(c); else setTimeout(covers, 5000); });
+  })();
+  poll();
+  setInterval(poll, 1000);
+}
+</script>
+</body>
+</html>
