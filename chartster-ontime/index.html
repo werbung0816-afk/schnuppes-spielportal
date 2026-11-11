@@ -2,976 +2,728 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#07000f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ChartsterOnTime</title>
-<link rel="icon" href="../chartster/icons/favicon-32x32.png">
-<link rel="apple-touch-icon" href="../chartster/icons/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-title" content="ChartsterOnTime">
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="qrcode.js"></script>
-<script src="cot-host.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChartsterOnTime – TV</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* CI 1:1 aus Chartster (index.html v5.8.3) */
-:root{
-  --cyan:#53f6ff;--pink:#ff4fd8;--purple:#8f5fff;
-  --bg:#07000f;--glass:rgba(255,255,255,.055);--glass-b:rgba(255,255,255,.10);
-  --text:rgba(240,240,255,1);--muted:rgba(240,240,255,.45);
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Outfit',sans-serif;background:var(--bg);
-  background-image:radial-gradient(ellipse 60% 50% at 15% 40%,rgba(143,95,255,.18) 0%,transparent 70%),radial-gradient(ellipse 50% 40% at 85% 15%,rgba(83,246,255,.12) 0%,transparent 60%),radial-gradient(ellipse 45% 45% at 65% 85%,rgba(255,79,216,.12) 0%,transparent 60%);
-  min-height:100dvh;color:var(--text);padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 40px)}
-.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
-.card{width:100%;background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--glass-b);border-radius:24px;padding:22px 20px;display:flex;flex-direction:column;align-items:center;gap:14px;position:relative}
-.game-title{font-size:clamp(26px,7.4vw,52px);white-space:nowrap;font-weight:900;letter-spacing:1px;line-height:1.15;padding-bottom:3px;text-align:center;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px rgba(83,246,255,.4))}
-.role{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--pink);border:1px solid rgba(255,79,216,.4);background:rgba(255,79,216,.1);border-radius:20px;padding:4px 14px}
-.label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:center;width:100%}
-.sep{width:100%;height:1px;background:var(--glass-b)}
-.btn{width:100%;padding:16px;border-radius:14px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;border:none;outline:none;-webkit-appearance:none;touch-action:manipulation;user-select:none}
-.btn[disabled]{opacity:.35;pointer-events:none}
-.btn-primary{background:linear-gradient(135deg,rgba(83,246,255,.15),rgba(143,95,255,.15));color:var(--cyan);border:1px solid rgba(83,246,255,.4);box-shadow:0 0 20px rgba(83,246,255,.12)}
-.btn-primary:active{box-shadow:0 0 32px rgba(83,246,255,.4)}
-.btn-muted{background:rgba(255,255,255,.03);color:var(--muted);border:1px solid rgba(255,255,255,.06);font-size:13px;padding:10px}
-.st-inp{width:100%;font-size:clamp(18px,5vw,24px);padding:14px 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:12px;color:#fff;font-family:Outfit,sans-serif;text-align:center;outline:none}
-.st-inp:focus{border-color:var(--cyan)}
-.err{color:#ff6060;font-size:15px;font-weight:600;text-align:center;min-height:0}
-.me{display:flex;align-items:center;gap:12px;font-size:clamp(26px,7vw,36px);font-weight:900}
-.dot{width:16px;height:16px;border-radius:50%;flex-shrink:0}
-.players{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%}
-.pl{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--glass-b);font-size:17px;font-weight:700;transition:opacity .3s}
-.pl.off{opacity:.35}
-.pl small{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.wait{font-size:17px;color:var(--muted);text-align:center;line-height:1.5}
-/* Filter wie Chartster */
-.filter-wrap{display:flex;flex-direction:column;gap:8px;width:100%}
-.flt-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.flt{padding:4px;border-radius:12px;border:1px solid rgba(83,246,255,.4);background:rgba(83,246,255,.07);display:inline-flex;align-items:center;justify-content:center;animation:flt-idle 2.8s ease-in-out infinite;transition:opacity .2s;color:var(--muted);font-family:Outfit,sans-serif;font-weight:700}
-@keyframes flt-idle{0%,100%{box-shadow:0 0 6px rgba(83,246,255,.2);border-color:rgba(83,246,255,.3)}50%{box-shadow:0 0 20px rgba(83,246,255,.6);border-color:rgba(83,246,255,.8)}}
-.flt img{width:clamp(44px,12vw,64px);height:clamp(44px,12vw,64px);border-radius:8px;object-fit:cover;display:block}
-.flt.off{opacity:.22;animation:none;border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.03);box-shadow:none}
-.targets{display:flex;gap:10px;width:100%}
-.targets button{flex:1;padding:14px 0;border-radius:14px;font-family:Outfit,sans-serif;font-size:24px;font-weight:900;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--glass-b)}
-.targets button.on{background:rgba(255,79,216,.18);color:var(--pink);border-color:var(--pink);box-shadow:0 0 16px rgba(255,79,216,.3)}
-.status{font-size:13px;color:var(--muted);font-weight:600}
-.hint{font-size:13px;color:var(--muted);text-align:center;line-height:1.5}
-.hint b{color:var(--cyan)}
-.version{align-self:flex-end;font-size:12px;font-weight:700;color:rgba(255,255,255,.4);background:rgba(0,0,0,.4);padding:3px 8px;border-radius:8px}
-/* ── Spiel ── */
-.mebar{display:flex;align-items:center;justify-content:space-between;width:100%;font-size:20px;font-weight:800}
-.mebar .pts{font-size:15px;color:var(--muted);font-weight:700}
-.mebar .pts b{font-size:22px}
-.qhead{display:flex;justify-content:space-between;width:100%;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.qcat{font-size:clamp(30px,8.5vw,44px);font-weight:900;line-height:1.15;padding-bottom:3px;text-align:center;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.tbar{width:100%;height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden}
-.tfill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width 1s linear}
-.tfill.hot{background:linear-gradient(90deg,var(--pink),#ff6060)}
-.cd{font-size:72px;font-weight:900;line-height:1;color:var(--pink);text-shadow:0 0 30px rgba(255,79,216,.6)}
-.cd.red{color:#ff6060;text-shadow:0 0 30px rgba(255,96,96,.7)}
-.opts{display:flex;flex-direction:column;gap:10px;width:100%}
-.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:15px 16px;border-radius:14px;font-family:Outfit,sans-serif;font-size:clamp(17px,4.6vw,21px);font-weight:700;color:var(--text);background:rgba(255,255,255,.05);border:2px solid var(--glass-b);transition:background .15s,border-color .15s;touch-action:manipulation}
-.opt .lt{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#07000f;background:rgba(83,246,255,.85)}
-.opt .tx{flex:1;min-width:0;overflow-wrap:anywhere}
-.opt .cnt{font-size:14px;color:var(--muted);font-weight:800;white-space:nowrap}
-.opt.sel{background:rgba(83,246,255,.14)}
-.opt.right{border-color:#4dff91!important;background:rgba(77,255,145,.16)!important;box-shadow:0 0 18px rgba(77,255,145,.3)}
+/* Chartster-CI für den TV-Browser (Samsung 2017): keine CSS-Variablen, kein clamp(), kein gap,
+   kein backdrop-filter/drop-shadow – Größen in vh, damit es bei 100 % und 125 % Zoom passt. */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Outfit',sans-serif;background:#07000f;color:#f0f0ff;
+  background-image:radial-gradient(ellipse 60% 50% at 15% 40%,rgba(143,95,255,.18) 0%,transparent 70%),radial-gradient(ellipse 50% 40% at 85% 15%,rgba(83,246,255,.12) 0%,transparent 60%),radial-gradient(ellipse 45% 45% at 65% 85%,rgba(255,79,216,.12) 0%,transparent 60%)}
+.flex{display:-webkit-flex;display:flex}
+.col{-webkit-flex-direction:column;flex-direction:column}
+.center{-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center}
+.grad{color:#53f6ff;background:linear-gradient(135deg,#53f6ff,#ff4fd8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.screen{position:relative;z-index:1;height:100%;display:none}
+.screen.on{display:-webkit-flex;display:flex}
+
+/* ── Cover-Hintergrund (Lobby) ── */
+#bg{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:0}
+.cv{position:absolute;border-radius:10px;background-size:cover;background-position:center;opacity:0;
+  -webkit-animation:emerge 40s ease-in-out infinite;animation:emerge 40s ease-in-out infinite}
+@-webkit-keyframes emerge{0%,100%{opacity:0;-webkit-transform:scale(.7)}22%,78%{opacity:.30;-webkit-transform:scale(1)}50%{opacity:.36;-webkit-transform:scale(1.03)}}
+@keyframes emerge{0%,100%{opacity:0;transform:scale(.7)}22%,78%{opacity:.30;transform:scale(1)}50%{opacity:.36;transform:scale(1.03)}}
+
+/* ── Lobby ── */
+#lobby{-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:3vh 4vw}
+.title{font-size:10vh;font-weight:900;letter-spacing:.3vh;line-height:1.15;padding-bottom:.6vh}
+.sub{font-size:3.6vh;color:rgba(240,240,255,.55);font-weight:600;margin:.5vh 0 3.5vh}
+.row{display:-webkit-flex;display:flex;-webkit-align-items:stretch;align-items:stretch;-webkit-justify-content:center;justify-content:center;width:100%}
+.card{background:rgba(20,8,40,.72);border:1px solid rgba(255,255,255,.10);border-radius:3vh;padding:2.6vh 2.4vw;margin:0 1vw;
+  display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;
+  box-shadow:0 0 4vh rgba(83,246,255,.06)}
+.step{font-size:2.2vh;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#53f6ff;margin-bottom:1.8vh}
+.step.p{color:#ff4fd8}
+.qr{width:27vh;height:27vh;border-radius:1.6vh;background:#fff;padding:.6vh;box-shadow:0 0 3vh rgba(83,246,255,.25)}
+.qrtxt{font-size:2.4vh;color:rgba(240,240,255,.7);margin-top:1.6vh;font-weight:600;text-align:center;max-width:30vh;word-wrap:break-word}
+.qrtxt b{color:#fff}
+.plcard{min-width:52vh;-webkit-align-items:stretch;align-items:stretch}
+.pl{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;font-size:4.2vh;font-weight:800;padding:.7vh 1vh;
+  border-radius:1.4vh;margin-bottom:.5vh;-webkit-transition:opacity .4s;transition:opacity .4s}
+.pl.off{opacity:.3}
+.pl.free{font-size:3vh;font-weight:600;color:rgba(240,240,255,.22);border:2px dashed rgba(255,255,255,.08)}
+.pl .dot{width:2.6vh;height:2.6vh;border-radius:50%;margin-right:1.6vh;-webkit-flex-shrink:0;flex-shrink:0}
+.pl .adm{font-size:1.7vh;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,240,255,.45);margin-left:1.4vh;font-weight:700}
+.pl .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info{font-size:2.8vh;color:rgba(240,240,255,.6);margin-top:3.5vh;font-weight:600;text-align:center}
+.info b{color:#ff4fd8}
+.info .warn{color:#ff6060}
+#fsBtn{position:fixed;bottom:1.2vh;left:1.4vw;font-family:'Outfit',sans-serif;font-size:1.8vh;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:#53f6ff;background:rgba(83,246,255,.1);border:1px solid rgba(83,246,255,.4);border-radius:1vh;padding:.8vh 1.4vh;z-index:5;text-decoration:none}
+
+/* ── Frage / Auflösung ── */
+#quiz{-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;padding:3vh 4vw 0}
+#qtop{width:100%;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;min-height:13vh}
+.round{font-size:2.6vh;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,240,255,.45);width:18vw}
+.qcat{font-size:8.5vh;font-weight:900;line-height:1.15;padding-bottom:.5vh;text-align:center;-webkit-flex:1;flex:1}
+.timer{width:18vw;text-align:right;font-size:3.4vh;font-weight:800;color:rgba(240,240,255,.7)}
+.tbar{width:100%;height:1vh;background:rgba(255,255,255,.1);border-radius:.5vh;overflow:hidden;margin:1.2vh 0 2.6vh}
+.tfill{height:100%;border-radius:.5vh;background:linear-gradient(90deg,#53f6ff,#8f5fff);-webkit-transition:width 1s linear;transition:width 1s linear}
+.tfill.hot{background:linear-gradient(90deg,#ff4fd8,#ff6060)}
+#cd{position:absolute;right:4vw;top:2vh;width:16vh;height:16vh;border-radius:50%;background:rgba(20,8,40,.9);border:.6vh solid #ff4fd8;
+  font-size:10vh;font-weight:900;color:#ff4fd8;text-align:center;line-height:14.8vh;box-shadow:0 0 5vh rgba(255,79,216,.6);display:none;z-index:4}
+#cd.red{border-color:#ff6060;color:#ff6060;box-shadow:0 0 5vh rgba(255,96,96,.7)}
+/* Auflösung oben – wie der Zuschauer-Modus in Chartster */
+#rev{display:none;width:100%;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;margin-bottom:2.4vh}
+#rev img{width:22vh;height:22vh;border-radius:1.6vh;object-fit:cover;margin-right:3vw;border:.3vh solid rgba(83,246,255,.5);box-shadow:0 0 4vh rgba(83,246,255,.3)}
+#rev .yr{font-size:17vh;font-weight:900;line-height:1.1;padding-bottom:.8vh;margin-right:3vw}
+#rev .meta{min-width:0;max-width:52vw}
+#rev .ar{font-family:'DM Sans',sans-serif;font-size:5.4vh;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rev .ti{font-family:'DM Sans',sans-serif;font-size:4.6vh;color:#53f6ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 5 Antworten */
+#opts{width:76vw}
+.opt{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;min-height:7.2vh;padding:.9vh 1.6vw;margin-bottom:1.2vh;border-radius:1.8vh;
+  background:rgba(20,8,40,.72);border:.3vh solid rgba(255,255,255,.12);-webkit-transition:all .4s;transition:all .4s}
+.opt .lt{width:5vh;height:5vh;border-radius:1.2vh;background:#53f6ff;color:#07000f;font-size:3vh;font-weight:900;text-align:center;line-height:5vh;margin-right:1.6vw;-webkit-flex-shrink:0;flex-shrink:0}
+.opt .tx{-webkit-flex:1;flex:1;font-size:3.8vh;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opt .cnt{font-size:3vh;font-weight:800;color:rgba(240,240,255,.6);margin-left:1vw}
+.opt.right{border-color:#4dff91;background:rgba(77,255,145,.18);box-shadow:0 0 4vh rgba(77,255,145,.35)}
 .opt.right .lt{background:#4dff91}
-.opt.wrong{border-color:#ff6060!important;background:rgba(255,96,96,.12)!important}
-.opt.dim{opacity:.45}
-.opts.locked .opt{pointer-events:none}
-.res{font-size:clamp(26px,7vw,36px);font-weight:900;text-align:center;line-height:1.2}
-.res.ok{color:#4dff91;text-shadow:0 0 24px rgba(77,255,145,.5)}
-.res.alone{color:#ffd84d;text-shadow:0 0 28px rgba(255,216,77,.6)}
-.res.no{color:#ff6060}
-.res.none{color:var(--muted)}
-.song{display:flex;align-items:center;gap:16px;width:100%}
-.song img{width:96px;height:96px;border-radius:12px;object-fit:cover;flex-shrink:0;background:#12041f;border:1px solid rgba(83,246,255,.3)}
-.song .y{font-size:40px;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding-bottom:2px}
-.song .a{font-family:'DM Sans',sans-serif;font-size:18px;font-weight:700;margin-top:4px}
-.song .t{font-family:'DM Sans',sans-serif;font-size:16px;color:var(--cyan)}
-.score{display:flex;flex-direction:column;gap:6px;width:100%}
-.srow{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.04)}
-.srow .n{flex:1}
-.srow .g{font-size:13px;font-weight:800;color:#4dff91}
-.srow .g.two{color:#ffd84d}
-.srow .s{font-size:22px;font-weight:900;min-width:28px;text-align:right}
-.wintitle{font-size:clamp(30px,8vw,44px);font-weight:900;text-align:center;line-height:1.2;color:#ffd84d;text-shadow:0 0 30px rgba(255,216,77,.5)}
-/* ── Spotify-Player mit Abdeckung: 1:1 aus Chartster ── */
-.player-outer{position:relative;width:100%;height:152px;border-radius:14px;overflow:hidden;border:1px solid rgba(83,246,255,.2);box-shadow:0 0 24px rgba(83,246,255,.08)}
-.player-outer iframe{position:absolute;top:0;left:0;width:100%;height:152px;border:none}
-.sp-ot{position:absolute;top:0;left:0;width:100%;height:95px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;pointer-events:none;z-index:11}
-.sp-name{font-size:30px;font-weight:700;background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;line-height:1.2;padding-bottom:2px}
-.sp-q{font-size:16px;color:rgba(255,255,255,.4);text-align:center}
-.btn-reveal{background:rgba(255,79,216,.12);color:var(--pink);border:1px solid rgba(255,79,216,.4)}
-.btn-gold{background:rgba(255,216,77,.14);color:#ffd84d;border:1px solid rgba(255,216,77,.5);box-shadow:0 0 20px rgba(255,216,77,.2)}
-/* ── Admin-Menü ⚙: 1:1 nach Chartster (#opt-fab, #opt-panel) ── */
-#opt-fab{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 18px);right:18px;z-index:840;width:54px;height:54px;border-radius:50%;background:rgba(15,5,30,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.4)}
-#opt-shade{position:fixed;inset:0;z-index:845;background:rgba(0,0,0,.45)}
-#opt-panel{position:fixed;bottom:0;left:0;right:0;max-height:88dvh;overflow-y:auto;background:rgba(8,2,18,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--glass-b);border-radius:20px 20px 0 0;padding:22px 20px calc(env(safe-area-inset-bottom) + 28px);z-index:850;display:flex;flex-direction:column;gap:14px;max-width:760px;margin:0 auto}
-.opt-title{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.opt-row{display:flex;gap:10px}
-.opt-btn{flex:1;padding:16px 12px;min-height:60px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:17px;font-weight:600;border:1px solid var(--glass-b);background:var(--glass);color:var(--text)}
-.opt-btn:active{background:rgba(255,255,255,.12)}
-.opt-btn small{display:block;font-weight:400;opacity:.6;font-size:12px;margin-top:2px}
-.opt-btn.danger{color:#ff6060;border-color:rgba(255,60,60,.3)}
-.opt-btn.gold{color:#ffd84d;border-color:rgba(255,216,77,.4)}
-.opt-btn[disabled]{opacity:.3;pointer-events:none}
-#opt-confirm{background:rgba(255,60,60,.08);border-radius:12px;padding:14px;flex-direction:column;gap:10px;border:1px solid rgba(255,60,60,.3);display:flex}
-.prow{display:flex;align-items:center;gap:8px;padding:10px;background:rgba(255,255,255,.05);border-radius:10px}
-.prow .n{flex:1;font-weight:700;font-size:18px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.prow .s{font-size:20px;font-weight:900;min-width:30px;text-align:center}
-.pbtn{min-width:46px;padding:11px 10px;border-radius:10px;font-family:Outfit,sans-serif;font-size:17px;font-weight:800;background:rgba(83,246,255,.15);border:1px solid rgba(83,246,255,.6);color:var(--cyan)}
-.pbtn.minus{background:rgba(255,79,216,.15);border-color:rgba(255,79,216,.6);color:var(--pink)}
-.pbtn.del{background:rgba(255,60,60,.08);border-color:rgba(255,60,60,.4);color:#ff6060}
-.pbtn.del.armed{background:#ff6060;color:#07000f}
-.pausebox{font-size:30px;font-weight:900;color:#ffd84d;text-align:center;letter-spacing:.1em;text-shadow:0 0 24px rgba(255,216,77,.5)}
-/* ── Spielende auf Handy/Tablet (Medaillenfarben wie Chartster) ── */
-.wplace{font-size:clamp(34px,10vw,52px);font-weight:900;text-align:center;line-height:1.1}
-.wcom{font-size:clamp(20px,6vw,28px);font-weight:900;text-align:center}
-.vgold{color:#ffd84d;text-shadow:0 0 30px rgba(255,216,77,.5)}
-.vsilver{color:#dce8ff;text-shadow:0 0 30px rgba(200,220,255,.4)}
-.vbronze{color:#ffb36b;text-shadow:0 0 30px rgba(255,180,100,.4)}
-/* ── Heimkino (Verstärker, Fernseher) ── */
-.setup-lines{display:flex;flex-direction:column;gap:4px;font-size:15px;line-height:1.35}
-.setup-lines:empty{display:none}
-.setup-lines .ok{color:#4dff91}.setup-lines .bad{color:#ff6060}.setup-lines .info{color:var(--muted)}
-#papTv{font-size:24px;font-weight:900;text-align:center;color:#ffd84d;padding:14px 10px;border-radius:14px;
-  background:rgba(255,216,77,.1);border:1px solid rgba(255,216,77,.45);box-shadow:0 0 22px rgba(255,216,77,.18);margin-bottom:12px;line-height:1.25}
-#papTv small{display:block;font-size:14px;font-weight:600;color:rgba(255,216,77,.8);margin-top:4px}
-/* ── Jahr genau: eigenes Ziffernfeld ── */
-#pad{width:100%;display:flex;flex-direction:column;gap:10px}
-.pad-show{font-size:clamp(52px,16vw,72px);font-weight:900;text-align:center;letter-spacing:.12em;line-height:1.1;
-  background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.pad-show .ph{-webkit-text-fill-color:rgba(255,255,255,.18)}
-.pad-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.pad-row.two{grid-template-columns:1fr 1fr}
-.pk{padding:16px 0;border-radius:14px;font-family:Outfit,sans-serif;font-size:28px;font-weight:800;color:var(--text);background:rgba(255,255,255,.06);
-  border:1px solid var(--glass-b);touch-action:manipulation}
-.pk:active{background:rgba(83,246,255,.2)}
-.pk.q{font-size:20px;color:var(--cyan);border-color:rgba(83,246,255,.45);background:rgba(83,246,255,.08)}
-.pk.del{color:var(--pink)}
-.pk.ok{font-size:20px;color:#07000f;background:#4dff91;border-color:#4dff91}
-.pk[disabled]{opacity:.3;pointer-events:none}
-.pad-sent{text-align:center;font-size:15px;font-weight:700;color:#4dff91;min-height:20px}
-/* ── Mobil: Start, Einladen ── */
-.invite{display:flex;gap:12px;width:100%;justify-content:center;flex-wrap:wrap}
-.inv{flex:1 1 140px;max-width:210px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px;border-radius:14px;
-  background:rgba(255,255,255,.05);border:1px solid var(--glass-b)}
-.inv-t{font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--cyan);text-transform:uppercase}
-.inv img{width:100%;max-width:170px;aspect-ratio:1;background:#fff;border-radius:10px;padding:6px;image-rendering:pixelated}
-.inv-u{font-size:12px;color:var(--muted);word-break:break-all;text-align:center;user-select:all;-webkit-user-select:all}
-.room{font-size:30px;font-weight:900;letter-spacing:.25em;color:#fff}
-#hostOff{margin-top:6px}
-[hidden]{display:none!important}
+.opt.dim{opacity:.35}
+.opt.wrong{border-color:#ff6060;background:rgba(255,96,96,.15);opacity:1}
+.opt .who{font-size:2.6vh;font-weight:800;margin-left:1vw;padding:.3vh 1vh;border-radius:1vh;color:#07000f}
+/* Paparazzi: Künstlerfoto wird aufgedeckt – Unscharf / Kacheln / Mosaik (wie Chartster Paparazzi) */
+#qbody{width:100%;-webkit-justify-content:center;justify-content:center;-webkit-align-items:flex-start;align-items:flex-start}
+#papBox{position:relative;width:47vh;height:47vh;margin-right:3vw;border-radius:2vh;overflow:hidden;border:.4vh solid rgba(83,246,255,.5);
+  box-shadow:0 0 4vh rgba(83,246,255,.3);background:#12041f;-webkit-flex-shrink:0;flex-shrink:0;display:none}
+#papImg,#papCv,#papTiles{position:absolute;top:0;left:0;width:100%;height:100%}
+#papImg{background-size:cover;background-position:center 30%}
+#papTiles div{position:absolute;background:#1a1030;border:1px solid rgba(255,255,255,.05);-webkit-transition:opacity .8s;transition:opacity .8s}
+#papSong{position:absolute;left:0;right:0;bottom:0;padding:1vh;text-align:center;font-size:2.4vh;font-weight:800;color:#53f6ff;background:rgba(7,0,15,.75);display:none}
+#rev .pimg{width:30vh;height:30vh;border-radius:2vh;background-size:cover;background-position:center 30%;margin-right:3vw;border:.4vh solid rgba(83,246,255,.6);box-shadow:0 0 4vh rgba(83,246,255,.35);-webkit-flex-shrink:0;flex-shrink:0}
+#rev .pname{font-size:9vh;font-weight:900;line-height:1.15;padding-bottom:.5vh}
+#rev .pres{font-size:3.6vh;font-weight:800;margin-top:1vh}
+/* Spielerleiste unten */
+#pbar{position:fixed;left:0;right:0;bottom:2vh;-webkit-justify-content:center;justify-content:center;z-index:3}
+.pc{position:relative;min-width:14vw;margin:0 .8vw;padding:1.2vh 1.4vw;border-radius:1.8vh;background:rgba(20,8,40,.85);border:.3vh solid rgba(255,255,255,.1);
+  display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-transition:opacity .4s;transition:opacity .4s}
+.pc.off{opacity:.35}
+.pc .dot{width:2.2vh;height:2.2vh;border-radius:50%;margin-right:1vw;-webkit-flex-shrink:0;flex-shrink:0}
+.pc .nm{font-size:3.2vh;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:16vw;-webkit-flex:1;flex:1}
+.pc .sc{font-size:4.6vh;font-weight:900;margin-left:1vw}
+.pc .chk{position:absolute;top:-1.6vh;right:-1vh;width:4vh;height:4vh;border-radius:50%;background:#4dff91;color:#07000f;font-size:2.6vh;font-weight:900;
+  text-align:center;line-height:4vh;box-shadow:0 0 2vh rgba(77,255,145,.7)}
+.pc .gain{position:absolute;top:-2.2vh;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);white-space:nowrap;font-size:2.4vh;font-weight:900;
+  padding:.3vh 1vh;border-radius:1vh;background:#4dff91;color:#07000f}
+.pc .gain.two{background:#ffd84d;box-shadow:0 0 3vh rgba(255,216,77,.8)}
+
+/* ── Spielende ── */
+#won{-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:4vh 4vw}
+.wt{font-size:10vh;font-weight:900;color:#ffd84d;text-shadow:0 0 5vh rgba(255,216,77,.5);text-align:center;line-height:1.15}
+.ws{font-size:3.2vh;color:rgba(240,240,255,.55);font-weight:600;margin:1vh 0 4vh}
+.rk{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;width:60vw;padding:1.4vh 2vw;margin-bottom:1.2vh;border-radius:2vh;
+  background:rgba(20,8,40,.8);border:.3vh solid rgba(255,255,255,.1)}
+.rk .pos{font-size:4vh;font-weight:900;width:8vh;color:rgba(240,240,255,.5)}
+.rk .dot{width:2.6vh;height:2.6vh;border-radius:50%;margin-right:1.6vw}
+.rk .nm{-webkit-flex:1;flex:1;font-size:4.6vh;font-weight:900}
+.rk .sc{font-size:5vh;font-weight:900}
+.rk.first{border-color:#ffd84d;box-shadow:0 0 4vh rgba(255,216,77,.35)}
+/* Siegerehrung 1:1 nach Chartster (.vstage, .v-comment, .v-place, .v-card, Medaillenfarben) – in vh */
+.vstage{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;text-align:center;
+  -webkit-animation:zoomIn .5s ease;animation:zoomIn .5s ease}
+@-webkit-keyframes zoomIn{from{opacity:0;-webkit-transform:scale(.8)}to{opacity:1;-webkit-transform:scale(1)}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.v-comment{font-size:7vh;font-weight:900;line-height:1.2;margin-bottom:2.4vh}
+.v-place{font-size:12vh;font-weight:900;line-height:1;margin-bottom:3.4vh}
+.v-card{min-width:56vh;padding:3.6vh 5vh;border-radius:3vh;background:rgba(20,20,40,.9);border:.4vh solid rgba(255,255,255,.15)}
+.v-name{font-size:8vh;font-weight:900;margin-bottom:1.2vh;line-height:1.1}
+.v-score{font-size:10vh;font-weight:900;line-height:1}
+.v-sub{font-size:2.6vh;color:rgba(240,240,255,.55);margin-top:1vh;font-weight:600}
+.vgold{color:#ffd84d;border-color:#ffd84d;box-shadow:0 0 8vh rgba(255,216,77,.5);text-shadow:0 0 4vh rgba(255,216,77,.6)}
+.vsilver{color:#dce8ff;border-color:#dce8ff;box-shadow:0 0 6vh rgba(200,220,255,.4);text-shadow:0 0 4vh rgba(200,220,255,.5)}
+.vbronze{color:#ffb36b;border-color:#ffb36b;box-shadow:0 0 6vh rgba(255,180,100,.4);text-shadow:0 0 4vh rgba(255,180,100,.5)}
+.v-comment.vgold,.v-comment.vsilver,.v-comment.vbronze,.v-place.vgold,.v-place.vsilver,.v-place.vbronze,.v-score.vgold{box-shadow:none}
+.endline{font-size:3vh;font-weight:700;color:rgba(240,240,255,.6);margin-top:4vh}
+#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9;overflow:hidden}
+/* Jahr genau */
+.gwait{text-align:center;font-size:6vh;font-weight:900;color:#53f6ff;padding:6vh 0}
+.gwait small{display:block;font-size:3.2vh;font-weight:700;color:rgba(240,240,255,.6);margin-top:1.6vh}
+.opt.near{border-color:#ffd84d;background:rgba(255,216,77,.14);box-shadow:0 0 4vh rgba(255,216,77,.3)}
+.opt .gy{font-size:4.6vh;font-weight:900;margin-left:auto;margin-right:1.6vw}
+.opt .gd{font-size:3vh;font-weight:800;color:rgba(240,240,255,.6);min-width:9vw;text-align:right}
+.opt .gg{font-size:2.8vh;font-weight:900;margin-left:1.2vw;padding:.3vh 1vh;border-radius:1vh;color:#07000f;background:#4dff91}
+.opt .gg.one{background:#ffd84d}
+/* Zwischenstand */
+#stand{-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:4vh 6vw}
+#stand .st-t{font-size:3vh;font-weight:800;letter-spacing:.3em;color:rgba(240,240,255,.55)}
+#stand .st-c{font-size:7.5vh;font-weight:900;line-height:1.15;padding-bottom:.8vh;margin:.8vh 0 2.6vh;text-align:center}
+.srow2{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;width:70vw;padding:.7vh 2vw;margin-bottom:.9vh;border-radius:2vh;
+  background:rgba(20,8,40,.75);border:.3vh solid rgba(255,255,255,.1);-webkit-animation:zoomIn .5s both;animation:zoomIn .5s both}
+.srow2 .s-rk{font-size:3.6vh;font-weight:900;width:6vw;color:rgba(240,240,255,.5)}
+.srow2 .s-nm{font-size:4.2vh;font-weight:900;width:22vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow2 .s-bar{-webkit-flex:1;flex:1;height:2.2vh;border-radius:1.1vh;background:rgba(255,255,255,.08);margin:0 2vw;overflow:hidden}
+.srow2 .s-bar div{height:100%;border-radius:1.1vh}
+.srow2 .s-pt{font-size:4.4vh;font-weight:900;min-width:7vw;text-align:right}
+.srow2 .s-to{font-size:2.4vh;font-weight:700;color:rgba(240,240,255,.5);min-width:11vw;text-align:right}
+/* Schnee (X-Mas) */
+#snow{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2;pointer-events:none;overflow:hidden;display:none}
+#snow div{position:absolute;top:-3vh;border-radius:50%;background:#fff;-webkit-animation:snow linear infinite;animation:snow linear infinite}
+@-webkit-keyframes snow{0%{-webkit-transform:translate(0,0)}50%{-webkit-transform:translate(3vw,55vh)}100%{-webkit-transform:translate(-1vw,108vh)}}
+@keyframes snow{0%{transform:translate(0,0)}50%{transform:translate(3vw,55vh)}100%{transform:translate(-1vw,108vh)}}
+@-webkit-keyframes cf-fall{0%{opacity:1;-webkit-transform:translateY(-20px) rotate(0deg)}100%{opacity:0;-webkit-transform:translateY(105vh) rotate(720deg)}}
+@keyframes cf-fall{0%{opacity:1;transform:translateY(-20px) rotate(0deg)}100%{opacity:0;transform:translateY(105vh) rotate(720deg)}}
+
+.version{position:fixed;bottom:1.2vh;right:1.4vw;font-size:1.8vh;font-weight:700;color:rgba(255,255,255,.4);background:rgba(0,0,0,.4);padding:.4vh 1vh;border-radius:1vh;z-index:5}
+#offline{position:fixed;top:2vh;left:50%;margin-left:-25vh;width:50vh;text-align:center;font-size:2.4vh;font-weight:700;color:#ff6060;
+  background:rgba(20,8,40,.9);border:1px solid rgba(255,96,96,.5);border-radius:1.4vh;padding:1vh;z-index:10;display:none}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card" id="titleCard">
-    <div class="game-title">CHARTSTER ON TIME</div>
-    <div class="role" id="role" hidden>Gastgeber</div>
-    <div class="err" id="hostOff" hidden>Gastgeber ist gerade nicht verbunden – bitte kurz warten.</div>
-    <div class="hint" id="connecting">Verbinde …</div>
-  </div>
+<div id="bg"></div>
+<div id="confetti"></div>
+<div id="offline">Verbindung unterbrochen …</div>
 
-  <!-- Start: neues Spiel oder Raum beitreten -->
-  <div class="card" id="startCard" hidden>
-    <button class="btn btn-gold" id="hostBtn">🎉 Neues Spiel als Gastgeber</button>
-    <div class="hint">Dein Gerät spielt die Musik (z. B. über einen Bluetooth-Lautsprecher) und zeigt die QR-Codes für alle.</div>
-    <div class="sep"></div>
-    <div class="label">Oder mitspielen mit Raumcode</div>
-    <input class="st-inp" id="codeInp" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="z. B. KXQB" style="text-transform:uppercase">
-    <button class="btn btn-primary" id="codeBtn">Beitreten</button>
-    <div class="err" id="startErr"></div>
-  </div>
-
-  <!-- Anmelden -->
-  <div class="card" id="joinCard" hidden>
-    <div class="label">Dein Name</div>
-    <input class="st-inp" id="name" maxlength="16" autocomplete="nickname" placeholder="z. B. Leni">
-    <div class="err" id="joinErr"></div>
-    <button class="btn btn-primary" id="joinBtn">Mitspielen</button>
-  </div>
-
-  <!-- Lobby -->
-  <div class="card" id="lobbyCard" hidden>
-    <div class="label">Du spielst als</div>
-    <div class="me" id="me"></div>
-    <div class="sep"></div>
-    <div class="label" id="plLabel">Dabei</div>
-    <div class="players" id="players"></div>
-    <div class="wait" id="wait">Gleich geht's los – der Gastgeber startet das Spiel.</div>
-    <button class="btn btn-muted" id="renameBtn">Name ändern</button>
-    <div class="hint" id="iosHint" hidden style="margin-top:10px">📱 Ganzer Bildschirm: unten auf <b>Teilen</b> ⬆︎ → <b>„Zum Home-Bildschirm“</b> –
-      dann das Spiel über das neue Symbol starten. Beim ersten Mal den Namen noch einmal eingeben.</div>
-  </div>
-
-  <!-- Admin: Auswahl und Ziel -->
-  <div class="card" id="adminCard" hidden>
-    <div class="label">Einladen · Raum</div>
-    <div class="room" id="roomCode"></div>
-    <div class="invite" id="invite">
-      <div class="inv"><div class="inv-t">Mitspieler</div><img id="qrPlay" alt=""><div class="inv-u" id="urlPlay"></div></div>
-      <div class="inv"><div class="inv-t">Anzeige</div><img id="qrTv" alt=""><div class="inv-u" id="urlTv"></div></div>
+<!-- ════ LOBBY ════ -->
+<div class="screen on" id="lobby">
+  <div class="title grad">CHARTSTER ON TIME</div>
+  <div class="sub">Gleich geht's los – macht alle mit!</div>
+  <div class="row">
+    <div class="card" id="wifiCard" style="display:none">
+      <div class="step">1 · WLAN verbinden</div>
+      <img class="qr" id="qrWifi" alt="">
+      <div class="qrtxt" id="wifiName"></div>
     </div>
-    <div class="hint">Anzeige = Fernseher, Laptop oder Tablet mit Browser: Adresse öffnen (am Fernseher eintippen).</div>
-    <div class="sep"></div>
-    <div class="label">Auswahl</div>
-    <div class="filter-wrap" id="flt-wrap">
-      <div class="flt-row">
-        <button class="flt" data-f="70er"><img src="../chartster/filter/filter-70er.png" alt="70er"></button>
-        <button class="flt" data-f="80er"><img src="../chartster/filter/filter-80er.png" alt="80er"></button>
-        <button class="flt" data-f="90er"><img src="../chartster/filter/filter-90er.png" alt="90er"></button>
-        <button class="flt" data-f="00er"><img src="../chartster/filter/filter-00er.png" alt="00er"></button>
-        <button class="flt" data-f="10er"><img src="../chartster/filter/filter-10er.png" alt="10er"></button>
-        <button class="flt" data-f="20er"><img src="../chartster/filter/filter-20er.png" alt="20er"></button>
-      </div>
-      <div class="flt-row">
-        <button class="flt" data-f="top20"><img src="../chartster/filter/filter-top20.png" alt="Top 20"></button>
-        <button class="flt" data-f="top10"><img src="../chartster/filter/filter-top10.png" alt="Top 10"></button>
-      </div>
-      <div class="flt-row">
-        <button class="flt" data-f="RS-500"><img src="../chartster/filter/filter-rs500.png" alt="RS-500"></button>
-        <button class="flt" data-f="Bond-Edition"><img src="../chartster/filter/filter-bondedition.png" alt="Bond"></button>
-        <button class="flt" data-f="WM-Edition"><img src="../chartster/filter/filter-football.png" alt="WM"></button>
-        <button class="flt" data-f="Popcorn-Edition"><img src="../chartster/filter/filter-kino.png" alt="Kino"></button>
-        <button class="flt" data-f="XMas-Edition"><img src="../chartster/filter/filter-xmas.png" alt="X-Mas"></button>
-      </div>
+    <div class="card">
+      <div class="step p" id="joinStep">2 · Mitspielen</div>
+      <img class="qr" id="qrGame" alt="">
+      <div class="qrtxt" id="gameUrl"></div>
     </div>
-    <div class="status" id="songCount"></div>
-    <div class="sep"></div>
-    <div class="label">Gewonnen hat, wer zuerst so viele Punkte hat</div>
-    <div class="targets" id="targets">
-      <button data-t="7">7</button><button data-t="10">10</button><button data-t="15">15</button>
+    <div class="card plcard">
+      <div class="step" id="plHead">Dabei</div>
+      <div id="players"></div>
     </div>
-    <div class="sep"></div>
-    <button class="btn btn-primary" id="startBtn" disabled>Spiel starten</button>
-    <div class="err" id="adminErr"></div>
-    <div class="hint" id="startHint"></div>
   </div>
+  <div class="info" id="info"></div>
+</div>
+<a href="#" id="fsBtn">Vollbild</a>
 
-  <!-- Spiel: Frage und Auflösung -->
-  <div class="card" id="gameCard" hidden>
-    <div class="mebar" id="mebar"></div>
-    <div class="sep"></div>
-    <div class="qhead"><span id="qRound"></span><span id="qTime"></span></div>
-    <div class="qcat" id="qCat"></div>
-    <div class="tbar" id="tbar"><div class="tfill" id="tfill"></div></div>
-    <div class="cd" id="cd" hidden></div>
-
-    <!-- nur Admin: Spotify, abgedeckt wie in Chartster -->
-    <div id="focus-sink" tabindex="-1" style="position:fixed;width:1px;height:1px;opacity:0;outline:none"></div>
-    <div class="player-outer" id="player-outer" hidden>
-      <iframe id="sp-frame" src="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
-      <svg id="sp-overlay" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;border-radius:13px;overflow:hidden"><defs><mask id="hole"><rect width="9999" height="152" fill="white"/><circle id="play-hole" cx="374" cy="124" r="28" fill="black"/></mask></defs><rect width="9999" height="152" fill="#121212" mask="url(#hole)" rx="13"/></svg>
-      <div class="sp-ot"><div class="sp-name" id="sp-cat">Hör genau hin!</div><div class="sp-q" id="sp-q">Die Musik läuft auf diesem Tablet</div></div>
-    </div>
-
-    <div class="pausebox" id="pausebox" hidden>PAUSE</div>
-    <div class="res" id="res" hidden></div>
-    <div class="song" id="song" hidden></div>
-    <div id="papTv" hidden>📺 Schau auf den Fernseher!<small>Dort wird das Foto aufgedeckt</small></div>
-    <div class="opts" id="opts"></div>
-    <div id="pad" hidden>
-      <div class="pad-show" id="padShow"></div>
-      <div class="pad-row two"><button class="pk q" data-k="19">19 ··</button><button class="pk q" data-k="20">20 ··</button></div>
-      <div class="pad-row"><button class="pk" data-k="1">1</button><button class="pk" data-k="2">2</button><button class="pk" data-k="3">3</button></div>
-      <div class="pad-row"><button class="pk" data-k="4">4</button><button class="pk" data-k="5">5</button><button class="pk" data-k="6">6</button></div>
-      <div class="pad-row"><button class="pk" data-k="7">7</button><button class="pk" data-k="8">8</button><button class="pk" data-k="9">9</button></div>
-      <div class="pad-row"><button class="pk del" data-k="del">⌫</button><button class="pk" data-k="0">0</button><button class="pk ok" data-k="ok" id="padOk">Tipp ✓</button></div>
-      <div class="pad-sent" id="padSent"></div>
-    </div>
-    <div class="hint" id="qHint"></div>
-    <div class="score" id="score" hidden></div>
-    <button class="btn btn-reveal" id="revealBtn" hidden>Jetzt auflösen</button>
-    <button class="btn btn-primary" id="nextBtn" hidden>▶ Nächster Song</button>
-    <div class="err" id="gameErr"></div>
+<!-- ════ FRAGE / AUFLÖSUNG ════ -->
+<div class="screen" id="quiz">
+  <div class="flex" id="qtop">
+    <div class="round" id="round"></div>
+    <div class="qcat grad" id="qcat"></div>
+    <div class="timer" id="timer"></div>
   </div>
-
-  <!-- Spielende: eigener Platz + Endstand (die große Siegerehrung läuft auf dem Fernseher) -->
-  <div class="card" id="wonCard" hidden>
-    <div class="wcom" id="wonCom"></div>
-    <div class="wplace" id="wonTitle"></div>
-    <div class="score" id="wonScore"></div>
-    <button class="btn btn-primary" id="lobbyBtn" hidden>🔄 Neues Spiel</button>
-    <div class="err" id="wonErr"></div>
-    <div class="wait" id="wonWait" hidden>Der Gastgeber startet gleich ein neues Spiel.</div>
+  <div class="flex" id="rev"></div>
+  <div class="tbar" id="tbar"><div class="tfill" id="tfill"></div></div>
+  <div id="cd"></div>
+  <div class="flex" id="qbody">
+    <div id="papBox"><div id="papImg"></div><canvas id="papCv"></canvas><div id="papTiles"></div><div id="papSong">♪ mit Song als Hilfe</div></div>
+    <div id="opts"></div>
   </div>
-  <div class="version" id="ver"></div>
+</div>
+<div class="flex" id="pbar" style="display:none"></div>
+
+<!-- ════ ZWISCHENSTAND (alle 3 Runden) ════ -->
+<div class="screen" id="stand">
+  <div class="st-t" id="stT">ZWISCHENSTAND</div>
+  <div class="st-c grad" id="stC"></div>
+  <div id="stRows"></div>
+</div>
+<div id="snow"></div>
+
+<!-- ════ SPIELENDE ════ -->
+<div class="screen" id="won">
+  <div id="stage"></div>
+  <div id="rankBox" style="display:none">
+    <div class="wt" id="wt"></div>
+    <div class="ws" id="ws"></div>
+    <div id="rank"></div>
+  </div>
 </div>
 
-<!-- ════ ADMIN-MENÜ ⚙ (nur Tablet) ════ -->
-<button id="opt-fab" hidden aria-label="Optionen">⚙</button>
-<div id="opt-shade" hidden></div>
-<div id="opt-panel" hidden>
-  <div class="opt-title">⚙ Optionen</div>
-  <div class="opt-row" id="optSongRow">
-    <button class="opt-btn" id="oSkip">Song überspringen<small>neuer Song – keine Punkte</small></button>
-    <button class="opt-btn" id="oPause">Pause<small>Musik und Zeit anhalten</small></button>
-  </div>
-  <div class="opt-title" style="margin-top:6px">Auswahl</div>
-  <div class="filter-wrap" id="opt-filter"></div>
-  <div class="status" id="optSongCount" style="text-align:center"></div>
-  <div class="opt-title" style="margin-top:6px">Spieler &amp; Punkte</div>
-  <div id="optPlayers" style="display:flex;flex-direction:column;gap:8px"></div>
-  <div class="opt-title" style="margin-top:6px">Einladen</div>
-  <div class="invite" id="optInvite"></div>
-  <div class="opt-row" style="margin-top:6px">
-    <button class="opt-btn gold" id="oEnd">Spiel beenden<small>Siegerehrung mit aktuellem Stand</small></button>
-    <button class="opt-btn danger" id="oReset">Zurücksetzen<small>zurück zur Lobby</small></button>
-  </div>
-  <div id="opt-confirm" hidden>
-    <div style="font-size:15px;font-weight:600;color:#ff6060">Wirklich zurücksetzen? Alle Punkte gehen verloren.</div>
-    <div class="opt-row">
-      <button class="opt-btn danger" id="oResetYes" style="flex:.5">Ja!</button>
-      <button class="opt-btn" id="oResetNo">Abbrechen</button>
-    </div>
-  </div>
-  <div class="err" id="optErr"></div>
-  <button class="opt-btn" id="oClose" style="color:var(--muted)">✕ Schließen</button>
-</div>
+<div class="version" id="ver">TV v0.4.3</div>
 
+<script src="../qrcode.js"></script>
 <script>
-let IS_ADMIN = false;                          // Gastgeber = Admin (wird beim Öffnen des Raums festgestellt)
-const PAGE_V = COT.VERSION;                    // muss zur Version des Gastgebers passen – sonst lädt die Seite sich neu
-const $ = id => document.getElementById(id);
-const store = {
-  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
-  set(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
-};
-let PID = store.get('cot_pid');
-if (!PID) { PID = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)); store.set('cot_pid', PID); }
-let S = null, lastJson = '', renaming = false, pending = null, optKey = '', myLocal = {}, cheeredRound = 0, busy = false;
-const LETTERS = 'ABCDE';
-const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-/* Statt Server: Gastgeber rechnet selbst, alle anderen fragen ihn über Firebase (siehe NET weiter unten) */
-async function api(path, body){
-  if (path.startsWith('/api/state')) return NET.state();
-  return NET.call(path, body);
-}
-
-/* ───────── Anmelden ───────── */
-async function join(name){
-  $('joinErr').textContent = '';
+/* Bewusst ES5 (var, function, XMLHttpRequest) – der TV-Browser kann kein neueres JavaScript. */
+/* Mobil: Zustand kommt über die Firebase-REST-Schnittstelle (einfaches XMLHttpRequest – klappt auch im alten TV-Browser) */
+var DB = 'https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app/cotmobil/rooms/';
+var ROOM = (function(){ var m = /[?&]r=([A-Za-z]{4})/.exec(location.search); return m ? m[1].toUpperCase() : ''; })();
+/* JavaScript-Fehler in den Raum schreiben (…/tvlog) – zum Nachsehen bei Problemen */
+function reportError(msg, line, col, kind){
   try {
-    await api('/api/join', { pid:PID, name, admin:IS_ADMIN });
-    store.set('cot_name', name);
-    renaming = false;
-    lastJson = ''; poll();
-  } catch(e){ $('joinErr').textContent = e.message; render(); }
-}
-$('joinBtn').onclick = () => { const n = $('name').value.trim(); if (n) join(n); else $('name').focus(); };
-$('name').addEventListener('keydown', e => { if (e.key === 'Enter') $('joinBtn').onclick(); });
-$('renameBtn').onclick = () => { renaming = true; $('name').value = store.get('cot_name') || ''; $('joinBtn').textContent = 'Übernehmen'; render(); $('name').focus(); };
-
-/* ───────── Anzeige ───────── */
-function render(){
-  $('connecting').hidden = !!S || !$('startCard').hidden;
-  if (!S) return;
-  $('hostOff').hidden = IS_ADMIN || !NET.hostAway();
-  const me = S.players.find(p => p.me);
-  const joined = !!me, ph = S.phase;
-  const starting = busy && !!playing && ph === 'lobby';      // Start getippt, Server antwortet gleich
-  $('role').hidden = !IS_ADMIN;
-  $('ver').textContent = 'Mobil v' + PAGE_V + (S.v !== PAGE_V ? ' · Gastgeber v' + S.v : '') + ' · Raum ' + NET.room;
-  $('titleCard').hidden = joined && (ph === 'question' || ph === 'reveal');
-  $('joinCard').hidden = joined && !renaming;
-  $('lobbyCard').hidden = !joined || renaming || ph !== 'lobby';
-  $('adminCard').hidden = !IS_ADMIN || !joined || renaming || ph !== 'lobby' || starting;
-  $('gameCard').hidden = !joined || renaming || (ph !== 'question' && ph !== 'reveal' && !starting);
-  $('wonCard').hidden = !joined || ph !== 'won';
-  $('opt-fab').hidden = !IS_ADMIN || !joined;
-  if (!IS_ADMIN || !joined) closeOpt();
-  else if (!$('opt-panel').hidden) renderOpt();
-  if (!joined) { stopMusic(); return; }
-  if (ph === 'lobby') renderLobby(me);
-  if (starting) { $('player-outer').hidden = false; $('opts').innerHTML = ''; $('qCat').textContent = 'Los geht\'s …'; }
-  if (ph === 'question' || ph === 'reveal') renderGame(me);
-  if (ph === 'won') renderWon();
-  if (ph !== 'question' && !busy) stopMusic();       // während Start/Nächster Song nicht gleich wieder stoppen
-}
-
-function dot(c, big){ return `<span class="dot" style="background:${c};${big ? 'box-shadow:0 0 12px ' + c : ''}"></span>`; }
-
-function renderLobby(me){
-  $('me').innerHTML = `${dot(me.color, 1)}<span style="color:${me.color}">${esc(me.name)}</span>`;
-  $('plLabel').textContent = `Dabei (${S.players.length}/${S.maxPlayers})`;
-  $('players').innerHTML = S.players.map(p =>
-    `<div class="pl ${p.online ? '' : 'off'}">${dot(p.color)}<span style="color:${p.color}">${esc(p.name)}</span>${p.admin ? '<small>Gastgeber</small>' : ''}</div>`).join('');
-  if (IS_ADMIN) renderAdmin();
-}
-
-function renderAdmin(){
-  const st = pending || S.settings;
-  document.querySelectorAll('#flt-wrap .flt').forEach(b => {
-    const f = b.dataset.f;
-    b.classList.toggle('off', (f === 'top10' || f === 'top20') ? st.top !== f : st.excluded.includes(f));
-  });
-  document.querySelectorAll('#targets button').forEach(b => b.classList.toggle('on', +b.dataset.t === st.target));
-  const sc = S.songs;
-  renderInvite();
-  $('songCount').textContent = sc.loading ? 'Songs werden geladen …' : !sc.found ? '⚠ Songs konnten nicht geladen werden – Seite neu laden'
-    : (sc.pool === sc.total ? `${sc.total} Songs` : `${sc.pool} / ${sc.total} Songs`) + (sc.pool < 10 ? ' – zu wenige, Filter anpassen!' : '');
-  const ok = S.players.length >= 2 && sc.pool >= 10 && !!S.hasNext;
-  $('startBtn').disabled = !ok || busy;
-  $('startHint').innerHTML = S.players.length < 2 ? 'Mindestens 2 Spieler – die anderen scannen den QR-Code „Mitspieler“.' : '';
-}
-
-function renderGame(me){
-  const q = S.q, ph = S.phase, rev = ph === 'reveal';
-  $('mebar').innerHTML = `<span style="color:${me.color};display:flex;align-items:center;gap:10px">${dot(me.color, 1)}${esc(me.name)}</span>` +
-    `<span class="pts"><b style="color:${me.color}">${me.score}</b> / ${S.settings.target} Punkte</span>`;
-  $('qRound').textContent = 'Runde ' + S.round;
-  $('qCat').textContent = q.text;
-
-  // Zeit: ohne Zeitlimit bis zur ersten Antwort, danach 15 s mit großem Countdown
-  const paused = !rev && !!q.paused;
-  $('pausebox').hidden = !paused;
-  const waiting = !rev && !paused && !!q.waiting;               // Zeit steht, bis am Tablet die Musik läuft
-  const showCd = !rev && !paused && !waiting && q.mode === 'after';
-  $('tbar').hidden = rev || showCd;
-  $('cd').hidden = !showCd;
-  if (!rev) {
-    $('qTime').textContent = paused ? 'Pause' : waiting ? (IS_ADMIN ? '' : '♪ Gleich geht\'s los …') : '';
-    const f = $('tfill');
-    f.style.width = Math.max(0, Math.min(100, q.left / q.total * 100)) + '%';
-    f.classList.toggle('hot', q.mode === 'after');
-    if (showCd) { $('cd').textContent = q.left; $('cd').classList.toggle('red', q.left <= 5); }
-  } else $('qTime').textContent = 'Auflösung';
-
-  // Antworten nur neu zeichnen, wenn sich etwas Wesentliches ändert (nicht jede Sekunde – sonst gehen Tipper verloren)
-  // Handys und Tablet zeigen nur die 5 Antworten – die Auflösung (richtige Antwort, Song, Foto, Liste) gibt es nur am Fernseher
-  const pap = q.cat === 'paparazzi', guess = q.cat === 'jahrgenau';
-  $('papTv').hidden = !pap || rev;
-  $('opts').hidden = guess;
-  $('pad').hidden = !guess || rev;
-  if (guess && !rev) renderPad(q, paused);
-  const mine = rev ? q.mine : (myLocal[S.round] ?? q.mine);
-  const key = [S.round, ph, mine, paused, JSON.stringify(q.options)].join('|');
-  if (key !== optKey) {
-    optKey = key;
-    $('opts').className = 'opts' + (rev || paused ? ' locked' : '');
-    $('opts').innerHTML = q.options.map((o, i) => {
-      let cls = 'opt' + (rev && i !== mine ? ' dim' : ''), st = '';
-      if (i === mine) { cls += ' sel'; st = `border-color:${me.color};box-shadow:0 0 16px ${me.color}55`; }
-      return `<button class="${cls}" data-i="${i}" style="${st}"><span class="lt">${LETTERS[i]}</span><span class="tx">${esc(o)}</span></button>`;
-    }).join('');
-  }
-  $('qHint').textContent = rev ? 'Die Auflösung siehst du am Fernseher.' : paused ? 'Kurze Pause – gleich geht\'s weiter.'
-    : pap ? 'Wer zuerst tippt, entscheidet! Richtig = +1 für dich, falsch = +1 für alle anderen.'
-    : guess ? 'Genau richtig = +2 · sonst bekommt, wer am nächsten dran ist, +1.'
-    : (mine == null ? 'Tippe deine Antwort.' : 'Gespeichert – ändern geht bis zur Auflösung.');
-
-  // Auflösung: nur das eigene Ergebnis
-  $('res').hidden = !rev;
-  $('song').hidden = $('score').hidden = true;
-  if (rev) {
-    const gain = me.gain, r = $('res'), b = q.buzzer;
-    if (pap && b && b !== me.name) {
-      if (gain) { r.className = 'res ok'; r.textContent = `${b} lag falsch – +1 für dich!`; }
-      else { r.className = 'res none'; r.textContent = `${b} war schneller`; }
-    } else if (pap && !b) { r.className = 'res none'; r.textContent = 'Niemand hat getippt'; }
-    else if (guess) {
-      if (gain === 2) { r.className = 'res alone'; r.textContent = 'Genau richtig! +2'; }
-      else if (gain === 1) { r.className = 'res ok'; r.textContent = 'Am nächsten dran! +1'; }
-      else if (q.mine == null) { r.className = 'res none'; r.textContent = 'Kein Tipp'; }
-      else { r.className = 'res no'; r.textContent = 'Leider nicht am nächsten'; }
-    }
-    else if (gain === 2) { r.className = 'res alone'; r.textContent = 'Allein richtig! +2'; }
-    else if (gain === 1) { r.className = 'res ok'; r.textContent = 'Richtig! +1'; }
-    else if (q.mine == null) { r.className = 'res none'; r.textContent = 'Keine Antwort'; }
-    else { r.className = 'res no'; r.textContent = pap ? 'Leider falsch – die anderen bekommen +1' : 'Leider falsch'; }
-    const alone = S.players.some(p => p.gain === 2);              // „Allein richtig!“ → kurzer Applaus vom Tablet
-    if (IS_ADMIN && alone && cheeredRound !== S.round) { cheeredRound = S.round; shortApplause(); }
-  }
-
-  // Admin: Musik und Knöpfe
-  $('player-outer').hidden = !IS_ADMIN || (rev && !busy) || (!rev && !S.play && !busy);   // Paparazzi Top 10: ohne Musik
-  $('revealBtn').hidden = !IS_ADMIN || rev || paused;
-  $('nextBtn').hidden = !IS_ADMIN || !rev;
-  if (IS_ADMIN) {
-    if (!rev && S.play && !paused) ensureMusic(S.play);
-    if ((paused || (!rev && !S.play)) && !busy) stopMusic();
-    const won = (S.winners || []).length > 0;
-    $('nextBtn').textContent = won ? '🏆 Zur Siegerehrung' : '▶ Nächster Song';
-    $('nextBtn').className = 'btn ' + (won ? 'btn-gold' : 'btn-primary');
-    $('nextBtn').disabled = busy || (!won && !S.hasNext);
-    updateHole();
-  } else if (rev && (S.winners || []).length) {
-    $('qHint').textContent = 'Ziel erreicht – gleich kommt die Siegerehrung!';
-  }
-}
-
-/* Siegerehrung – Plätze, Sprüche und Farben aus Chartster (MEDALS). Die große Show läuft auf dem Fernseher,
-   das Tablet spielt im gleichen Takt (alle 3 s eine Stufe) den Applaus dazu – wie Chartster bei jeder Stufe. */
-const MEDALS = [
-  { place:'1. PLATZ', coms:['UNSCHLAGBAR!','CHARTSTÜRMER!','MUSIKLEGENDEN!','MEISTERKLASSE!','HITPROFIS!','LEGENDÄR!','SUPERCHARTSTER!','BRAVO!'], cls:'vgold' },
-  { place:'2. PLATZ', coms:['STARKES OHR!','STARK!','KÖNNER!','TREFFSICHER!','MITTELGEWICHTCHAMPIONS!','TREFFER!','NAHE DRAN!'], cls:'vsilver' },
-  { place:'3. PLATZ', coms:['GUT GEMACHT!','GUT DABEI!','GUT GERATEN!','DABEI SEIN IST ALLES!','ORDENTLICH!','SAUBER!'], cls:'vbronze' },
-  { place:'4. PLATZ', coms:['NÄCHSTE RUNDE!','GUT VERSUCHT!','WEITER SO!'], cls:'vbronze' }
-];
-const STAGE_SEC = 3;
-function ranking(){
-  const list = S.players.slice().sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
-  let rank = 0;
-  list.forEach((p, i) => { if (i && p.score !== list[i - 1].score) rank = i; p.rank = rank; });   // gleiche Punkte = gleicher Platz
-  return list;
-}
-function stageCount(list, winners){ return list.filter(p => !winners.includes(p.name)).length + 1; }   // Nicht-Sieger einzeln + Sieger-Stufe
-let wonStage = -1;
-function renderWon(){
-  const w = S.winners || [], list = ranking(), me = list.find(p => p.me);
-  const m = MEDALS[Math.min(me ? me.rank : 3, 3)];
-  const won = me && w.includes(me.name);
-  $('wonCom').className = 'wcom ' + m.cls;
-  $('wonTitle').className = 'wplace ' + m.cls;
-  if (!w.length) { $('wonCom').textContent = ''; $('wonTitle').textContent = 'Spiel beendet'; }
-  else if (won) { $('wonCom').textContent = w.length > 1 ? 'GEMEINSAMER SIEG!' : m.coms[0]; $('wonTitle').textContent = 'Gewonnen!'; }
-  else { $('wonCom').textContent = m.coms[(me ? me.name.length : 0) % m.coms.length]; $('wonTitle').textContent = (me ? me.rank + 1 : '') + '. PLATZ'; }
-  $('wonScore').innerHTML = list.map(p =>
-    `<div class="srow">${dot(p.color)}<span class="n" style="color:${p.color}">${p.rank + 1}. ${esc(p.name)}</span><span class="s" style="color:${p.color}">${p.score}</span></div>`).join('');
-  $('lobbyBtn').hidden = !IS_ADMIN;
-  $('wonWait').hidden = IS_ADMIN;
-  if (IS_ADMIN && w.length) {                                   // Applaus vom Tablet je Stufe der TV-Siegerehrung
-    const n = stageCount(list, w), st = Math.min(n - 1, Math.floor((S.wonAgo || 0) / STAGE_SEC));
-    if (st > wonStage && (S.wonAgo || 0) < n * STAGE_SEC + 2) { wonStage = st; if (st === n - 1) playApplause(); }   // einmal voll beim Sieger
-  }
-}
-let applause = null;
-function playApplause(){                                          // immer ganz abspielen, nie abschneiden; läuft er noch, nicht doppelt starten
-  try {
-    if (applause && !applause.paused && !applause.ended) return;
-    applause = new Audio('../chartster/applause.mp3'); applause.volume = 0.8; applause.play().catch(() => {});
+    if (!ROOM) return;
+    var x = new XMLHttpRequest();
+    x.open('POST', DB + ROOM + '/tvlog.json', true);
+    x.setRequestHeader('Content-Type', 'application/json');
+    x.send(JSON.stringify({ m: String(msg), l: line, c: col, k: kind || 'err', v: typeof PAGE_V !== 'undefined' ? PAGE_V : '?', ua: navigator.userAgent }));
   } catch(e){}
 }
+window.onerror = function(msg, src, line, col){ reportError(msg, line, col); };
+var S = null, lastJson = '', fails = 0, optKey = '', revKey = '';
+var PAGE_V = '0.2.0';                          // Mobil-Version – muss zur Version des Gastgebers passen
+var DECADES = ['70er', '80er', '90er', '00er', '10er', '20er'];
+var EDITIONS = { 'RS-500': 'RS-500', 'Bond-Edition': 'Bond', 'WM-Edition': 'WM', 'Popcorn-Edition': 'Kino', 'XMas-Edition': 'X-Mas' };
+var LETTERS = 'ABCDE';
 
-/* ───────── Antworten (änderbar bis zur Auflösung) ───────── */
-$('opts').onclick = async e => {
-  const b = e.target.closest('.opt'); if (!b || !S || S.phase !== 'question') return;
-  const i = +b.dataset.i, rnd = S.round;
-  myLocal[rnd] = i; optKey = ''; render();                   // sofort zeigen, Server bestätigt
-  try { await api('/api/answer', { pid:PID, round:rnd, choice:i }); $('gameErr').textContent = ''; }
-  catch(err){ $('gameErr').textContent = err.message; delete myLocal[rnd]; optKey = ''; }
-  lastJson = ''; poll();
+function $(id){ return document.getElementById(id); }
+function esc(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]; }); }
+function get(url, cb){
+  var x = new XMLHttpRequest();
+  x.open('GET', url, true);
+  x.timeout = 4000;
+  x.onload = function(){ var j = null; try { j = JSON.parse(x.responseText); } catch(e){} cb(x.status === 200 ? j : null); };
+  x.onerror = x.ontimeout = function(){ cb(null); };
+  x.send();
+}
+/* #rev ist per CSS ausgeblendet – zum Zeigen ausdrücklich flex setzen (alter Browser: -webkit-flex) */
+function setFlex(el, on){
+  if (!on) { el.style.display = 'none'; return; }
+  el.style.display = '-webkit-flex';
+  el.style.display = 'flex';
+}
+function inArr(a, v){ for (var i = 0; i < a.length; i++) if (a[i] === v) return true; return false; }
+function show(id){
+  var ids = ['lobby', 'quiz', 'won', 'stand'];
+  for (var i = 0; i < ids.length; i++) $(ids[i]).className = 'screen' + (ids[i] === id ? ' on' : '');
+  $('bg').style.display = id === 'lobby' ? '' : 'none';
+  $('fsBtn').style.display = id === 'lobby' && !isFull() ? '' : 'none';
+  $('pbar').style.display = id === 'quiz' ? '' : 'none';
+}
+
+function render(){
+  $('ver').textContent = 'Anzeige v' + PAGE_V + (S.v !== PAGE_V ? ' · Gastgeber v' + S.v : '') + ' · Raum ' + ROOM;   // Version der Seite selbst
+  snow(S.settings && !inArr(S.settings.excluded || [], 'XMas-Edition'));
+  if (S.phase === 'reveal' && S.standNow) { show('stand'); renderStand(); }
+  else if (S.phase === 'question' || S.phase === 'reveal') { show('quiz'); renderQuiz(); }
+  else if (S.phase === 'won') { show('won'); renderWon(); }
+  else { show('lobby'); renderLobby(); }
+  if (S.phase !== 'won') { wonStage = -1; stageComs = {}; }
+}
+
+/* ───────── Lobby ───────── */
+function renderLobby(){
+  var i, h = '', p;
+  if (S.wifi) {
+    $('wifiCard').style.display = '';
+    $('wifiName').innerHTML = 'WLAN <b>' + esc(S.wifi) + '</b>';
+    $('joinStep').textContent = '2 · Mitspielen';
+  } else {
+    $('wifiCard').style.display = 'none';
+    $('joinStep').textContent = 'Mitspielen';
+  }
+  $('gameUrl').textContent = S.gameUrl.replace(/^https?:\/\//, '');
+  if (qrFor !== S.gameUrl) { qrFor = S.gameUrl; $('qrGame').src = qrImg(S.gameUrl); }
+  $('plHead').textContent = 'Dabei · ' + S.players.length + ' / ' + S.maxPlayers;
+  for (i = 0; i < S.maxPlayers; i++) {
+    p = S.players[i];
+    if (p) h += '<div class="pl' + (p.online ? '' : ' off') + '"><span class="dot" style="background:' + p.color + ';box-shadow:0 0 1.6vh ' + p.color +
+      '"></span><span class="nm" style="color:' + p.color + '">' + esc(p.name) + '</span>' + (p.admin ? '<span class="adm">Gastgeber</span>' : '') + '</div>';
+    else h += '<div class="pl free"><span class="dot" style="border:2px dashed rgba(255,255,255,.15)"></span>frei</div>';
+  }
+  $('players').innerHTML = h;
+  $('info').innerHTML = infoText();
+}
+
+function infoText(){
+  var st = S.settings, sc = S.songs, parts = [], dec = [], ed = [], i;
+  if (sc.loading) return 'Songs werden geladen …';
+  if (!sc.found) return '<span class="warn">Songs konnten nicht geladen werden – Gastgeber: Seite neu laden</span>';
+  for (i = 0; i < DECADES.length; i++) if (!inArr(st.excluded, DECADES[i])) dec.push(DECADES[i]);
+  for (var k in EDITIONS) if (!inArr(st.excluded, k)) ed.push(EDITIONS[k]);
+  parts.push('Ziel <b>' + st.target + ' Punkte</b>');
+  parts.push(dec.length === DECADES.length ? 'alle Jahrzehnte' : (dec.length ? dec.join(' · ') : 'keine Jahrzehnte'));
+  if (ed.length) parts.push(ed.join(' · '));
+  if (st.top) parts.push(st.top === 'top10' ? 'nur Top 10' : 'nur Top 20');
+  parts.push(sc.pool + ' Songs');
+  return parts.join(' &nbsp;·&nbsp; ');
+}
+
+/* ───────── Frage und Auflösung ───────── */
+function renderQuiz(){
+  var q = S.q, rev = S.phase === 'reveal', i, h = '';
+  $('round').textContent = 'Runde ' + S.round;
+  $('qtop').style.display = rev ? 'none' : '';
+  setFlex($('rev'), rev);
+
+  if (!rev) {
+    $('qcat').textContent = q.text;
+    var showCd = !q.paused && !q.waiting && q.mode === 'after';      // ab der ersten Antwort: 15 s Countdown
+    $('timer').textContent = q.paused ? 'PAUSE' : q.waiting ? '\u266a gleich …' : '';
+    $('timer').style.color = q.paused ? '#ffd84d' : '';
+    $('tbar').style.visibility = 'visible';
+    var f = $('tfill');
+    f.style.width = Math.max(0, Math.min(100, q.left / q.total * 100)) + '%';
+    f.className = 'tfill' + (q.mode === 'after' ? ' hot' : '');
+    $('cd').style.display = showCd ? 'block' : 'none';
+    if (showCd) { $('cd').textContent = q.left; $('cd').className = q.left <= 5 ? 'red' : ''; }
+  } else {
+    $('tbar').style.visibility = 'hidden';
+    $('cd').style.display = 'none';
+    var s = q.song, key = S.round + '|' + s.a + '|' + s.t;
+    if (key !== revKey) {
+      revKey = key;
+      if (q.cat === 'paparazzi') {
+        var bc = buzzColor(q.buzzer);
+        var res = !q.buzzer ? '<span style="color:rgba(240,240,255,.55)">Niemand hat getippt</span>'
+          : q.buzzRight ? '<span style="color:' + bc + '">' + esc(q.buzzer) + '</span> <span style="color:#4dff91">hat es erkannt! +1</span>'
+          : '<span style="color:' + bc + '">' + esc(q.buzzer) + '</span> <span style="color:#ff6060">lag falsch – alle anderen +1</span>';
+        $('rev').innerHTML = '<div class="pimg" style="background-image:url(&quot;' + esc(q.photo) + '&quot;)"></div>' +
+          '<div class="meta"><div class="pname grad">' + esc(s.a) + '</div>' +
+          (q.music ? '<div class="ti">♪ ' + esc(s.t) + ' (' + esc(s.y) + ')</div>' : '') + '<div class="pres">' + res + '</div></div>';
+        if (q.buzzRight) confetti(bc, 120);
+      } else {
+        $('rev').innerHTML = (s.c ? '<img src="' + esc(s.c) + '" alt="">' : '') +
+          '<div class="yr grad">' + esc(s.y) + '</div><div class="meta"><div class="ar">' + esc(s.a) + '</div><div class="ti">' + esc(s.t) + '</div></div>';
+        if (q.alone) confetti('#ffd84d', 120);
+      }
+    }
+  }
+  renderPap(q, rev);
+
+  if (q.cat === 'jahrgenau') { renderGuess(q, rev); renderBar(rev); return; }
+  var ok = S.round + '|' + S.phase + '|' + q.options.join('|') + '|' + (rev ? q.counts.join(',') : '');
+  if (ok !== optKey) {
+    optKey = ok;
+    for (i = 0; i < q.options.length; i++) {
+      var buzzed = q.cat === 'paparazzi' && rev && q.buzzer && i === buzzChoice(q);
+      var cls = 'opt' + (rev ? (i === q.correct ? ' right' : buzzed ? ' wrong' : ' dim') : '');
+      var cnt = rev && q.cat !== 'paparazzi' && q.counts[i] ? '<span class="cnt">' + q.counts[i] + '×</span>' : '';
+      var who = buzzed ? '<span class="who" style="background:' + buzzColor(q.buzzer) + '">' + esc(q.buzzer) + '</span>' : '';
+      h += '<div class="' + cls + '"><span class="lt">' + LETTERS.charAt(i) + '</span><span class="tx">' + esc(q.options[i]) + '</span>' + cnt + who + '</div>';
+    }
+    $('opts').innerHTML = h;
+  }
+  renderBar(rev);
+}
+
+/* ───────── Jahr genau: während der Frage Hinweis, bei der Auflösung alle Tipps mit Abstand ───────── */
+function renderGuess(q, rev){
+  var k = S.round + '|' + S.phase + '|' + (rev ? JSON.stringify(q.guesses) : ''), h = '', i, g, cls, d;
+  if (k === optKey) return;
+  optKey = k;
+  $('opts').style.width = '76vw';
+  if (!rev) { $('opts').innerHTML = '<div class="gwait">\ud83d\udcf1 Jahr am Handy eintippen<small>genau richtig +2 \u00b7 sonst am n\u00e4chsten dran +1</small></div>'; return; }
+  if (!q.guesses.length) { $('opts').innerHTML = '<div class="gwait">Niemand hat getippt</div>'; return; }
+  for (i = 0; i < q.guesses.length && i < 6; i++) {
+    g = q.guesses[i];
+    cls = 'opt' + (g.gain === 2 ? ' right' : g.gain === 1 ? ' near' : ' dim');
+    d = g.diff === 0 ? 'genau!' : (g.diff > 0 ? '+' : '\u2212') + Math.abs(g.diff);
+    h += '<div class="' + cls + '"><span class="lt" style="background:' + g.color + '"></span><span class="tx" style="color:' + g.color + '">' + esc(g.name) + '</span>' +
+      '<span class="gy">' + g.year + '</span><span class="gd">' + d + '</span>' +
+      (g.gain ? '<span class="gg' + (g.gain === 1 ? ' one' : '') + '">+' + g.gain + '</span>' : '') + '</div>';
+  }
+  $('opts').innerHTML = h;
+  if (q.guesses[0].gain === 2) confetti('#4dff91', 120);
+}
+
+/* ───────── Zwischenstand: Rangliste mit Spruch ───────── */
+var standKey = '';
+function renderStand(){
+  var ps = S.players.slice(0), i, p, h = '', tgt = S.settings.target, c;
+  ps.sort(function(a, b){ return b.score - a.score || (a.name < b.name ? -1 : 1); });
+  var k = S.round + '|' + JSON.stringify(ps);
+  if (k === standKey) return;
+  standKey = k;
+  var a = ps[0], b = ps[1];
+  if (!a || a.score === 0) c = 'NOCH IST ALLES OFFEN!';
+  else if (b && a.score === b.score) c = 'KOPF-AN-KOPF-RENNEN!';
+  else if (a.score >= tgt - 2) c = a.name.toUpperCase() + ' HAT DAS ZIEL VOR AUGEN!';
+  else if (b && a.score - b.score >= 3) c = a.name.toUpperCase() + ' ZIEHT DAVON!';
+  else c = 'SPANNEND BLEIBT\u2019S!';
+  $('stT').textContent = 'ZWISCHENSTAND \u00b7 NACH RUNDE ' + S.round;
+  $('stC').textContent = c;
+  var rank = 0;
+  for (i = 0; i < ps.length; i++) {
+    p = ps[i];
+    if (i === 0 || p.score !== ps[i - 1].score) rank = i + 1;
+    h += '<div class="srow2" style="-webkit-animation-delay:' + (i * 0.15) + 's;animation-delay:' + (i * 0.15) + 's;border-color:' + (rank === 1 && p.score ? p.color : 'rgba(255,255,255,.1)') + '">' +
+      '<span class="s-rk">' + rank + '.</span><span class="s-nm" style="color:' + p.color + '">' + esc(p.name) + '</span>' +
+      '<span class="s-bar"><div style="width:' + Math.min(100, p.score / tgt * 100) + '%;background:' + p.color + '"></div></span>' +
+      '<span class="s-pt" style="color:' + p.color + '">' + p.score + '</span><span class="s-to">' + (p.score >= tgt ? 'am Ziel' : 'noch ' + (tgt - p.score)) + '</span></div>';
+  }
+  $('stRows').innerHTML = h;
+}
+
+/* ───────── Schnee, wenn X-Mas gewählt ist ───────── */
+var snowOn = null;
+function snow(on){
+  if (on === snowOn) return;
+  snowOn = on;
+  var box = $('snow'), i, f, sz;
+  box.style.display = on ? 'block' : 'none';
+  if (!on || box.childNodes.length) return;
+  for (i = 0; i < 45; i++) {
+    f = document.createElement('div');
+    sz = 0.5 + Math.random() * 1.1;
+    f.style.width = f.style.height = sz + 'vh';
+    f.style.left = (Math.random() * 100) + '%';
+    f.style.opacity = (0.35 + Math.random() * 0.5).toFixed(2);
+    var dur = (9 + Math.random() * 10).toFixed(1) + 's', del = (-Math.random() * 18).toFixed(1) + 's';
+    f.style.webkitAnimationDuration = f.style.animationDuration = dur;
+    f.style.webkitAnimationDelay = f.style.animationDelay = del;
+    box.appendChild(f);
+  }
+}
+
+/* ───────── Paparazzi: Foto aufdecken – 10 Stufen über 30 s (Zeit kommt vom Server, steht in der Pause) ───────── */
+var BLUR_OK = (function(){ try { return !!(window.CSS && CSS.supports && (CSS.supports('filter', 'blur(2px)') || CSS.supports('-webkit-filter', 'blur(2px)'))); } catch(e){ return false; } })();
+var pap = { key: '', mode: '', img: null, tiles: [], step: -1 };
+var MOSAIC = [5, 7, 9, 12, 16, 22, 30, 42, 60, 90];
+function buzzColor(name){ for (var i = 0; i < S.players.length; i++) if (S.players[i].name === name) return S.players[i].color; return '#fff'; }
+function buzzChoice(q){ for (var i = 0; i < q.counts.length; i++) if (q.counts[i]) return i; return -1; }   // nur der Tipper hat geantwortet
+
+function renderPap(q, rev){
+  var box = $('papBox'), isPap = q.cat === 'paparazzi' && !rev;
+  box.style.display = isPap ? 'block' : 'none';
+  $('opts').style.width = isPap ? '46vw' : '76vw';
+  if (!isPap) return;
+  if (pap.key !== S.round + '|' + q.photo) setupPap(q);      // neue Runde oder neues Spiel mit gleicher Rundennummer
+  var steps = 10, step = Math.min(steps, Math.floor(q.elapsed / (q.reveal / steps)));
+  if (step !== pap.step) { pap.step = step; drawPap(step, steps); }
+}
+function setupPap(q){
+  pap.key = S.round + '|' + q.photo; pap.step = -1;
+  pap.mode = q.pmode === 'blur' && !BLUR_OK ? (Math.random() < .5 ? 'tiles' : 'mosaic') : q.pmode;   // Rückfall, falls keine Unschärfe
+  $('papSong').style.display = q.music ? 'block' : 'none';          // Top-20-Künstler: Song läuft als Hilfe
+  var img = $('papImg'), cv = $('papCv'), tl = $('papTiles'), i, j;
+  img.style.backgroundImage = 'url("' + q.photo + '")';
+  var probe = new Image();                                       // lädt das Foto nicht, steht es im Log
+  probe.onerror = function(){ reportError('Paparazzi-Foto lädt nicht: ' + q.photo, 0, 0); };
+  probe.onload = function(){                                       // was sieht der Fernseher wirklich? → Log [TV-Info]
+    setTimeout(function(){
+      var b = $('papBox'), im = $('papImg'), cs = window.getComputedStyle ? getComputedStyle(im) : {};
+      reportError('Paparazzi: Foto ' + probe.width + 'x' + probe.height + ', Box ' + b.offsetWidth + 'x' + b.offsetHeight +
+        ', Bild ' + im.offsetWidth + 'x' + im.offsetHeight + ', Modus ' + pap.mode + ' (Server ' + q.pmode + '), Unschaerfe ' + BLUR_OK +
+        ', display ' + b.style.display + '/' + im.style.display + ', bg ' + String(cs.backgroundImage || '').slice(0, 60) +
+        ', filter ' + (cs.webkitFilter || cs.filter || '-') + ', Kacheln offen ' + openTiles(), 0, 0, 'info');
+    }, 4000);
+  };
+  probe.src = q.photo;
+  img.style.filter = img.style.webkitFilter = '';
+  img.style.display = pap.mode === 'mosaic' ? 'none' : 'block';
+  cv.style.display = pap.mode === 'mosaic' ? 'block' : 'none';
+  tl.innerHTML = ''; pap.tiles = [];
+  if (pap.mode === 'tiles') {
+    for (j = 0; j < 4; j++) for (i = 0; i < 4; i++) {
+      var d = document.createElement('div');
+      d.style.left = (i * 25) + '%'; d.style.top = (j * 25) + '%'; d.style.width = '25.5%'; d.style.height = '25.5%';
+      tl.appendChild(d); pap.tiles.push(d);
+    }
+    pap.tiles.sort(function(){ return Math.random() - .5; });
+  }
+  if (pap.mode === 'mosaic') {
+    pap.img = new Image();
+    pap.img.onload = function(){ pap.step = -1; };              // neu zeichnen, sobald das Foto da ist
+    pap.img.src = q.photo;
+  }
+}
+function openTiles(){ var n = 0; for (var i = 0; i < pap.tiles.length; i++) if (pap.tiles[i].style.opacity === '0') n++; return n + '/' + pap.tiles.length; }
+function drawPap(step, steps){
+  var left = 1 - step / steps;
+  if (pap.mode === 'blur') {
+    var b = 'blur(' + Math.round(left * 28) + 'px)';
+    $('papImg').style.webkitFilter = b; $('papImg').style.filter = b;
+  } else if (pap.mode === 'tiles') {
+    var hide = Math.round(pap.tiles.length * left), show0 = 2;          // von Anfang an 2 Kacheln offen
+    for (var i = 0; i < pap.tiles.length; i++) pap.tiles[i].style.opacity = i >= show0 && i < Math.max(show0, hide) ? '1' : '0';
+  } else if (pap.mode === 'mosaic' && pap.img && pap.img.complete && pap.img.naturalWidth) {
+    var cv = $('papCv'), W = cv.offsetWidth || 400, n = step >= steps ? 0 : MOSAIC[step];
+    cv.width = W; cv.height = W;
+    var ctx = cv.getContext('2d'), im = pap.img, s = Math.min(im.naturalWidth, im.naturalHeight);
+    var sx = (im.naturalWidth - s) / 2, sy = (im.naturalHeight - s) * 0.3;
+    if (!n) { ctx.drawImage(im, sx, sy, s, s, 0, 0, W, W); return; }
+    var sm = document.createElement('canvas'); sm.width = n; sm.height = n;
+    sm.getContext('2d').drawImage(im, sx, sy, s, s, 0, 0, n, n);
+    ctx.imageSmoothingEnabled = false; ctx.webkitImageSmoothingEnabled = false;
+    ctx.drawImage(sm, 0, 0, n, n, 0, 0, W, W);                           // grobe Pixel – das Foto wird nie ausgelesen
+  }
+}
+
+function renderBar(rev){
+  var h = '', i, p, badge;
+  for (i = 0; i < S.players.length; i++) {
+    p = S.players[i];
+    badge = '';
+    if (!rev && p.answered) badge = '<span class="chk">✓</span>';
+    if (rev && p.gain === 2) badge = '<span class="gain two">+2 Allein richtig!</span>';
+    else if (rev && p.gain === 1) badge = '<span class="gain">+1</span>';
+    h += '<div class="pc' + (p.online ? '' : ' off') + '" style="' + (p.answered || p.gain ? 'border-color:' + p.color : '') + '">' + badge +
+      '<span class="dot" style="background:' + p.color + ';box-shadow:0 0 1.4vh ' + p.color + '"></span>' +
+      '<span class="nm" style="color:' + p.color + '">' + esc(p.name) + '</span><span class="sc" style="color:' + p.color + '">' + p.score + '</span></div>';
+  }
+  $('pbar').innerHTML = h;
+}
+
+/* ───────── Siegerehrung wie Chartster: vom letzten zum ersten Platz, alle 3 s eine Stufe ─────────
+   Das Tablet spielt im selben Takt den Applaus (Zeit kommt vom Server: wonAgo). */
+var MEDALS = [
+  { place:'1. PLATZ', coms:['UNSCHLAGBAR!','CHARTSTÜRMER!','MUSIKLEGENDEN!','MEISTERKLASSE!','HITPROFIS!','LEGENDÄR!','SUPERCHARTSTER!','BRAVO!'], cls:'vgold', cf:300 },
+  { place:'2. PLATZ', coms:['STARKES OHR!','STARK!','KÖNNER!','TREFFSICHER!','MITTELGEWICHTCHAMPIONS!','TREFFER!','NAHE DRAN!'], cls:'vsilver', cf:180 },
+  { place:'3. PLATZ', coms:['GUT GEMACHT!','GUT DABEI!','GUT GERATEN!','DABEI SEIN IST ALLES!','ORDENTLICH!','SAUBER!'], cls:'vbronze', cf:110 },
+  { place:'4. PLATZ', coms:['NÄCHSTE RUNDE!','GUT VERSUCHT!','WEITER SO!'], cls:'vbronze', cf:60 }
+];
+var JOINT = ['GEMEINSAMER SIEG!','AUF DEM SIEGERPODEST SIND ALLE GLEICH!','KENNSTE EINEN; KENNSTE ALLE!','SAUBER NACHGEZOGEN!','FAST HÄTTEN WIR EINEN EINZELSIEGER GEHABT!'];
+var STAGE_SEC = 3, wonStage = -1, stageComs = {};
+
+function ranking(){
+  var list = S.players.slice(), i, rank = 0;
+  list.sort(function(a, b){ return b.score - a.score || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0); });
+  for (i = 0; i < list.length; i++) { if (i && list[i].score !== list[i - 1].score) rank = i; list[i].rank = rank; }
+  return list;
+}
+function pick(arr, key){                       // Spruch einmal auswählen und merken (sonst wechselt er jede Sekunde)
+  if (!stageComs[key]) stageComs[key] = arr[Math.floor(Math.random() * arr.length)];
+  return stageComs[key];
+}
+function renderWon(){
+  var w = S.winners || [], list = ranking(), i, p, m;
+  if (!w.length) { renderRankOnly(list); return; }
+  $('rankBox').style.display = 'none'; $('stage').style.display = '';
+  var seq = [];                                                   // Nicht-Sieger vom letzten Platz aufwärts, dann die Sieger
+  for (i = list.length - 1; i >= 0; i--) if (!inArr(w, list[i].name)) seq.push(list[i]);
+  var n = seq.length + 1, st = Math.min(n - 1, Math.floor((S.wonAgo || 0) / STAGE_SEC));
+  if (st === wonStage) return;
+  wonStage = st;
+  var h = '';
+  if (st < seq.length) {
+    p = seq[st]; m = MEDALS[Math.min(p.rank, 3)];
+    h = '<div class="vstage"><div class="v-comment ' + m.cls + '">' + pick(m.coms, 's' + st) + '</div><div class="v-place ' + m.cls + '">' + (p.rank + 1) + '. PLATZ</div>' +
+      '<div class="v-card ' + m.cls + '"><div class="v-name" style="color:' + p.color + '">' + esc(p.name) + '</div>' +
+      '<div class="v-score" style="color:' + p.color + '">' + p.score + ' Punkte</div></div></div>';
+    confetti(p.color, m.cf);
+  } else if (w.length === 1) {
+    for (i = 0; i < list.length; i++) if (list[i].name === w[0]) p = list[i];
+    m = MEDALS[0];
+    h = '<div class="vstage"><div class="v-comment vgold">' + pick(m.coms, 'win') + '</div><div class="v-place vgold">1. PLATZ</div>' +
+      '<div class="v-card vgold"><div class="v-name" style="color:' + p.color + '">' + esc(p.name) + '</div>' +
+      '<div class="v-score" style="color:' + p.color + '">' + p.score + ' Punkte</div><div class="v-sub">Ziel ' + S.settings.target + ' Punkte</div></div>' +
+      endLine(list) + '</div>';
+    confetti(p.color, m.cf); setTimeout(function(){ confetti('#ffd84d', 150); }, 700);
+  } else {                                                        // gemeinsamer Sieg wie Chartster showJointVictory()
+    var names = [], cols = [];
+    for (i = 0; i < list.length; i++) if (inArr(w, list[i].name)) { names.push('<span style="color:' + list[i].color + '">' + esc(list[i].name) + '</span>'); cols.push(list[i].color); }
+    h = '<div class="vstage"><div class="v-comment vgold">' + pick(JOINT, 'joint') + '</div>' +
+      '<div class="v-card vgold"><div class="v-name">' + names.join(' &amp; ') + '</div>' +
+      '<div class="v-score vgold">' + list[0].score + ' Punkte</div><div class="v-sub">perfekt gleichauf!</div></div>' + endLine(list) + '</div>';
+    for (i = 0; i < cols.length; i++) (function(c, d){ setTimeout(function(){ confetti(c, 220); }, d); })(cols[i], i * 400);
+  }
+  $('stage').innerHTML = h;
+}
+function endLine(list){
+  var parts = [], i;
+  for (i = 0; i < list.length; i++) parts.push('<span style="color:' + list[i].color + '">' + (list[i].rank + 1) + '. ' + esc(list[i].name) + ' ' + list[i].score + '</span>');
+  return '<div class="endline">' + parts.join(' &nbsp;·&nbsp; ') + '</div>';
+}
+function renderRankOnly(list){                                    // Spiel ohne Punkte beendet – nur Endstand
+  var h = '', i, p;
+  $('stage').style.display = 'none'; $('rankBox').style.display = '';
+  $('wt').textContent = 'Spiel beendet';
+  $('ws').textContent = 'Endstand';
+  for (i = 0; i < list.length; i++) {
+    p = list[i];
+    h += '<div class="rk"><span class="pos">' + (p.rank + 1) + '.</span><span class="dot" style="background:' + p.color + '"></span>' +
+      '<span class="nm" style="color:' + p.color + '">' + esc(p.name) + '</span><span class="sc" style="color:' + p.color + '">' + p.score + '</span></div>';
+  }
+  $('rank').innerHTML = h;
+}
+
+/* Konfetti wie Chartster spawnConfetti() */
+function confetti(color, n){
+  var c = $('confetti'), cols = [color, '#fff', '#ffd84d', '#ff4fd8', '#53f6ff'];
+  for (var i = 0; i < n; i++) {
+    var p = document.createElement('div'), sz = 6 + Math.random() * 12, dur = 1.6 + Math.random() * 2;
+    var anim = 'cf-fall ' + dur + 's ' + (Math.random() * .8) + 's linear both';
+    p.style.cssText = 'position:absolute;top:-20px;left:' + (Math.random() * 100) + '%;width:' + sz + 'px;height:' + sz +
+      'px;background:' + cols[i % cols.length] + ';border-radius:' + ['50%', '3px', '0'][i % 3] + ';-webkit-animation:' + anim + ';animation:' + anim;
+    c.appendChild(p);
+    (function(el, ms){ setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, ms); })(p, Math.ceil((dur + 1) * 1000));
+  }
+}
+
+/* ───────── Vollbild (mit der TV-Fernbedienung anklicken) ───────── */
+function isFull(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+$('fsBtn').onclick = function(e){
+  e.preventDefault();
+  var d = document.documentElement;
+  try { (d.requestFullscreen || d.webkitRequestFullscreen).call(d); } catch(err){}
+  setTimeout(function(){ $('fsBtn').style.display = isFull() ? 'none' : ''; }, 800);
+  return false;
 };
 
-/* ───────── Jahr genau: Ziffernfeld (4 Ziffern, Schnellstart 19/20, änderbar bis zur Auflösung) ───────── */
-let padRound = 0, padDigits = '';
-function renderPad(q, paused){
-  if (padRound !== S.round) { padRound = S.round; padDigits = ''; }
-  const mine = myLocal[S.round] ?? q.mine;
-  const shown = padDigits || (mine != null ? String(mine) : '');
-  $('padShow').innerHTML = esc(shown) + '<span class="ph">' + '_'.repeat(4 - shown.length) + '</span>';
-  $('padOk').disabled = paused || padDigits.length !== 4 || +padDigits === mine;
-  document.querySelectorAll('#pad .pk').forEach(b => { if (b.id !== 'padOk') b.disabled = !!paused; });
-  $('padSent').textContent = mine != null && (!padDigits || +padDigits === mine) ? `✓ Dein Tipp: ${mine} – ändern geht bis zur Auflösung` : '';
-}
-$('pad').onclick = async e => {
-  const b = e.target.closest('.pk'); if (!b || !S || S.phase !== 'question' || !S.q) return;
-  const k = b.dataset.k;
-  if (k === '19' || k === '20') padDigits = k;
-  else if (k === 'del') padDigits = padDigits.slice(0, -1);
-  else if (k === 'ok') {
-    if (padDigits.length !== 4) return;
-    const y = +padDigits, rnd = S.round;
-    myLocal[rnd] = y; padDigits = '';
-    renderPad(S.q, false);
-    try { await api('/api/answer', { pid:PID, round:rnd, choice:y }); $('gameErr').textContent = ''; }
-    catch(err){ $('gameErr').textContent = err.message; delete myLocal[rnd]; }
-    lastJson = ''; poll(); return;
-  } else if (padDigits.length < 4) padDigits += k;
-  renderPad(S.q, !!S.q.paused);
-};
-
-/* ───────── Admin: Filter, Ziel, Start ───────── */
-$('flt-wrap').onclick = e => {
-  const b = e.target.closest('.flt'); if (!b || !S) return;
-  const f = b.dataset.f;
-  const st = JSON.parse(JSON.stringify(pending || S.settings));
-  if (f === 'top10' || f === 'top20') st.top = st.top === f ? null : f;
-  else st.excluded = st.excluded.includes(f) ? st.excluded.filter(x => x !== f) : st.excluded.concat(f);
-  sendSettings(st);
-};
-$('targets').onclick = e => {
-  const b = e.target.closest('button'); if (!b || !S) return;
-  sendSettings({ ...(pending || S.settings), target: +b.dataset.t });
-};
-async function sendSettings(st){
-  pending = st; renderAdmin();
-  try { await api('/api/admin/settings', { pid:PID, excluded:st.excluded, top:st.top, target:st.target }); $('adminErr').textContent = ''; }
-  catch(e){ $('adminErr').textContent = e.message; }
-  pending = null; lastJson = ''; poll();
-}
-async function adminCmd(cmd, errEl){
-  busy = true; render();
-  try { await api('/api/admin/' + cmd, { pid:PID }); $(errEl).textContent = ''; }
-  catch(e){ $(errEl).textContent = e.message; if (cmd === 'start' || cmd === 'next') stopMusic(); }
-  busy = false; lastJson = ''; poll();
-}
-// Start und „Nächster Song“: Spotify im selben Tipp starten (sonst blockiert der Browser den Ton) – wie Chartster
-$('startBtn').onclick = () => {
-  if (S && S.next) { $('gameCard').hidden = false; playNow(S.next); }   // Player sichtbar, damit Spotify sicher lädt (Paparazzi Top 10: kein Song)
-  adminCmd('start', 'adminErr');
-};
-$('nextBtn').onclick = () => {
-  if (S && !(S.winners || []).length) { if (S.next) playNow(S.next); else stopMusic(); }
-  adminCmd('next', 'gameErr');
-};
-$('revealBtn').onclick = () => adminCmd('reveal', 'gameErr');
-$('lobbyBtn').onclick = () => adminCmd('lobby', 'gameErr');
-
-/* ───────── Spotify (nur Tablet) – wie Chartster: Embed mit autoplay, Stoppen = Quelle leeren ───────── */
-let playing = '';
-function embed(l){ return 'https://open.spotify.com/embed/track/' + l + '?utm_source=generator&theme=0&autoplay=1'; }
-function playNow(l){ unfocusPlayer(); playing = l; $('player-outer').hidden = false; $('sp-frame').src = embed(l); updateHole(); }
-function ensureMusic(l){ if (playing !== l) playNow(l); }           // z. B. nach Neuladen der Seite – dann ggf. Play tippen
-/* Zeit startet erst mit der Musik: Spotify meldet „spielt“ – sonst zählt der Tipp in den Player (Play-Knopf) */
-let goSent = 0, spInfo = 0;
-function musicStarted(why){
-  if (!S || S.phase !== 'question' || !S.q || !S.q.waiting || goSent === S.round) return;
-  goSent = S.round;
-  api('/api/admin/playing', { pid:PID, round:S.round, why }).catch(() => { goSent = 0; });
-}
-window.addEventListener('message', e => {
-  let host = '';
-  try { host = new URL(e.origin).hostname; } catch(x){}
-  if (!IS_ADMIN || !/(^|\.)spotify\.com$/.test(host)) return;
-  let d = e.data;
-  if (typeof d === 'string') { try { d = JSON.parse(d); } catch(x){ return; } }
-  if (!d || typeof d !== 'object') return;
-  const pl = d.payload || d.data || {};
-  if (/playback/i.test(d.type || '') && pl.isPaused === false && (pl.position > 0 || pl.isBuffering === false)) musicStarted('Spotify spielt');
-});
-window.addEventListener('blur', () => setTimeout(() => {                // Tipp in den Spotify-Player
-  if (document.activeElement === $('sp-frame') && playing) musicStarted('Play getippt');
-}, 0));
-function unfocusPlayer(){ if (document.activeElement === $('sp-frame')) $('focus-sink').focus(); }   // damit der nächste Tipp wieder erkannt wird
-function stopMusic(){ if (playing) { playing = ''; $('sp-frame').src = ''; } }
-function updateHole(){
-  const o = $('player-outer'); const w = o.offsetWidth || 412, mob = window.innerWidth < 600;
-  $('play-hole').setAttribute('cx', mob ? w - 32 : w - 28);
-  $('play-hole').setAttribute('r', mob ? 18 : 22);
-  $('play-hole').setAttribute('cy', mob ? 128 : 124);
-}
-window.addEventListener('resize', updateHole);
-
-/* ───────── Vollbild: der erste Tipp schaltet um (Browser erlauben es erst nach einem Tipp) ───────── */
-const STANDALONE = (window.matchMedia && matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches) || navigator.standalone === true;
+/* Erste Taste der Fernbedienung (OK, Pfeile …) schaltet auf Vollbild – vorher erlaubt es der Browser nicht */
 function goFull(){
-  if (STANDALONE || document.fullscreenElement || document.webkitFullscreenElement) return;
-  const d = document.documentElement, f = d.requestFullscreen || d.webkitRequestFullscreen;
-  if (!f) return;                                                  // iPhone: kein Vollbild für Webseiten → Home-Bildschirm
-  try { const r = f.call(d, { navigationUI:'hide' }); if (r && r.catch) r.catch(() => {}); } catch(e){}
+  if (isFull()) return;
+  var d = document.documentElement;
+  try { (d.requestFullscreen || d.webkitRequestFullscreen).call(d); } catch(err){}
+  setTimeout(function(){ $('fsBtn').style.display = isFull() ? 'none' : ''; }, 800);
 }
+document.addEventListener('keydown', goFull, true);
 document.addEventListener('click', goFull, true);
-const IS_IPHONE = /iPhone|iPod/.test(navigator.userAgent);
-$('iosHint').hidden = !IS_IPHONE || STANDALONE;
 
-/* Applaus bei „Allein richtig!“ – läuft voll durch (wie Chartster) */
-function shortApplause(){ playApplause(); }
-
-/* ───────── Admin-Menü ⚙ (wie Chartster: Leiste unten, Zurücksetzen mit zweitem Knopf statt Rückfrage-Dialog) ───────── */
-let armedDel = '';
-function openOpt(){
-  $('opt-filter').innerHTML = $('flt-wrap').innerHTML;            // gleiche Filterknöpfe wie in der Lobby
-  $('opt-confirm').hidden = true; $('optErr').textContent = ''; armedDel = '';
-  $('opt-panel').hidden = $('opt-shade').hidden = false;
-  renderOpt();
-}
-function closeOpt(){ $('opt-panel').hidden = $('opt-shade').hidden = true; $('opt-confirm').hidden = true; armedDel = ''; }
-function renderOpt(){
-  if (!S) return;
-  const ph = S.phase, inQ = ph === 'question', paused = inQ && S.q && S.q.paused;
-  $('optSongRow').hidden = !inQ;
-  $('oSkip').disabled = busy || paused || !S.hasNext;
-  $('oPause').innerHTML = paused ? '▶ Weiter<small>Song startet neu, Zeit läuft weiter</small>' : 'Pause<small>Musik und Zeit anhalten</small>';
-  $('oEnd').disabled = !(inQ || ph === 'reveal');
-  const st = pending || S.settings;
-  $('opt-filter').querySelectorAll('.flt').forEach(b => {
-    const f = b.dataset.f;
-    b.classList.toggle('off', (f === 'top10' || f === 'top20') ? st.top !== f : st.excluded.includes(f));
-  });
-  const sc = S.songs;
-  $('optSongCount').textContent = (sc.pool === sc.total ? `${sc.total} Songs` : `${sc.pool} / ${sc.total} Songs`) + (sc.pool < 10 ? ' – zu wenige!' : '');
-  $('optInvite').innerHTML = $('invite').innerHTML;
-  $('optPlayers').innerHTML = S.players.map(p =>
-    `<div class="prow">${dot(p.color)}<span class="n" style="color:${p.color}">${esc(p.name)}${p.online ? '' : ' <small style="color:var(--muted);font-weight:600">(weg)</small>'}</span>` +
-    `<span class="s" style="color:${p.color}">${p.score}</span>` +
-    `<button class="pbtn minus" data-a="adjust" data-d="-1" data-n="${esc(p.name)}">−1</button>` +
-    `<button class="pbtn" data-a="adjust" data-d="1" data-n="${esc(p.name)}">+1</button>` +
-    (p.me ? '' : `<button class="pbtn del ${armedDel === p.name ? 'armed' : ''}" data-a="remove" data-n="${esc(p.name)}">${armedDel === p.name ? 'Entfernen?' : '✕'}</button>`) +
-    `</div>`).join('');
-}
-async function optCmd(cmd, body){
-  $('optErr').textContent = '';
-  try { await api('/api/admin/' + cmd, { pid:PID, ...(body || {}) }); }
-  catch(e){ $('optErr').textContent = e.message; return false; }
-  lastJson = ''; await poll(); renderOpt(); return true;
-}
-$('opt-fab').onclick = openOpt;
-$('opt-shade').onclick = closeOpt;
-$('oClose').onclick = closeOpt;
-$('opt-filter').onclick = e => {                                  // Filter mitten im Spiel ändern – gilt ab dem nächsten Song
-  const b = e.target.closest('.flt'); if (!b || !S) return;
-  const f = b.dataset.f, st = JSON.parse(JSON.stringify(pending || S.settings));
-  if (f === 'top10' || f === 'top20') st.top = st.top === f ? null : f;
-  else st.excluded = st.excluded.includes(f) ? st.excluded.filter(x => x !== f) : st.excluded.concat(f);
-  sendSettings(st).then(renderOpt);
-};
-$('optPlayers').onclick = e => {
-  const b = e.target.closest('.pbtn'); if (!b) return;
-  const n = b.dataset.n;
-  if (b.dataset.a === 'adjust') return optCmd('adjust', { name:n, delta:+b.dataset.d });
-  if (armedDel !== n) { armedDel = n; renderOpt(); return; }         // erster Tipp: „Entfernen?“, zweiter Tipp: weg
-  armedDel = ''; optCmd('remove', { name:n });
-};
-// Überspringen und Weiter: Spotify im selben Tipp starten (sonst blockiert der Browser den Ton)
-$('oSkip').onclick = () => { if (S && S.next) playNow(S.next); else stopMusic(); busy = true; optCmd('skip').then(ok => { busy = false; if (!ok) stopMusic(); closeOpt(); }); };
-$('oPause').onclick = () => {
-  const paused = S && S.q && S.q.paused;
-  if (paused) { if (S.play) playNow(S.play); busy = true; optCmd('resume').then(() => { busy = false; closeOpt(); }); }
-  else { stopMusic(); optCmd('pause').then(closeOpt); }
-};
-$('oEnd').onclick = () => { stopMusic(); optCmd('end').then(closeOpt); };
-$('oReset').onclick = () => { $('opt-confirm').hidden = false; };
-$('oResetNo').onclick = () => { $('opt-confirm').hidden = true; };
-$('oResetYes').onclick = () => { stopMusic(); optCmd('lobby').then(closeOpt); };
-
-/* ───────── Versionsabgleich: neue Server-Version → Seite neu laden (alte Seiten passen nicht zu neuen Daten) ───────── */
-function vnum(v){ return String(v || '0').split('.').reduce((n, x) => n * 1000 + (+x || 0), 0); }
+/* Versionsabgleich: neue Server-Version → Seite neu laden (höchstens 3-mal hintereinander) */
+function vnum(v){ var a = String(v || '0').split('.'), n = 0; for (var i = 0; i < a.length; i++) n = n * 1000 + (+a[i] || 0); return n; }
 function versionCheck(sv){
+  var n = 0;
   if (!sv || sv === PAGE_V) { try { sessionStorage.removeItem('cot_reload'); } catch(e){} return false; }
   if (vnum(sv) > vnum(PAGE_V)) {
-    let n = 0; try { n = +(sessionStorage.getItem('cot_reload') || 0); if (n < 3) sessionStorage.setItem('cot_reload', n + 1); } catch(e){}
+    try { n = +(sessionStorage.getItem('cot_reload') || 0); if (n < 3) sessionStorage.setItem('cot_reload', n + 1); } catch(e){}
     if (n < 3) { location.reload(); return true; }
   }
-  $('gameErr').textContent = $('adminErr').textContent = `Versionen passen nicht: diese Seite ${PAGE_V}, Gastgeber ${sv} – der Gastgeber sollte seine Seite neu laden.`;
+  $('offline').style.display = 'block';
+  $('offline').textContent = 'Versionen passen nicht: Anzeige ' + PAGE_V + ', Gastgeber ' + sv + ' – Seite neu laden';
   return false;
 }
 
-/* ───────── Abfrage jede Sekunde ───────── */
-async function poll(){
-  try {
-    const j = await api('/api/state?pid=' + encodeURIComponent(PID));
+var reloadBase = null;
+var qrFor = '';
+function qrImg(text){ var q = qrcode(0, 'M'); q.addData(text); q.make(); return q.createDataURL(8, 2); }
+function poll(){
+  get(DB + ROOM + '/tv.json', function(t){
+    var j = null;
+    try { j = typeof t === 'string' ? JSON.parse(t) : null; } catch(e){}
+    if (!j) { fails++; if (fails >= 3) { $('offline').style.display = 'block'; $('offline').textContent = t === null && fails > 3 ? 'Raum ' + ROOM + ' noch ohne Spielstand – Gastgeber-Seite geöffnet?' : 'Verbindung unterbrochen …'; } return; }
+    fails = 0; $('offline').style.display = 'none';
     if (versionCheck(j.v)) return;
-    const txt = JSON.stringify(j);
+    // „Spieleabend starten“ bei schon offener TV-Seite: nur neu laden statt neuem Tab
+    if (reloadBase === null) reloadBase = j.tvReload;
+    else if (j.tvReload !== reloadBase) { location.reload(); return; }
+    var txt = JSON.stringify(j);
     S = j;
-    if (j.phase !== 'question') myLocal = {};
-    if (j.phase !== 'won') wonStage = -1;
-    if (txt !== lastJson){ lastJson = txt; render(); }
-  } catch(e){}
-}
-
-/* ═══════════════════ Netz: Firebase statt NAS ═══════════════════
-   cotmobil/index/<CODE>            Anlagezeit (zum Aufräumen alter Räume)
-   cotmobil/rooms/<CODE>/meta       { created, admin: Geräte-ID des Gastgebers }
-   …/host   Spielstand des Gastgebers (JSON-Text) – übersteht Neuladen und Gastgeber-Wechsel
-   …/pub    Zustand für die Handys (JSON-Text, ohne Lösung)      …/tv     Zustand für die Anzeige (JSON-Text)
-   …/covers Cover für den Hintergrund der Anzeige                …/seen/<id> Lebenszeichen jedes Geräts
-   …/req    Anfragen der Handys an den Gastgeber                 …/res    Antworten des Gastgebers            */
-const FB_CFG = {apiKey:"AIzaSyB0KvxjCtg4jiRK9WH3bN-niKwLFj3P9yw",authDomain:"schnuppes-spielportal.firebaseapp.com",databaseURL:"https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app",projectId:"schnuppes-spielportal",storageBucket:"schnuppes-spielportal.firebasestorage.app",messagingSenderId:"1022973500272",appId:"1:1022973500272:web:f9e39d0dfd3c61c3c88db5"};
-firebase.initializeApp(FB_CFG);
-const FDB = firebase.database(), TS = firebase.database.ServerValue.TIMESTAMP;
-const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';          // ohne I und O (Verwechslung mit 1 und 0)
-const KEEP_DAYS = 2;                                     // ältere Räume räumt der nächste neue Raum auf
-const BASE_URL = location.origin + location.pathname.replace(/[^/]*$/, '');
-
-const NET = {
-  room: '', ref: null, meta: null, host: false, game: null, pub: null, offset: 0, hostSeenAt: 0,
-  _pubTxt: '', _tvTxt: '', _saveTimer: null,
-
-  urls(){ return { game: BASE_URL + '?r=' + this.room, tv: BASE_URL + 'tv/?r=' + this.room }; },
-  serverNow(){ return Date.now() + this.offset; },
-  hostAway(){ return !this.host && this.meta && this.hostSeenAt && this.serverNow() - this.hostSeenAt > 15000; },
-
-  /* Neuen Raum anlegen (Gastgeber) */
-  async create(){
-    const idx = FDB.ref('cotmobil/index');
-    let code = '';
-    for (let i = 0; i < 20 && !code; i++) {
-      const c = Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
-      if (!(await idx.child(c).get()).exists()) code = c;
+    if (txt !== lastJson) {
+      lastJson = txt;
+      try { render(); } catch(e){ reportError((e && e.message) || e, e && e.lineNumber, 0); }
     }
-    if (!code) throw new Error('Kein freier Raumcode – bitte nochmal versuchen');
-    await idx.child(code).set(TS);
-    await FDB.ref('cotmobil/rooms/' + code + '/meta').set({ created: TS, admin: PID });
-    await Promise.race([this.cleanup().catch(() => {}), new Promise(r => setTimeout(r, 3000))]);   // vor dem Umschalten der Seite
-    return code;
-  },
-  /* Räume älter als 2 Tage löschen – ein laufender Abend ist nie betroffen */
-  async cleanup(){
-    const snap = await FDB.ref('cotmobil/index').get(), limit = this.serverNow() - KEEP_DAYS * 86400000, upd = {};
-    snap.forEach(c => { if (+c.val() < limit) { upd['index/' + c.key] = null; upd['rooms/' + c.key] = null; } });
-    if (Object.keys(upd).length) await FDB.ref('cotmobil').update(upd);
-  },
+  });
+}
 
-  /* Raum öffnen: Gastgeber rechnet selbst, alle anderen hören zu */
-  async open(code){
-    this.room = code;
-    this.ref = FDB.ref('cotmobil/rooms/' + code);
-    FDB.ref('.info/serverTimeOffset').on('value', s => { this.offset = s.val() || 0; });
-    const meta = (await this.ref.child('meta').get()).val();
-    if (!meta) return false;
-    this.meta = meta;
-    this.ref.child('meta').on('value', s => {
-      const m = s.val(); if (!m) return;
-      const was = this.meta && this.meta.admin;
-      this.meta = m;
-      if (this.host && m.admin !== PID) location.reload();      // ein anderes Gerät ist jetzt Gastgeber
-      if (!this.host && was !== m.admin) this._watchHost();
-    });
-    // Lebenszeichen alle 3 s (der Gastgeber merkt daran, wer noch da ist)
-    const beat = () => this.ref.child('seen/' + COT.pidId(PID)).set({ pid: PID, t: TS }).catch(() => {});
-    beat(); setInterval(beat, 3000);
-    if (meta.admin === PID) await this.becomeHost();
-    else this.listen();
-    return true;
-  },
-  listen(){
-    this.ref.child('pub').on('value', s => {
-      try { this.pub = s.val() ? JSON.parse(s.val()) : null; } catch(e){ this.pub = null; }
-      lastJson = ''; poll();
-    });
-    this._watchHost();
-  },
-  _watchHost(){
-    if (this._hostRef) this._hostRef.off();
-    this._hostRef = this.ref.child('seen/' + COT.pidId(this.meta.admin) + '/t');
-    this._hostRef.on('value', s => { this.hostSeenAt = s.val() || 0; });
-  },
-
-  /* Dieses Gerät rechnet das Spiel (wie bisher der NAS) */
-  async becomeHost(){
-    this.host = IS_ADMIN = true;
-    if (this.pub) this.ref.child('pub').off();
-    this.game = new COT.Game({
-      room: this.room, urls: this.urls(), hostPid: () => PID,
-      log: t => console.log(t),
-      save: txt => { clearTimeout(this._saveTimer); this._saveTimer = setTimeout(() => this.ref.child('host').set(txt).catch(() => {}), 300); }
-    });
-    this.game.load((await this.ref.child('host').get()).val());
-    COT.Songs.load('../chartster/songs.json').then(() => {
-      const c = COT.Songs.songs.filter(s => s.c).map(s => s.c);
-      for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; }
-      this.ref.child('covers').set(JSON.stringify(c.slice(0, 60))).catch(() => {});
-      this.game.rev++; lastJson = ''; poll();
-    });
-    // Lebenszeichen der anderen
-    const seen = s => { const v = s.val(); if (v && v.pid) this.game.touch(v.pid); };
-    this.ref.child('seen').on('child_added', seen);
-    this.ref.child('seen').on('child_changed', seen);
-    // Anfragen der anderen beantworten
-    this.ref.child('req').on('child_added', s => {
-      const r = s.val() || {}, body = Object.assign({}, r.body || {}, { pid: r.pid });   // Absender zählt, nicht was im Text steht
-      let res;
-      try { res = Object.assign({ ok: true }, this.game.handle(String(r.path || ''), body)); }
-      catch(e){ res = { error: e.message || String(e) }; }
-      this.ref.child('res/' + s.key).set(JSON.stringify(res)).catch(() => {});
-      s.ref.remove().catch(() => {});
-      this.publish();
-    });
-    setInterval(() => { this.game.touch(PID); this.publish(); }, 500);
-    this.publish();
-  },
-  publish(){
-    if (!this.game) return;
-    const pub = JSON.stringify(this.game.view('', false)), tv = JSON.stringify(this.game.view('', true));
-    if (pub !== this._pubTxt) { this._pubTxt = pub; this.ref.child('pub').set(pub).catch(() => {}); }
-    if (tv !== this._tvTxt) { this._tvTxt = tv; this.ref.child('tv').set(tv).catch(() => {}); }
-  },
-
-  /* Zustand wie bisher /api/state */
-  state(){
-    if (this.host) return this.game.view(PID, false);
-    if (!this.pub) throw new Error('noch kein Spielstand');
-    const j = JSON.parse(JSON.stringify(this.pub)), myId = COT.pidId(PID);
-    j.players.forEach(p => { p.me = p.id === myId; });
-    j.hostAway = this.hostAway();                              // damit sich die Anzeige auch ohne neuen Spielstand ändert
-    return j;
-  },
-  /* Anfrage wie bisher POST /api/… */
-  async call(path, body){
-    body = Object.assign({}, body || {}, { pid: PID });
-    if (this.host) { const r = this.game.handle(path, body); this.publish(); return r; }
-    if (path === '/api/join' && this.hostAway()) await this._takeOver(body.name);
-    if (this.host) { const r = this.game.handle(path, body); this.publish(); return r; }
-    const ref = this.ref.child('req').push(), resRef = this.ref.child('res/' + ref.key);
-    await ref.set({ pid: PID, path, body, t: TS });
-    return new Promise((ok, bad) => {
-      const done = () => { clearTimeout(to); resRef.off(); resRef.remove().catch(() => {}); };
-      const to = setTimeout(() => { done(); ref.remove().catch(() => {}); bad(new Error('Der Gastgeber antwortet nicht – ist sein Gerät noch an?')); }, 10000);
-      resRef.on('value', s => {
-        if (!s.val()) return;
-        let r = {}; try { r = JSON.parse(s.val()); } catch(e){}
-        done();
-        r.error ? bad(new Error(r.error)) : ok(r);
-      });
-    });
-  },
-  /* Gastgeber weg und dieses Gerät meldet sich mit dessen Namen → übernimmt (wie die Namensübernahme der NAS-Version) */
-  async _takeOver(name){
-    const adminP = this.pub && this.pub.players.find(p => p.admin);
-    if (!adminP || adminP.name.toLowerCase() !== String(name || '').trim().toLowerCase()) return;
-    const old = this.meta.admin;
-    const r = await this.ref.child('meta/admin').transaction(cur => cur === old ? PID : undefined);
-    if (r.committed) await this.becomeHost();
+/* Cover-Hintergrund wie die Chartster-Lobby: nur an den Rändern, langsam auf- und abblenden */
+var SLOTS = [[3,8],[3,40],[3,72],[13,24],[13,56],[13,86],[87,8],[87,40],[87,72],[77,24],[77,56],[77,86],[30,2],[50,2],[68,2],[30,90],[50,90],[68,90]];
+function buildBg(covers){
+  if (!covers || !covers.length) return;
+  var bg = $('bg'), idx = 0;
+  function next(){ var c = covers[idx % covers.length]; idx++; return c; }
+  for (var i = 0; i < SLOTS.length; i++) {
+    var d = document.createElement('div'), sz = 9 + Math.random() * 9, dur = 38 + Math.random() * 24;
+    d.className = 'cv';
+    d.style.width = sz + 'vh'; d.style.height = sz + 'vh';
+    d.style.left = SLOTS[i][0] + '%'; d.style.top = SLOTS[i][1] + '%';
+    d.style.marginLeft = (-sz / 2) + 'vh';
+    d.style.backgroundImage = 'url("' + next() + '")';
+    d.style.webkitAnimationDuration = d.style.animationDuration = dur + 's';
+    d.style.webkitAnimationDelay = d.style.animationDelay = (-Math.random() * dur) + 's';
+    (function(el){
+      function swap(){ el.style.backgroundImage = 'url("' + next() + '")'; }
+      el.addEventListener('animationiteration', swap);
+      el.addEventListener('webkitAnimationIteration', swap);
+    })(d);
+    bg.appendChild(d);
   }
-};
-
-/* ───────── Einladen: QR-Codes und Adressen (Gastgeber) ───────── */
-function qrImg(text){
-  const q = qrcode(0, 'M'); q.addData(text); q.make();
-  return q.createDataURL(6, 2);
-}
-let inviteFor = '';
-function renderInvite(){
-  if (inviteFor === NET.room) return;
-  inviteFor = NET.room;
-  const u = NET.urls();
-  $('roomCode').textContent = NET.room;
-  $('qrPlay').src = qrImg(u.game); $('urlPlay').textContent = u.game.replace(/^https?:\/\//, '');
-  $('qrTv').src = qrImg(u.tv); $('urlTv').textContent = u.tv.replace(/^https?:\/\//, '');
 }
 
-/* ───────── Start: neues Spiel oder Raum beitreten ───────── */
-function showStart(msg){
-  $('startCard').hidden = false; $('connecting').hidden = true;
-  $('startErr').textContent = msg || '';
-  ['joinCard', 'lobbyCard', 'adminCard', 'gameCard', 'wonCard'].forEach(id => { $(id).hidden = true; });
-}
-$('hostBtn').onclick = async () => {
-  $('hostBtn').disabled = true; $('startErr').textContent = '';
-  try { const code = await NET.create(); location.replace(BASE_URL + '?r=' + code); }
-  catch(e){ $('startErr').textContent = e.message || 'Keine Verbindung – Internet prüfen'; $('hostBtn').disabled = false; }
-};
-$('codeBtn').onclick = () => {
-  const c = $('codeInp').value.trim().toUpperCase();
-  if (!/^[A-Z]{4}$/.test(c)) { $('startErr').textContent = 'Der Raumcode hat 4 Buchstaben'; return; }
-  location.replace(BASE_URL + '?r=' + c);
-};
-$('codeInp').addEventListener('keydown', e => { if (e.key === 'Enter') $('codeBtn').onclick(); });
-
-(async () => {
-  const code = (new URLSearchParams(location.search).get('r') || '').toUpperCase();
-  if (!/^[A-Z]{4}$/.test(code)) { showStart(); return; }
-  let ok = false;
-  try { ok = await NET.open(code); } catch(e){ showStart('Keine Verbindung – Internet prüfen'); return; }
-  if (!ok) { showStart(`Raum ${code} gibt es nicht (mehr). Neues Spiel anlegen oder Code prüfen.`); return; }
-  for (let i = 0; i < 50 && !NET.host && !NET.pub; i++) await new Promise(r => setTimeout(r, 200));   // erster Spielstand
-  await poll();
-  const saved = store.get('cot_name');
-  const me = S && S.players.find(p => p.me);
-  if (me && IS_ADMIN && !me.admin) join(me.name);            // Gastgeber war schon Spieler → wird Admin
-  else if (!me && saved) join(saved);                          // Wiedereinstieg mit gemerktem Namen
-  else { if (saved) $('name').value = saved; render(); }
+if (!ROOM) {
+  $('offline').style.display = 'block';
+  $('offline').textContent = 'Bitte die Adresse mit Raumcode öffnen – sie steht auf dem Gerät des Gastgebers (…/tv/?r=CODE).';
+} else {
+  (function covers(){                                  // Cover schreibt der Gastgeber, sobald seine Songs geladen sind
+    get(DB + ROOM + '/covers.json', function(t){ var c = null; try { c = JSON.parse(t); } catch(e){} if (c && c.length) buildBg(c); else setTimeout(covers, 5000); });
+  })();
+  poll();
   setInterval(poll, 1000);
-})();
+}
 </script>
 </body>
 </html>
