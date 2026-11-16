@@ -62,9 +62,19 @@ body{font-family:'Outfit',sans-serif;background:#07000f;color:#f0f0ff;
 .tbar{width:100%;height:1vh;background:rgba(255,255,255,.1);border-radius:.5vh;overflow:hidden;margin:1.2vh 0 2.6vh}
 .tfill{height:100%;border-radius:.5vh;background:linear-gradient(90deg,#53f6ff,#8f5fff);-webkit-transition:width 1s linear;transition:width 1s linear}
 .tfill.hot{background:linear-gradient(90deg,#ff4fd8,#ff6060)}
-#cd{position:absolute;right:4vw;top:2vh;width:16vh;height:16vh;border-radius:50%;background:rgba(20,8,40,.9);border:.6vh solid #ff4fd8;
-  font-size:10vh;font-weight:900;color:#ff4fd8;text-align:center;line-height:14.8vh;box-shadow:0 0 5vh rgba(255,79,216,.6);display:none;z-index:4}
-#cd.red{border-color:#ff6060;color:#ff6060;box-shadow:0 0 5vh rgba(255,96,96,.7)}
+/* Countdown: Zahl rollt Schritt für Schritt nach oben, darunter eine unscharfe Spiegelung */
+#cd{position:absolute;right:3vw;top:1vh;width:24vh;display:none;z-index:4;text-align:center;font-weight:900;color:#ff4fd8;pointer-events:none}
+#cd.red{color:#ff6060}
+#cd .cdw{height:10vh;overflow:hidden}
+#cd .cds{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+#cd .cds.go{-webkit-transition:-webkit-transform .55s cubic-bezier(.34,1.45,.5,1);transition:transform .55s cubic-bezier(.34,1.45,.5,1);
+  -webkit-transform:translate3d(0,-10vh,0);transform:translate3d(0,-10vh,0)}
+#cd .cdn{height:10vh;line-height:10.6vh;font-size:12.5vh;text-shadow:0 0 1.2vh rgba(255,79,216,.5)}
+#cd.red .cdn{text-shadow:0 0 1.2vh rgba(255,96,96,.6)}
+#cd .cdrc{height:5vh;overflow:hidden;opacity:.6;
+  -webkit-mask-image:-webkit-gradient(linear,left top,left bottom,from(rgba(0,0,0,1)),to(rgba(0,0,0,0)));
+  mask-image:linear-gradient(to bottom,#000,transparent)}
+#cd .cdr{-webkit-transform:scaleY(-1);transform:scaleY(-1);-webkit-filter:blur(.35vh);filter:blur(.35vh)}
 /* Auflösung oben – wie der Zuschauer-Modus in Chartster */
 #rev{display:none;width:100%;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;margin-bottom:2.4vh}
 #rev img{width:22vh;height:22vh;border-radius:1.6vh;object-fit:cover;margin-right:3vw;border:.3vh solid rgba(83,246,255,.5);box-shadow:0 0 4vh rgba(83,246,255,.3)}
@@ -234,7 +244,7 @@ body{font-family:'Outfit',sans-serif;background:#07000f;color:#f0f0ff;
   </div>
 </div>
 
-<div class="version" id="ver">TV v0.4.3</div>
+<div class="version" id="ver">Anzeige v0.2.1</div>
 
 <script src="../qrcode.js"></script>
 <script>
@@ -254,7 +264,7 @@ function reportError(msg, line, col, kind){
 }
 window.onerror = function(msg, src, line, col){ reportError(msg, line, col); };
 var S = null, lastJson = '', fails = 0, optKey = '', revKey = '';
-var PAGE_V = '0.2.0';                          // Mobil-Version – muss zur Version des Gastgebers passen
+var PAGE_V = '0.2.1';                          // Mobil-Version – muss zur Version des Gastgebers passen
 var DECADES = ['70er', '80er', '90er', '00er', '10er', '20er'];
 var EDITIONS = { 'RS-500': 'RS-500', 'Bond-Edition': 'Bond', 'WM-Edition': 'WM', 'Popcorn-Edition': 'Kino', 'XMas-Edition': 'X-Mas' };
 var LETTERS = 'ABCDE';
@@ -332,6 +342,28 @@ function infoText(){
   return parts.join(' &nbsp;·&nbsp; ');
 }
 
+/* ───────── Countdown-Zahl mit Rollen und Spiegelung ───────── */
+var cdCur = null;
+function cdCell(n){ return '<div class="cds"><div class="cdn">' + n + '</div></div>'; }
+function cdShow(n){
+  var el = $('cd'), i, st;
+  el.className = n <= 5 ? 'red' : '';
+  if (cdCur === null) {                                 // erscheint: ohne Animation
+    el.innerHTML = '<div class="cdw">' + cdCell(n) + '</div><div class="cdrc"><div class="cdw cdr">' + cdCell(n) + '</div></div>';
+    el.style.display = 'block'; cdCur = n; return;
+  }
+  if (n === cdCur) return;
+  st = el.querySelectorAll('.cds');
+  for (i = 0; i < st.length; i++) {                     // alte Zahl oben, neue darunter – dann nach oben rollen
+    st[i].className = 'cds';
+    st[i].innerHTML = '<div class="cdn">' + cdCur + '</div><div class="cdn">' + n + '</div>';
+    void st[i].offsetHeight;
+    st[i].className = 'cds go';
+  }
+  cdCur = n;
+}
+function cdHide(){ $('cd').style.display = 'none'; cdCur = null; }
+
 /* ───────── Frage und Auflösung ───────── */
 function renderQuiz(){
   var q = S.q, rev = S.phase === 'reveal', i, h = '';
@@ -348,11 +380,10 @@ function renderQuiz(){
     var f = $('tfill');
     f.style.width = Math.max(0, Math.min(100, q.left / q.total * 100)) + '%';
     f.className = 'tfill' + (q.mode === 'after' ? ' hot' : '');
-    $('cd').style.display = showCd ? 'block' : 'none';
-    if (showCd) { $('cd').textContent = q.left; $('cd').className = q.left <= 5 ? 'red' : ''; }
+    if (showCd) cdShow(q.left); else cdHide();
   } else {
     $('tbar').style.visibility = 'hidden';
-    $('cd').style.display = 'none';
+    cdHide();
     var s = q.song, key = S.round + '|' + s.a + '|' + s.t;
     if (key !== revKey) {
       revKey = key;
@@ -716,6 +747,7 @@ function buildBg(covers){
 
 if (!ROOM) {
   $('offline').style.display = 'block';
+  $('lobby').querySelector('.row').style.display = 'none';      // ohne Code keine leeren QR-Karten
   $('offline').textContent = 'Bitte die Adresse mit Raumcode öffnen – sie steht auf dem Gerät des Gastgebers (…/tv/?r=CODE).';
 } else {
   (function covers(){                                  // Cover schreibt der Gastgeber, sobald seine Songs geladen sind

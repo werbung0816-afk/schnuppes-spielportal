@@ -6,7 +6,7 @@
 'use strict';
 
 const COT = (() => {
-  const VERSION = '0.2.0';
+  const VERSION = '0.2.1';
 
   // ── aus Chartster / NAS-Version ──
   const COLORS = ['#53f6ff', '#ff4fd8', '#8f5fff', '#4dff91', '#ffd84d', '#ff6b35'];
