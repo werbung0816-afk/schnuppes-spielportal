@@ -6,7 +6,7 @@
 'use strict';
 
 const COT = (() => {
-  const VERSION = '0.2.1';
+  const VERSION = '0.2.2';
 
   // ── aus Chartster / NAS-Version ──
   const COLORS = ['#53f6ff', '#ff4fd8', '#8f5fff', '#4dff91', '#ffd84d', '#ff6b35'];
@@ -38,6 +38,72 @@ const COT = (() => {
   }
   const shuffle = a => { const c = sample(a, a.length); a.splice(0, a.length, ...c); return a; };
   const uniq = a => [...new Set(a)];
+
+  /* Gemeinsamer Verlauf „schon gespielt“ mit Chartster und der NAS-Version (wie verlauf.py):
+     Firebase verlauf/s/<Spotify-ID> und verlauf/p/<FNV der Foto-URL> = Zeitpunkt in ms.
+     Was in den letzten 90 Tagen lief, kommt erst, wenn nichts anderes mehr übrig ist – dann das am längsten Zurückliegende.
+     Ohne Verbindung merkt sich das Gerät den Verlauf selbst (localStorage) und reicht ihn später nach. */
+  const VERLAUF = (() => {
+    const URL = 'https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app/verlauf';
+    const KEEP_DAYS = 90, KEEP_MS = KEEP_DAYS * 864e5, LS = 'cot_verlauf';
+    let h = { s: {}, p: {} }, pending = { s: {}, p: {} };
+    try { const d = JSON.parse(localStorage.getItem(LS) || 'null'); if (d) { h = { s: d.s || {}, p: d.p || {} }; pending = d.pending || pending; } } catch (e) {}
+    const store = () => { try { localStorage.setItem(LS, JSON.stringify({ s: h.s, p: h.p, pending })); } catch (e) {} };
+    function fnv(t){
+      let x = 0x811c9dc5;
+      for (let i = 0; i < t.length; i++) { x ^= t.charCodeAt(i); x = Math.imul(x, 0x01000193) >>> 0; }
+      return ('0000000' + x.toString(16)).slice(-8);
+    }
+    function key(kind, v){
+      v = String(v || '').trim();
+      if (!v) return '';
+      return kind === 'p' ? fnv(v) : v.replace(/[.#$\[\]\/]/g, '_');
+    }
+    function when(kind, v){                                    // ms, wenn in den letzten 90 Tagen gespielt – sonst 0
+      const k = key(kind, v), t = k ? h[kind][k] || 0 : 0;
+      return t && Date.now() - t < KEEP_MS ? t : 0;
+    }
+    function order(items, kind, val){                         // zum Ziehen von hinten (pop): erst Ungespieltes, dann Ältestes
+      const fresh = [], old = [];
+      for (const x of items) { const t = when(kind, val(x)); if (t) old.push([t, x]); else fresh.push(x); }
+      old.sort((a, b) => b[0] - a[0]);
+      return old.map(p => p[1]).concat(sample(fresh, fresh.length));
+    }
+    const freshCount = (items, kind, val) => items.filter(x => !when(kind, val(x))).length;
+    const patch = (kind, obj) => fetch(URL + '/' + kind + '.json', { method: 'PATCH', body: JSON.stringify(obj) })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); });
+    async function push(){
+      for (const kind of ['s', 'p']) {
+        const todo = Object.assign({}, pending[kind]);
+        if (!Object.keys(todo).length) continue;
+        try { await patch(kind, todo); for (const k in todo) if (pending[kind][k] === todo[k]) delete pending[kind][k]; store(); }
+        catch (e) { return false; }
+      }
+      return true;
+    }
+    function mark(kind, v){
+      const k = key(kind, v);
+      if (!k) return;
+      h[kind][k] = pending[kind][k] = Date.now();
+      store(); push();
+    }
+    async function load(){
+      await push();
+      let d;
+      try { const r = await fetch(URL + '.json', { cache: 'no-store' }); if (!r.ok) throw 0; d = (await r.json()) || {}; }
+      catch (e) { return false; }
+      const cutoff = Date.now() - KEEP_MS;
+      for (const kind of ['s', 'p']) {
+        const remote = d[kind] && typeof d[kind] === 'object' ? d[kind] : {}, old = {};
+        for (const k in remote) { const t = +remote[k]; if (!t) continue; if (t < cutoff) old[k] = null; else if (t > (h[kind][k] || 0)) h[kind][k] = t; }
+        for (const k in h[kind]) if (h[kind][k] < cutoff) delete h[kind][k];
+        if (Object.keys(old).length) patch(kind, old).catch(() => {});     // Altes (> 90 Tage) aufräumen
+      }
+      store();
+      return true;
+    }
+    return { load, when, order, freshCount, mark, fnv, KEEP_DAYS, count: () => [Object.keys(h.s).length, Object.keys(h.p).length] };
+  })();
 
   /* Öffentliche Kennung eines Geräts (die Geräte-ID selbst bleibt geheim): FNV-1a, 8 Hex-Zeichen */
   function pidId(pid){
@@ -362,6 +428,7 @@ real sweet gonna wanna`.split(/\s+/));
       this.settings = { excluded: ['70er', '80er', ...EDITIONS], top: null, target: 10 };   // 90er bis heute, Ziel 10
       this.rev = 0;
       this.deck = [];                                          // gemischte Songs der Auswahl (keine Wiederholung im Spiel)
+      this.deckT = 0;                                          // wann gemischt wurde (ms) – für den Verlauf
       this.catCycle = [];
       this.prepared = null;                                    // nächste Frage – schon fertig, damit die Musik sofort startet
       this.q = null;                                           // aktuelle Frage
@@ -505,9 +572,10 @@ real sweet gonna wanna`.split(/\s+/));
         if (cat === 'paparazzi') cat = choice(SONG_CATS);
       }
       for (let i = 0; i < 30; i++) {
-        if (!this.deck.length) this.deck = sample(pool, pool.length);
+        if (!this.deck.length) this._newDeck(pool);           // Ungespieltes zuerst, dann das am längsten Zurückliegende
         const s = this.deck.pop();
         if (!s.a || !s.t) continue;
+        if (VERLAUF.when('s', s.l) >= this.deckT) continue;   // lief schon, seit gemischt wurde (z. B. als Paparazzi-Song)
         let options, correct, level = '';
         if (cat === 'jahr') {
           if (!s.y) continue;                                  // ohne Jahr keine Jahresfrage
@@ -539,7 +607,8 @@ real sweet gonna wanna`.split(/\s+/));
       if (!ready.length) { this.io.log('[Foto] noch kein Künstlerfoto geladen – statt Paparazzi eine normale Frage'); this.warmPhotos(); return false; }
       let keys = ready.filter(k => !this.papUsed.has(k));
       if (!keys.length) keys = ready;
-      for (const k of sample(keys, keys.length).slice(0, 20)) {
+      keys = VERLAUF.order(keys, 'p', k => arts_.get(k).ca).reverse();   // Bilder der letzten 90 Tage erst ganz zum Schluss
+      for (const k of keys.slice(0, 20)) {
         const art = arts_.get(k), opts = paparazziOptions(art, arts_, Songs.songs);
         if (!opts) continue;
         this.papUsed.add(k);
@@ -552,6 +621,21 @@ real sweet gonna wanna`.split(/\s+/));
       }
       return false;
     }
+    _newDeck(pool){
+      this.deck = VERLAUF.order(pool, 's', x => x.l);
+      this.deckT = Date.now();
+    }
+    _stale(q){                                                 // vorbereitete Frage schon in den letzten 90 Tagen gespielt?
+      return !!(VERLAUF.when('s', q.song.l) || (q.cat === 'paparazzi' && VERLAUF.when('p', q.photo)));
+    }
+    /* Verlauf neu geladen: bereitgelegte Frage in der Lobby schon gespielt (z. B. gestern in Chartster)? → neu wählen */
+    verlaufLoaded(){
+      const [ns, np] = VERLAUF.count();
+      this.io.log(`[Verlauf] ${ns} Titel und ${np} Bilder in den letzten ${VERLAUF.KEEP_DAYS} Tagen`);
+      if ((this.phase === 'lobby' || this.phase === 'won') && this.prepared && this._stale(this.prepared)) {
+        this.prepared = null; this.deck = []; this.rev++;
+      }
+    }
     _activate(){
       if (!this.prepared) this._prepare();
       if (!this.prepared) throw new Error('Zu wenige Songs – Auswahl anpassen');
@@ -559,6 +643,8 @@ real sweet gonna wanna`.split(/\s+/));
       this.q = Object.assign({}, this.prepared, { started: t, first: null, answers: {}, answered: new Set(), paused: null,
                                                   buzz: null, waiting: music ? t : null });
       this.prepared = null;
+      if (this.q.song.l) VERLAUF.mark('s', this.q.song.l);    // Verlauf: Titel (und Paparazzi-Bild) als gespielt merken
+      if (this.q.cat === 'paparazzi') VERLAUF.mark('p', this.q.photo);
       this.round++;
       this.result = null;
       this.phase = 'question';
@@ -573,10 +659,14 @@ real sweet gonna wanna`.split(/\s+/));
       if (this.pool().length < 10) throw new Error('Zu wenige Songs – Auswahl anpassen');
       this.players.forEach(p => { p.score = 0; });
       this.round = 0; this.winners = []; this.papUsed = new Set();
+      // Verlauf: neu mischen – alles aus den letzten 90 Tagen (auch von Chartster) kommt erst ganz zum Schluss
+      this._newDeck(this.pool());
+      if (this.prepared && this._stale(this.prepared)) { this.prepared = null; this._prepare(); }
       // Fünferpack neu beginnen – die schon vorbereitete Frage zählt als erste des Blocks
       this.catCycle = sample(CATS, CATS.length).filter(c => !this.prepared || c !== this.prepared.cat);
-      if (!this.deck.length) this.deck = sample(this.pool(), this.pool().length);
-      this.io.log(`[Spiel] Start: ${this.players.length} Spieler, Ziel ${this.settings.target}, ${this.pool().length} Songs`);
+      const pool = this.pool();
+      this.io.log(`[Spiel] Start: ${this.players.length} Spieler, Ziel ${this.settings.target}, ${pool.length} Songs ` +
+                  `(${VERLAUF.freshCount(pool, 's', x => x.l)} davon in den letzten ${VERLAUF.KEEP_DAYS} Tagen nicht gespielt)`);
       return this._activate();
     }
     nextSong(pid){
@@ -858,6 +948,6 @@ real sweet gonna wanna`.split(/\s+/));
     }
   }
 
-  return { VERSION, Game, Songs, SIM, PHOTOS, pidId, fold, mainArtist, lang, yearOptions, artistOptions, titleOptions,
+  return { VERSION, Game, Songs, SIM, PHOTOS, VERLAUF, pidId, fold, mainArtist, lang, yearOptions, artistOptions, titleOptions,
            paparazziArtists, DECADES, EDITIONS, CAT_TEXT };
 })();

@@ -860,6 +860,9 @@ const NET = {
     });
     this.game.load((await this.ref.child('host').get()).val());
     COT.SIM.load('aehnlich.json');                             // ähnliche Künstler (Datei vom NAS) – fehlt sie, geht es ohne
+    const verlauf = () => COT.VERLAUF.load().then(ok => { if (ok && this.game) this.game.verlaufLoaded(); });
+    verlauf(); clearInterval(this._verlaufTimer);
+    this._verlaufTimer = setInterval(verlauf, 600000);         // „schon gespielt“ (90 Tage) – alle 10 min neu, auch von Chartster
     COT.Songs.load('../chartster/songs.json').then(() => {
       this.game.warmPhotos();
       const c = COT.Songs.songs.filter(s => s.c).map(s => s.c);
