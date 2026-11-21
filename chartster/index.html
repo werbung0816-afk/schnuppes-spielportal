@@ -704,7 +704,7 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
 <audio id="snd-slot" src="slot%20machine.mp3" preload="auto"></audio>
 <audio id="snd-appl" src="applause.mp3" preload="auto"></audio>
 
-<div class="version">v5.8.5</div>
+<div class="version">v5.8.6</div>
 
 <!-- SW Update Toast -->
 
@@ -987,6 +987,37 @@ body[data-mode=single] .tl-box{width:clamp(100px,14vw,170px)!important;height:cl
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script>
+/* ════ VERLAUF „schon gespielt“ – gemeinsam mit ChartsterOnTime (NAS + Mobil) ════
+   Firebase verlauf/s/<Spotify-ID> und verlauf/p/<FNV der Foto-URL> = Zeitpunkt in ms.
+   Was in den letzten 90 Tagen lief, kommt erst, wenn nichts anderes mehr übrig ist – dann das am längsten Zurückliegende.
+   Ohne Verbindung merkt sich das Gerät den Verlauf selbst und reicht ihn später nach. */
+var VL=(function(){
+  var URL='https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app/verlauf';
+  var KEEP_MS=90*864e5,LS='cot_verlauf',KINDS=['s','p'];
+  var h={s:{},p:{}},pending={s:{},p:{}},loaded=null;
+  try{var d=JSON.parse(localStorage.getItem(LS)||'null');if(d){h={s:d.s||{},p:d.p||{}};pending=d.pending||pending;}}catch(e){}
+  function store(){try{localStorage.setItem(LS,JSON.stringify({s:h.s,p:h.p,pending:pending}));}catch(e){}}
+  function fnv(t){var x=0x811c9dc5;for(var i=0;i<t.length;i++){x^=t.charCodeAt(i);x=Math.imul(x,0x01000193)>>>0;}return('0000000'+x.toString(16)).slice(-8);}
+  function key(kind,v){v=String(v||'').trim();if(!v)return'';return kind==='p'?fnv(v):v.replace(/[.#$\[\]\/]/g,'_');}
+  function when(kind,v){var k=key(kind,v),t=k?(h[kind][k]||0):0;return(t&&Date.now()-t<KEEP_MS)?t:0;}
+  function mix(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var c=b[i];b[i]=b[j];b[j]=c;}return b;}
+  // Reihenfolge zum Ziehen von hinten (pop): erst Ungespieltes (gemischt), dann das am längsten Zurückliegende
+  function order(items,kind,val){var fresh=[],old=[];items.forEach(function(x){var t=when(kind,val(x));if(t)old.push([t,x]);else fresh.push(x);});
+    old.sort(function(a,b){return b[0]-a[0];});return old.map(function(p){return p[1];}).concat(mix(fresh));}
+  function patch(kind,obj){return fetch(URL+'/'+kind+'.json',{method:'PATCH',body:JSON.stringify(obj)}).then(function(r){if(!r.ok)throw new Error(r.status);});}
+  function push(){return KINDS.reduce(function(p,kind){return p.then(function(){var todo={},n=0;for(var k in pending[kind]){todo[k]=pending[kind][k];n++;}
+    if(!n)return;return patch(kind,todo).then(function(){for(var k in todo)if(pending[kind][k]===todo[k])delete pending[kind][k];store();});});},Promise.resolve()).catch(function(){});}
+  function mark(kind,v){var k=key(kind,v);if(!k)return;h[kind][k]=pending[kind][k]=Date.now();store();push();}
+  // Verlauf holen (höchstens 3 s warten – ohne Verbindung geht es mit dem eigenen Verlauf weiter)
+  function load(){if(loaded)return loaded;loaded=new Promise(function(res){var done=false,fin=function(){if(!done){done=true;res();}};setTimeout(fin,3000);
+    push().then(function(){return fetch(URL+'.json',{cache:'no-store'});}).then(function(r){return r.ok?r.json():null;}).then(function(d){
+      if(d){var cutoff=Date.now()-KEEP_MS;KINDS.forEach(function(kind){var remote=(d[kind]&&typeof d[kind]==='object')?d[kind]:{},old={},n=0;
+        for(var k in remote){var t=+remote[k];if(!t)continue;if(t<cutoff){old[k]=null;n++;}else if(t>(h[kind][k]||0))h[kind][k]=t;}
+        for(var k2 in h[kind])if(h[kind][k2]<cutoff)delete h[kind][k2];
+        if(n)patch(kind,old).catch(function(){});});store();}fin();}).catch(fin);});
+    setTimeout(function(){loaded=null;},600000);return loaded;}
+  return{load:load,when:when,order:order,mark:mark,fnv:fnv};
+})();
 // ════ ZUSCHAUER-MODUS ════
 
 
@@ -1325,7 +1356,7 @@ function setMode(mode){
   if(mode==='single') setTimeout(loadTeamNames, 200);
 }
 
-function setHost(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();}}
+function setHost(){IS_HOST=true;VL.load();sessionStorage.setItem('chartster_host','1');REF.set({host:Date.now(),screen:'lobby'});document.getElementById('lobby-status').textContent='lädt …';if(G.songs.length===0)loadSongs();else{updateStartBtn();updateSongCount();decorateMiniGameButtons();}}
 function setGuest(){IS_HOST=false;sessionStorage.removeItem('chartster_host');document.getElementById('lobby-status').textContent='Zuschauer – warte auf Host …';document.getElementById('start-btn').disabled=true;fbListener=REF.on('value',snap=>{var d=snap.val();if(d&&!IS_HOST)applyRemote(d);});}
 function applyRemote(d){
   if(IS_HOST) return; // Host nie überschreiben
@@ -1363,6 +1394,11 @@ function filteredSongs(){
   else if(G.topFilter==='top20') s=s.filter(function(x){return x.p&&x.p<=20;});
   return s;
 }
+VL.load();
+// Stapel nach Verlauf: Ungespieltes zuerst; Karte ziehen merkt sie als gespielt (nur der Host)
+function newDeck(pool){G.deck=VL.order(pool,'s',function(x){return x.l;});G.deckT=Date.now();}
+function popCard(){for(var i=0;i<40;i++){if(G.deck.length===0)newDeck(filteredSongs());var c=G.deck.pop();if(!c)return c;
+  if(G.deck.length&&VL.when('s',c.l)>=(G.deckT||0))continue;if(IS_HOST)VL.mark('s',c.l);return c;}return G.deck.pop();}
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 
 // ── SEAT SELECTOR ──
@@ -1424,7 +1460,7 @@ function toggleFlt(btn,isOpt){
     }
   }
   syncFlt('flt-wrap');syncFlt('opt-filter');updateSongCount();
-  if(isOpt){var pool=filteredSongs();if(pool.length>=5)G.deck=shuffle(pool);}
+  if(isOpt){var pool=filteredSongs();if(pool.length>=5)newDeck(pool);}
 }
 function syncFlt(id){
   var w=document.getElementById(id);if(!w)return;
@@ -1459,7 +1495,7 @@ function startGame(){
   if(G.songs.length===0){showHint('Songs werden geladen – kurz warten!');return;}
   if(G_MODE!=='single') G.teams=active.map(function(pos,i){var inp=document.querySelector(`.seat[data-pos="${pos}"] .seat-inp`);return{name:inp?inp.value.trim()||DEFAULTS[i]:DEFAULTS[i],color:COLORS[i],side:SEAT_DEF[pos].side,pos:pos,years:[],tokens:2};});
   var pool=filteredSongs();if(pool.length<10){showHint('Zu wenige Songs – Filter anpassen!');return;}
-  G.deck=shuffle(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
+  newDeck(pool);G.slotTeam=0;G.slotYears=[];G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.miniGames=document.getElementById('mini-btn').classList.contains('on');
   try{var _el=document.documentElement;(_el.requestFullscreen||_el.webkitRequestFullscreen||function(){}).call(_el);}catch(e){}
   if(G_MODE==='single'){Object.keys(CENTER_ROT).forEach(function(k){CENTER_ROT[k]='r0';});}
   else{var cr={bot:'r0',top:'r180',left:'r90',right:'r270'};Object.keys(cr).forEach(function(k){CENTER_ROT[k]=cr[k];});}
@@ -1475,8 +1511,8 @@ function updateSlotUI(){var team=G.teams[G.slotTeam];var el=document.getElementB
 function nextSlotTeam(){G.slotTeam++;if(G.slotTeam>=G.teams.length){var validYears=G.slotYears.slice(0,G.teams.length);G.teams.forEach((t,i)=>{t.years=[validYears[i]||1990];});var activeCW=CW_ORDER.filter(pos=>G.teams.some(t=>t.pos===pos));var startPos=activeCW[Math.floor(Math.random()*activeCW.length)];G.cur=G.teams.findIndex(t=>t.pos===startPos);if(G.cur<0)G.cur=0;beginPlay();}else{updateSlotUI();initSlot();}}
 
 // ── PLAY ──
-function beginPlay(){G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.readyToReveal=false;clearCd();if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();var gc=document.getElementById('game-center');if(gc)gc.className=CENTER_ROT[G.teams[G.cur].side]||'r0';showScreen('game');buildOptFilter();renderPanels();updateGameUI();pushState();}
-function drawCard(){if(G.deck.length===0)G.deck=shuffle(filteredSongs());G.currentCard=G.deck.pop();}
+function beginPlay(){G.phase=1;G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.readyToReveal=false;clearCd();G.currentCard=popCard();var gc=document.getElementById('game-center');if(gc)gc.className=CENTER_ROT[G.teams[G.cur].side]||'r0';showScreen('game');buildOptFilter();renderPanels();updateGameUI();pushState();}
+function drawCard(){G.currentCard=popCard();}
 
 // ── PANELS ──
 function renderActivePanelOnly(){
@@ -1707,7 +1743,7 @@ function mkBox(idx,team){
 function getCorrectPos(y,sorted){for(var i=0;i<sorted.length;i++){if(y<sorted[i])return i;}return sorted.length;}
 
 // ── NEUER SONG TOKEN ──
-function newSongToken(){var team=G.teams[G.cur];if(team.tokens<=0){showHint('Keine Token mehr!');return;}team.tokens--;clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();cardNext();}
+function newSongToken(){var team=G.teams[G.cur];if(team.tokens<=0){showHint('Keine Token mehr!');return;}team.tokens--;clearCd();G.deck.unshift(G.currentCard);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();cardNext();}
 
 // ── SCORING ──
 function score(type){var team=G.teams[G.cur];var sorted=team.years.slice().sort((a,b)=>a-b);var correctPos=getCorrectPos(G.currentCard.y,sorted);if(type==='year'||type==='both'){team.years.push(G.currentCard.y);team.years.sort((a,b)=>a-b);if(type==='both')team.tokens=Math.min(MAX_TOK,team.tokens+1);spawnConfetti(team.color,90,false);}else{for(var i=0;i<G.teams.length;i++){if(i!==G.cur&&G.bets[i]===correctPos){G.teams[i].years.push(G.currentCard.y);G.teams[i].years.sort((a,b)=>a-b);spawnConfetti(G.teams[i].color,60,false);showHint(`${G.teams[i].name} stehlen die Jahreszahl! 🎉`);break;}}}G.bets={};G.betMode=null;
@@ -1895,7 +1931,7 @@ function spawnConfetti(color,count,withWave){var c=document.getElementById('conf
 // ── OPTIONS ──
 function openOpt(){renderOptTeams();buildOptFilter();document.getElementById('opt-panel').classList.add('show');document.getElementById('opt-confirm').classList.remove('show');}
 function closeOpt(){document.getElementById('opt-panel').classList.remove('show');document.getElementById('opt-confirm').classList.remove('show');}
-function optNewSong(){closeOpt();clearCd();G.deck.push(G.currentCard);G.deck=shuffle(G.deck);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();showHint('Schiedsrichter: Neuer Song! ⚖️');}
+function optNewSong(){closeOpt();clearCd();G.deck.unshift(G.currentCard);drawCard();G.cardLoaded=false;G.selBox=null;G.bets={};G.betMode=null;G.hitsterStarted=false;G.phase=1;updateGameUI();renderPanels();showHint('Schiedsrichter: Neuer Song! ⚖️');}
 function optResetPrompt(){document.getElementById('opt-confirm').classList.add('show');}
 function doReset(){closeOpt();clearCd();document.getElementById('victoryOverlay').classList.remove('show');G.teams=[];G.deck=[];G.cur=0;G.phase=1;G.bets={};G.betMode=null;G.currentCard=null;G.slotYears=[];G.slotTeam=0;G.miniGamesDone={memory:false,paparazzi:false};G.pendingMiniGame=null;G.finalRound=false;G.finalRoundStart=-1;G.hitsterStarted=false;['top-l','top-r','left','right','bot-l','bot-r'].forEach(function(pos){G.seatCfg[pos]=null;var seat=document.querySelector(`.seat[data-pos="${pos}"]`);if(seat){seat.classList.remove('active');seat.querySelector('.seat-circle').style.cssText='';var inp=seat.querySelector('.seat-inp');inp.value='';inp.style.display='none';}});REF.set({screen:'lobby',host:Date.now()}).then(function(){IS_HOST=true;sessionStorage.setItem('chartster_host','1');updateSongCount();document.getElementById('start-btn').disabled=true;showScreen('lobby');});}
 

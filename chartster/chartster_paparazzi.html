@@ -398,7 +398,7 @@ body{
 <div id="hint-toast"></div>
 <div id="confetti"></div>
 <div id="victoryOverlay"></div>
-<div class="ver">v2.4.1-mini</div>
+<div class="ver">v2.4.2-mini</div>
 
 <!-- Zahnrad-Menü (nur im Spiel) -->
 <div id="gear-btn" onclick="toggleGear()">&#9881;</div>
@@ -511,6 +511,37 @@ body{
 </div>
 
 <script>
+/* ════ VERLAUF „schon gespielt“ – gemeinsam mit ChartsterOnTime (NAS + Mobil) ════
+   Firebase verlauf/s/<Spotify-ID> und verlauf/p/<FNV der Foto-URL> = Zeitpunkt in ms.
+   Was in den letzten 90 Tagen lief, kommt erst, wenn nichts anderes mehr übrig ist – dann das am längsten Zurückliegende.
+   Ohne Verbindung merkt sich das Gerät den Verlauf selbst und reicht ihn später nach. */
+var VL=(function(){
+  var URL='https://schnuppes-spielportal-default-rtdb.europe-west1.firebasedatabase.app/verlauf';
+  var KEEP_MS=90*864e5,LS='cot_verlauf',KINDS=['s','p'];
+  var h={s:{},p:{}},pending={s:{},p:{}},loaded=null;
+  try{var d=JSON.parse(localStorage.getItem(LS)||'null');if(d){h={s:d.s||{},p:d.p||{}};pending=d.pending||pending;}}catch(e){}
+  function store(){try{localStorage.setItem(LS,JSON.stringify({s:h.s,p:h.p,pending:pending}));}catch(e){}}
+  function fnv(t){var x=0x811c9dc5;for(var i=0;i<t.length;i++){x^=t.charCodeAt(i);x=Math.imul(x,0x01000193)>>>0;}return('0000000'+x.toString(16)).slice(-8);}
+  function key(kind,v){v=String(v||'').trim();if(!v)return'';return kind==='p'?fnv(v):v.replace(/[.#$\[\]\/]/g,'_');}
+  function when(kind,v){var k=key(kind,v),t=k?(h[kind][k]||0):0;return(t&&Date.now()-t<KEEP_MS)?t:0;}
+  function mix(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var c=b[i];b[i]=b[j];b[j]=c;}return b;}
+  // Reihenfolge zum Ziehen von hinten (pop): erst Ungespieltes (gemischt), dann das am längsten Zurückliegende
+  function order(items,kind,val){var fresh=[],old=[];items.forEach(function(x){var t=when(kind,val(x));if(t)old.push([t,x]);else fresh.push(x);});
+    old.sort(function(a,b){return b[0]-a[0];});return old.map(function(p){return p[1];}).concat(mix(fresh));}
+  function patch(kind,obj){return fetch(URL+'/'+kind+'.json',{method:'PATCH',body:JSON.stringify(obj)}).then(function(r){if(!r.ok)throw new Error(r.status);});}
+  function push(){return KINDS.reduce(function(p,kind){return p.then(function(){var todo={},n=0;for(var k in pending[kind]){todo[k]=pending[kind][k];n++;}
+    if(!n)return;return patch(kind,todo).then(function(){for(var k in todo)if(pending[kind][k]===todo[k])delete pending[kind][k];store();});});},Promise.resolve()).catch(function(){});}
+  function mark(kind,v){var k=key(kind,v);if(!k)return;h[kind][k]=pending[kind][k]=Date.now();store();push();}
+  // Verlauf holen (höchstens 3 s warten – ohne Verbindung geht es mit dem eigenen Verlauf weiter)
+  function load(){if(loaded)return loaded;loaded=new Promise(function(res){var done=false,fin=function(){if(!done){done=true;res();}};setTimeout(fin,3000);
+    push().then(function(){return fetch(URL+'.json',{cache:'no-store'});}).then(function(r){return r.ok?r.json():null;}).then(function(d){
+      if(d){var cutoff=Date.now()-KEEP_MS;KINDS.forEach(function(kind){var remote=(d[kind]&&typeof d[kind]==='object')?d[kind]:{},old={},n=0;
+        for(var k in remote){var t=+remote[k];if(!t)continue;if(t<cutoff){old[k]=null;n++;}else if(t>(h[kind][k]||0))h[kind][k]=t;}
+        for(var k2 in h[kind])if(h[kind][k2]<cutoff)delete h[kind][k2];
+        if(n)patch(kind,old).catch(function(){});});store();}fin();}).catch(fin);});
+    setTimeout(function(){loaded=null;},600000);return loaded;}
+  return{load:load,when:when,order:order,mark:mark,fnv:fnv};
+})();
 // ════ EMBEDDED MODE ════
 var EMBEDDED_MODE = (new URLSearchParams(window.location.search)).get('embedded') === '1';
 var embCfg = {};
@@ -688,7 +719,7 @@ loadSongs();
 
 function loadSongs(){
   document.getElementById('lobby-status').textContent='lädt …';
-  fetch('./songs.json')
+  VL.load().then(function(){return fetch('./songs.json');})
     .then(r=>r.ok?r.json():Promise.reject(r.status))
     .then(function(data){
       var all=Array.isArray(data)?data:(data.songs||[]);
@@ -783,7 +814,7 @@ function startGame(){
   });
   G.players=G.teams.map(function(t){return t.name;});
   G.scores=G.teams.map(function(){return 0;});
-  G.queue=shuffle(G.artists.map(function(_,i){return i;}));
+  G.queue=papQueue();
 
   G.startSeatIdx=0;
   G.round=0;
@@ -860,9 +891,10 @@ function nextArtist(){
     var dome=b.querySelector('.tbz-dome');if(dome)dome.style.boxShadow='';
   });
 
-  if(G.queue.length===0) G.queue=shuffle(G.artists.map(function(_,i){return i;}));
+  if(G.queue.length===0) G.queue=papQueue();
   var idx=G.queue.pop();
   G.cur=G.artists[idx];
+  if(!(typeof IS_SPECTATOR_VIEW!=='undefined'&&IS_SPECTATOR_VIEW)&&G.cur) VL.mark('p',G.cur.img);   // Verlauf: Bild als gespielt merken
   G.stepIdx=0;
   G.buzzedPlayer=-1;
   G.buzzedOut=[];
@@ -1239,6 +1271,7 @@ function resetToLobby(){
 }
 
 // ════ UTILS ════
+function papQueue(){return VL.order(G.artists.map(function(_,i){return i;}),'p',function(i){return G.artists[i].img;});}   // Bilder der letzten 90 Tage zuletzt
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
 function showScreen(name){
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
